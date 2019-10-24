@@ -16,6 +16,8 @@ from forecast.models import MonthlyFigure, FinancialPeriod
 from forecast.tables import ForecastSubTotalTable, ForecastTable
 from forecast.forms import EditForm, AddForecastRowForm
 from core.views import FidoExportMixin
+from forecast.views.base import ForecastBaseView
+
 
 # programme__budget_type_fk__budget_type_display
 # indicates if DEL, AME, ADMIN used in every view
@@ -222,21 +224,8 @@ class AddRowView(FormView):
         return super().form_valid(form)
 
 
-class EditForecastView(UserPassesTestMixin, TemplateView):
+class EditForecastView(ForecastBaseView):
     template_name = "forecast/edit.html"
-    cost_centre_code = "888812"
-
-    def test_func(self):
-        cost_centre = CostCentre.objects.get(
-            cost_centre_code=self.cost_centre_code
-        )
-
-        return self.request.user.has_perm(
-            "view_costcentre", cost_centre
-        ) and self.request.user.has_perm("change_costcentre", cost_centre)
-
-    def handle_no_permission(self):
-        return redirect("costcentre")
 
     def cost_centre_details(self):
         return {
