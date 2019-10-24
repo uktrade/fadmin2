@@ -1,22 +1,23 @@
 import json
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.shortcuts import redirect
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core import serializers
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
 from django_tables2 import MultiTableMixin, SingleTableView, RequestConfig
 
-from costcentre.models import CostCentre
 from forecast.models import MonthlyFigure, FinancialPeriod
 from forecast.tables import ForecastSubTotalTable, ForecastTable
 from forecast.forms import EditForm, AddForecastRowForm
 from core.views import FidoExportMixin
-from forecast.views.base import ForecastBaseView
+from forecast.views.base import (
+    ForecastBaseView,
+    NoCostCentreCodeInURLError,
+)
+from costcentre.models import CostCentre
 
 
 # programme__budget_type_fk__budget_type_display
@@ -193,19 +194,46 @@ def pivot_test1(request):
 class AddRowView(FormView):
     template_name = "forecast/add.html"
     form_class = AddForecastRowForm
-    success_url = reverse_lazy("edit_forecast")
-    cost_centre_code = 888812
     financial_year_id = 2019
+    cost_centre_code = None
+
+    def get_cost_centre(self):
+        if self.cost_centre_code is not None:
+            return
+
+        if 'cost_centre_code' not in self.kwargs:
+            raise NoCostCentreCodeInURLError(
+                "No cost centre code provided in URL"
+            )
+
+        self.cost_centre_code = self.kwargs["cost_centre_code"]
+
+    def get_success_url(self):
+        self.get_cost_centre()
+
+        return reverse(
+            "edit_forecast",
+            kwargs={
+                'cost_centre_code': self.cost_centre_code
+            }
+        )
 
     def cost_centre_details(self):
+        self.get_cost_centre()
+
+        cost_centre = CostCentre.objects.get(
+            cost_centre_code=self.cost_centre_code,
+        )
         return {
-            "group": "Test group",
-            "directorate": "Test directorate",
-            "cost_centre_name": "Test cost centre name",
-            "cost_centre_num": self.cost_centre_code,
+            "group": cost_centre.directorate.group.group_name,
+            "directorate": cost_centre.directorate.directorate_name,
+            "cost_centre_name": cost_centre.cost_centre_name,
+            "cost_centre_num": cost_centre.cost_centre_code,
         }
 
     def form_valid(self, form):
+        self.get_cost_centre()
+
         data = form.cleaned_data
         for financial_period in range(1, 13):
             monthly_figure = MonthlyFigure(
