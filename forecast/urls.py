@@ -1,13 +1,13 @@
 from django.urls import path
 
 from forecast.views.forecast_views import (
+    AddRowView,
     CostClassView,
+    EditForecastView,
     MultiForecastView,
     PivotClassView,
-    pivot_test1,
     edit_forecast_prototype,
-    EditForecastView,
-    AddRowView,
+    pivot_test1,
 )
 from forecast.views.cost_centre_views import (
     ChooseCostCentreView,

@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+
 from guardian.shortcuts import assign_perm
 
 from django.test import RequestFactory, TestCase
@@ -6,7 +7,9 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 
 from forecast.views.forecast_views import EditForecastView
+
 from costcentre.test.factories import CostCentreFactory
+
 from chartofaccountDIT.test.factories import (
     ProgrammeCodeFactory,
     NaturalCodeFactory,

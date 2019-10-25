@@ -1,23 +1,40 @@
 import json
 
-from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
-from django.urls import reverse
-from django.shortcuts import render
+from django.core.serializers.json import DjangoJSONEncoder
+from django.shortcuts import (
+    render,
+    reverse,
+)
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
-from django_tables2 import MultiTableMixin, SingleTableView, RequestConfig
+from django_tables2 import (
+    MultiTableMixin,
+    RequestConfig,
+    SingleTableView,
+)
 
-from forecast.models import MonthlyFigure, FinancialPeriod
-from forecast.tables import ForecastSubTotalTable, ForecastTable
-from forecast.forms import EditForm, AddForecastRowForm
 from core.views import FidoExportMixin
+
+from costcentre.models import CostCentre
+
+from forecast.forms import (
+    AddForecastRowForm,
+    EditForm,
+)
+from forecast.models import (
+    FinancialPeriod,
+    MonthlyFigure,
+)
+from forecast.tables import (
+    ForecastSubTotalTable,
+    ForecastTable,
+)
 from forecast.views.base import (
     ForecastBaseView,
     NoCostCentreCodeInURLError,
 )
-from costcentre.models import CostCentre
 
 
 # programme__budget_type_fk__budget_type_display
