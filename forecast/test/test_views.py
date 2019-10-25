@@ -12,8 +12,9 @@ from chartofaccountDIT.test.factories import (
     NaturalCodeFactory,
 )
 
-# Nb. we're using RequestFactory here because SSO
-# does not fullt support the test client's user object
+# Nb. we're using RequestFactory here
+# because SSO does not fully support
+# the test client's user object
 
 
 class ViewPermissionsTest(TestCase):
