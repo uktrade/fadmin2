@@ -9,14 +9,17 @@ from chartofaccountDIT.models import (
 )
 
 from core.import_csv import get_fk
+from core.models import FinancialYear
 
 from costcentre.models import CostCentre
 
-from forecast.models import MonthlyFigure
-
+from forecast.models import (
+    MonthlyFigure,
+    FinancialPeriod,
+)
 
 CHART_OF_ACCOUNT_COL = "D"
-MONTHLY_FIGURE_COL = "F"
+ACTUAL_FIGURE_COL = "F"
 NAC_COL = "A"
 
 FIRST_DATA_ROW = 13
@@ -49,19 +52,25 @@ class SubTotalFieldNotSpecifiedError(Exception):
     pass
 
 
-def check_trial_balance_format(file, period):
+def check_trial_balance_format(ws, period, year):
     """Check that the file is really the trial
     balance and it is the correct period"""
-    pass
-
-
-def row_to_use(row):
-    """Check the account code: if resource or
-    capital use the row, otherwise ignore it"""
-    if row[MONTHLY_FIGURE_COL] == 0:
+    if ws.title != "FNDWRR":
+        # wrong file
         return False
-    # if row[NAC_COL] not resouce:
-    #     return False
+    if ws[TITLE_CELL].value != CORRECT_TITLE:
+        # wrong file
+        return False
+
+    report_date = ws[MONTH_CELL].value
+    if report_date.year != year:
+        # wrong date
+        return False
+
+    if report_date.month != period:
+        # wrong date
+        return False
+
     return True
 
 
@@ -73,6 +82,7 @@ def save_row(chart_of_account, value, period_obj, year_obj):
     chart_account_list = chart_of_account[CHART_OF_ACCOUNT_COL].split(
         CHART_ACCOUNT_SEPARATOR
     )
+    # Check that the NAC is resource or capital
     error_message = ""
     cc_obj, message = get_fk(CostCentre, chart_account_list[CC_INDEX])
     error_message += message
@@ -106,27 +116,22 @@ def save_row(chart_of_account, value, period_obj, year_obj):
     return success, error_message
 
 
-def upload_file(path, period, year):
+def upload_trial_balance_report(path, month_number, year):
     """Use transactions, so it can rollback
     if there is an error in the file"""
+    print(path)
     wb = load_workbook(path)
+    print("Path opened")
     ws = wb.worksheets[0]
-    if ws.title != "FNDWRR":
-        # wrong file
-        return False
-    if ws[TITLE_CELL].value != CORRECT_TITLE:
-        # wrong file
-        return False
-
-    report_date = ws[MONTH_CELL].value
-    if report_date.year != year:
-        # wrong date
-        return False
-
-    if report_date.month != period:
-        # wrong date
-        return False
-
+    if not check_trial_balance_format(ws, month_number, year):
+        wb.close
+        return
     # If we are here, the file is a trial balance
     # run for the correct period
     # ws.cell(row=i, column=1).value
+    year_obj, msg = get_fk(FinancialYear, year)
+    q = FinancialPeriod.objects.filter(period_calendar_code=month_number)
+    for row in range(FIRST_DATA_ROW, ws.max_row):
+        if ws.cell_value(row, CHART_OF_ACCOUNT_COL):
+            save_row(ws.cells(row, CHART_OF_ACCOUNT_COL),
+                    ws.cells(row, ACTUAL_FIGURE_COL), q, year_obj)
