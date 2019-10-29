@@ -124,7 +124,11 @@ class FinancialCode(models.Model):
     )
     # The following field is calculated from programme and NAC.
     forecast_expenditure_type = models.ForeignKey(
-        ForecastExpenditureType, on_delete=models.PROTECT, default=1, blank=True, null=True
+        ForecastExpenditureType,
+        on_delete=models.PROTECT,
+        default=1,
+        blank=True,
+        null=True
     )
 
     def save(self, *args, **kwargs):

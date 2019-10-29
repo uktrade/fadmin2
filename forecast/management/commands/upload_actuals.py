@@ -8,9 +8,9 @@ class Command(BaseCommand):
     help = "Upload the Trial Balance for a specific month"
 
     def add_arguments(self, parser):
-        parser.add_argument('path')
-        parser.add_argument('month', type=int)
-        parser.add_argument('financial_year', type=int)
+        parser.add_argument("path")
+        parser.add_argument("month", type=int)
+        parser.add_argument("financial_year", type=int)
 
     def handle(self, *args, **options):
         path = options["path"]
@@ -18,11 +18,10 @@ class Command(BaseCommand):
         year = options["financial_year"]
 
         upload_trial_balance_report(path, month, year)
-        print("Finish")
-        # self.stdout.write(
-        #     self.style.SUCCESS(
-        #         "Permission to edit cost centre {} added".format(
-        #             options["cost_centre_code"]
-        #         )
-        #     )
-        # )
+        self.stdout.write(
+            self.style.SUCCESS(
+                "Actual for period {} added".format(
+                    month
+                )
+            )
+        )
