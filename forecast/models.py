@@ -124,7 +124,7 @@ class FinancialCode(models.Model):
     )
     # The following field is calculated from programme and NAC.
     forecast_expenditure_type = models.ForeignKey(
-        ForecastExpenditureType, on_delete=models.PROTECT, default=1
+        ForecastExpenditureType, on_delete=models.PROTECT, default=1, blank=True, null=True
     )
 
     def save(self, *args, **kwargs):
@@ -204,7 +204,11 @@ class PivotManager(models.Manager):
 
     def add_row_to_subtotal(self, row_from, sub_total):
         for period in self.period_list:
-            sub_total[period] += row_from[period]
+            if row_from[period]:
+                val = row_from[period]
+            else:
+                val = 0
+            sub_total[period] += val
 
     def clear_row(self, row):
         for period in self.period_list:

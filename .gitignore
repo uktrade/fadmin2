@@ -130,3 +130,6 @@ front_end/config/webpack-stats.json
 node_modules
 
 !bin/
+
+# Fixture with real data
+fido_db_test_all.json

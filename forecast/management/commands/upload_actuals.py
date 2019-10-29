@@ -18,7 +18,7 @@ class Command(BaseCommand):
         year = options["financial_year"]
 
         upload_trial_balance_report(path, month, year)
-
+        print("Finish")
         # self.stdout.write(
         #     self.style.SUCCESS(
         #         "Permission to edit cost centre {} added".format(
