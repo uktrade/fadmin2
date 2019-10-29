@@ -4,11 +4,6 @@ from forecast.models import FileUpload
 
 
 @shared_task
-def hello():
-    print("Hello there!")
-
-
-@shared_task
 def process_uploaded_file():
     latest_unprocessed = FileUpload.objects.filter(
         processed=False,
@@ -19,3 +14,4 @@ def process_uploaded_file():
         # Process file here
         latest_unprocessed.processed = True
         latest_unprocessed.save()
+        print("Saved file...")

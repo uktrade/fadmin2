@@ -130,3 +130,6 @@ front_end/config/webpack-stats.json
 node_modules
 
 !bin/
+
+# Local upload folder
+uploaded/*

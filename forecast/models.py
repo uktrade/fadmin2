@@ -446,7 +446,9 @@ class OSCARReturn(models.Model):
 
 
 class FileUpload(SimpleTimeStampedModel):
-    document_file = models.FileField()
+    document_file = models.FileField(
+        upload_to='uploaded/actuals/'
+    )
     processed = models.BooleanField(
         default=False,
     )

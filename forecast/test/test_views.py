@@ -35,7 +35,12 @@ class ViewPermissionsTest(TestCase):
         self.test_user.set_password(self.test_password)
 
     def test_edit_forecast_view(self):
-        self.assertFalse(self.test_user.has_perm("change_costcentre", self.cost_centre))
+        self.assertFalse(
+            self.test_user.has_perm(
+                "change_costcentre",
+                self.cost_centre,
+            )
+        )
 
         request = self.factory.get(reverse("edit_forecast"))
         request.user = self.test_user
