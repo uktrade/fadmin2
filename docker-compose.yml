@@ -31,6 +31,14 @@ services:
      AUTHBROKER_CLIENT_SECRET: ${AUTHBROKER_CLIENT_SECRET}
      BROWSERSTACK_USERNAME: ${BROWSERSTACK_USERNAME}
      BROWSERSTACK_ACCESS_KEY: ${BROWSERSTACK_ACCESS_KEY}
+     CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+     CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+ redis:
+    image: redis:buster
+    ports:
+      - "6379:6379"
  selenium-hub:
     image: selenium/hub:3.141.59-vanadium
     container_name: selenium-hub

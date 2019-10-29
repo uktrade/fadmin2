@@ -62,3 +62,7 @@ class AddForecastRowForm(forms.Form):
             "aria-describedby": "project_code-hint project_code-error",
         }
     )
+
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField()
