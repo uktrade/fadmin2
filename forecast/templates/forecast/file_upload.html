@@ -1,0 +1,12 @@
+{% extends "wide_content.html" %}
+
+{% block content %}
+    <div class="app-pane__content">
+        <h1 class="govuk-heading-xl">Financial Report</h1>
+        <form method="post" enctype="multipart/form-data" action="">
+            {% csrf_token %}
+            {% include "core/govt_uk_form.html" %}
+            <input type="submit" value="Add entry" class="govuk-button" data-module="govuk-button"/>
+        </form>
+    </div>
+{% endblock %}
