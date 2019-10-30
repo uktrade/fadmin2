@@ -193,14 +193,12 @@ WEBPACK_LOADER = {
 AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
 
-AWS_STORAGE_BUCKET_NAME = "secchiello1234546a"
-
-AWS_S3_CUSTOM_DOMAIN = "%s.s3.amazonaws.com" % AWS_STORAGE_BUCKET_NAME
-AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
-
-AWS_S3_REGION_NAME = 'eu-west-2'
+AWS_STORAGE_BUCKET_NAME = "fido-dev"  # Need to check this with GDS bucket
+AWS_S3_CUSTOM_DOMAIN = "%s.s3.amazonaws.com" % AWS_STORAGE_BUCKET_NAME  # Need to check this with GDS bucket
+AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}  # Need to check this with GDS bucket
+AWS_S3_REGION_NAME = 'eu-west-2'  # Need to check this with GDS bucket
 #
-AWS_DEFAULT_ACL = None
+AWS_DEFAULT_ACL = None  # Need to check this with GDS bucket
 #
 
 # celery
