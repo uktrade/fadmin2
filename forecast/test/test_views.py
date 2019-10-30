@@ -13,7 +13,11 @@ from chartofaccountDIT.test.factories import (
     NaturalCodeFactory,
 )
 
-from forecast.views import EditForecastView
+from forecast.models import FinancialPeriod
+
+from forecast.test.factories import MonthlyFigureFactory
+
+from forecast.views import EditForecastView, MultiForecastView
 
 
 class ViewPermissionsTest(TestCase):
@@ -124,9 +128,19 @@ class AddForecastRowTest(TestCase):
 
 class ViewCostCentreDashboard(TestCase):
     def setUp(self):
-        self.programme = ProgrammeCodeFactory.create()
-        self.nac = NaturalCodeFactory.create(natural_account_code=999999)
+        self.apr_amount = MonthlyFigureFactory.create(
+            financial_period = FinancialPeriod.objects.get(
+                financial_period_code=1
+            ),
+            amount = 9876543,
+        )
 
-        self.cost_centre_code = 888812
-    def testView(self):
-        pass
+    def test_view_cost_centre_dashboard(self):
+        resp = self.client.get(reverse("pivotmulti"))
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "govuk-table")
+
+        soup = BeautifulSoup(resp.content, features="html.parser")
+        tables = soup.find_all("table", class_="govuk-table")
+        assert len(tables) == 3
