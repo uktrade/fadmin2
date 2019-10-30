@@ -154,16 +154,22 @@ def upload_trial_balance_report(path, month_number, year):
         FinancialPeriod,
         "period_calendar_code",
         month_number)
+    # Delete the existing actuals.
+    # There are multiple lines in the Trial Balance for the same combination of Chart-of-Account,
+    # so we need to add the figures when we save them. This means that we need to start with a clean slate.
     MonthlyFigure.objects.filter(
         financial_year=year,
         financial_period=period_obj).delete()
 
-    print(ws.max_row)
     for row in range(FIRST_DATA_ROW, ws.max_row):
         chart_of_account = ws["{}{}".format(CHART_OF_ACCOUNT_COL, row)].value
         if chart_of_account:
             actual = ws["{}{}".format(ACTUAL_FIGURE_COL, row)].value
-            print(row)
-            save_row(chart_of_account, actual, period_obj, year_obj)
+            if actual:
+                save_row(chart_of_account, actual, period_obj, year_obj)
         else:
-            return
+            break
+
+    period_obj.actual_loaded = True
+    period_obj.save()
+#     TODO log date and time of upload
