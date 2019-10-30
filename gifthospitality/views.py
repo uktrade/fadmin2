@@ -1,6 +1,7 @@
 from json import dumps
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
@@ -99,3 +100,31 @@ class GiftHospitalityReceivedDoneView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["section_name"] = "Completed Gift/Hospitality Received"
         return context
+
+
+def quick_links(request, year):
+    return render(request, 'giftsandhospitality/quick_links.html', {
+        "year": year,
+        "quick_links": [
+            {
+                "title": "Cost Centre Hierarchy",
+                "text": "TODO",
+                "url": "costcentrefilter",
+            },
+            {
+                "title": "Programme Codes",
+                "text": "TODO",
+                "url": "programme_filter",
+            },
+            {
+                "title": "Natural Account",
+                "text": "TODO",
+                "url": "natural_code",
+            },
+            {
+                "title": "Budget",
+                "text": "TODO",
+                "url": "finance_category",
+            },
+        ]
+    })

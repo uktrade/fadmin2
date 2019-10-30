@@ -1,3 +1,5 @@
+from django.shortcuts import render
+
 from core.views import FAdminFilteredView
 
 from .filters import (
@@ -268,3 +270,68 @@ class HistoricalFilteredFCOMappingView(FilteredFCOMappingView):
     model = table_class.Meta.model
     filterset_class = HistoricalFCOMappingtFilter
     name = "FCO Mappings 2018-19"
+
+
+def choose_year(request):
+    return render(
+        request,
+        'chartofaccountDIT/choose_year.html',
+    )
+
+
+def quick_links(request, year):
+    return render(request, 'chartofaccountDIT/quick_links.html', {
+        "year": year,
+        "quick_links": [
+            {
+                "title": "Cost Centre Hierarchy",
+                "text": "TODO",
+                "url": "costcentrefilter",
+            },
+            {
+                "title": "Programme Codes",
+                "text": "TODO",
+                "url": "programme_filter",
+            },
+            {
+                "title": "Natural Account",
+                "text": "TODO",
+                "url": "natural_code",
+            },
+            {
+                "title": "Budget",
+                "text": "TODO",
+                "url": "finance_category",
+            },
+            {
+                "title": "Commercial",
+                "text": "TODO",
+                "url": "commercial_category",
+            },
+            {
+                "title": "Contract Reconciliation",
+                "text": "TODO",
+                "url": "analysis_1",
+            },
+            {
+                "title": "Markets (Analysis 2)",
+                "text": "TODO",
+                "url": "analysis_2",
+            },
+            {
+                "title": "Projects (Spare 1)",
+                "text": "TODO",
+                "url": "project_filter",
+            },
+            {
+                "title": "Entity-Inter Entity",
+                "text": "TODO",
+                "url": "inter_entity_filter",
+            },
+            {
+                "title": "FCO Mapping",
+                "text": "TODO",
+                "url": "fco_filter",
+            },
+        ]
+    })

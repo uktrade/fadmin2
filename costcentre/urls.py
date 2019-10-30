@@ -7,6 +7,6 @@ urlpatterns = [
     path(
         "costcentrehistoricalfilter/",
         FilteredCostHistoricalListView.as_view(),
-        name="costcentrehistoricalfilter",
+        name="historical_cost_centre_filter",
     ),
 ]
