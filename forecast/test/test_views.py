@@ -1,30 +1,30 @@
 from bs4 import BeautifulSoup
 
-from guardian.shortcuts import assign_perm
-
+from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
-from django.contrib.auth import get_user_model
 
-from forecast.views.forecast_views import EditForecastView
+from guardian.shortcuts import assign_perm
+
+
+from chartofaccountDIT.test.factories import (
+    NaturalCodeFactory,
+    ProgrammeCodeFactory,
+)
 
 from costcentre.test.factories import CostCentreFactory
 
-from chartofaccountDIT.test.factories import (
-    ProgrammeCodeFactory,
-    NaturalCodeFactory,
-)
+from forecast.views.forecast_views import EditForecastView
+
 
 # Nb. we're using RequestFactory here
 # because SSO does not fully support
 # the test client's user object
-
-
 class ViewPermissionsTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
 
-        self.cost_centre_code = 888812
+        self.cost_centre_code = 109076
         self.test_user_email = "test@test.com"
         self.test_password = "test_password"
 
@@ -39,7 +39,8 @@ class ViewPermissionsTest(TestCase):
         self.test_user.set_password(self.test_password)
 
     def test_edit_forecast_view(self):
-        self.assertFalse(self.test_user.has_perm(
+        self.assertFalse(
+            self.test_user.has_perm(
                 "change_costcentre",
                 self.cost_centre
             )
@@ -85,7 +86,7 @@ class AddForecastRowTest(TestCase):
         self.programme = ProgrammeCodeFactory.create()
         self.nac = NaturalCodeFactory.create(natural_account_code=999999)
 
-        self.cost_centre_code = 888812
+        self.cost_centre_code = 109076
         self.test_user_email = "test@test.com"
         self.test_password = "test_password"
 
@@ -164,7 +165,7 @@ class AddForecastRowTest(TestCase):
 
 class ChooseCostCentreTest(TestCase):
     def setUp(self):
-        self.cost_centre_code = 888812
+        self.cost_centre_code = 109076
         self.cost_centre = CostCentreFactory.create(
             cost_centre_code=self.cost_centre_code
         )
@@ -203,9 +204,24 @@ class ChooseCostCentreTest(TestCase):
             len(resp.redirect_chain),
             2
         )
-        assert resp.redirect_chain[0] == ('/forecast/edit/{}/'.format(
+        assert resp.redirect_chain[0] == (
+            '/forecast/edit/{}/'.format(
                 self.cost_centre_code,
             ),
             302,
         )
-        assert resp.redirect_chain[1] == ('/forecast/costcentre/', 302)
+        assert resp.redirect_chain[1] == (
+            '/forecast/costcentre/',
+            302,
+        )
+
+
+class ViewCostCentreDashboard(TestCase):
+    def setUp(self):
+        self.programme = ProgrammeCodeFactory.create()
+        self.nac = NaturalCodeFactory.create(natural_account_code=999999)
+
+        self.cost_centre_code = 109076
+
+    def testView(self):
+        pass

@@ -1,5 +1,5 @@
-from django.views.generic.edit import FormView
 from django.urls import reverse
+from django.views.generic.edit import FormView
 
 from costcentre.forms import ChooseCostCentreForm
 
