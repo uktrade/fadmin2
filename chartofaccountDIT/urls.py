@@ -70,12 +70,12 @@ urlpatterns = [
     path(
         "historicalanalysis1/",
         HistoricalFilteredAnalysis1ListView.as_view(),
-        name="historical_analysis1",
+        name="historical_analysis_1",
     ),
     path(
         "historicalanalysis2/",
         HistoricalFilteredAnalysis2ListView.as_view(),
-        name="historical_analysis2",
+        name="historical_analysis_2",
     ),
     path(
         "historicalprogrammefilter/",
@@ -85,7 +85,7 @@ urlpatterns = [
     path(
         "historicalinterentityfilter/",
         HistoricalFilteredInterEntityView.as_view(),
-        name="historical_interentity_filter",
+        name="historical_inter_entity_filter",
     ),
     path(
         "historicalprojectfilter/",

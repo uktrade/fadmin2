@@ -102,29 +102,23 @@ class GiftHospitalityReceivedDoneView(TemplateView):
         return context
 
 
-def quick_links(request, year):
-    return render(request, 'giftsandhospitality/quick_links.html', {
-        "year": year,
+def quick_links(request):
+    return render(request, 'gifthospitality/quick_links.html', {
         "quick_links": [
             {
-                "title": "Cost Centre Hierarchy",
+                "title": "Add Gift/Hosp Received",
                 "text": "TODO",
-                "url": "costcentrefilter",
+                "url": "gifts_hospitality:gift-received",
             },
             {
-                "title": "Programme Codes",
+                "title": "Add Gift/Hosp Offered",
                 "text": "TODO",
-                "url": "programme_filter",
+                "url": "gifts_hospitality:gift-offered",
             },
             {
-                "title": "Natural Account",
+                "title": "Search Records",
                 "text": "TODO",
-                "url": "natural_code",
-            },
-            {
-                "title": "Budget",
-                "text": "TODO",
-                "url": "finance_category",
+                "url": "gifts_hospitality:gift-search",
             },
         ]
     })

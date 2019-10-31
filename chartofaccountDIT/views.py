@@ -280,58 +280,63 @@ def choose_year(request):
 
 
 def quick_links(request, year):
+    historical = ""
+
+    if year == 2018:
+        historical = "historical_"
+
     return render(request, 'chartofaccountDIT/quick_links.html', {
         "year": year,
         "quick_links": [
             {
                 "title": "Cost Centre Hierarchy",
                 "text": "TODO",
-                "url": "costcentrefilter",
+                "url": "{}cost_centre_filter".format(historical),
             },
             {
                 "title": "Programme Codes",
                 "text": "TODO",
-                "url": "programme_filter",
+                "url": "{}programme_filter".format(historical),
             },
             {
                 "title": "Natural Account",
                 "text": "TODO",
-                "url": "natural_code",
+                "url": "{}natural_code".format(historical),
             },
             {
                 "title": "Budget",
                 "text": "TODO",
-                "url": "finance_category",
+                "url": "{}finance_category".format(historical),
             },
             {
                 "title": "Commercial",
                 "text": "TODO",
-                "url": "commercial_category",
+                "url": "{}commercial_category".format(historical),
             },
             {
                 "title": "Contract Reconciliation",
                 "text": "TODO",
-                "url": "analysis_1",
+                "url": "{}analysis_1".format(historical),
             },
             {
                 "title": "Markets (Analysis 2)",
                 "text": "TODO",
-                "url": "analysis_2",
+                "url": "{}analysis_2".format(historical),
             },
             {
                 "title": "Projects (Spare 1)",
                 "text": "TODO",
-                "url": "project_filter",
+                "url": "{}project_filter".format(historical),
             },
             {
                 "title": "Entity-Inter Entity",
                 "text": "TODO",
-                "url": "inter_entity_filter",
+                "url": "{}inter_entity_filter".format(historical),
             },
             {
                 "title": "FCO Mapping",
                 "text": "TODO",
-                "url": "fco_filter",
+                "url": "{}fco_filter".format(historical),
             },
         ]
     })
