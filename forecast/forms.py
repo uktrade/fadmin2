@@ -8,6 +8,8 @@ from chartofaccountDIT.models import (
     ProjectCode,
 )
 
+from forecast.models import MonthlyFigure
+
 
 class EditForm(forms.Form):
     cell_data = forms.CharField(widget=forms.Textarea)
@@ -16,6 +18,28 @@ class EditForm(forms.Form):
 
 
 class AddForecastRowForm(forms.Form):
+    def clean(self):
+        cleaned_data = super().clean()
+        programme = cleaned_data.get("programme")
+        natural_account_code = cleaned_data.get("natural_account_code")
+        analysis1_code = cleaned_data.get("analysis1_code")
+        analysis2_code = cleaned_data.get("analysis2_code")
+        project_code = cleaned_data.get("project_code")
+
+        existing_row_count = MonthlyFigure.objects.filter(
+            programme=programme,
+            natural_account_code=natural_account_code,
+            analysis1_code=analysis1_code,
+            analysis2_code=analysis2_code,
+            project_code=project_code,
+        ).count()
+
+        if existing_row_count > 0:
+            raise forms.ValidationError(
+                "A row already exists with these details, "
+                "please amend the values you are supplying"
+            )
+
     programme = forms.ModelChoiceField(
         queryset=ProgrammeCode.objects.all(), empty_label=""
     )

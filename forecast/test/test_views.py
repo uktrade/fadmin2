@@ -6,14 +6,17 @@ from django.urls import reverse
 
 from guardian.shortcuts import assign_perm
 
-
 from chartofaccountDIT.test.factories import (
+    Analysis1Factory,
+    Analysis2Factory,
     NaturalCodeFactory,
     ProgrammeCodeFactory,
+    ProjectCodeFactory,
 )
 
 from costcentre.test.factories import CostCentreFactory
 
+from forecast.models import MonthlyFigure
 from forecast.views.forecast_views import EditForecastView
 
 
@@ -83,16 +86,23 @@ class AddForecastRowTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
 
-        self.programme = ProgrammeCodeFactory.create()
-        self.nac = NaturalCodeFactory.create(natural_account_code=999999)
-
+        self.nac_code = 999999
         self.cost_centre_code = 109076
-        self.test_user_email = "test@test.com"
-        self.test_password = "test_password"
+        self.analysis_1_code = "1111111"
+        self.analysis_2_code = "2222222"
+        self.project_code = "3000"
 
+        self.programme = ProgrammeCodeFactory.create()
+        self.nac = NaturalCodeFactory.create(natural_account_code=self.nac_code)
+        self.project_code = ProjectCodeFactory.create(project_code=self.project_code)
+        self.analysis_1 = Analysis1Factory.create(analysis1_code=self.analysis_1_code)
+        self.analysis_2 = Analysis2Factory.create(analysis2_code=self.analysis_2_code)
         self.cost_centre = CostCentreFactory.create(
             cost_centre_code=self.cost_centre_code
         )
+
+        self.test_user_email = "test@test.com"
+        self.test_password = "test_password"
 
         self.test_user, _ = get_user_model().objects.get_or_create(
             email=self.test_user_email
@@ -161,6 +171,59 @@ class AddForecastRowTest(TestCase):
 
         # Now we should have 3 rows (header, footer and new row)
         assert len(table_rows) == 3
+
+    def test_duplicate_values(self):
+        assign_perm("change_costcentre", self.test_user, self.cost_centre)
+        assign_perm("view_costcentre", self.test_user, self.cost_centre)
+
+        # add_forecast_row
+        response = self.client.post(
+            reverse(
+                "add_forecast_row",
+                kwargs={
+                    'cost_centre_code': self.cost_centre_code
+                },
+            ),
+            {
+                "programme": self.programme.programme_code,
+                "natural_account_code": self.nac.natural_account_code,
+                "analysis1_code": self.analysis_1_code,
+                "analysis2_code": self.analysis_2_code,
+                "project_code": self.project_code,
+            },
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        print(response.content)
+        assert "govuk-list govuk-error-summary__list" not in str(
+            response.content
+        )
+
+        monthly_figures = MonthlyFigure.objects.all()
+        self.assertEqual(monthly_figures.count(), 12)
+
+        response_2 = self.client.post(
+            reverse(
+                "add_forecast_row",
+                kwargs={
+                    'cost_centre_code': self.cost_centre_code
+                },
+            ),
+            {
+                "programme": self.programme.programme_code,
+                "natural_account_code": self.nac.natural_account_code,
+                "analysis1_code": self.analysis_1_code,
+                "analysis2_code": self.analysis_2_code,
+                "project_code": self.project_code,
+            },
+            follow=True,
+        )
+
+        self.assertEqual(response_2.status_code, 200)
+        assert "govuk-list govuk-error-summary__list" in response.content
+        monthly_figures.refresh_from_db()
+        self.assertEqual(monthly_figures, 12)
 
 
 class ChooseCostCentreTest(TestCase):

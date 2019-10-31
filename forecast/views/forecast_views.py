@@ -216,7 +216,7 @@ def pivot_test1(request):
     return render(request, "forecast/forecast.html", {"table": table})
 
 
-class AddRowView(FormView):
+class AddRowView(ForecastBaseView, FormView):
     template_name = "forecast/add.html"
     form_class = AddForecastRowForm
     financial_year_id = TEST_FINANCIAL_YEAR
@@ -259,6 +259,8 @@ class AddRowView(FormView):
     def form_valid(self, form):
         self.get_cost_centre()
 
+        print("SAVING...")
+
         data = form.cleaned_data
         for financial_period in range(1, 13):
             monthly_figure = MonthlyFigure(
@@ -267,33 +269,22 @@ class AddRowView(FormView):
                 cost_centre_id=self.cost_centre_code,
                 programme=data["programme"],
                 natural_account_code=data["natural_account_code"],
-                analysis1_code_id=data["analysis1_code"],
-                analysis2_code_id=data["analysis2_code"],
+                analysis1_code=data["analysis1_code"],
+                analysis2_code=data["analysis2_code"],
                 project_code=data["project_code"],
                 amount=0,
             )
             monthly_figure.save()
+            print("Saved monthly figure...")
+
+        monthly_figures = MonthlyFigure.objects.all()
+        assert monthly_figures.count() == 12
 
         return super().form_valid(form)
 
 
 class EditForecastView(ForecastBaseView):
     template_name = "forecast/edit.html"
-    cost_centre_code = TEST_COST_CENTRE
-
-    def test_func(self):
-        cost_centre = CostCentre.objects.get(
-            cost_centre_code=self.cost_centre_code
-        )
-        return self.request.user.has_perm(
-            "view_costcentre", cost_centre
-        ) and self.request.user.has_perm(
-            "change_costcentre",
-            cost_centre,
-        )
-
-    def handle_no_permission(self):
-        return redirect("costcentre")
 
     def cost_centre_details(self):
         return {
