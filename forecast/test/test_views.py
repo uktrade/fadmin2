@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 
 from django.contrib.auth import get_user_model
+from django.contrib.humanize.templatetags.humanize import intcomma
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
@@ -125,20 +126,39 @@ class AddForecastRowTest(TestCase):
 
 
 class ViewCostCentreDashboard(TestCase):
+    cost_centre_code = 109076
+    amount = 9876543
+
     def setUp(self):
         self.apr_amount = MonthlyFigureFactory.create(
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=1
             ),
-            amount=9876543,
+            cost_centre=CostCentreFactory.create(
+                cost_centre_code=self.cost_centre_code
+            ),
+            amount=self.amount,
         )
 
     def test_view_cost_centre_dashboard(self):
         resp = self.client.get(reverse("pivotmulti"))
-
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, "govuk-table")
 
         soup = BeautifulSoup(resp.content, features="html.parser")
+        # Check that there are 3 tables on the page
         tables = soup.find_all("table", class_="govuk-table")
         assert len(tables) == 3
+
+        # Check that the first table displays the cost centre code
+        rows = tables[0].find_all("tr")
+        cols = rows[1].find_all("td")
+        assert int(cols[2].get_text()) == self.cost_centre_code
+        # Check the April value
+        assert cols[4].get_text() == intcomma(self.amount)
+        # Check the total for the year
+        assert cols[-3].get_text() == intcomma(self.amount)
+        # Check the difference between budget and year total
+        assert cols[-2].get_text() == intcomma(-self.amount)
+        table_rows = soup.find_all("tr", class_="govuk-table__row")
+        assert len(table_rows) == 14
