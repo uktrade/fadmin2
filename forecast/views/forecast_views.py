@@ -37,7 +37,7 @@ from forecast.views.base import (
     NoCostCentreCodeInURLError,
 )
 
-TEST_COST_CENTRE = 109076
+TEST_COST_CENTRE = 888812
 TEST_FINANCIAL_YEAR = 2019
 
 # programme__budget_type_fk__budget_type_display
@@ -216,7 +216,7 @@ def pivot_test1(request):
     return render(request, "forecast/forecast.html", {"table": table})
 
 
-class AddRowView(ForecastBaseView, FormView):
+class AddRowView(FormView):
     template_name = "forecast/add.html"
     form_class = AddForecastRowForm
     financial_year_id = TEST_FINANCIAL_YEAR
@@ -258,9 +258,6 @@ class AddRowView(ForecastBaseView, FormView):
 
     def form_valid(self, form):
         self.get_cost_centre()
-
-        print("SAVING...")
-
         data = form.cleaned_data
         for financial_period in range(1, 13):
             monthly_figure = MonthlyFigure(
@@ -275,10 +272,6 @@ class AddRowView(ForecastBaseView, FormView):
                 amount=0,
             )
             monthly_figure.save()
-            print("Saved monthly figure...")
-
-        monthly_figures = MonthlyFigure.objects.all()
-        assert monthly_figures.count() == 12
 
         return super().form_valid(form)
 

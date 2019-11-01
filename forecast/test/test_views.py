@@ -87,14 +87,14 @@ class AddForecastRowTest(TestCase):
         self.factory = RequestFactory()
 
         self.nac_code = 999999
-        self.cost_centre_code = 109076
+        self.cost_centre_code = 888812
         self.analysis_1_code = "1111111"
         self.analysis_2_code = "2222222"
         self.project_code = "3000"
 
         self.programme = ProgrammeCodeFactory.create()
         self.nac = NaturalCodeFactory.create(natural_account_code=self.nac_code)
-        self.project_code = ProjectCodeFactory.create(project_code=self.project_code)
+        self.project = ProjectCodeFactory.create(project_code=self.project_code)
         self.analysis_1 = Analysis1Factory.create(analysis1_code=self.analysis_1_code)
         self.analysis_2 = Analysis2Factory.create(analysis2_code=self.analysis_2_code)
         self.cost_centre = CostCentreFactory.create(
@@ -172,7 +172,7 @@ class AddForecastRowTest(TestCase):
         # Now we should have 3 rows (header, footer and new row)
         assert len(table_rows) == 3
 
-    def test_duplicate_values(self):
+    def test_duplicate_values_invalid(self):
         assign_perm("change_costcentre", self.test_user, self.cost_centre)
         assign_perm("view_costcentre", self.test_user, self.cost_centre)
 
@@ -195,13 +195,8 @@ class AddForecastRowTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        print(response.content)
-        assert "govuk-list govuk-error-summary__list" not in str(
-            response.content
-        )
 
-        monthly_figures = MonthlyFigure.objects.all()
-        self.assertEqual(monthly_figures.count(), 12)
+        self.assertEqual(MonthlyFigure.objects.count(), 12)
 
         response_2 = self.client.post(
             reverse(
@@ -221,9 +216,11 @@ class AddForecastRowTest(TestCase):
         )
 
         self.assertEqual(response_2.status_code, 200)
-        assert "govuk-list govuk-error-summary__list" in response.content
-        monthly_figures.refresh_from_db()
-        self.assertEqual(monthly_figures, 12)
+
+        assert "govuk-list govuk-error-summary__list" in str(
+            response_2.content,
+        )
+        self.assertEqual(MonthlyFigure.objects.count(), 12)
 
 
 class ChooseCostCentreTest(TestCase):
