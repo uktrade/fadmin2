@@ -3,7 +3,6 @@ import json
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import (
-    redirect,
     render,
     reverse,
 )
