@@ -26,19 +26,24 @@ class AddForecastRowForm(forms.Form):
         analysis2_code = cleaned_data.get("analysis2_code")
         project_code = cleaned_data.get("project_code")
 
-        existing_row_count = MonthlyFigure.objects.filter(
-            programme=programme,
-            natural_account_code=natural_account_code,
-            analysis1_code=analysis1_code,
-            analysis2_code=analysis2_code,
-            project_code=project_code,
-        ).count()
+        if (
+            analysis1_code and
+            analysis2_code and
+            project_code
+        ):
+            existing_row_count = MonthlyFigure.objects.filter(
+                programme=programme,
+                natural_account_code=natural_account_code,
+                analysis1_code=analysis1_code,
+                analysis2_code=analysis2_code,
+                project_code=project_code,
+            ).count()
 
-        if existing_row_count > 0:
-            raise forms.ValidationError(
-                "A row already exists with these details, "
-                "please amend the values you are supplying"
-            )
+            if existing_row_count > 0:
+                raise forms.ValidationError(
+                    "A row already exists with these details, "
+                    "please amend the values you are supplying"
+                )
 
     programme = forms.ModelChoiceField(
         queryset=ProgrammeCode.objects.all(), empty_label=""
