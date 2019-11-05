@@ -8,6 +8,8 @@ from chartofaccountDIT.models import (
     ProjectCode,
 )
 
+from core.myutils import get_current_financial_year
+
 from forecast.models import MonthlyFigure
 
 
@@ -26,34 +28,36 @@ class AddForecastRowForm(forms.Form):
         analysis2_code = cleaned_data.get("analysis2_code")
         project_code = cleaned_data.get("project_code")
 
-        if (
-            analysis1_code and
-            analysis2_code and
-            project_code
-        ):
-            existing_row_count = MonthlyFigure.objects.filter(
-                programme=programme,
-                natural_account_code=natural_account_code,
-                analysis1_code=analysis1_code,
-                analysis2_code=analysis2_code,
-                project_code=project_code,
-            ).count()
+        existing_row_count = MonthlyFigure.objects.filter(
+            financial_year_id=get_current_financial_year(),
+            programme=programme,
+            natural_account_code=natural_account_code,
+            analysis1_code=analysis1_code,
+            analysis2_code=analysis2_code,
+            project_code=project_code,
+        ).count()
 
-            if existing_row_count > 0:
-                raise forms.ValidationError(
-                    "A row already exists with these details, "
-                    "please amend the values you are supplying"
-                )
+        if existing_row_count > 0:
+            raise forms.ValidationError(
+                "A row already exists with these details, "
+                "please amend the values you are supplying"
+            )
 
     programme = forms.ModelChoiceField(
-        queryset=ProgrammeCode.objects.all(), empty_label=""
+        queryset=ProgrammeCode.objects.filter(
+            active=True,
+        ),
+        empty_label="",
     )
     programme.widget.attrs.update(
         {"class": "govuk-select", "aria-describedby": "programme-hint programme-error"}
     )
 
     natural_account_code = forms.ModelChoiceField(
-        queryset=NaturalCode.objects.all(), empty_label=""
+        queryset=NaturalCode.objects.filter(
+            active=True,
+        ),
+        empty_label="",
     )
     natural_account_code.widget.attrs.update(
         {
@@ -63,7 +67,11 @@ class AddForecastRowForm(forms.Form):
     )
 
     analysis1_code = forms.ModelChoiceField(
-        queryset=Analysis1.objects.all(), required=False, empty_label=""
+        queryset=Analysis1.objects.filter(
+            active=True,
+        ),
+        required=False,
+        empty_label="",
     )
     analysis1_code.widget.attrs.update(
         {
@@ -73,7 +81,11 @@ class AddForecastRowForm(forms.Form):
     )
 
     analysis2_code = forms.ModelChoiceField(
-        queryset=Analysis2.objects.all(), required=False, empty_label=""
+        queryset=Analysis2.objects.filter(
+            active=True,
+        ),
+        required=False,
+        empty_label="",
     )
     analysis2_code.widget.attrs.update(
         {
@@ -83,7 +95,9 @@ class AddForecastRowForm(forms.Form):
     )
 
     project_code = forms.ModelChoiceField(
-        queryset=ProjectCode.objects.all(), required=False, empty_label=""
+        queryset=ProjectCode.objects.all(),
+        required=False,
+        empty_label="",
     )
     project_code.widget.attrs.update(
         {

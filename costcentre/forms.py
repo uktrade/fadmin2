@@ -6,7 +6,9 @@ from costcentre.models import CostCentre
 
 class ChooseCostCentreForm(forms.Form):
     cost_centre = forms.ModelChoiceField(
-        queryset=CostCentre.objects.all(),
+        queryset=CostCentre.objects.filter(
+            active=True,
+        ),
         widget=Select(),
     )
 
