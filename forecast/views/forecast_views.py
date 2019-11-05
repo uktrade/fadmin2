@@ -8,6 +8,7 @@ from django.shortcuts import (
 )
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+from django.urls import reverse_lazy
 
 from django_tables2 import (
     MultiTableMixin,
@@ -22,6 +23,7 @@ from costcentre.models import CostCentre
 from forecast.forms import (
     AddForecastRowForm,
     EditForm,
+    UploadActualsForm,
 )
 from forecast.models import (
     FinancialPeriod,
@@ -31,10 +33,13 @@ from forecast.tables import (
     ForecastSubTotalTable,
     ForecastTable,
 )
+from forecast.tasks import process_uploaded_file
 from forecast.views.base import (
     ForecastBaseView,
     NoCostCentreCodeInURLError,
 )
+
+from upload_file.models import FileUpload
 
 
 TEST_COST_CENTRE = 888812
@@ -300,6 +305,28 @@ class EditForecastView(ForecastBaseView):
         )
 
         return ForecastTable(field_dict, q1)
+
+
+class UploadActualsView(FormView):
+    template_name = "forecast/file_upload.html"
+    form_class = UploadActualsForm
+    success_url = reverse_lazy("upload_success")
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+
+        if form.is_valid():
+            file_upload = FileUpload(
+                document_file=request.FILES['file']
+            )
+            file_upload.save()
+            # Process file async
+            process_uploaded_file.delay()
+
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 
 def edit_forecast_prototype(request):
