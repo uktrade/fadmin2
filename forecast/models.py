@@ -14,7 +14,6 @@ from chartofaccountDIT.models import (
 )
 
 from core.metamodels import (
-    SimpleTimeStampedModel,
     TimeStampedModel,
 )
 from core.models import FinancialYear
@@ -443,26 +442,6 @@ class OSCARReturn(models.Model):
         managed = False
         db_table = "forecast_oscarreturn"
         ordering = ["sub_segment_code"]
-
-
-class FileUpload(SimpleTimeStampedModel):
-    document_file = models.FileField(
-        upload_to='uploaded/actuals/'
-    )
-    processed = models.BooleanField(
-        default=False,
-    )
-
-    def __str__(self):
-        if self.processed:
-            status = "processed"
-        else:
-            status = "unprocessed"
-
-        return "{} {}".format(
-            self.document_file,
-            status,
-        )
 
 
 """
