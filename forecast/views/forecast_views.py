@@ -317,12 +317,17 @@ class UploadActualsView(FormView):
         form = self.get_form(form_class)
 
         if form.is_valid():
+            data = form.cleaned_data
+
             file_upload = FileUpload(
                 document_file=request.FILES['file']
             )
             file_upload.save()
             # Process file async
-            process_uploaded_file.delay()
+            process_uploaded_file.delay(
+                data['period'].period_calendar_code,
+                data['year'].financial_year,
+            )
 
             return self.form_valid(form)
         else:

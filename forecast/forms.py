@@ -115,14 +115,31 @@ class AddForecastRowForm(forms.Form):
 
 class UploadActualsForm(forms.Form):
     file = forms.FileField()
+    file.widget.attrs.update(
+        {
+            "class": "govuk-select",
+            "aria-describedby": "file-hint file-error",
+        }
+    )
 
     period = forms.ModelChoiceField(
         queryset=FinancialPeriod.objects.all(),
-        required=False,
         empty_label="",
     )
+    period.widget.attrs.update(
+        {
+            "class": "govuk-select",
+            "aria-describedby": "period-hint period-error",
+        }
+    )
+
     year = forms.ModelChoiceField(
         queryset=FinancialYear.objects.all(),
-        required=False,
         empty_label="",
+    )
+    year.widget.attrs.update(
+        {
+            "class": "govuk-select",
+            "aria-describedby": "year-hint year-error",
+        }
     )
