@@ -1,13 +1,4 @@
-from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import FormView
-
-from forecast.forms import (
-    UploadFileForm,
-)
-
-from upload_file.models import FileUpload
-from upload_file.tasks import process_uploaded_file
 
 
 class SuccessfulUploadView(TemplateView):
