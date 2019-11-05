@@ -1,9 +1,9 @@
 import csv
 
 """Set of functions used to import from
-csv into the FIDO model. The import is 
-specified as a dictionary, defining the 
-model, the name of the primary key and 
+csv into the FIDO model. The import is
+specified as a dictionary, defining the
+model, the name of the primary key and
 the list of fields. Recursions are used
 to defind foreign keys."""
 
@@ -195,7 +195,10 @@ def import_obj(csv_file, obj_key, op=always_true, pos=1, value=1):
     return True, msg
 
 
-# used for import of lists needed to populate tables, when the primary key is created by the system
+# used for import of lists
+# needed to populate tables,
+# when the primary key is
+# created by the system
 def import_list_obj(csv_file, model, fieldname):
     reader = csv.reader(csv_file)
     next(reader)  # skip the header
@@ -224,12 +227,12 @@ class ImportInfo:
         key={},
         title="",
         h_list=[],
-        my_import_func=None,
+        special_import_func=None,
         filter=[],
         extra_func=None,
     ):
         self.key = key
-        self.special_func = my_import_func
+        self.special_func = special_import_func
         if bool(key):
             self.header_list = get_col_from_obj_key(key)
         else:
@@ -253,7 +256,7 @@ class ImportInfo:
         # empty references to a valid value
         self.extra_func = extra_func
 
-    def my_import_func(self, c):
+    def import_func(self, c):
         if bool(self.key):
             if self.op:
                 success, message = import_obj(
