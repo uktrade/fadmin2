@@ -1,13 +1,11 @@
 import json
 
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import (
-    redirect,
     render,
+    reverse,
 )
-from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
@@ -33,22 +31,29 @@ from forecast.tables import (
     ForecastSubTotalTable,
     ForecastTable,
 )
+from forecast.views.base import (
+    ForecastBaseView,
+    NoCostCentreCodeInURLError,
+)
 
+
+TEST_COST_CENTRE = 888812
+TEST_FINANCIAL_YEAR = 2019
 
 # programme__budget_type_fk__budget_type_display
 # indicates if DEL, AME, ADMIN used in every view
 budget_type_columns = {
     "programme__budget_type_fk__budget_type_display": "Budget_type",
-    "cost_centre__cost_centre_code": "Cost Centre Code",
     "cost_centre__cost_centre_name": "Cost Centre Description",
+    "cost_centre__cost_centre_code": "Cost Centre Code",
 }
 
 programme_columns = {
     "programme__budget_type_fk__budget_type_display": "Hidden",
     "forecast_expenditure_type__forecast_expenditure_type_description": "Hidden",
     "forecast_expenditure_type__forecast_expenditure_type_name": "Expenditure Type",
-    "programme__programme_code": "Programme Code",
     "programme__programme_description": "Programme Description",
+    "programme__programme_code": "Programme Code",
 }
 
 natural_account_columns = {
@@ -112,10 +117,11 @@ class CostClassView(FidoExportMixin, SingleTableView):
             "project_code__project_description": "Project Description",
             "programme__budget_type_fk__budget_type_display": "Budget Type",
             "natural_account_code__expenditure_category__NAC_category__NAC_category_description": "Budget Grouping",  # noqa
+        # noqa
             "natural_account_code__expenditure_category__grouping_description": "Budget Category",  # noqa
             "natural_account_code__account_L5_code__economic_budget_code": "Expenditure Type",  # noqa
         }
-        cost_centre_code = 888812
+        cost_centre_code = TEST_COST_CENTRE
         pivot_filter = {"cost_centre__cost_centre_code": "{}".format(cost_centre_code)}
         q = MonthlyFigure.pivot.pivot_data(columns.keys(), pivot_filter)
         self.queryset = q
@@ -134,7 +140,7 @@ class MultiForecastView(MultiTableMixin, TemplateView):
     def __init__(self, *args, **kwargs):
         # TODO remove hardcoded cost centre
         # TODO the filter will be set from the request
-        cost_centre_code = 888812
+        cost_centre_code = TEST_COST_CENTRE
         order_list = ["programme__budget_type_fk__budget_type_display_order"]
         pivot_filter = {"cost_centre__cost_centre_code": "{}".format(cost_centre_code)}
 
@@ -149,7 +155,7 @@ class MultiForecastView(MultiTableMixin, TemplateView):
         )
 
         # subtotal_data
-        order_list = [
+        order_list_prog = [
             "programme__budget_type_fk__budget_type_display_order",
             "forecast_expenditure_type__forecast_expenditure_type_display_order",
         ]
@@ -164,7 +170,7 @@ class MultiForecastView(MultiTableMixin, TemplateView):
             sub_total_prog,
             programme_columns.keys(),
             pivot_filter,
-            order_list=order_list,
+            order_list=order_list_prog,
         )
 
         sub_total_nac = [
@@ -174,13 +180,17 @@ class MultiForecastView(MultiTableMixin, TemplateView):
         display_sub_total_column = (
             "natural_account_code__expenditure_category__grouping_description"
         )
+        order_list_nac = [
+            "programme__budget_type_fk__budget_type_display_order",
+            "natural_account_code__expenditure_category__NAC_category__NAC_category_description"  # noqa
+        ]
 
         q3 = MonthlyFigure.pivot.subtotal_data(
             display_sub_total_column,
             sub_total_nac,
             natural_account_columns.keys(),
             pivot_filter,
-            order_list=order_list,
+            order_list=order_list_nac,
         )
         self.tables = [
             ForecastSubTotalTable(budget_type_columns, q1),
@@ -209,19 +219,45 @@ def pivot_test1(request):
 class AddRowView(FormView):
     template_name = "forecast/add.html"
     form_class = AddForecastRowForm
-    success_url = reverse_lazy("edit_forecast")
-    cost_centre_code = 888812
-    financial_year_id = 2019
+    financial_year_id = TEST_FINANCIAL_YEAR
+    cost_centre_code = None
+
+    def get_cost_centre(self):
+        if self.cost_centre_code is not None:
+            return
+
+        if 'cost_centre_code' not in self.kwargs:
+            raise NoCostCentreCodeInURLError(
+                "No cost centre code provided in URL"
+            )
+
+        self.cost_centre_code = self.kwargs["cost_centre_code"]
+
+    def get_success_url(self):
+        self.get_cost_centre()
+
+        return reverse(
+            "edit_forecast",
+            kwargs={
+                'cost_centre_code': self.cost_centre_code
+            }
+        )
 
     def cost_centre_details(self):
+        self.get_cost_centre()
+
+        cost_centre = CostCentre.objects.get(
+            cost_centre_code=self.cost_centre_code,
+        )
         return {
-            "group": "Test group",
-            "directorate": "Test directorate",
-            "cost_centre_name": "Test cost centre name",
-            "cost_centre_num": self.cost_centre_code,
+            "group": cost_centre.directorate.group.group_name,
+            "directorate": cost_centre.directorate.directorate_name,
+            "cost_centre_name": cost_centre.cost_centre_name,
+            "cost_centre_num": cost_centre.cost_centre_code,
         }
 
     def form_valid(self, form):
+        self.get_cost_centre()
         data = form.cleaned_data
         for financial_period in range(1, 13):
             monthly_figure = MonthlyFigure(
@@ -230,8 +266,8 @@ class AddRowView(FormView):
                 cost_centre_id=self.cost_centre_code,
                 programme=data["programme"],
                 natural_account_code=data["natural_account_code"],
-                analysis1_code_id=data["analysis1_code"],
-                analysis2_code_id=data["analysis2_code"],
+                analysis1_code=data["analysis1_code"],
+                analysis2_code=data["analysis2_code"],
                 project_code=data["project_code"],
                 amount=0,
             )
@@ -240,21 +276,8 @@ class AddRowView(FormView):
         return super().form_valid(form)
 
 
-class EditForecastView(UserPassesTestMixin, TemplateView):
+class EditForecastView(ForecastBaseView):
     template_name = "forecast/edit.html"
-    cost_centre_code = "888812"
-
-    def test_func(self):
-        cost_centre = CostCentre.objects.get(
-            cost_centre_code=self.cost_centre_code
-        )
-
-        return self.request.user.has_perm(
-            "view_costcentre", cost_centre
-        ) and self.request.user.has_perm("change_costcentre", cost_centre)
-
-    def handle_no_permission(self):
-        return redirect("costcentre")
 
     def cost_centre_details(self):
         return {
@@ -280,8 +303,8 @@ class EditForecastView(UserPassesTestMixin, TemplateView):
 
 
 def edit_forecast_prototype(request):
-    financial_year = 2019
-    cost_centre_code = "888812"
+    financial_year = TEST_FINANCIAL_YEAR
+    cost_centre_code = TEST_COST_CENTRE
 
     if request.method == "POST":
         form = EditForm(request.POST)

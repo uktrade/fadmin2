@@ -133,3 +133,6 @@ node_modules
 
 # Local upload folder
 uploaded/*
+
+# Fixture with real data
+fido_db_test_all.json
