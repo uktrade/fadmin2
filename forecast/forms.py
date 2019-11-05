@@ -8,9 +8,15 @@ from chartofaccountDIT.models import (
     ProjectCode,
 )
 
-from core.myutils import get_current_financial_year
+from core.models import FinancialYear
+from core.myutils import (
+    get_current_financial_year,
+)
 
-from forecast.models import MonthlyFigure
+from forecast.models import (
+    FinancialPeriod,
+    MonthlyFigure,
+)
 
 
 class EditForm(forms.Form):
@@ -107,5 +113,16 @@ class AddForecastRowForm(forms.Form):
     )
 
 
-class UploadFileForm(forms.Form):
+class UploadActualsForm(forms.Form):
     file = forms.FileField()
+
+    period = forms.ModelChoiceField(
+        queryset=FinancialPeriod.objects.all(),
+        required=False,
+        empty_label="",
+    )
+    year = forms.ModelChoiceField(
+        queryset=FinancialYear.objects.all(),
+        required=False,
+        empty_label="",
+    )
