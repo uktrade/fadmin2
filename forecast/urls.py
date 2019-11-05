@@ -6,8 +6,6 @@ from forecast.views import (
     EditForecastView,
     MultiForecastView,
     PivotClassView,
-    UploadFileView,
-    SuccessfulUploadView,
     edit_forecast_prototype,
     pivot_test1,
 )
@@ -20,6 +18,4 @@ urlpatterns = [
     path("edit/", EditForecastView.as_view(), name="edit_forecast"),
     path("add/", AddRowView.as_view(), name="add_forecast_row"),
     path("edit-prototype/", edit_forecast_prototype, name="edit_prototype"),
-    path("upload-file/", UploadFileView.as_view(), name="upload_file"),
-    path("upload-success/", SuccessfulUploadView.as_view(), name="upload_success"),
 ]

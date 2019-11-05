@@ -1,6 +1,6 @@
 from celery import shared_task
 
-from forecast.models import FileUpload
+from upload_file.models import FileUpload
 
 
 @shared_task

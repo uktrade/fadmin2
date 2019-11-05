@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "treasurySS.apps.TreasurySSConfig",
     "core.apps.CoreConfig",
     "importdata.apps.ImportDataConfig",
+    "upload_file.apps.UploadFileConfig",
     "django_extensions",
     "django_tables2",
     "django_filters",
