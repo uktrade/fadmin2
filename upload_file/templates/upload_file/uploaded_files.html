@@ -1,0 +1,14 @@
+{% extends "wide_content.html" %}
+
+{% block content %}
+    <h3 class="govuk-heading-m">Uploaded files</h3>
+    {% for document in view.uploaded_files %}
+        <p>{{ document }}</p><p>{{ document.updated }}</p>
+        {% if document.processed %}
+        <button onclick="javascript:window.location.reload();" class="govuk-button" data-module="govuk-button">
+            Refresh
+        </button>
+        {% endif %}
+    {% endfor %}
+
+{% endblock %}
