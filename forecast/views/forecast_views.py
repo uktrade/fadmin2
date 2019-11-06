@@ -1,14 +1,15 @@
 import json
 
+from django.conf import settings
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import (
     render,
     reverse,
 )
+from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from django.urls import reverse_lazy
 
 from django_tables2 import (
     MultiTableMixin,
@@ -324,10 +325,17 @@ class UploadActualsView(FormView):
             )
             file_upload.save()
             # Process file async
-            process_uploaded_file.delay(
-                data['period'].period_calendar_code,
-                data['year'].financial_year,
-            )
+
+            if settings.ASYNC_FILE_UPLOAD:
+                process_uploaded_file.delay(
+                    data['period'].period_calendar_code,
+                    data['year'].financial_year,
+                )
+            else:
+                process_uploaded_file(
+                    data['period'].period_calendar_code,
+                    data['year'].financial_year,
+                )
 
             return self.form_valid(form)
         else:

@@ -1,10 +1,10 @@
 from celery import shared_task
 
-from upload_file.models import FileUpload
-
 from forecast.import_actuals import (
     upload_trial_balance_report,
 )
+
+from upload_file.models import FileUpload
 
 
 @shared_task

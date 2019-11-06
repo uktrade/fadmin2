@@ -26,3 +26,5 @@ MIDDLEWARE = [
 ]
 
 SELENIUM_ADDRESS = env("SELENIUM_ADDRESS", default="selenium-hub")
+
+ASYNC_FILE_UPLOAD = True
