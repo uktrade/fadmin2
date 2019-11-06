@@ -96,17 +96,23 @@ def save_row(chart_of_account, value, period_obj, year_obj):
     chart_account_list = chart_of_account.split(CHART_ACCOUNT_SEPARATOR)
     programme_code = chart_account_list[PROGRAMME_INDEX]
     # Handle lines without programme code
+    # TODO put GENERIC_PROGRAMME_CODE in database
     if not int(programme_code):
         if value:
             programme_code = GENERIC_PROGRAMME_CODE
         else:
             return True, ""
 
-    # TODO Check that the NAC is resource or capital
+
     error_message = ""
-    cc_obj, message = get_fk(CostCentre, chart_account_list[CC_INDEX])
-    error_message += message
     nac_obj, message = get_fk(NaturalCode, chart_account_list[NAC_INDEX])
+    error_message += message
+    if nac_obj:
+        #  Check that the NAC is resource or capital
+        if not nac_obj.economic_budget_code or \
+                nac_obj.economic_budget_code.upper() not in ['RESOURCE', 'CAPITAL']:
+            return True, ""
+    cc_obj, message = get_fk(CostCentre, chart_account_list[CC_INDEX])
     error_message += message
     programme_obj, message = get_fk(ProgrammeCode, programme_code)
     error_message += message
@@ -174,6 +180,7 @@ def upload_trial_balance_report(path, month_number, year):
         financial_period=period_obj).delete()
 
     for row in range(FIRST_DATA_ROW, ws.max_row):
+        print("Processing row {}".format(row))
         chart_of_account = ws["{}{}".format(CHART_OF_ACCOUNT_COL, row)].value
         if chart_of_account:
             actual = ws["{}{}".format(ACTUAL_FIGURE_COL, row)].value
@@ -181,7 +188,7 @@ def upload_trial_balance_report(path, month_number, year):
                 save_row(chart_of_account, actual, period_obj, year_obj)
         else:
             break
-
+    print("Upload completed")
     period_obj.actual_loaded = True
     period_obj.save()
 #     TODO log date and time of upload
