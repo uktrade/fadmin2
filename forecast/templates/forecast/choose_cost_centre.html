@@ -1,11 +1,53 @@
 {% extends "wide_content.html" %}
 
 {% block content %}
-    <h3 class="govuk-heading-m">Choose cost centre</h3>
-    <form method="post" action ="">
-        {% csrf_token %}
-        {% include "core/govt_uk_form.html" %}
-        <input type="submit" value="Choose cost centre" class="govuk-button" data-module="govuk-button"/>
-    </form>
 
+    {% if view.my_cost_centres_form %}
+        <form method="post" action ="">
+            {% include "core/govt_uk_form.html" with form=view.cost_centre_mode_form %}
+        </form>
+    {% endif %}
+
+    <div id="all-cc">
+        <h3 class="govuk-heading-m">All cost centres</h3>
+        <form method="post" action ="">
+            {% csrf_token %}
+            {% include "core/govt_uk_form.html" with form=view.all_cost_centres_form %}
+            <input type="submit" value="Choose cost centre" class="govuk-button" data-module="govuk-button"/>
+        </form>
+    </div>
+
+    {% if view.my_cost_centres_form %}
+        <div id="my-cc">
+            <h3 class="govuk-heading-m">My cost centres</h3>
+            <form method="post" action ="">
+                {% csrf_token %}
+                {% include "core/govt_uk_form.html" with form=view.my_cost_centres_form %}
+                <input type="submit" value="Choose cost centre" class="govuk-button" data-module="govuk-button"/>
+            </form>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script type="application/javascript">
+    let allCC = document.getElementById("all-cc");
+    let myCC = document.getElementById("my-cc");
+
+    console.log(allCC);
+
+    myCC.style.display = "none";
+    document.getElementById("id_mode_0").checked = true;
+
+    function swapCostCentreChoice(input) {
+        if (input.id === "id_mode_0") {
+            allCC.style.display = "block";
+            myCC.style.display = "none";
+        } else {
+            allCC.style.display = "none";
+            myCC.style.display = "block";
+        }
+    }
+</script>
 {% endblock %}
