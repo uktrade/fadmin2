@@ -160,5 +160,6 @@ class ViewCostCentreDashboard(TestCase):
         assert cols[-3].get_text() == intcomma(self.amount)
         # Check the difference between budget and year total
         assert cols[-2].get_text() == intcomma(-self.amount)
+        # Check that all the subtotals exist
         table_rows = soup.find_all("tr", class_="govuk-table__row")
         assert len(table_rows) == 14
