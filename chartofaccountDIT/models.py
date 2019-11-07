@@ -323,6 +323,7 @@ class NaturalCodeAbstract(models.Model):
         blank=True,
         null=True,
     )
+
     def __str__(self):
         return "{} - {}".format(
             self.natural_account_code, self.natural_account_code_description
