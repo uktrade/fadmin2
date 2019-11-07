@@ -78,7 +78,7 @@ def check_trial_balance_format(ws, period, year):
     return True
 
 
-def get_chart_account_obj(model, chart_of_account_item):
+def get_optional_chart_account_obj(model, chart_of_account_item):
     if int(chart_of_account_item):
         obj, message = get_fk(model, chart_of_account_item)
     else:
@@ -96,31 +96,36 @@ def save_row(chart_of_account, value, period_obj, year_obj):
     chart_account_list = chart_of_account.split(CHART_ACCOUNT_SEPARATOR)
     programme_code = chart_account_list[PROGRAMME_INDEX]
     # Handle lines without programme code
+    # TODO put GENERIC_PROGRAMME_CODE in database
     if not int(programme_code):
         if value:
             programme_code = GENERIC_PROGRAMME_CODE
         else:
             return True, ""
 
-    # TODO Check that the NAC is resource or capital
     error_message = ""
-    cc_obj, message = get_fk(CostCentre, chart_account_list[CC_INDEX])
-    error_message += message
     nac_obj, message = get_fk(NaturalCode, chart_account_list[NAC_INDEX])
+    error_message += message
+    if nac_obj:
+        #  Check that the NAC is resource or capital
+        if not nac_obj.economic_budget_code or \
+                nac_obj.economic_budget_code.upper() not in ['RESOURCE', 'CAPITAL']:
+            return True, ""
+    cc_obj, message = get_fk(CostCentre, chart_account_list[CC_INDEX])
     error_message += message
     programme_obj, message = get_fk(ProgrammeCode, programme_code)
     error_message += message
-    analysis1_obj, message = get_chart_account_obj(
+    analysis1_obj, message = get_optional_chart_account_obj(
         Analysis1,
         chart_account_list[ANALYSIS1_INDEX],
     )
     error_message += message
-    analysis2_obj, message = get_chart_account_obj(
+    analysis2_obj, message = get_optional_chart_account_obj(
         Analysis2,
         chart_account_list[ANALYSIS2_INDEX],
     )
     error_message += message
-    project_obj, message = get_chart_account_obj(
+    project_obj, message = get_optional_chart_account_obj(
         ProjectCode,
         chart_account_list[PROJECT_INDEX],
     )
@@ -176,14 +181,22 @@ def upload_trial_balance_report(path, month_number, year):
         financial_period=period_obj).delete()
 
     for row in range(FIRST_DATA_ROW, ws.max_row):
+        if not row % 100:
+            print("Processing row {}".format(row))
         chart_of_account = ws["{}{}".format(CHART_OF_ACCOUNT_COL, row)].value
         if chart_of_account:
             actual = ws["{}{}".format(ACTUAL_FIGURE_COL, row)].value
+            # No need to save 0 values, because the data has been cleared
+            # before starting the upload
             if actual:
-                save_row(chart_of_account, actual, period_obj, year_obj)
+                success, error_message = \
+                    save_row(chart_of_account, actual, period_obj, year_obj)
+                if not success:
+                    print('Error at row {}, chart of account {}, message {}'.
+                          format(row, chart_of_account, error_message))
         else:
             break
-
+    print("Upload completed")
     period_obj.actual_loaded = True
     period_obj.save()
 #     TODO log date and time of upload
