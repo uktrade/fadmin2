@@ -103,7 +103,6 @@ def save_row(chart_of_account, value, period_obj, year_obj):
         else:
             return True, ""
 
-
     error_message = ""
     nac_obj, message = get_fk(NaturalCode, chart_account_list[NAC_INDEX])
     error_message += message
