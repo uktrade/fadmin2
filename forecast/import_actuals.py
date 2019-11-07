@@ -156,7 +156,9 @@ def upload_trial_balance_report(path, month_number, year):
     if not check_trial_balance_format(ws, month_number, year):
         wb.close
         return
-    """TODO Use transactions, so it can rollback if there is an error in the file"""  # noqa
+    """TODO Use transactions, so it can 
+    rollback if there is an error in 
+    the file"""
     year_obj, msg = get_fk(FinancialYear, year)
     period_obj, msg = get_fk_from_field(
         FinancialPeriod,
