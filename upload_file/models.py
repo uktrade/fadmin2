@@ -6,20 +6,39 @@ from core.metamodels import (
 
 
 class FileUpload(SimpleTimeStampedModel):
+    UNPROCESSED = 'unprocessed'
+    PROCESSING = 'processing'
+    PROCESSED = 'processed'
+    ERROR = 'error'
+
+    STATUS_CHOICES = [
+        (UNPROCESSED, 'Unprocessed'),
+        (PROCESSING, 'Processing'),
+        (PROCESSED, 'Processed'),
+        (ERROR, 'Error'),
+    ]
+
     document_file = models.FileField(
         upload_to='uploaded/actuals/'
     )
-    processed = models.BooleanField(
-        default=False,
+    status = models.CharField(
+        max_length=11,
+        choices=STATUS_CHOICES,
+        default=UNPROCESSED,
+    )
+    user_error_message = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+    )
+    error_message = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
     )
 
     def __str__(self):
-        if self.processed:
-            status = "processed"
-        else:
-            status = "unprocessed"
-
         return "{} {}".format(
             self.document_file,
-            status,
+            self.status,
         )
