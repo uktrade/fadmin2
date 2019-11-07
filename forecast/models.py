@@ -138,7 +138,7 @@ class FinancialCode(models.Model):
         if self.pk is None:
             # calculate the forecast_expenditure_type
             nac_economic_budget_code = (
-                self.natural_account_code.account_L5_code.economic_budget_code
+                self.natural_account_code.economic_budget_code
             )
             programme_budget_type = self.programme.budget_type_fk
 

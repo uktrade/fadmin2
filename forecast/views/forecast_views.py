@@ -43,7 +43,8 @@ from forecast.views.base import (
 from upload_file.models import FileUpload
 
 
-TEST_COST_CENTRE = 888812
+# TEST_COST_CENTRE = 888812
+TEST_COST_CENTRE = 109076  # use this value for testing with real data
 TEST_FINANCIAL_YEAR = 2019
 
 # programme__budget_type_fk__budget_type_display
@@ -125,7 +126,7 @@ class CostClassView(FidoExportMixin, SingleTableView):
             "natural_account_code__expenditure_category__NAC_category__NAC_category_description": "Budget Grouping",  # noqa
         # noqa
             "natural_account_code__expenditure_category__grouping_description": "Budget Category",  # noqa
-            "natural_account_code__account_L5_code__economic_budget_code": "Expenditure Type",  # noqa
+            "natural_account_code__economic_budget_code": "Expenditure Type",  # noqa
         }
         cost_centre_code = TEST_COST_CENTRE
         pivot_filter = {"cost_centre__cost_centre_code": "{}".format(cost_centre_code)}
