@@ -35,18 +35,18 @@
     let allCC = document.getElementById("all-cc");
     let myCC = document.getElementById("my-cc");
 
-    console.log(allCC);
+    if (allCC && myCC) {
+        myCC.style.display = "none";
+        document.getElementById("id_mode_0").checked = true;
 
-    myCC.style.display = "none";
-    document.getElementById("id_mode_0").checked = true;
-
-    function swapCostCentreChoice(input) {
-        if (input.id === "id_mode_0") {
-            allCC.style.display = "block";
-            myCC.style.display = "none";
-        } else {
-            allCC.style.display = "none";
-            myCC.style.display = "block";
+        function swapCostCentreChoice(input) {
+            if (input.id === "id_mode_0") {
+                allCC.style.display = "block";
+                myCC.style.display = "none";
+            } else {
+                allCC.style.display = "none";
+                myCC.style.display = "block";
+            }
         }
     }
 </script>
