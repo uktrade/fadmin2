@@ -17,7 +17,7 @@ def process_uploaded_file(month, year):
         print("Unprocessed file: {}".format(latest_unprocessed))
 
         upload_trial_balance_report(
-            latest_unprocessed.document_file,
+            latest_unprocessed,
             month,
             year,
         )
