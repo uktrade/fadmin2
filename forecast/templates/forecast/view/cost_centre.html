@@ -1,42 +1,28 @@
 {% extends "wide_content.html" %}
 {% load render_table from django_tables2 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "DIT forecast" "forecast_dit" %}
+    {% breadcrumb view.cost_centre.directorate.group.group_name "forecast_group" view.cost_centre.directorate.group_id %}
+    {% breadcrumb view.cost_centre.directorate.directorate_name "forecast_directorate" view.cost_centre.directorate.directorate_code %}
+    {% breadcrumb view.cost_centre.cost_centre_name "forecast_cost_centre" view.cost_centre.cost_centre_code %}
+{% endblock %}
 
 {% block content %}
-
-
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Cost Centre</h1>
-        </div>
+      <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">{{ view.cost_centre.cost_centre_name }}</h1>
+      </div>
 
-        <div class="govuk-grid-column-one-third">
-            {% if view.my_cost_centres_form %}
-                <form method="post" action ="">
-                    {% csrf_token %}
-                    {% include "core/govt_uk_form.html" with form=view.cost_centre_mode_form %}
-                </form>
-            {% endif %}
-
-            <div id="all-cc">
-                <h3 class="govuk-heading-m">All cost centres</h3>
-                <form method="post" action ="">
-                    {% csrf_token %}
-                    {% include "core/govt_uk_form.html" with form=view.all_cost_centres_form %}
-                    <input type="submit" value="Choose cost centre" class="govuk-button" data-module="govuk-button"/>
-                </form>
-            </div>
-
-            {% if view.my_cost_centres_form %}
-                <div id="my-cc">
-                    <h3 class="govuk-heading-m">My cost centres</h3>
-                    <form method="post" action ="">
-                        {% csrf_token %}
-                        {% include "core/govt_uk_form.html" with form=view.my_cost_centres_form %}
-                        <input type="submit" value="Choose cost centre" class="govuk-button" data-module="govuk-button"/>
-                    </form>
-                </div>
-            {% endif %}
-        </div>
+      <div class="govuk-grid-column-one-third directorate-cc-form">
+        <form method="post" action ="">
+            {% csrf_token %}
+            {% include "core/govt_uk_form.html" with form=view.cost_centres_form %}
+            <input type="submit" value="Change" class="govuk-button" data-module="govuk-button"/>
+        </form>
+      </div>
     </div>
 
     {% for table in tables %}

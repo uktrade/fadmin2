@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import (
     render,
@@ -11,15 +12,13 @@ from django_tables2 import (
     SingleTableView,
 )
 
-from costcentre.models import Directorate
+from costcentre.models import Directorate, CostCentre
 from core.views import FidoExportMixin
 
 from costcentre.models import DepartmentalGroup
 from costcentre.forms import (
     AllCostCentresForm,
-    CostCentreViewModeForm,
     DirectorateCostCentresForm,
-    MyCostCentresForm,
 )
 
 from forecast.models import (
@@ -265,8 +264,6 @@ class DirectorateView(MultiTableMixin, TemplateView):
         )
 
     def post(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-
         cost_centre_code = request.POST.get(
             'cost_centre',
             None,
@@ -278,8 +275,8 @@ class DirectorateView(MultiTableMixin, TemplateView):
                     kwargs={'cost_centre_code': cost_centre_code}
                 )
             )
-
-        #return self.render_to_response(context)
+        else:
+            raise Http404("Cost Centre not found")
 
     def __init__(self, *args, **kwargs):
         self.tables = get_forecast_table()
@@ -290,16 +287,38 @@ class CostCentreView(MultiTableMixin, TemplateView):
     template_name = "forecast/view/cost_centre.html"
     table_pagination = False
 
-    def all_cost_centres_form(self):
-        return AllCostCentresForm()
-
-    def cost_centre_mode_form(self):
-        return CostCentreViewModeForm()
-
-    def my_cost_centres_form(self):
-        return MyCostCentresForm(
-            user=self.request.user,
+    def cost_centre(self):
+        test = CostCentre.objects.get(
+            cost_centre_code=self.kwargs['cost_centre_code'],
         )
+
+        return CostCentre.objects.get(
+            cost_centre_code=self.kwargs['cost_centre_code'],
+        )
+
+    def cost_centres_form(self):
+        cost_centre = CostCentre.objects.get(
+            cost_centre_code=self.kwargs['cost_centre_code'],
+        )
+
+        return DirectorateCostCentresForm(
+            directorate_code=cost_centre.directorate.directorate_code
+        )
+
+    def post(self, request, *args, **kwargs):
+        cost_centre_code = request.POST.get(
+            'cost_centre',
+            None,
+        )
+        if cost_centre_code:
+            return HttpResponseRedirect(
+                reverse(
+                    "forecast_cost_centre",
+                    kwargs={'cost_centre_code': cost_centre_code}
+                )
+            )
+        else:
+            raise Http404("Cost Centre not found")
 
     def __init__(self, *args, **kwargs):
         self.tables = get_forecast_table()
