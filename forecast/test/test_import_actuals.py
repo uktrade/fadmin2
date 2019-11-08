@@ -41,8 +41,6 @@ TEST_COST_CENTRE = 109189
 TEST_VALID_NATURAL_ACCOUNT_CODE = 52191003
 TEST_NOT_VALID_NATURAL_ACCOUNT_CODE = 92191003
 TEST_PROGRAMME_CODE = '310940'
-
-
 _KT = TypeVar('_KT')
 _VT = TypeVar('_VT')
 
@@ -171,6 +169,7 @@ class ImportActualsTest(TestCase):
             self.period_obj,
             self.year_obj,
         )
+        # Lines with 0 programme and 0 amount are not saved
         self.assertEqual(
             MonthlyFigure.objects.filter(cost_centre=self.cost_centre_code).count(),
             0,
@@ -232,8 +231,8 @@ class ImportActualsTest(TestCase):
 
         bad_title_file_upload = FileUpload(
             document_file=os.path.join(
-            os.path.dirname(__file__),
-            'test_assets/bad_title_upload_test.xlsx',)
+                os.path.dirname(__file__),
+                'test_assets/bad_title_upload_test.xlsx', )
         )
         bad_title_file_upload.save()
 
@@ -246,8 +245,8 @@ class ImportActualsTest(TestCase):
 
         good_file_upload = FileUpload(
             document_file=os.path.join(
-            os.path.dirname(__file__),
-            'test_assets/upload_test.xlsx',)
+                os.path.dirname(__file__),
+                'test_assets/upload_test.xlsx', )
         )
         good_file_upload.save()
         self.assertEqual(
@@ -269,8 +268,8 @@ class ImportActualsTest(TestCase):
             4,
         )
         result = MonthlyFigure.objects.filter(
-                cost_centre=self.cost_centre_code
-            ).aggregate(total = Sum('amount'))
+            cost_centre=self.cost_centre_code
+        ).aggregate(total=Sum('amount'))
 
         # Check that figures have correct values
         self.assertEqual(
