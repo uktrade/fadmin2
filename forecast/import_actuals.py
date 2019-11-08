@@ -32,9 +32,6 @@ CORRECT_TITLE = "Detail Trial Balance"
 # '3000-30000-109189-52191003-310940-00000-00000-0000-0000-0000' # noqa
 # The following are the index for the
 # chart of account after decoded into a list
-DIT_INDEX = (
-    0
-)  # col value must be 3000. If not, the trial balance is for another department # noqa
 CC_INDEX = 2
 NAC_INDEX = 3
 PROGRAMME_INDEX = 4
@@ -59,6 +56,7 @@ class SubTotalFieldNotSpecifiedError(Exception):
 def check_trial_balance_format(ws, period, year):
     """Check that the file is really the trial
     balance and it is the correct period"""
+    # TODO return specific error messages
     if ws.title != "FNDWRR":
         # wrong file
         return False
@@ -90,13 +88,11 @@ def get_optional_chart_account_obj(model, chart_of_account_item):
 def save_row(chart_of_account, value, period_obj, year_obj):
     """Parse the long strings containing the
     chart of account information. Return errors
-    if missing from database."""
-    # Sample line:
-    # '3000-30000-109189-52191003-310940-00000-00000-0000-0000-0000' # noqa
+    if the elements of the chart of account are missing from database."""
     chart_account_list = chart_of_account.split(CHART_ACCOUNT_SEPARATOR)
     programme_code = chart_account_list[PROGRAMME_INDEX]
-    # Handle lines without programme code
     # TODO put GENERIC_PROGRAMME_CODE in database
+    # Handle lines without programme code
     if not int(programme_code):
         if value:
             programme_code = GENERIC_PROGRAMME_CODE
@@ -161,7 +157,7 @@ def upload_trial_balance_report(path, month_number, year):
     if not check_trial_balance_format(ws, month_number, year):
         wb.close
         return
-    """TODO Use transactions, so it can rollback if there is an error in the file"""  # noqa
+    """TODO Use transactions, so it can rollback if there is an error """
     year_obj, msg = get_fk(FinancialYear, year)
     period_obj, msg = get_fk_from_field(
         FinancialPeriod,
