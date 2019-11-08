@@ -138,5 +138,6 @@ fido_db_test_all.json
 *.xlsx
 *.csv
 
+uploaded/
 
 

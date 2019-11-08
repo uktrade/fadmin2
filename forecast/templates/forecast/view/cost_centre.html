@@ -1,0 +1,70 @@
+{% extends "wide_content.html" %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Cost Centre</h1>
+        </div>
+
+        <div class="govuk-grid-column-one-third">
+            {% if view.my_cost_centres_form %}
+                <form method="post" action ="">
+                    {% csrf_token %}
+                    {% include "core/govt_uk_form.html" with form=view.cost_centre_mode_form %}
+                </form>
+            {% endif %}
+
+            <div id="all-cc">
+                <h3 class="govuk-heading-m">All cost centres</h3>
+                <form method="post" action ="">
+                    {% csrf_token %}
+                    {% include "core/govt_uk_form.html" with form=view.all_cost_centres_form %}
+                    <input type="submit" value="Choose cost centre" class="govuk-button" data-module="govuk-button"/>
+                </form>
+            </div>
+
+            {% if view.my_cost_centres_form %}
+                <div id="my-cc">
+                    <h3 class="govuk-heading-m">My cost centres</h3>
+                    <form method="post" action ="">
+                        {% csrf_token %}
+                        {% include "core/govt_uk_form.html" with form=view.my_cost_centres_form %}
+                        <input type="submit" value="Choose cost centre" class="govuk-button" data-module="govuk-button"/>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% for table in tables %}
+        <div class="tables-container">
+            {% render_table table %}
+        </div>
+    {% endfor %}
+
+{% endblock %}
+
+{% block scripts %}
+<script type="application/javascript">
+    let allCC = document.getElementById("all-cc");
+    let myCC = document.getElementById("my-cc");
+
+    if (allCC && myCC) {
+        myCC.style.display = "none";
+        document.getElementById("id_mode_0").checked = true;
+
+        function swapCostCentreChoice(input) {
+            if (input.id === "id_mode_0") {
+                allCC.style.display = "block";
+                myCC.style.display = "none";
+            } else {
+                allCC.style.display = "none";
+                myCC.style.display = "block";
+            }
+        }
+    }
+</script>
+{% endblock %}
