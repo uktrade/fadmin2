@@ -17,7 +17,7 @@ from chartofaccountDIT.test.factories import (
 from costcentre.test.factories import CostCentreFactory
 
 from forecast.models import MonthlyFigure
-from forecast.views.forecast_views import EditForecastView
+from forecast.views.forecast_views import EditForecastView, TEST_COST_CENTRE
 
 
 # Nb. we're using RequestFactory here
@@ -27,7 +27,7 @@ class ViewPermissionsTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
 
-        self.cost_centre_code = 109076
+        self.cost_centre_code = TEST_COST_CENTRE
         self.test_user_email = "test@test.com"
         self.test_password = "test_password"
 
@@ -87,7 +87,7 @@ class AddForecastRowTest(TestCase):
         self.factory = RequestFactory()
 
         self.nac_code = 999999
-        self.cost_centre_code = 888812
+        self.cost_centre_code = TEST_COST_CENTRE
         self.analysis_1_code = "1111111"
         self.analysis_2_code = "2222222"
         self.project_code = "3000"
@@ -225,7 +225,7 @@ class AddForecastRowTest(TestCase):
 
 class ChooseCostCentreTest(TestCase):
     def setUp(self):
-        self.cost_centre_code = 109076
+        self.cost_centre_code = TEST_COST_CENTRE
         self.cost_centre = CostCentreFactory.create(
             cost_centre_code=self.cost_centre_code
         )
@@ -281,7 +281,7 @@ class ViewCostCentreDashboard(TestCase):
         self.programme = ProgrammeCodeFactory.create()
         self.nac = NaturalCodeFactory.create(natural_account_code=999999)
 
-        self.cost_centre_code = 109076
+        self.cost_centre_code = TEST_COST_CENTRE
 
     def testView(self):
         pass
