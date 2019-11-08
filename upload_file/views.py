@@ -1,5 +1,4 @@
 from django.core.paginator import Paginator
-
 from django.views.generic.base import TemplateView
 
 from upload_file.models import FileUpload

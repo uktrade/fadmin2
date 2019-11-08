@@ -44,6 +44,8 @@ ANALYSIS2_INDEX = 6
 PROJECT_INDEX = 7
 CHART_ACCOUNT_SEPARATOR = "-"
 
+VALID_ECONOMIC_CODE_LIST = ['RESOURCE', 'CAPITAL']
+
 # TODO Read the value from the database. It should be
 # possible for the business to change it.
 GENERIC_PROGRAMME_CODE = 310940
@@ -91,7 +93,7 @@ def save_row(chart_of_account, value, period_obj, year_obj):
     if nac_obj:
         #  Check that the NAC is resource or capital
         if not nac_obj.economic_budget_code or \
-                nac_obj.economic_budget_code.upper() not in ['RESOURCE', 'CAPITAL']:
+                nac_obj.economic_budget_code.upper() not in VALID_ECONOMIC_CODE_LIST:
             return True, ""
     cc_obj, message = get_fk(CostCentre, chart_account_list[CC_INDEX])
     error_message += message
