@@ -10,11 +10,13 @@ from upload_file.models import FileUpload
 @shared_task
 def process_uploaded_file(month, year):
     latest_unprocessed = FileUpload.objects.filter(
-        processed=False,
+        status=FileUpload.UNPROCESSED,
     ).order_by('-created').first()
 
     if latest_unprocessed is not None:
         print("Unprocessed file: {}".format(latest_unprocessed))
+        latest_unprocessed.status = FileUpload.PROCESSING
+        latest_unprocessed.save()
 
         upload_trial_balance_report(
             latest_unprocessed,
@@ -23,6 +25,6 @@ def process_uploaded_file(month, year):
         )
         # Process file here
 
-        latest_unprocessed.processed = True
+        latest_unprocessed.status = FileUpload.PROCESSED
         latest_unprocessed.save()
         print("Saved file...")
