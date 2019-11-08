@@ -25,7 +25,8 @@ from forecast.import_actuals import (
     VALID_ECONOMIC_CODE_LIST,
     check_trial_balance_format,
     save_row,
-    upload_trial_balance_report
+    upload_trial_balance_report,
+    GENERIC_PROGRAMME_CODE
 )
 from forecast.models import (
     FinancialPeriod,
@@ -76,12 +77,18 @@ class ImportActualsTest(TestCase):
         self.period_obj = FinancialPeriod.objects.get(financial_period_code=2)
         self.year_obj = FinancialYear.objects.get(financial_year=2019)
 
-        self.chart_of_account_line = \
-            '3000-30000-{}-{}-{}-00000-00000-0000-0000-0000'.format(
-                self.cost_centre_code,
-                self.valid_natural_account_code,
-                self.programme_code
-            )
+        self.chart_of_account_line_correct = \
+        '3000-30000-{}-{}-{}-00000-00000-0000-0000-0000'.format(
+            self.cost_centre_code,
+            self.valid_natural_account_code,
+            self.programme_code
+        )
+
+        self.chart_of_account_line_no_programme = \
+        '3000-30000-{}-{}-000000-00000-00000-0000-0000-0000'.format(
+            self.cost_centre_code,
+            self.valid_natural_account_code,
+         )
 
     def test_save_row(self):
         self.assertEqual(
@@ -92,7 +99,7 @@ class ImportActualsTest(TestCase):
         )
 
         save_row(
-            self.chart_of_account_line,
+            self.chart_of_account_line_correct,
             self.test_amount,
             self.period_obj,
             self.year_obj,
@@ -109,7 +116,7 @@ class ImportActualsTest(TestCase):
         )
 
         save_row(
-            self.chart_of_account_line,
+            self.chart_of_account_line_correct,
             self.test_amount * 2,
             self.period_obj,
             self.year_obj,
@@ -124,6 +131,50 @@ class ImportActualsTest(TestCase):
             q.amount,
             self.test_amount * 100 * 3,
         )
+
+    def test_save_row_no_programme(self):
+        self.assertEqual(
+            MonthlyFigure.objects.filter(
+                cost_centre=self.cost_centre_code
+            ).count(),
+            0,
+        )
+
+        save_row(
+            self.chart_of_account_line_no_programme,
+            0,
+            self.period_obj,
+            self.year_obj,
+        )
+        # Lines with 0 programme and 0 amount are not saved
+        self.assertEqual(
+            MonthlyFigure.objects.filter(cost_centre=self.cost_centre_code).count(),
+            0,
+        )
+
+        save_row(
+            self.chart_of_account_line_no_programme,
+            self.test_amount,
+            self.period_obj,
+            self.year_obj,
+        )
+        # check that the line has been saved
+        self.assertEqual(
+            MonthlyFigure.objects.filter(cost_centre=self.cost_centre_code).count(),
+            1,
+        )
+        q = MonthlyFigure.objects.get(cost_centre=self.cost_centre_code)
+        self.assertEqual(
+            q.amount,
+            self.test_amount * 100
+        )
+        self.assertEqual(
+            int(q.programme.programme_code),
+            GENERIC_PROGRAMME_CODE
+        )
+
+
+
 
     def test_upload_trial_balance_report(self):
         # Check that BadZipFile is raised on
