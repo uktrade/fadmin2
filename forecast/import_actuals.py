@@ -52,14 +52,6 @@ VALID_ECONOMIC_CODE_LIST = ['RESOURCE', 'CAPITAL']
 GENERIC_PROGRAMME_CODE = 310940
 
 
-class SubTotalFieldDoesNotExistError(Exception):
-    pass
-
-
-class SubTotalFieldNotSpecifiedError(Exception):
-    pass
-
-
 class TrialBalanceError(Exception):
     pass
 
@@ -114,29 +106,31 @@ def save_row(chart_of_account, value, period_obj, year_obj):
         chart_account_list[PROJECT_INDEX],
     )
     error_message += message
-
-    if error_message == "":
-        monthly_figure_obj, created = MonthlyFigure.objects.get_or_create(
-            financial_year=year_obj,
-            programme=programme_obj,
-            cost_centre=cc_obj,
-            natural_account_code=nac_obj,
-            analysis1_code=analysis1_obj,
-            analysis2_code=analysis2_obj,
-            project_code=project_obj,
-            financial_period=period_obj,
+    if error_message:
+        raise TrialBalanceError(
+            error_message
         )
-        if created:
-            # to avoid problems with precision,
-            # we store the figures in pence
-            monthly_figure_obj.amount = value * 100
-        else:
-            monthly_figure_obj.amount += value * 100
-        monthly_figure_obj.save()
-        success = True
+
+    monthly_figure_obj, created = MonthlyFigure.objects.get_or_create(
+        financial_year=year_obj,
+        programme=programme_obj,
+        cost_centre=cc_obj,
+        natural_account_code=nac_obj,
+        analysis1_code=analysis1_obj,
+        analysis2_code=analysis2_obj,
+        project_code=project_obj,
+        financial_period=period_obj,
+    )
+    if created:
+        # to avoid problems with precision,
+        # we store the figures in pence
+        monthly_figure_obj.amount = value * 100
     else:
-        success = False
-    return success, error_message
+        monthly_figure_obj.amount += value * 100
+
+    monthly_figure_obj.save()
+
+    return True
 
 
 def check_trial_balance_format(ws, period, year):
@@ -220,22 +214,26 @@ def upload_trial_balance_report(file_upload, month_number, year):
     ).delete()
 
     for row in range(FIRST_DATA_ROW, ws.max_row):
-        if not row % 100:
-            print("Processing row {}".format(row))
         chart_of_account = ws["{}{}".format(CHART_OF_ACCOUNT_COL, row)].value
         if chart_of_account:
             actual = ws["{}{}".format(ACTUAL_FIGURE_COL, row)].value
             # No need to save 0 values, because the data has been cleared
             # before starting the upload
             if actual:
-                success, error_message = \
+                try:
                     save_row(chart_of_account, actual, period_obj, year_obj)
-                if not success:
-                    print('Error at row {}, chart of account {}, message {}'.
-                          format(row, chart_of_account, error_message))
+                except TrialBalanceError as ex:
+                    wb.close
+                    msg = 'Error at row {}: {}'. \
+                        format(row, str(ex))
+                    set_file_upload_error(
+                        file_upload,
+                        msg,
+                        msg,
+                    )
+                    raise ex
         else:
             break
-    print("Upload completed")
     period_obj.actual_loaded = True
     period_obj.save()
-#     TODO log date and time of upload
+    wb.close

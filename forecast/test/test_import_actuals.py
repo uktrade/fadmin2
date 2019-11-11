@@ -218,6 +218,18 @@ class ImportActualsTest(TestCase):
             0,
         )
 
+        with self.assertRaises(TrialBalanceError):
+            save_row(
+                '3000-30000-123456-12345678-123456-12345-12345-1234-1234-1234'.format(
+                    '123456',
+                    self.not_valid_natural_account_code,
+                    self.programme_code
+                ),
+                10,
+                self.period_obj,
+                self.year_obj,
+            )
+
     def test_upload_trial_balance_report(self):
         # Check that BadZipFile is raised on
         # supply of incorrect file format
@@ -289,6 +301,7 @@ class ImportActualsTest(TestCase):
             ).count(),
             1,
         )
+
         upload_trial_balance_report(
             good_file_upload,
             self.test_period,
