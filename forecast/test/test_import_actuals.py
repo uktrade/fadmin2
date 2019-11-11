@@ -16,7 +16,10 @@ from chartofaccountDIT.test.factories import (
 
 from core.models import FinancialYear
 
-from costcentre.test.factories import CostCentreFactory
+from costcentre.test.factories import (
+    CostCentreFactory,
+    DirectorateFactory,
+)
 
 from forecast.import_actuals import (
     CORRECT_TITLE,
@@ -67,8 +70,12 @@ class ImportActualsTest(TestCase):
         self.not_valid_natural_account_code = TEST_NOT_VALID_NATURAL_ACCOUNT_CODE
         self.programme_code = TEST_PROGRAMME_CODE
         self.test_amount = 100
+        self.directorate_obj = DirectorateFactory.create(
+            directorate_code='T123'
+        )
         CostCentreFactory.create(
-            cost_centre_code=self.cost_centre_code
+            cost_centre_code=self.cost_centre_code,
+            directorate=self.directorate_obj
         )
         NaturalCodeFactory.create(
             natural_account_code=self.valid_natural_account_code,
@@ -91,28 +98,10 @@ class ImportActualsTest(TestCase):
             programme_code='310530'
         )
 
-        self.period_obj = FinancialPeriod.objects.get(financial_period_code=2)
+        self.period_obj = FinancialPeriod.objects.get(
+            period_calendar_code=self.test_period
+        )
         self.year_obj = FinancialYear.objects.get(financial_year=2019)
-
-        self.chart_of_account_line_correct = \
-            '3000-30000-{}-{}-{}-00000-00000-0000-0000-0000'.format(
-                self.cost_centre_code,
-                self.valid_natural_account_code,
-                self.programme_code
-            )
-
-        self.chart_of_account_line_no_programme = \
-            '3000-30000-{}-{}-000000-00000-00000-0000-0000-0000'.format(
-                self.cost_centre_code,
-                self.valid_natural_account_code,
-            )
-
-        self.chart_of_account_line_not_valid_nac = \
-            '3000-30000-{}-{}-{}-00000-00000-0000-0000-0000'.format(
-                self.cost_centre_code,
-                self.not_valid_natural_account_code,
-                self.programme_code
-            )
 
     def test_save_row(self):
         self.assertEqual(
@@ -121,9 +110,15 @@ class ImportActualsTest(TestCase):
             ).count(),
             0,
         )
+        chart_of_account_line_correct = \
+            '3000-30000-{}-{}-{}-00000-00000-0000-0000-0000'.format(
+                self.cost_centre_code,
+                self.valid_natural_account_code,
+                self.programme_code
+            )
 
         save_row(
-            self.chart_of_account_line_correct,
+            chart_of_account_line_correct,
             self.test_amount,
             self.period_obj,
             self.year_obj,
@@ -140,7 +135,7 @@ class ImportActualsTest(TestCase):
         )
 
         save_row(
-            self.chart_of_account_line_correct,
+            chart_of_account_line_correct,
             self.test_amount * 2,
             self.period_obj,
             self.year_obj,
@@ -163,8 +158,14 @@ class ImportActualsTest(TestCase):
             ).count(),
             0,
         )
+        chart_of_account_line_no_programme = \
+            '3000-30000-{}-{}-000000-00000-00000-0000-0000-0000'.format(
+                self.cost_centre_code,
+                self.valid_natural_account_code,
+            )
+
         save_row(
-            self.chart_of_account_line_no_programme,
+            chart_of_account_line_no_programme,
             0,
             self.period_obj,
             self.year_obj,
@@ -175,7 +176,7 @@ class ImportActualsTest(TestCase):
             0,
         )
         save_row(
-            self.chart_of_account_line_no_programme,
+            chart_of_account_line_no_programme,
             self.test_amount,
             self.period_obj,
             self.year_obj,
@@ -200,7 +201,11 @@ class ImportActualsTest(TestCase):
         )
 
         save_row(
-            self.chart_of_account_line_not_valid_nac,
+            '3000-30000-{}-{}-{}-00000-00000-0000-0000-0000'.format(
+                self.cost_centre_code,
+                self.not_valid_natural_account_code,
+                self.programme_code
+            ),
             10,
             self.period_obj,
             self.year_obj,
@@ -255,10 +260,46 @@ class ImportActualsTest(TestCase):
             ).count(),
             0,
         )
+        self.assertEqual(
+            MonthlyFigure.objects.filter(
+                cost_centre=self.cost_centre_code
+            ).count(),
+            0,
+        )
+        cost_centre_code_1 = 888888
+        CostCentreFactory.create(
+            cost_centre_code=cost_centre_code_1,
+            directorate=self.directorate_obj
+        )
+
+        save_row(
+            '3000-30000-{}-{}-{}-00000-00000-0000-0000-0000'.format(
+                cost_centre_code_1,
+                self.valid_natural_account_code,
+                self.programme_code
+            ),
+            self.test_amount,
+            self.period_obj,
+            self.year_obj,
+        )
+
+        self.assertEqual(
+            MonthlyFigure.objects.filter(
+                cost_centre=cost_centre_code_1
+            ).count(),
+            1,
+        )
         upload_trial_balance_report(
             good_file_upload,
             self.test_period,
             self.test_year,
+        )
+        # Check that existing figures for the same period have been deleted
+        self.assertEqual(
+            MonthlyFigure.objects.filter(
+                cost_centre=cost_centre_code_1
+            ).count(),
+            0,
         )
         # Check for existence of monthly figures
         self.assertEqual(
