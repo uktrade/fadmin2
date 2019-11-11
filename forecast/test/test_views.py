@@ -324,26 +324,40 @@ class ViewCostCentreDashboard(TestCase):
         pass
 
 
-class ViewForecastHierarchy(TestCase):
+class ViewForecastHierarchyTest(TestCase):
     def setUp(self):
         self.group_name = "Test Group"
+        self.group_code = "TestGG"
+
+        self.directorate_name = "Test Directorate"
+        self.directorate_code = "TestDD"
+        self.cost_centre_code = 888888
+
         self.group = DepartmentalGroupFactory(
-            group_name=self.group_name
+            group_code=self.group_code,
+            group_name=self.group_name,
         )
         self.directorate = DirectorateFactory(
+            directorate_code=self.directorate_code,
+            directorate_name=self.directorate_name,
             group=self.group,
         )
         self.cost_centre = CostCentreFactory(
-            directorate=self.directorate
+            directorate=self.directorate,
+            cost_centre_code=self.cost_centre_code,
         )
 
-    def dit_view(self):
+    def test_dit_view(self):
         response = self.client.get(
             reverse("forecast_dit")
         )
+
         self.assertEqual(response.status_code, 200)
 
-    def group_view(self):
+        # Check group is shown
+        assert self.group_name in str(response.content)
+
+    def test_group_view(self):
         response = self.client.get(
             reverse(
                 "forecast_group",
@@ -354,7 +368,10 @@ class ViewForecastHierarchy(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    def directorate_view(self):
+        # Check directorate is shown
+        assert self.directorate_name in str(response.content)
+
+    def test_directorate_view(self):
         response = self.client.get(
             reverse(
                 "forecast_directorate",
@@ -365,7 +382,10 @@ class ViewForecastHierarchy(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    def cost_centre_view(self):
+        # Check directorate is shown
+        assert str(self.cost_centre_code) in str(response.content)
+
+    def test_cost_centre_view(self):
         response = self.client.get(
             reverse(
                 "forecast_cost_centre",
@@ -375,3 +395,6 @@ class ViewForecastHierarchy(TestCase):
             )
         )
         self.assertEqual(response.status_code, 200)
+
+        # Check directorate is shown
+        assert str(self.cost_centre_code) in str(response.content)

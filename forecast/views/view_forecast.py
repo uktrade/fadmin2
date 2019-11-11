@@ -288,18 +288,12 @@ class CostCentreView(MultiTableMixin, TemplateView):
     table_pagination = False
 
     def cost_centre(self):
-        test = CostCentre.objects.get(
-            cost_centre_code=self.kwargs['cost_centre_code'],
-        )
-
         return CostCentre.objects.get(
             cost_centre_code=self.kwargs['cost_centre_code'],
         )
 
     def cost_centres_form(self):
-        cost_centre = CostCentre.objects.get(
-            cost_centre_code=self.kwargs['cost_centre_code'],
-        )
+        cost_centre = self.cost_centre()
 
         return DirectorateCostCentresForm(
             directorate_code=cost_centre.directorate.directorate_code

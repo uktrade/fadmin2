@@ -45,27 +45,26 @@ class AllCostCentresForm(forms.Form):
 class DirectorateCostCentresForm(forms.Form):
     def __init__(self, *args, **kwargs):
         directorate_code = kwargs.pop('directorate_code')
+
         super(DirectorateCostCentresForm, self).__init__(
             *args,
             **kwargs,
         )
 
-        self.base_fields['cost_centre'].queryset = CostCentre.objects.filter(
-            directorate__directorate_code=directorate_code,
-            active=True,
+        self.fields['cost_centre'] = forms.ModelChoiceField(
+            queryset=CostCentre.objects.filter(
+                directorate__directorate_code=directorate_code,
+                active=True,
+            ),
+            widget=Select(),
         )
 
-    cost_centre = forms.ModelChoiceField(
-        queryset=None,
-        widget=Select(),
-    )
-
-    cost_centre.widget.attrs.update(
-        {
-            "class": "govuk-select",
-            "aria-describedby": "cost_centre-hint cost_centre-error",
-        }
-    )
+        self.fields["cost_centre"].widget.attrs.update(
+            {
+                "class": "govuk-select",
+                "aria-describedby": "cost_centre-hint cost_centre-error",
+            }
+        )
 
 
 class MyCostCentresForm(forms.Form):
