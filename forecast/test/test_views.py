@@ -14,10 +14,14 @@ from chartofaccountDIT.test.factories import (
     ProjectCodeFactory,
 )
 
-from costcentre.test.factories import CostCentreFactory
+from costcentre.test.factories import  (
+    CostCentreFactory,
+    DepartmentalGroupFactory,
+    DirectorateFactory,
+)
 
 from forecast.models import MonthlyFigure
-from forecast.views.forecast_views import EditForecastView
+from forecast.views.edit_forecast import EditForecastView
 
 
 # Nb. we're using RequestFactory here
@@ -183,8 +187,7 @@ class AddForecastRowTest(TestCase):
                 kwargs={
                     'cost_centre_code': self.cost_centre_code
                 },
-            ),
-            {
+            ), {
                 "programme": self.programme.programme_code,
                 "natural_account_code": self.nac.natural_account_code,
                 "analysis1_code": self.analysis_1_code,
@@ -195,7 +198,6 @@ class AddForecastRowTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-
         self.assertEqual(MonthlyFigure.objects.count(), 12)
 
         response_2 = self.client.post(
@@ -283,5 +285,58 @@ class ViewCostCentreDashboard(TestCase):
 
         self.cost_centre_code = 109076
 
-    def testView(self):
+    def test_view(self):
         pass
+
+
+class ViewForecastHierarchy(TestCase):
+    def setUp(self):
+        self.group_name = "Test Group"
+        self.group = DepartmentalGroupFactory(
+            group_name=self.group_name
+        )
+        self.directorate = DirectorateFactory(
+            group=self.group,
+        )
+        self.cost_centre = CostCentreFactory(
+            directorate=self.directorate
+        )
+
+    def dit_view(self):
+        response = self.client.get(
+            reverse("forecast_dit")
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def group_view(self):
+        response = self.client.get(
+            reverse(
+                "forecast_group",
+                kwargs={
+                    'group_code': self.group.group_code
+                },
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def directorate_view(self):
+        response = self.client.get(
+            reverse(
+                "forecast_directorate",
+                kwargs={
+                    'directorate_code': self.directorate.directorate_code
+                },
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def cost_centre_view(self):
+        response = self.client.get(
+            reverse(
+                "forecast_cost_centre",
+                kwargs={
+                    'cost_centre_code': self.cost_centre.cost_centre_code
+                },
+            )
+        )
+        self.assertEqual(response.status_code, 200)
