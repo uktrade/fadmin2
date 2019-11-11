@@ -27,7 +27,7 @@ class CostHierarchy:
     counter = 0
 
     def create_departmental_group(
-            self, group_code, howmany_directorate, howmany_cost_centres
+        self, group_code, howmany_directorate, howmany_cost_centres
     ):
         departmental_group = DepartmentalGroup.objects.create(
             group_code=group_code,
@@ -45,7 +45,7 @@ class CostHierarchy:
             directorate_code_base += 1
 
     def create_directorate(
-            self, departmental_group, directorate_code, howmany_cost_centres
+        self, departmental_group, directorate_code, howmany_cost_centres
     ):
         directorate = Directorate.objects.create(
             directorate_code=directorate_code,
@@ -226,7 +226,7 @@ class NaturalAccountCodes:
         NACCategory.objects.all().delete()
 
     def create_natural_account_code_expenditure_group(
-            self, nac_category, economic_budget_code, cat_description, nac_base, howmany
+        self, nac_category, economic_budget_code, cat_description, nac_base, howmany
     ):
         expenditure_category = ExpenditureCategory.objects.create(
             active=True,
