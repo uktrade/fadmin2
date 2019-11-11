@@ -138,6 +138,8 @@ fido_db_test_all.json
 *.xlsx
 *.csv
 
+# Uploaded files
 uploaded/
 
-
+# Generated static files
+config/staticfiles/
