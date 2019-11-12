@@ -12,14 +12,16 @@ from django_tables2 import (
     SingleTableView,
 )
 
-from costcentre.models import Directorate, CostCentre
 from core.views import FidoExportMixin
 
-from costcentre.models import DepartmentalGroup
 from costcentre.forms import (
-    AllCostCentresForm,
     DirectorateCostCentresForm,
 )
+from costcentre.models import (
+    CostCentre,
+    Directorate,
+)
+from costcentre.models import DepartmentalGroup
 
 from forecast.models import (
     MonthlyFigure,

@@ -6,9 +6,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import (
     render,
 )
+from django.urls import reverse
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from django.urls import reverse
 
 from guardian.shortcuts import get_objects_for_user
 

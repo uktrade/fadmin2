@@ -19,8 +19,6 @@ class CostCentreViewModeForm(forms.Form):
 
     mode.widget.attrs.update(
         {
-            #"class": "govuk-radios__input",
-            #"aria-describedby": "mode-hint mode-error",
             'onclick': 'swapCostCentreChoice(this)',
         }
     )

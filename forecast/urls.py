@@ -9,8 +9,8 @@ from forecast.views.edit_forecast import (
 from forecast.views.view_forecast import (
     CostCentreView,
     CostClassView,  # Legacy
-    DirectorateView,
     DITView,
+    DirectorateView,
     GroupView,
     MultiForecastView,
     PivotClassView,

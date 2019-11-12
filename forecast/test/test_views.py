@@ -14,7 +14,7 @@ from chartofaccountDIT.test.factories import (
     ProjectCodeFactory,
 )
 
-from costcentre.test.factories import  (
+from costcentre.test.factories import (
     CostCentreFactory,
     DepartmentalGroupFactory,
     DirectorateFactory,
@@ -152,14 +152,16 @@ class AddForecastRowTest(TestCase):
         return EditForecastView.as_view()(request, **kwargs)
 
     def test_view_add_row(self):
-        # View edit, page, check there are 2 rows, view add page, add row, check there are 3 rows
         assign_perm("change_costcentre", self.test_user, self.cost_centre)
         assign_perm("view_costcentre", self.test_user, self.cost_centre)
 
         edit_response = self.edit_row_get_response()
         self.assertEqual(edit_response.status_code, 200)
 
-        soup = BeautifulSoup(edit_response.rendered_content, features="html.parser")
+        soup = BeautifulSoup(
+            edit_response.rendered_content,
+            features="html.parser",
+        )
         table_rows = soup.find_all("tr", class_="govuk-table__row")
 
         # There should only be 2 rows (for the header and footer)
