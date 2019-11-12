@@ -18,6 +18,7 @@ from costcentre.models import CostCentre
 from forecast.models import (
     FinancialPeriod,
     MonthlyFigure,
+    UploadingActuals,
 )
 
 from upload_file.utils import set_file_upload_error
@@ -50,14 +51,6 @@ VALID_ECONOMIC_CODE_LIST = ['RESOURCE', 'CAPITAL']
 # TODO Read the value from the database. It should be
 # possible for the business to change it.
 GENERIC_PROGRAMME_CODE = 310940
-
-
-class SubTotalFieldDoesNotExistError(Exception):
-    pass
-
-
-class SubTotalFieldNotSpecifiedError(Exception):
-    pass
 
 
 class TrialBalanceError(Exception):
@@ -114,29 +107,31 @@ def save_row(chart_of_account, value, period_obj, year_obj):
         chart_account_list[PROJECT_INDEX],
     )
     error_message += message
-
-    if error_message == "":
-        monthly_figure_obj, created = MonthlyFigure.objects.get_or_create(
-            financial_year=year_obj,
-            programme=programme_obj,
-            cost_centre=cc_obj,
-            natural_account_code=nac_obj,
-            analysis1_code=analysis1_obj,
-            analysis2_code=analysis2_obj,
-            project_code=project_obj,
-            financial_period=period_obj,
+    if error_message:
+        raise TrialBalanceError(
+            error_message
         )
-        if created:
-            # to avoid problems with precision,
-            # we store the figures in pence
-            monthly_figure_obj.amount = value * 100
-        else:
-            monthly_figure_obj.amount += value * 100
-        monthly_figure_obj.save()
-        success = True
+
+    actuals_obj, created = UploadingActuals.objects.get_or_create(
+        financial_year=year_obj,
+        programme=programme_obj,
+        cost_centre=cc_obj,
+        natural_account_code=nac_obj,
+        analysis1_code=analysis1_obj,
+        analysis2_code=analysis2_obj,
+        project_code=project_obj,
+        financial_period=period_obj,
+    )
+    if created:
+        # to avoid problems with precision,
+        # we store the figures in pence
+        actuals_obj.amount = value * 100
     else:
-        success = False
-    return success, error_message
+        actuals_obj.amount += value * 100
+
+    actuals_obj.save()
+
+    return True
 
 
 def check_trial_balance_format(ws, period, year):
@@ -207,35 +202,85 @@ def upload_trial_balance_report(file_upload, month_number, year):
         FinancialPeriod,
         "period_calendar_code",
         month_number)
-    # Delete the existing actuals.
-    # There are multiple lines in the Trial
-    # Balance for the same combination of
-    # Chart-of-Account, so we need to add
-    # the figures when we save them. This
-    # means that we need to start with a
-    # clean slate.
-    MonthlyFigure.objects.filter(
+    # Clear the table used to upload the actuals.
+    # The actuals are uploaded to to a temporary storage, and copied
+    # to the MonthlyFigure when the upload is completed successfully.
+    # This means that we always have a full upload.
+
+    UploadingActuals.objects.filter(
         financial_year=year,
         financial_period=period_obj,
     ).delete()
 
     for row in range(FIRST_DATA_ROW, ws.max_row):
         if not row % 100:
-            print("Processing row {}".format(row))
+            print(row)
         chart_of_account = ws["{}{}".format(CHART_OF_ACCOUNT_COL, row)].value
         if chart_of_account:
             actual = ws["{}{}".format(ACTUAL_FIGURE_COL, row)].value
             # No need to save 0 values, because the data has been cleared
             # before starting the upload
             if actual:
-                success, error_message = \
+                try:
                     save_row(chart_of_account, actual, period_obj, year_obj)
-                if not success:
-                    print('Error at row {}, chart of account {}, message {}'.
-                          format(row, chart_of_account, error_message))
+                except TrialBalanceError as ex:
+                    wb.close
+                    msg = 'Error at row {}: {}'. \
+                        format(row, str(ex))
+                    set_file_upload_error(
+                        file_upload,
+                        msg,
+                        msg,
+                    )
+                    raise ex
         else:
             break
-    print("Upload completed")
+    q = UploadingActuals.objects.filter(
+        financial_year=year,
+        financial_period=period_obj,
+    )
+    # Now copy the newly uploaded actuals to the monthly figure table
+    MonthlyFigure.objects.filter(
+        financial_year=year,
+        financial_period=period_obj,
+    ).delete()
+    MonthlyFigure.objects.bulk_create(q)
+    UploadingActuals.objects.filter(
+        financial_year=year,
+        financial_period=period_obj,
+    ).delete()
     period_obj.actual_loaded = True
     period_obj.save()
-#     TODO log date and time of upload
+    wb.close
+    return True
+
+
+# INSERT
+# INTO
+# forecast_monthlyfigure(created, updated,
+#                        active,
+#                        analysis1_code_id,
+#                        analysis2_code_id,
+#                        cost_centre_id,
+#                        financial_period_id,
+#                        financial_year_id,
+#                        natural_account_code_id,
+#                        programme_id,
+#                        project_code_id,
+#                        amount,
+#                        forecast_expenditure_type_id)
+#
+# SELECT
+# now(), now(), active,
+# analysis1_code_id,
+# analysis2_code_id,
+# cost_centre_id,
+# financial_period_id,
+# financial_year_id,
+# natural_account_code_id,
+# programme_id,
+# project_code_id,
+# amount,
+# forecast_expenditure_type_id
+# FROM
+# public.forecast_uploadingactuals;
