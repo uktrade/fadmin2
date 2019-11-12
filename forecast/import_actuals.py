@@ -18,6 +18,7 @@ from costcentre.models import CostCentre
 from forecast.models import (
     FinancialPeriod,
     MonthlyFigure,
+    UploadingActuals,
 )
 
 from upload_file.utils import set_file_upload_error
@@ -111,7 +112,7 @@ def save_row(chart_of_account, value, period_obj, year_obj):
             error_message
         )
 
-    monthly_figure_obj, created = MonthlyFigure.objects.get_or_create(
+    actuals_obj, created = UploadingActuals.objects.get_or_create(
         financial_year=year_obj,
         programme=programme_obj,
         cost_centre=cc_obj,
@@ -124,11 +125,11 @@ def save_row(chart_of_account, value, period_obj, year_obj):
     if created:
         # to avoid problems with precision,
         # we store the figures in pence
-        monthly_figure_obj.amount = value * 100
+        actuals_obj.amount = value * 100
     else:
-        monthly_figure_obj.amount += value * 100
+        actuals_obj.amount += value * 100
 
-    monthly_figure_obj.save()
+    actuals_obj.save()
 
     return True
 
@@ -201,14 +202,12 @@ def upload_trial_balance_report(file_upload, month_number, year):
         FinancialPeriod,
         "period_calendar_code",
         month_number)
-    # Delete the existing actuals.
-    # There are multiple lines in the Trial
-    # Balance for the same combination of
-    # Chart-of-Account, so we need to add
-    # the figures when we save them. This
-    # means that we need to start with a
-    # clean slate.
-    MonthlyFigure.objects.filter(
+    # Clear the table used to upload the actuals.
+    # The actuals are uploaded to to a temporary storage, and copied
+    # to the MonthlyFigure when the upload is completed successfully.
+    # This means that we always have a full upload.
+
+    UploadingActuals.objects.filter(
         financial_year=year,
         financial_period=period_obj,
     ).delete()
@@ -234,6 +233,21 @@ def upload_trial_balance_report(file_upload, month_number, year):
                     raise ex
         else:
             break
+    q = UploadingActuals.objects.filter(
+        financial_year=year,
+        financial_period=period_obj,
+    )
+    # Now copy the newly uploaded actuals to the monthly figure table
+    MonthlyFigure.objects.filter(
+        financial_year=year,
+        financial_period=period_obj,
+    ).delete()
+    MonthlyFigure.objects.bulk_create(q)
+    UploadingActuals.objects.filter(
+        financial_year=year,
+        financial_period=period_obj,
+    ).delete()
     period_obj.actual_loaded = True
     period_obj.save()
     wb.close
+    return True

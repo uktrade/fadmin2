@@ -204,11 +204,15 @@ class SubTotalForecast():
 
     def add_row_to_subtotal(self, row_from, sub_total):
         for period in self.period_list:
+            val = None
             if row_from[period]:
                 val = row_from[period]
             else:
                 val = 0
-            sub_total[period] += val
+            if sub_total[period]:
+                sub_total[period] += val
+            else:
+                sub_total[period] = val
 
     def clear_row(self, row):
         for period in self.period_list:
@@ -343,7 +347,8 @@ class PivotManager(models.Manager):
         "cost_centre__cost_centre_code": "Cost Centre Code",
         "cost_centre__cost_centre_name": "Cost Centre Description",
         "natural_account_code__natural_account_code": "Natural Account Code",
-        "natural_account_code__natural_account_code_description": "Natural Account Code Description",  # noqa
+        "natural_account_code__natural_account_code_description": "Natural Account Code Description",
+        # noqa
         "programme__programme_code": "Programme Code",
         "programme__programme_description": "Programme Description",
         "project_code__project_code": "Project Code",
@@ -444,40 +449,69 @@ class MonthlyFigure(FinancialCode, TimeStampedModel):
         )
 
 
+class UploadingActuals(FinancialCode):
+    """Used to upload the actuals.
+    When the upload is successfully completed, they get copied to the Monthly figures.
+    This allow to achieve a all-or-nothing upload."""
+    financial_year = models.ForeignKey(
+        FinancialYear,
+        on_delete=models.PROTECT,
+    )
+    financial_period = models.ForeignKey(
+        FinancialPeriod,
+        on_delete=models.PROTECT,
+    )
+    amount = models.BigIntegerField(default=0)
+
+    class Meta:
+        unique_together = (
+            "programme",
+            "cost_centre",
+            "natural_account_code",
+            "analysis1_code",
+            "analysis2_code",
+            "project_code",
+            "financial_year",
+            "financial_period",
+        )
+
+
 class OSCARReturn(models.Model):
     """Used for downloading the Oscar return.
     Mapped to a view in the database, because
     the query is too complex"""
 
-    # The view is created by the migration 0016_recreate_oscar_view.py
-    # TODO Change the database view to return
-    #  figures in thousands. At the moment the
-    #  figures are in pence.
-    row_number = models.BigIntegerField()
-    account_l5_code = models.ForeignKey(
-        "treasuryCOA.L5Account",
-        on_delete=models.PROTECT,
-        db_column="account_l5_code",
-    )
-    sub_segment_code = models.CharField(max_length=8, primary_key=True)
-    sub_segment_long_name = models.CharField(max_length=255)
-    apr = models.BigIntegerField(default=0)
-    may = models.BigIntegerField(default=0)
-    jun = models.BigIntegerField(default=0)
-    jul = models.BigIntegerField(default=0)
-    aug = models.BigIntegerField(default=0)
-    sep = models.BigIntegerField(default=0)
-    oct = models.BigIntegerField(default=0)
-    nov = models.BigIntegerField(default=0)
-    dec = models.BigIntegerField(default=0)
-    jan = models.BigIntegerField(default=0)
-    feb = models.BigIntegerField(default=0)
-    mar = models.BigIntegerField(default=0)
 
-    class Meta:
-        managed = False
-        db_table = "forecast_oscarreturn"
-        ordering = ["sub_segment_code"]
+# The view is created by the migration 0016_recreate_oscar_view.py
+# TODO Change the database view to return
+#  figures in thousands. At the moment the
+#  figures are in pence.
+row_number = models.BigIntegerField()
+account_l5_code = models.ForeignKey(
+    "treasuryCOA.L5Account",
+    on_delete=models.PROTECT,
+    db_column="account_l5_code",
+)
+sub_segment_code = models.CharField(max_length=8, primary_key=True)
+sub_segment_long_name = models.CharField(max_length=255)
+apr = models.BigIntegerField(default=0)
+may = models.BigIntegerField(default=0)
+jun = models.BigIntegerField(default=0)
+jul = models.BigIntegerField(default=0)
+aug = models.BigIntegerField(default=0)
+sep = models.BigIntegerField(default=0)
+oct = models.BigIntegerField(default=0)
+nov = models.BigIntegerField(default=0)
+dec = models.BigIntegerField(default=0)
+jan = models.BigIntegerField(default=0)
+feb = models.BigIntegerField(default=0)
+mar = models.BigIntegerField(default=0)
+
+
+class Meta:
+    managed = False
+    db_table = "forecast_oscarreturn"
+    ordering = ["sub_segment_code"]
 
 
 """

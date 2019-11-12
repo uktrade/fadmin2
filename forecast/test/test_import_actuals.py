@@ -36,6 +36,7 @@ from forecast.import_actuals import (
 from forecast.models import (
     FinancialPeriod,
     MonthlyFigure,
+    UploadingActuals,
 )
 
 from upload_file.models import FileUpload
@@ -105,7 +106,7 @@ class ImportActualsTest(TestCase):
 
     def test_save_row(self):
         self.assertEqual(
-            MonthlyFigure.objects.filter(
+            UploadingActuals.objects.filter(
                 cost_centre=self.cost_centre_code
             ).count(),
             0,
@@ -125,10 +126,10 @@ class ImportActualsTest(TestCase):
         )
 
         self.assertEqual(
-            MonthlyFigure.objects.filter(cost_centre=self.cost_centre_code).count(),
+            UploadingActuals.objects.filter(cost_centre=self.cost_centre_code).count(),
             1,
         )
-        q = MonthlyFigure.objects.get(cost_centre=self.cost_centre_code)
+        q = UploadingActuals.objects.get(cost_centre=self.cost_centre_code)
         self.assertEqual(
             q.amount,
             self.test_amount * 100,
@@ -142,10 +143,10 @@ class ImportActualsTest(TestCase):
         )
         # check that lines with the same chart of account are added together
         self.assertEqual(
-            MonthlyFigure.objects.filter(cost_centre=self.cost_centre_code).count(),
+            UploadingActuals.objects.filter(cost_centre=self.cost_centre_code).count(),
             1,
         )
-        q = MonthlyFigure.objects.get(cost_centre=self.cost_centre_code)
+        q = UploadingActuals.objects.get(cost_centre=self.cost_centre_code)
         self.assertEqual(
             q.amount,
             self.test_amount * 100 * 3,
@@ -153,7 +154,7 @@ class ImportActualsTest(TestCase):
 
     def test_save_row_no_programme(self):
         self.assertEqual(
-            MonthlyFigure.objects.filter(
+            UploadingActuals.objects.filter(
                 cost_centre=self.cost_centre_code
             ).count(),
             0,
@@ -172,7 +173,7 @@ class ImportActualsTest(TestCase):
         )
         # Lines with 0 programme and 0 amount are not saved
         self.assertEqual(
-            MonthlyFigure.objects.filter(cost_centre=self.cost_centre_code).count(),
+            UploadingActuals.objects.filter(cost_centre=self.cost_centre_code).count(),
             0,
         )
         save_row(
@@ -181,7 +182,7 @@ class ImportActualsTest(TestCase):
             self.period_obj,
             self.year_obj,
         )
-        q = MonthlyFigure.objects.get(cost_centre=self.cost_centre_code)
+        q = UploadingActuals.objects.get(cost_centre=self.cost_centre_code)
 
         self.assertEqual(
             q.amount,
@@ -194,12 +195,11 @@ class ImportActualsTest(TestCase):
 
     def test_save_row_not_valid_nac(self):
         self.assertEqual(
-            MonthlyFigure.objects.filter(
+            UploadingActuals.objects.filter(
                 cost_centre=self.cost_centre_code
             ).count(),
             0,
         )
-
         save_row(
             '3000-30000-{}-{}-{}-00000-00000-0000-0000-0000'.format(
                 self.cost_centre_code,
@@ -210,9 +210,8 @@ class ImportActualsTest(TestCase):
             self.period_obj,
             self.year_obj,
         )
-
         self.assertEqual(
-            MonthlyFigure.objects.filter(
+            UploadingActuals.objects.filter(
                 cost_centre=self.cost_centre_code
             ).count(),
             0,
