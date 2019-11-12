@@ -213,6 +213,8 @@ def upload_trial_balance_report(file_upload, month_number, year):
     ).delete()
 
     for row in range(FIRST_DATA_ROW, ws.max_row):
+        if not row % 100:
+            print(row)
         chart_of_account = ws["{}{}".format(CHART_OF_ACCOUNT_COL, row)].value
         if chart_of_account:
             actual = ws["{}{}".format(ACTUAL_FIGURE_COL, row)].value
@@ -251,3 +253,34 @@ def upload_trial_balance_report(file_upload, month_number, year):
     period_obj.save()
     wb.close
     return True
+
+
+# INSERT
+# INTO
+# forecast_monthlyfigure(created, updated,
+#                        active,
+#                        analysis1_code_id,
+#                        analysis2_code_id,
+#                        cost_centre_id,
+#                        financial_period_id,
+#                        financial_year_id,
+#                        natural_account_code_id,
+#                        programme_id,
+#                        project_code_id,
+#                        amount,
+#                        forecast_expenditure_type_id)
+#
+# SELECT
+# now(), now(), active,
+# analysis1_code_id,
+# analysis2_code_id,
+# cost_centre_id,
+# financial_period_id,
+# financial_year_id,
+# natural_account_code_id,
+# programme_id,
+# project_code_id,
+# amount,
+# forecast_expenditure_type_id
+# FROM
+# public.forecast_uploadingactuals;

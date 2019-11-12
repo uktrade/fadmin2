@@ -453,6 +453,7 @@ class UploadingActuals(FinancialCode):
     """Used to upload the actuals.
     When the upload is successfully completed, they get copied to the Monthly figures.
     This allow to achieve a all-or-nothing upload."""
+    id = models.AutoField("Row ID", primary_key=True)
     financial_year = models.ForeignKey(
         FinancialYear,
         on_delete=models.PROTECT,
@@ -462,6 +463,7 @@ class UploadingActuals(FinancialCode):
         on_delete=models.PROTECT,
     )
     amount = models.BigIntegerField(default=0)
+    active = models.BooleanField(default=True)
 
     class Meta:
         unique_together = (
@@ -482,36 +484,36 @@ class OSCARReturn(models.Model):
     the query is too complex"""
 
 
-# The view is created by the migration 0016_recreate_oscar_view.py
-# TODO Change the database view to return
-#  figures in thousands. At the moment the
-#  figures are in pence.
-row_number = models.BigIntegerField()
-account_l5_code = models.ForeignKey(
-    "treasuryCOA.L5Account",
-    on_delete=models.PROTECT,
-    db_column="account_l5_code",
-)
-sub_segment_code = models.CharField(max_length=8, primary_key=True)
-sub_segment_long_name = models.CharField(max_length=255)
-apr = models.BigIntegerField(default=0)
-may = models.BigIntegerField(default=0)
-jun = models.BigIntegerField(default=0)
-jul = models.BigIntegerField(default=0)
-aug = models.BigIntegerField(default=0)
-sep = models.BigIntegerField(default=0)
-oct = models.BigIntegerField(default=0)
-nov = models.BigIntegerField(default=0)
-dec = models.BigIntegerField(default=0)
-jan = models.BigIntegerField(default=0)
-feb = models.BigIntegerField(default=0)
-mar = models.BigIntegerField(default=0)
+    # The view is created by the migration 0016_recreate_oscar_view.py
+    # TODO Change the database view to return
+    #  figures in thousands. At the moment the
+    #  figures are in pence.
+    row_number = models.BigIntegerField()
+    account_l5_code = models.ForeignKey(
+        "treasuryCOA.L5Account",
+        on_delete=models.PROTECT,
+        db_column="account_l5_code",
+    )
+    sub_segment_code = models.CharField(max_length=8, primary_key=True)
+    sub_segment_long_name = models.CharField(max_length=255)
+    apr = models.BigIntegerField(default=0)
+    may = models.BigIntegerField(default=0)
+    jun = models.BigIntegerField(default=0)
+    jul = models.BigIntegerField(default=0)
+    aug = models.BigIntegerField(default=0)
+    sep = models.BigIntegerField(default=0)
+    oct = models.BigIntegerField(default=0)
+    nov = models.BigIntegerField(default=0)
+    dec = models.BigIntegerField(default=0)
+    jan = models.BigIntegerField(default=0)
+    feb = models.BigIntegerField(default=0)
+    mar = models.BigIntegerField(default=0)
 
 
-class Meta:
-    managed = False
-    db_table = "forecast_oscarreturn"
-    ordering = ["sub_segment_code"]
+    class Meta:
+        managed = False
+        db_table = "forecast_oscarreturn"
+        ordering = ["sub_segment_code"]
 
 
 """
