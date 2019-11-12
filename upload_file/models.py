@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+
+from pathlib import Path
 
 from core.metamodels import (
     SimpleTimeStampedModel,
@@ -36,6 +39,16 @@ class FileUpload(SimpleTimeStampedModel):
         null=True,
         blank=True,
     )
+    uploading_user = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+    )
+
+    @property
+    def file_name(self):
+        return Path(
+            self.document_file.path,
+        ).name
 
     def __str__(self):
         return "{} {}".format(

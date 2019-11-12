@@ -312,7 +312,7 @@ class EditForecastView(ForecastBaseView):
 class UploadActualsView(FormView):
     template_name = "forecast/file_upload.html"
     form_class = UploadActualsForm
-    success_url = reverse_lazy("upload_success")
+    success_url = reverse_lazy("uploaded_files")
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
@@ -322,7 +322,8 @@ class UploadActualsView(FormView):
             data = form.cleaned_data
 
             file_upload = FileUpload(
-                document_file=request.FILES['file']
+                document_file=request.FILES['file'],
+                uploading_user=request.user,
             )
             file_upload.save()
             # Process file async
