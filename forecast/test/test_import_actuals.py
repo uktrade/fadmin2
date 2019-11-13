@@ -281,12 +281,7 @@ class ImportActualsTest(TestCase):
             uploading_user=self.test_user,
         )
         good_file_upload.save()
-        self.assertEqual(
-            MonthlyFigure.objects.filter(
-                cost_centre=self.cost_centre_code
-            ).count(),
-            0,
-        )
+
         self.assertEqual(
             MonthlyFigure.objects.filter(
                 cost_centre=self.cost_centre_code
@@ -343,6 +338,10 @@ class ImportActualsTest(TestCase):
             ).count(),
             0,
         )
+        self.assertFalse(FinancialPeriod.objects.get(
+            period_calendar_code=self.test_period
+        ).actual_loaded
+        )
         upload_trial_balance_report(
             good_file_upload,
             self.test_period,
@@ -370,6 +369,11 @@ class ImportActualsTest(TestCase):
         self.assertEqual(
             result['total'],
             1000000,
+        )
+
+        self.assertTrue(FinancialPeriod.objects.get(
+            period_calendar_code=self.test_period
+        ).actual_loaded
         )
 
     def test_check_trial_balance_format(self):
