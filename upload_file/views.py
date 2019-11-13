@@ -11,11 +11,8 @@ class UploadedView(TemplateView):
         uploaded_files = FileUpload.objects.all().order_by(
             "-created"
         )
-        paginator = Paginator(uploaded_files, 5)
 
-        page = self.request.GET.get('page')
-
-        return paginator.get_page(page)
+        return uploaded_files
 
 
 class SuccessfulUploadView(TemplateView):
