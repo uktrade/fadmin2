@@ -68,3 +68,10 @@ class UploadPermission(models.Model):
     upload_budget = models.BooleanField(
         default=False,
     )
+
+    def __str__(self):
+        return "{} - upload actuals: {}, upload budget: {}".format(
+            self.user,
+            self.upload_actuals,
+            self.upload_budget,
+        )
