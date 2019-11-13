@@ -11,26 +11,12 @@ class UploadedView(TemplateView):
         uploaded_files = FileUpload.objects.all().order_by(
             "-created"
         )
-        paginator = Paginator(uploaded_files, 25)
 
-        page = self.request.GET.get('page')
-        return paginator.get_page(page)
+        return uploaded_files
 
 
 class SuccessfulUploadView(TemplateView):
     template_name = "core/info.html"
-
-    def heading(self):
-        return "Your upload was successful"
-
-    def message(self):
-        return "You have successfully " \
-               "uploaded a file, it will" \
-               " be processed shortly."
-
-
-class DocumentsView(TemplateView):
-    template_name = "upload_file/documents.html"
 
     def heading(self):
         return "Your upload was successful"

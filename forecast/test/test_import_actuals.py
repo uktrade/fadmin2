@@ -194,7 +194,7 @@ class ImportActualsTest(TestCase):
             GENERIC_PROGRAMME_CODE
         )
 
-    def test_save_row_not_valid_nac(self):
+    def test_save_row_invalid_nac(self):
         self.assertEqual(
             UploadingActuals.objects.filter(
                 cost_centre=self.cost_centre_code
@@ -263,7 +263,8 @@ class ImportActualsTest(TestCase):
         good_file_upload = FileUpload(
             document_file=os.path.join(
                 os.path.dirname(__file__),
-                'test_assets/upload_test.xlsx', )
+                'test_assets/upload_test.xlsx',
+            )
         )
         good_file_upload.save()
         self.assertEqual(

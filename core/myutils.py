@@ -1,6 +1,10 @@
 # Collection of useful functions and classes
 import datetime
 
+from django.conf import settings
+
+import requests
+
 from .models import FinancialYear
 
 
@@ -38,3 +42,26 @@ class GetValidYear:
 
     def to_url(self, value):
         return '%04d' % value
+
+
+def run_anti_virus(file):
+    # Check file with AV web service
+    files = {"file": file}
+    auth = (
+        settings.CLAM_AV_USERNAME,
+        settings.CLAM_AV_PASSWORD,
+    )
+    # print(auth)
+    response = requests.post(
+        settings.CLAM_AV_URL,
+        auth=auth,
+        files=files,
+    )
+    #
+    # auth = ("app1", "letmein")
+    # files = {"file": file}
+    #
+    # response = requests.post("http://docker.for.mac.localhost:8090/v2/scan", auth=auth, files=files)
+    json_response = response.json()
+
+    return json_response
