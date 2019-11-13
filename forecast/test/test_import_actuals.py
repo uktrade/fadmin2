@@ -6,6 +6,7 @@ from typing import (
 )
 from zipfile import BadZipFile
 
+from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.test import RequestFactory, TestCase
 
@@ -104,6 +105,14 @@ class ImportActualsTest(TestCase):
             period_calendar_code=self.test_period
         )
         self.year_obj = FinancialYear.objects.get(financial_year=2019)
+
+        self.test_user_email = "test@test.com"
+        self.test_password = "password"
+        self.test_user, _ = get_user_model().objects.get_or_create(
+            email=self.test_user_email,
+        )
+
+        self.test_user.set_password(self.test_password)
 
     def test_save_row(self):
         self.assertEqual(
@@ -236,7 +245,9 @@ class ImportActualsTest(TestCase):
         bad_file_type_upload = FileUpload(
             document_file=os.path.join(
                 os.path.dirname(__file__),
-                'test_assets/bad_file_type.csv', )
+                'test_assets/bad_file_type.csv',
+            ),
+            uploading_user=self.test_user,
         )
         bad_file_type_upload.save()
         with self.assertRaises(BadZipFile):
@@ -249,7 +260,9 @@ class ImportActualsTest(TestCase):
         bad_title_file_upload = FileUpload(
             document_file=os.path.join(
                 os.path.dirname(__file__),
-                'test_assets/bad_title_upload_test.xlsx', )
+                'test_assets/bad_title_upload_test.xlsx',
+            ),
+            uploading_user=self.test_user,
         )
         bad_title_file_upload.save()
 
@@ -264,7 +277,8 @@ class ImportActualsTest(TestCase):
             document_file=os.path.join(
                 os.path.dirname(__file__),
                 'test_assets/upload_test.xlsx',
-            )
+            ),
+            uploading_user=self.test_user,
         )
         good_file_upload.save()
         self.assertEqual(
