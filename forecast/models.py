@@ -347,8 +347,8 @@ class PivotManager(models.Manager):
         "cost_centre__cost_centre_code": "Cost Centre Code",
         "cost_centre__cost_centre_name": "Cost Centre Description",
         "natural_account_code__natural_account_code": "Natural Account Code",
-        "natural_account_code__natural_account_code_description": "Natural Account Code Description",
-        # noqa
+        "natural_account_code__natural_account_code_description":
+            "Natural Account Code Description",
         "programme__programme_code": "Programme Code",
         "programme__programme_description": "Programme Description",
         "project_code__project_code": "Project Code",
@@ -483,7 +483,6 @@ class OSCARReturn(models.Model):
     Mapped to a view in the database, because
     the query is too complex"""
 
-
     # The view is created by the migration 0016_recreate_oscar_view.py
     # TODO Change the database view to return
     #  figures in thousands. At the moment the
@@ -508,7 +507,6 @@ class OSCARReturn(models.Model):
     jan = models.BigIntegerField(default=0)
     feb = models.BigIntegerField(default=0)
     mar = models.BigIntegerField(default=0)
-
 
     class Meta:
         managed = False

@@ -30,6 +30,7 @@ from forecast.import_actuals import (
     TrialBalanceError,
     VALID_ECONOMIC_CODE_LIST,
     check_trial_balance_format,
+    copy_actuals_to_monthly_figure,
     save_row,
     upload_trial_balance_report,
 )
@@ -277,6 +278,12 @@ class ImportActualsTest(TestCase):
             ).count(),
             0,
         )
+        self.assertEqual(
+            UploadingActuals.objects.filter(
+                cost_centre=self.cost_centre_code
+            ).count(),
+            0,
+        )
         cost_centre_code_1 = 888888
         CostCentreFactory.create(
             cost_centre_code=cost_centre_code_1,
@@ -298,9 +305,29 @@ class ImportActualsTest(TestCase):
             MonthlyFigure.objects.filter(
                 cost_centre=cost_centre_code_1
             ).count(),
+            0,
+        )
+
+        self.assertEqual(
+            UploadingActuals.objects.filter(
+                cost_centre=cost_centre_code_1
+            ).count(),
             1,
         )
 
+        copy_actuals_to_monthly_figure(self.period_obj, self.test_year)
+        self.assertEqual(
+            MonthlyFigure.objects.filter(
+                cost_centre=cost_centre_code_1
+            ).count(),
+            1,
+        )
+        self.assertEqual(
+            UploadingActuals.objects.filter(
+                cost_centre=cost_centre_code_1
+            ).count(),
+            0,
+        )
         upload_trial_balance_report(
             good_file_upload,
             self.test_period,
