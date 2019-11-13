@@ -273,15 +273,6 @@ class ImportActualsTest(TestCase):
                 self.test_year,
             )
 
-        good_file_upload = FileUpload(
-            document_file=os.path.join(
-                os.path.dirname(__file__),
-                'test_assets/upload_test.xlsx',
-            ),
-            uploading_user=self.test_user,
-        )
-        good_file_upload.save()
-
         self.assertEqual(
             MonthlyFigure.objects.filter(
                 cost_centre=self.cost_centre_code
@@ -299,7 +290,7 @@ class ImportActualsTest(TestCase):
             cost_centre_code=cost_centre_code_1,
             directorate=self.directorate_obj
         )
-
+        # Prepare to upload data. Create some data that will be deleted
         save_row(
             '3000-30000-{}-{}-{}-00000-00000-0000-0000-0000'.format(
                 cost_centre_code_1,
@@ -341,7 +332,42 @@ class ImportActualsTest(TestCase):
         self.assertFalse(FinancialPeriod.objects.get(
             period_calendar_code=self.test_period
         ).actual_loaded
+                         )
+        bad_file_upload = FileUpload(
+            document_file=os.path.join(
+                os.path.dirname(__file__),
+                'test_assets/upload_bad_data.xlsx',
+            ),
+            uploading_user=self.test_user,
         )
+        bad_file_upload.save()
+        with self.assertRaises(TrialBalanceError):
+            upload_trial_balance_report(
+                bad_file_upload,
+                self.test_period,
+                self.test_year,
+            )
+        self.assertFalse(FinancialPeriod.objects.get(
+            period_calendar_code=self.test_period
+        ).actual_loaded
+                         )
+
+        self.assertEqual(
+            MonthlyFigure.objects.filter(
+                cost_centre=cost_centre_code_1
+            ).count(),
+            1,
+        )
+
+        good_file_upload = FileUpload(
+            document_file=os.path.join(
+                os.path.dirname(__file__),
+                'test_assets/upload_test.xlsx',
+            ),
+            uploading_user=self.test_user,
+        )
+        good_file_upload.save()
+
         upload_trial_balance_report(
             good_file_upload,
             self.test_period,
@@ -374,7 +400,7 @@ class ImportActualsTest(TestCase):
         self.assertTrue(FinancialPeriod.objects.get(
             period_calendar_code=self.test_period
         ).actual_loaded
-        )
+                        )
 
     def test_check_trial_balance_format(self):
         fake_work_sheet = FakeWorkSheet()
