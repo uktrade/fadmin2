@@ -36,6 +36,7 @@ from forecast.views.base import (
     NoCostCentreCodeInURLError,
 )
 
+from upload_file.decorators import has_actuals_upload_permission
 from upload_file.models import FileUpload
 
 TEST_COST_CENTRE = 888812
@@ -165,6 +166,10 @@ class UploadActualsView(FormView):
     template_name = "forecast/file_upload.html"
     form_class = UploadActualsForm
     success_url = reverse_lazy("uploaded_files")
+
+    @has_actuals_upload_permission
+    def dispatch(self, *args, **kwargs):
+        return super(UploadActualsView, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()

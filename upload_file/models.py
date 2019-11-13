@@ -55,3 +55,16 @@ class FileUpload(SimpleTimeStampedModel):
             self.document_file,
             self.status,
         )
+
+
+class UploadPermission(models.Model):
+    user = models.OneToOneField(
+        get_user_model(),
+        on_delete=models.CASCADE,
+    )
+    upload_actuals = models.BooleanField(
+        default=False,
+    )
+    upload_budget = models.BooleanField(
+        default=False,
+    )
