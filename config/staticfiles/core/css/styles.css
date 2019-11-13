@@ -4164,7 +4164,21 @@ input.cell-input {
   .sub-total .actual-month {
     background-color: #00ad93 !important; }
 
+<<<<<<< HEAD
 .govuk-error-summary {
   margin-bottom: 20px; }
+=======
+.directorate-cc-form label {
+  display: none; }
+
+.directorate-cc-form .govuk-form-group {
+  float: left; }
+
+.directorate-cc-form select, .directorate-cc-form input {
+  display: inline; }
+
+.directorate-cc-form input {
+  margin-left: 10px; }
+>>>>>>> dev
 
 /*# sourceMappingURL=styles.css.map */

@@ -1,18 +1,23 @@
 from django.urls import path
 
-from forecast.views.cost_centre_views import (
-    ChooseCostCentreView,
-)
-from forecast.views.forecast_views import (
+from forecast.views.edit_forecast import (
     AddRowView,
-    CostClassView,
+    ChooseCostCentreView,
     EditForecastView,
-    MultiForecastView,
-    PivotClassView,
     UploadActualsView,
     edit_forecast_prototype,
+)
+from forecast.views.view_forecast import (
+    CostCentreView,
+    CostClassView,  # Legacy
+    DITView,
+    DirectorateView,
+    GroupView,
+    MultiForecastView,
+    PivotClassView,
     pivot_test1,
 )
+
 
 urlpatterns = [
     path("pivot/", PivotClassView.as_view(), name="pivot"),
@@ -21,7 +26,8 @@ urlpatterns = [
     path("pivot1/", pivot_test1, name="pivot1"),
     path(
         "edit/<int:cost_centre_code>/",
-        EditForecastView.as_view(), name="edit_forecast"),
+        EditForecastView.as_view(), name="edit_forecast"
+    ),
     path(
         "add/<int:cost_centre_code>/",
         AddRowView.as_view(),
@@ -42,4 +48,24 @@ urlpatterns = [
         UploadActualsView.as_view(),
         name="upload_file"
     ),
+    path(
+        "dit/",
+        DITView.as_view(),
+        name="forecast_dit",
+    ),
+    path(
+        "group/<group_code>/",
+        GroupView.as_view(),
+        name="forecast_group",
+    ),
+    path(
+        "directorate/<directorate_code>/",
+        DirectorateView.as_view(),
+        name="forecast_directorate",
+    ),
+    path(
+        "cost-centre/<cost_centre_code>/",
+        CostCentreView.as_view(),
+        name="forecast_cost_centre",
+    )
 ]

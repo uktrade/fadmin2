@@ -52,5 +52,22 @@ input.cell-input {
 }
 
 .govuk-error-summary {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
+}
+.directorate-cc-form {
+  label {
+    display: none;
+  }
+
+  .govuk-form-group {
+    float: left;
+  }
+
+  select, input {
+    display: inline;
+  }
+
+  input {
+    margin-left: 10px;
+  }
 }
