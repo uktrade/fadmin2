@@ -1,5 +1,7 @@
 from zipfile import BadZipFile
 
+from django.db import connection
+
 from openpyxl import load_workbook
 
 from chartofaccountDIT.models import (
@@ -52,9 +54,53 @@ VALID_ECONOMIC_CODE_LIST = ['RESOURCE', 'CAPITAL']
 # possible for the business to change it.
 GENERIC_PROGRAMME_CODE = 310940
 
+COPY_DATA_SQL = 'INSERT INTO forecast_monthlyfigure(' \
+                'created, ' \
+                'updated, ' \
+                'active,  ' \
+                'analysis1_code_id, ' \
+                'analysis2_code_id, ' \
+                'cost_centre_id, ' \
+                'financial_period_id, ' \
+                'financial_year_id, ' \
+                'natural_account_code_id, ' \
+                'programme_id, ' \
+                'project_code_id, ' \
+                'amount, ' \
+                'forecast_expenditure_type_id)' \
+                ' SELECT  ' \
+                'now(), ' \
+                'now(), ' \
+                'active,  ' \
+                'analysis1_code_id, ' \
+                'analysis2_code_id, ' \
+                'cost_centre_id, ' \
+                'financial_period_id, ' \
+                'financial_year_id, ' \
+                'natural_account_code_id, ' \
+                'programme_id, ' \
+                'project_code_id, ' \
+                'amount, ' \
+                'forecast_expenditure_type_id ' \
+                ' FROM forecast_uploadingactuals;'
+
 
 class TrialBalanceError(Exception):
     pass
+
+
+def copy_actuals_to_monthly_figure(period_obj, year):
+    # Now copy the newly uploaded actuals to the monthly figure table
+    MonthlyFigure.objects.filter(
+        financial_year=year,
+        financial_period=period_obj,
+    ).delete()
+    with connection.cursor() as cursor:
+        cursor.execute(COPY_DATA_SQL)
+    UploadingActuals.objects.filter(
+        financial_year=year,
+        financial_period=period_obj,
+    ).delete()
 
 
 def get_optional_chart_account_obj(model, chart_of_account_item):
@@ -196,7 +242,6 @@ def upload_trial_balance_report(file_upload, month_number, year):
         )
         raise ex
 
-    # TODO Use transactions, so it can rollback if there is an error
     year_obj, msg = get_fk(FinancialYear, year)
     period_obj, msg = get_fk_from_field(
         FinancialPeriod,
@@ -213,8 +258,10 @@ def upload_trial_balance_report(file_upload, month_number, year):
     ).delete()
 
     for row in range(FIRST_DATA_ROW, ws.max_row):
-        if not row % 100:
-            print(row)
+        # don't delete this comment: useful for debugging, but it gives a
+        # 'too complex error'
+        # if not row % 100:
+        #     print(row)
         chart_of_account = ws["{}{}".format(CHART_OF_ACCOUNT_COL, row)].value
         if chart_of_account:
             actual = ws["{}{}".format(ACTUAL_FIGURE_COL, row)].value
@@ -235,52 +282,10 @@ def upload_trial_balance_report(file_upload, month_number, year):
                     raise ex
         else:
             break
-    q = UploadingActuals.objects.filter(
-        financial_year=year,
-        financial_period=period_obj,
-    )
+
     # Now copy the newly uploaded actuals to the monthly figure table
-    MonthlyFigure.objects.filter(
-        financial_year=year,
-        financial_period=period_obj,
-    ).delete()
-    MonthlyFigure.objects.bulk_create(q)
-    UploadingActuals.objects.filter(
-        financial_year=year,
-        financial_period=period_obj,
-    ).delete()
+    copy_actuals_to_monthly_figure(period_obj, year)
     period_obj.actual_loaded = True
     period_obj.save()
     wb.close
     return True
-
-
-# INSERT
-# INTO
-# forecast_monthlyfigure(created, updated,
-#                        active,
-#                        analysis1_code_id,
-#                        analysis2_code_id,
-#                        cost_centre_id,
-#                        financial_period_id,
-#                        financial_year_id,
-#                        natural_account_code_id,
-#                        programme_id,
-#                        project_code_id,
-#                        amount,
-#                        forecast_expenditure_type_id)
-#
-# SELECT
-# now(), now(), active,
-# analysis1_code_id,
-# analysis2_code_id,
-# cost_centre_id,
-# financial_period_id,
-# financial_year_id,
-# natural_account_code_id,
-# programme_id,
-# project_code_id,
-# amount,
-# forecast_expenditure_type_id
-# FROM
-# public.forecast_uploadingactuals;
