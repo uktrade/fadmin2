@@ -488,7 +488,7 @@ class UploadActualsTest(TestCase, RequestFactoryBase):
         assert resp.url == '/upload/files/'
 
         # Clean up file
-        file_path = '/app/uploaded/actuals/{}'.format(
+        file_path = 'uploaded/actuals/{}'.format(
             self.file_mock.name
         )
         if os.path.exists(file_path):
