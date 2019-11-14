@@ -51,17 +51,10 @@ def run_anti_virus(file):
         settings.CLAM_AV_USERNAME,
         settings.CLAM_AV_PASSWORD,
     )
-    # print(auth)
     response = requests.post(
         settings.CLAM_AV_URL,
         auth=auth,
         files=files,
     )
-    #
-    # auth = ("app1", "letmein")
-    # files = {"file": file}
-    #
-    # response = requests.post("http://docker.for.mac.localhost:8090/v2/scan", auth=auth, files=files)
-    json_response = response.json()
 
-    return json_response
+    return response.json()

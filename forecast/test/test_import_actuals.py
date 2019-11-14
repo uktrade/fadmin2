@@ -329,10 +329,11 @@ class ImportActualsTest(TestCase):
             ).count(),
             0,
         )
-        self.assertFalse(FinancialPeriod.objects.get(
-            period_calendar_code=self.test_period
-        ).actual_loaded
-                         )
+        self.assertFalse(
+            FinancialPeriod.objects.get(
+                period_calendar_code=self.test_period
+            ).actual_loaded
+        )
         bad_file_upload = FileUpload(
             document_file=os.path.join(
                 os.path.dirname(__file__),
@@ -347,10 +348,11 @@ class ImportActualsTest(TestCase):
                 self.test_period,
                 self.test_year,
             )
+
         self.assertFalse(FinancialPeriod.objects.get(
-            period_calendar_code=self.test_period
-        ).actual_loaded
-                         )
+                period_calendar_code=self.test_period,
+            ).actual_loaded
+        )
 
         self.assertEqual(
             MonthlyFigure.objects.filter(
@@ -397,10 +399,11 @@ class ImportActualsTest(TestCase):
             1000000,
         )
 
-        self.assertTrue(FinancialPeriod.objects.get(
-            period_calendar_code=self.test_period
-        ).actual_loaded
-                        )
+        self.assertTrue(
+            FinancialPeriod.objects.get(
+                period_calendar_code=self.test_period
+            ).actual_loaded
+        )
 
     def test_check_trial_balance_format(self):
         fake_work_sheet = FakeWorkSheet()

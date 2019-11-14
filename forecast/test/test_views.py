@@ -34,8 +34,8 @@ from forecast.views.edit_forecast import (
 )
 from forecast.views.view_forecast import (
     CostCentreView,
-    DirectorateView,
     DITView,
+    DirectorateView,
     GroupView,
     MultiForecastView,
 )
