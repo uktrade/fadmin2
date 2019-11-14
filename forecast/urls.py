@@ -46,7 +46,7 @@ urlpatterns = [
     path(
         "upload-file/",
         UploadActualsView.as_view(),
-        name="upload_file"
+        name="upload_actuals_file"
     ),
     path(
         "dit/",

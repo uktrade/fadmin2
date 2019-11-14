@@ -23,6 +23,19 @@ class FileUpload(SimpleTimeStampedModel):
         (ERROR, 'Error'),
     ]
 
+    ACTUALS = 'actuals'
+    BUDGET = 'budget'
+
+    DOCUMENT_TYPE_CHOICES = [
+        (ACTUALS, 'Actuals'),
+        (BUDGET, 'Budget'),
+    ]
+
+    document_type = models.CharField(
+        max_length=7,
+        choices=DOCUMENT_TYPE_CHOICES,
+        default=ACTUALS,
+    )
     document_file = models.FileField(
         upload_to='uploaded/actuals/'
     )
@@ -53,8 +66,9 @@ class FileUpload(SimpleTimeStampedModel):
         ).name
 
     def __str__(self):
-        return "{} {}".format(
+        return "{} {} {}".format(
             self.document_file,
+            self.document_type,
             self.status,
         )
 
@@ -64,16 +78,8 @@ class UploadPermission(models.Model):
         get_user_model(),
         on_delete=models.CASCADE,
     )
-    upload_actuals = models.BooleanField(
-        default=False,
-    )
-    upload_budget = models.BooleanField(
-        default=False,
-    )
 
     def __str__(self):
-        return "{} - upload actuals: {}, upload budget: {}".format(
+        return "{}".format(
             self.user,
-            self.upload_actuals,
-            self.upload_budget,
         )
