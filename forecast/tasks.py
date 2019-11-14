@@ -18,6 +18,8 @@ def process_uploaded_file(month, year):
     if latest_unprocessed is not None:
         # Check for viruses
         print("Unprocessed file: {}".format(latest_unprocessed))
+        latest_unprocessed.status = FileUpload.ANTIVIRUS
+        latest_unprocessed.save()
 
         anti_virus_result = run_anti_virus(
             latest_unprocessed.document_file,

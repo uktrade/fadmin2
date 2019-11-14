@@ -13,9 +13,11 @@ class FileUpload(SimpleTimeStampedModel):
     PROCESSING = 'processing'
     PROCESSED = 'processed'
     ERROR = 'error'
+    ANTIVIRUS = 'antivirus'
 
     STATUS_CHOICES = [
         (UNPROCESSED, 'Unprocessed'),
+        (ANTIVIRUS, 'Checking for viruses'),
         (PROCESSING, 'Processing'),
         (PROCESSED, 'Processed'),
         (ERROR, 'Error'),
