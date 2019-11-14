@@ -48,6 +48,7 @@ def run_anti_virus(file):
     # Check file with AV web service
     if settings.IGNORE_ANTI_VIRUS:
         return {'malware': False}
+
     files = {"file": file}
     auth = (
         settings.CLAM_AV_USERNAME,

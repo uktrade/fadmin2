@@ -1,9 +1,7 @@
-from django.core.paginator import Paginator
 from django.views.generic.base import TemplateView
 
-from upload_file.models import FileUpload
-
 from upload_file.decorators import has_actuals_upload_permission
+from upload_file.models import FileUpload
 
 
 class UploadedView(TemplateView):

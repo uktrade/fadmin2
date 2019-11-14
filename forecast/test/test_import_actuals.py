@@ -342,6 +342,7 @@ class ImportActualsTest(TestCase):
             uploading_user=self.test_user,
         )
         bad_file_upload.save()
+
         with self.assertRaises(TrialBalanceError):
             upload_trial_balance_report(
                 bad_file_upload,
@@ -349,7 +350,8 @@ class ImportActualsTest(TestCase):
                 self.test_year,
             )
 
-        self.assertFalse(FinancialPeriod.objects.get(
+        self.assertFalse(
+            FinancialPeriod.objects.get(
                 period_calendar_code=self.test_period,
             ).actual_loaded
         )
