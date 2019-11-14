@@ -32,28 +32,52 @@ from forecast.views.edit_forecast import (
     EditForecastView,
     TEST_COST_CENTRE,
 )
+from forecast.views.view_forecast import (
+    CostCentreView,
+    DirectorateView,
+    DITView,
+    GroupView,
+    MultiForecastView,
+)
 
 
 # Nb. we're using RequestFactory here
 # because SSO does not fully support
 # the test client's user object
-class ViewPermissionsTest(TestCase):
-    def setUp(self):
+class FactoryBase:
+    def __init__(self):
         self.factory = RequestFactory()
 
-        self.cost_centre_code = TEST_COST_CENTRE
         self.test_user_email = "test@test.com"
         self.test_password = "test_password"
-
-        self.cost_centre = CostCentreFactory.create(
-            cost_centre_code=self.cost_centre_code
-        )
 
         self.test_user, _ = get_user_model().objects.get_or_create(
             email=self.test_user_email
         )
-
         self.test_user.set_password(self.test_password)
+        self.test_user.save()
+
+    def factory_get(self, url, view_class, *args, **kwargs):
+        request = self.factory.get(url)
+        request.user = self.test_user
+        return view_class.as_view()(request, **kwargs)
+
+    def factory_post(self, url, post_content, view_class, *args, **kwargs):
+        request = self.factory.post(
+            url,
+            post_content,
+        )
+        request.user = self.test_user
+        return view_class.as_view()(request, **kwargs)
+
+
+class ViewPermissionsTest(TestCase, FactoryBase):
+    def setUp(self):
+        FactoryBase.__init__(self)
+        self.cost_centre_code = TEST_COST_CENTRE
+        self.cost_centre = CostCentreFactory.create(
+            cost_centre_code=self.cost_centre_code
+        )
 
     def test_edit_forecast_view(self):
         self.assertFalse(
@@ -70,13 +94,11 @@ class ViewPermissionsTest(TestCase):
             }
         )
 
-        request = self.factory.get(edit_forecast_url)
-        request.user = self.test_user
-        kwargs = {
-            'cost_centre_code': self.cost_centre_code
-        }  # required because factory does not pass kwargs to request
-
-        resp = EditForecastView.as_view()(request, **kwargs)
+        resp = self.factory_get(
+            edit_forecast_url,
+            EditForecastView,
+            cost_centre_code=self.cost_centre_code,
+        )
 
         # Should have been redirected (no permission)
         self.assertEqual(resp.status_code, 302)
@@ -87,19 +109,19 @@ class ViewPermissionsTest(TestCase):
         self.assertTrue(self.test_user.has_perm("change_costcentre", self.cost_centre))
         self.assertTrue(self.test_user.has_perm("view_costcentre", self.cost_centre))
 
-        request = self.factory.get(edit_forecast_url)
-        request.user = self.test_user
-
-        resp = EditForecastView.as_view()(request, **kwargs)
+        resp = self.factory_get(
+            edit_forecast_url,
+            EditForecastView,
+            cost_centre_code=self.cost_centre_code,
+        )
 
         # Should be allowed
         self.assertEqual(resp.status_code, 200)
 
 
-class AddForecastRowTest(TestCase):
+class AddForecastRowTest(TestCase, FactoryBase):
     def setUp(self):
-        self.factory = RequestFactory()
-
+        FactoryBase.__init__(self)
         self.nac_code = 999999
         self.cost_centre_code = TEST_COST_CENTRE
         self.analysis_1_code = "1111111"
@@ -115,33 +137,20 @@ class AddForecastRowTest(TestCase):
             cost_centre_code=self.cost_centre_code
         )
 
-        self.test_user_email = "test@test.com"
-        self.test_password = "test_password"
-
-        self.test_user, _ = get_user_model().objects.get_or_create(
-            email=self.test_user_email
-        )
-
-        self.test_user.set_password(self.test_password)
-
     def add_row_get_response(self, url):
-        request = self.factory.get(url)
-        request.user = self.test_user
-        kwargs = {
-            'cost_centre_code': self.cost_centre_code
-        }  # required because factory does not pass kwargs to request
-        return AddRowView.as_view()(request, **kwargs)
+        return self.factory_get(
+            url,
+            AddRowView,
+            cost_centre_code=self.cost_centre_code,
+        )
 
     def add_row_post_response(self, url, post_content):
-        request = self.factory.post(
+        return self.factory_post(
             url,
             post_content,
+            AddRowView,
+            cost_centre_code=self.cost_centre_code,
         )
-        request.user = self.test_user
-        kwargs = {
-            'cost_centre_code': self.cost_centre_code
-        }  # required because factory does not pass kwargs to request
-        return AddRowView.as_view()(request, **kwargs)
 
     def edit_row_get_response(self):
         edit_view_url = reverse(
@@ -150,12 +159,12 @@ class AddForecastRowTest(TestCase):
                 'cost_centre_code': self.cost_centre_code
             },
         )
-        request = self.factory.get(edit_view_url)
-        request.user = self.test_user
-        kwargs = {
-            'cost_centre_code': self.cost_centre_code
-        }  # required because factory does not pass kwargs to request
-        return EditForecastView.as_view()(request, **kwargs)
+
+        return self.factory_get(
+            edit_view_url,
+            EditForecastView,
+            cost_centre_code=self.cost_centre_code,
+        )
 
     def test_view_add_row(self):
         assign_perm("change_costcentre", self.test_user, self.cost_centre)
@@ -257,46 +266,25 @@ class AddForecastRowTest(TestCase):
         self.assertEqual(MonthlyFigure.objects.count(), 12)
 
 
-class ChooseCostCentreTest(TestCase):
+class ChooseCostCentreTest(TestCase, FactoryBase):
     def setUp(self):
-        #self.cost_centre_code = TEST_COST_CENTRE
-        self.factory = RequestFactory()
+        FactoryBase.__init__(self)
         self.cost_centre_code = 109076
         self.cost_centre = CostCentreFactory.create(
             cost_centre_code=self.cost_centre_code
         )
-        self.test_user, _ = get_user_model().objects.get_or_create(
-            email="test@test.com"
-        )
-        self.test_user.set_password("test_password")
-
         assign_perm("change_costcentre", self.test_user, self.cost_centre)
         assign_perm("view_costcentre", self.test_user, self.cost_centre)
-
-    def factory_get(self, url):
-        request = self.factory.get(url)
-        request.user = self.test_user
-        kwargs = {
-            'cost_centre_code': self.cost_centre_code
-        }  # required because factory does not pass kwargs to request
-        return ChooseCostCentreView.as_view()(request, **kwargs)
-
-    def factory_post(self, url, post_content):
-        request = self.factory.post(
-            url,
-            post_content,
-        )
-        request.user = self.test_user
-        kwargs = {
-            'cost_centre_code': self.cost_centre_code
-        }  # required because factory does not pass kwargs to request
-        return ChooseCostCentreView.as_view()(request, **kwargs)
 
     def test_choose_cost_centre(self):
         response = self.factory_get(
             reverse(
                 "choose_cost_centre"
-            )
+            ),
+            ChooseCostCentreView,
+            kwargs={
+                'cost_centre_code': self.cost_centre_code
+            },  # required because factory does not pass kwargs to request
         )
 
         self.assertEqual(
@@ -310,6 +298,10 @@ class ChooseCostCentreTest(TestCase):
             ), {
                 "cost_centre": self.cost_centre_code
             },
+            ChooseCostCentreView,
+            kwargs={
+                'cost_centre_code': self.cost_centre_code
+            },  # required because factory does not pass kwargs to request
         )
 
         self.assertEqual(
@@ -321,11 +313,13 @@ class ChooseCostCentreTest(TestCase):
         assert "/forecast/edit/" in response.url
 
 
-class ViewCostCentreDashboard(TestCase):
+class ViewCostCentreDashboard(TestCase, FactoryBase):
     cost_centre_code = 888812
     amount = 9876543
 
     def setUp(self):
+        FactoryBase.__init__(self)
+
         self.apr_amount = MonthlyFigureFactory.create(
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=1
@@ -337,7 +331,10 @@ class ViewCostCentreDashboard(TestCase):
         )
 
     def test_view_cost_centre_dashboard(self):
-        resp = self.client.get(reverse("pivotmulti"))
+        resp = self.factory_get(
+            reverse("pivotmulti"),
+            MultiForecastView,
+        )
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, "govuk-table")
 
@@ -366,8 +363,10 @@ class ViewCostCentreDashboard(TestCase):
         assert len(table_rows) == 14
 
 
-class ViewForecastHierarchyTest(TestCase):
+class ViewForecastHierarchyTest(TestCase, FactoryBase):
     def setUp(self):
+        FactoryBase.__init__(self)
+
         self.group_name = "Test Group"
         self.group_code = "TestGG"
 
@@ -390,53 +389,60 @@ class ViewForecastHierarchyTest(TestCase):
         )
 
     def test_dit_view(self):
-        response = self.client.get(
-            reverse("forecast_dit")
+        response = self.factory_get(
+            reverse("forecast_dit"),
+            DITView,
         )
 
         self.assertEqual(response.status_code, 200)
 
         # Check group is shown
-        assert self.group_name in str(response.content)
+        assert self.group_name in str(response.rendered_content)
 
     def test_group_view(self):
-        response = self.client.get(
+        response = self.factory_get(
             reverse(
                 "forecast_group",
                 kwargs={
                     'group_code': self.group.group_code
                 },
-            )
+            ),
+            GroupView,
+            group_code=self.group.group_code,
         )
         self.assertEqual(response.status_code, 200)
 
         # Check directorate is shown
-        assert self.directorate_name in str(response.content)
+        assert self.directorate_name in str(response.rendered_content)
 
     def test_directorate_view(self):
-        response = self.client.get(
+        response = self.factory_get(
             reverse(
                 "forecast_directorate",
                 kwargs={
                     'directorate_code': self.directorate.directorate_code
                 },
-            )
+            ),
+            DirectorateView,
+            directorate_code=self.directorate.directorate_code,
         )
         self.assertEqual(response.status_code, 200)
 
         # Check directorate is shown
-        assert str(self.cost_centre_code) in str(response.content)
+        assert str(self.cost_centre_code) in str(response.rendered_content)
 
     def test_cost_centre_view(self):
-        response = self.client.get(
+        response = self.factory_get(
             reverse(
                 "forecast_cost_centre",
                 kwargs={
                     'cost_centre_code': self.cost_centre.cost_centre_code
                 },
-            )
+            ),
+            CostCentreView,
+            cost_centre_code=self.cost_centre.cost_centre_code,
         )
         self.assertEqual(response.status_code, 200)
 
         # Check directorate is shown
-        assert str(self.cost_centre_code) in str(response.content)
+        assert str(self.cost_centre_code) in str(response.rendered_content)
