@@ -9,7 +9,7 @@ from django.core.files import File
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from guardian.shortcuts import assign_perm
+from forecast.permission_shortcuts import assign_perm
 
 from chartofaccountDIT.test.factories import (
     Analysis1Factory,
@@ -29,9 +29,13 @@ from costcentre.test.factories import (
 
 from forecast.models import (
     FinancialPeriod,
+    ForecastPermission,
     MonthlyFigure,
 )
-from forecast.test.factories import MonthlyFigureFactory
+from forecast.test.factories import (
+    ForecastPermissionFactory,
+    MonthlyFigureFactory,
+)
 from forecast.views.edit_forecast import (
     AddRowView,
     ChooseCostCentreView,
@@ -45,13 +49,6 @@ from forecast.views.view_forecast import (
     DirectorateView,
     GroupView,
     MultiForecastView,
-)
-
-from upload_file.models import (
-    UploadPermission,
-)
-from upload_file.test.factories import (
-    UploadPermissionFactory,
 )
 
 
@@ -313,6 +310,10 @@ class ViewCostCentreDashboard(TestCase, RequestFactoryBase):
             ),
             amount=self.amount,
         )
+        # Assign forecast view permission
+        ForecastPermissionFactory(
+            user=self.test_user,
+        )
 
     def test_view_cost_centre_dashboard(self):
         resp = self.factory_get(
@@ -370,6 +371,11 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.cost_centre = CostCentreFactory(
             directorate=self.directorate,
             cost_centre_code=self.cost_centre_code,
+        )
+
+        # Assign forecast view permission
+        ForecastPermissionFactory(
+            user=self.test_user,
         )
 
     def test_dit_view(self):
@@ -444,8 +450,8 @@ class UploadActualsTest(TestCase, RequestFactoryBase):
     @override_settings(ASYNC_FILE_UPLOAD=False)
     @patch('forecast.views.edit_forecast.process_uploaded_file')
     def test_upload_actuals_view(self, mock_process_uploaded_file):
-        upload_permission_count = UploadPermission.objects.all().count()
-        self.assertEqual(upload_permission_count, 0)
+        forecast_permission_count = ForecastPermission.objects.all().count()
+        self.assertEqual(forecast_permission_count, 0)
 
         uploaded_actuals_url = reverse(
             "upload_actuals_file",
@@ -458,8 +464,9 @@ class UploadActualsTest(TestCase, RequestFactoryBase):
                 UploadActualsView,
             )
 
-        UploadPermissionFactory.create(
+        ForecastPermissionFactory.create(
             user=self.test_user,
+            can_upload=True,
         )
 
         resp = self.factory_get(

@@ -4,12 +4,35 @@ from django.urls import reverse
 
 from costcentre.models import CostCentre
 
+from forecast.models import ForecastPermission
+
 
 class NoCostCentreCodeInURLError(Exception):
     pass
 
 
-class ForecastPermissionTest(UserPassesTestMixin):
+class ForecastViewPermissionTest(UserPassesTestMixin):
+    cost_centre_code = None
+
+    def test_func(self):
+        forecast_permission = ForecastPermission.objects.filter(
+            user=self.request.user,
+        ).first()
+
+        if forecast_permission:
+            return True
+
+        return False
+
+    def handle_no_permission(self):
+        return redirect(
+            reverse(
+                "index",
+            )
+        )
+
+
+class CostCentrePermissionTest(UserPassesTestMixin):
     cost_centre_code = None
 
     def test_func(self):

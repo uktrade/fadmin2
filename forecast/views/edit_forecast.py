@@ -11,7 +11,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
-from guardian.shortcuts import get_objects_for_user
+from forecast.permission_shortcuts import get_objects_for_user
 
 from costcentre.forms import (
     MyCostCentresForm,
@@ -32,7 +32,7 @@ from forecast.tables import (
 )
 from forecast.tasks import process_uploaded_file
 from forecast.views.base import (
-    ForecastPermissionTest,
+    CostCentrePermissionTest,
     NoCostCentreCodeInURLError,
 )
 
@@ -76,7 +76,7 @@ class ChooseCostCentreView(UserPassesTestMixin, FormView):
         )
 
 
-class AddRowView(ForecastPermissionTest, FormView):
+class AddRowView(CostCentrePermissionTest, FormView):
     template_name = "forecast/edit/add.html"
     form_class = AddForecastRowForm
     financial_year_id = TEST_FINANCIAL_YEAR
@@ -136,7 +136,7 @@ class AddRowView(ForecastPermissionTest, FormView):
         return super().form_valid(form)
 
 
-class EditForecastView(ForecastPermissionTest, TemplateView):
+class EditForecastView(CostCentrePermissionTest, TemplateView):
     template_name = "forecast/edit/edit.html"
 
     def cost_centre_details(self):

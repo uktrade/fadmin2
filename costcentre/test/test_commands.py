@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase
 
-from guardian.shortcuts import assign_perm
+from forecast.permission_shortcuts import assign_perm
 
 from costcentre.test.factories import CostCentreFactory
 
