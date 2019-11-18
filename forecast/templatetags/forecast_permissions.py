@@ -1,7 +1,9 @@
 from django import template
 
+
 from forecast.models import ForecastPermission
 from forecast.permission_shortcuts import get_objects_for_user
+
 
 register = template.Library()
 

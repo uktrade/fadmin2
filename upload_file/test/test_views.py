@@ -8,6 +8,7 @@ from django.urls import reverse
 
 from core.test.test_base import RequestFactoryBase
 
+
 from forecast.models import ForecastPermission
 from forecast.test.factories import ForecastPermissionFactory
 
