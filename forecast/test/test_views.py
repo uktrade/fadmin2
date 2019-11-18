@@ -59,7 +59,28 @@ class ViewPermissionsTest(TestCase, RequestFactoryBase):
             cost_centre_code=self.cost_centre_code
         )
 
+    def test_edit_forecast_view_permission(self):
+        edit_forecast_url = reverse(
+            "edit_forecast",
+            kwargs={
+                'cost_centre_code': self.cost_centre_code
+            }
+        )
+
+        # Should 403 as they do not have permission
+        with self.assertRaises(PermissionDenied):
+            self.factory_get(
+                edit_forecast_url,
+                EditForecastView,
+                cost_centre_code=self.cost_centre_code,
+            )
+
     def test_edit_forecast_view(self):
+        # Add forecast view permission
+        ForecastPermissionFactory(
+            user=self.test_user,
+        )
+
         self.assertFalse(
             self.test_user.has_perm(
                 "change_costcentre",
