@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse
 
@@ -36,6 +37,13 @@ class CostCentrePermissionTest(UserPassesTestMixin):
     cost_centre_code = None
 
     def test_func(self):
+        forecast_permission = ForecastPermission.objects.filter(
+            user=self.request.user,
+        ).first()
+
+        if not forecast_permission:
+            raise PermissionDenied()
+
         if 'cost_centre_code' not in self.kwargs:
             raise NoCostCentreCodeInURLError(
                 "No cost centre code provided in URL"

@@ -3,6 +3,7 @@ import json
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core import serializers
+from django.core.exceptions import PermissionDenied
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import (
     render,
@@ -25,7 +26,10 @@ from forecast.models import (
     FinancialPeriod,
     MonthlyFigure,
 )
-from forecast.permission_shortcuts import get_objects_for_user
+from forecast.permission_shortcuts import (
+    NoForecastViewPermission,
+    get_objects_for_user,
+)
 from forecast.tables import (
     ForecastTable,
 )
@@ -48,10 +52,13 @@ class ChooseCostCentreView(UserPassesTestMixin, FormView):
     cost_centre = None
 
     def test_func(self):
-        cost_centres = get_objects_for_user(
-            self.request.user,
-            "costcentre.change_costcentre",
-        )
+        try:
+            cost_centres = get_objects_for_user(
+                self.request.user,
+                "costcentre.change_costcentre",
+            )
+        except NoForecastViewPermission:
+            raise PermissionDenied()
 
         # If user has permission on
         # one or more CCs then let them view
