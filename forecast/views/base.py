@@ -12,7 +12,7 @@ class NoCostCentreCodeInURLError(Exception):
     pass
 
 
-class ForecastViewPermissionTest(UserPassesTestMixin):
+class ForecastViewPermissionMixin(UserPassesTestMixin):
     cost_centre_code = None
 
     def test_func(self):

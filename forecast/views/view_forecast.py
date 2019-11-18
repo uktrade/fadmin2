@@ -30,7 +30,7 @@ from forecast.tables import (
     ForecastSubTotalTable,
     ForecastTable,
 )
-from forecast.views.base import ForecastViewPermissionTest
+from forecast.views.base import ForecastViewPermissionMixin
 
 
 TEST_COST_CENTRE = 888812
@@ -60,7 +60,7 @@ natural_account_columns = {
 
 
 class PivotClassView(
-    ForecastViewPermissionTest,
+    ForecastViewPermissionMixin,
     FidoExportMixin,
     SingleTableView,
 ):
@@ -91,7 +91,7 @@ class PivotClassView(
 
 
 class CostClassView(
-    ForecastViewPermissionTest,
+    ForecastViewPermissionMixin,
     FidoExportMixin,
     SingleTableView,
 ):
@@ -197,7 +197,7 @@ def get_forecast_table():
 
 
 class MultiForecastView(
-    ForecastViewPermissionTest,
+    ForecastViewPermissionMixin,
     MultiTableMixin,
     TemplateView,
 ):
@@ -230,7 +230,7 @@ def pivot_test1(request):
 
 
 class DITView(
-    ForecastViewPermissionTest,
+    ForecastViewPermissionMixin,
     MultiTableMixin,
     TemplateView,
 ):
@@ -248,7 +248,7 @@ class DITView(
 
 
 class GroupView(
-    ForecastViewPermissionTest,
+    ForecastViewPermissionMixin,
     MultiTableMixin,
     TemplateView,
 ):
@@ -273,7 +273,7 @@ class GroupView(
 
 
 class DirectorateView(
-    ForecastViewPermissionTest,
+    ForecastViewPermissionMixin,
     MultiTableMixin,
     TemplateView,
 ):
@@ -312,7 +312,7 @@ class DirectorateView(
 
 
 class CostCentreView(
-    ForecastViewPermissionTest,
+    ForecastViewPermissionMixin,
     MultiTableMixin,
     TemplateView,
 ):
