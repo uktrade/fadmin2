@@ -9,8 +9,6 @@ from django.core.files import File
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from forecast.permission_shortcuts import assign_perm
-
 from chartofaccountDIT.test.factories import (
     Analysis1Factory,
     Analysis2Factory,
@@ -32,6 +30,7 @@ from forecast.models import (
     ForecastPermission,
     MonthlyFigure,
 )
+from forecast.permission_shortcuts import assign_perm
 from forecast.test.factories import (
     ForecastPermissionFactory,
     MonthlyFigureFactory,

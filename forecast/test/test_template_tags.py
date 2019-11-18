@@ -1,17 +1,16 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from forecast.permission_shortcuts import assign_perm
-
 from costcentre.test.factories import (
     CostCentreFactory,
 )
 
-from forecast.test.factories import ForecastPermissionFactory
+from forecast.permission_shortcuts import assign_perm
 from forecast.templatetags.forecast_permissions import (
     has_edit_permission,
     is_forecast_user,
 )
+from forecast.test.factories import ForecastPermissionFactory
 from forecast.views.edit_forecast import (
     TEST_COST_CENTRE,
 )

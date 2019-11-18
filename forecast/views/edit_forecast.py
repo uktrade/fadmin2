@@ -11,8 +11,6 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
-from forecast.permission_shortcuts import get_objects_for_user
-
 from costcentre.forms import (
     MyCostCentresForm,
 )
@@ -27,6 +25,7 @@ from forecast.models import (
     FinancialPeriod,
     MonthlyFigure,
 )
+from forecast.permission_shortcuts import get_objects_for_user
 from forecast.tables import (
     ForecastTable,
 )

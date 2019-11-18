@@ -23,7 +23,6 @@ from costcentre.models import (
 )
 from costcentre.models import DepartmentalGroup
 
-from forecast.views.base import ForecastViewPermissionTest
 from forecast.models import (
     MonthlyFigure,
 )
@@ -31,6 +30,7 @@ from forecast.tables import (
     ForecastSubTotalTable,
     ForecastTable,
 )
+from forecast.views.base import ForecastViewPermissionTest
 
 
 TEST_COST_CENTRE = 888812

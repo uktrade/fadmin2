@@ -1,10 +1,10 @@
+from django.contrib.auth import get_user_model
+from django.test import TestCase
+
 from guardian.shortcuts import (
     assign_perm as guardian_assign_perm,
     get_objects_for_user as guardian_get_objects_for_user,
 )
-
-from django.contrib.auth import get_user_model
-from django.test import TestCase
 
 from costcentre.test.factories import (
     CostCentreFactory,
@@ -12,9 +12,9 @@ from costcentre.test.factories import (
 
 from forecast.models import ForecastPermission
 from forecast.permission_shortcuts import (
+    NoForecastViewPermission,
     assign_perm,
     get_objects_for_user,
-    NoForecastViewPermission,
 )
 from forecast.test.factories import ForecastPermissionFactory
 from forecast.views.edit_forecast import (
