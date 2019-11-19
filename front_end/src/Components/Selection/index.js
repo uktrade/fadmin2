@@ -36,27 +36,30 @@ const Selection = () => {
                 height: (last.y - initial.y) + initial.height
             }
         } else {
+            console.log("Bottom to top")
+            console.log("left to right")
+            console.log(last.x - initial.x)
             styles = {
                 left : initial.x + window.scrollX,
-                top: initial.y + window.scrollY,
+                top: last.y + window.scrollY,
                 width: (last.x - initial.x) + initial.width,
-                height: (last.y - initial.y) + initial.height
+                height: (initial.y - last.y) + initial.height
             }
         }
     } else { // RIGHT_TO_LEFT
         if (verticalDirection === TOP_TO_BOTTOM) {
             styles = {
                 left : last.x + window.scrollX,
-                top: last.y + window.scrollY,
-                width: (initial.x - last.x) + last.width,
-                height: (initial.y - last.y) + last.height
+                top: initial.y + window.scrollY,
+                width: (initial.x - last.x) + initial.width,
+                height: (last.y - initial.y) + initial.height
             }
         } else {
             styles = {
-                left : initial.x + window.scrollX,
-                top: initial.y + window.scrollY,
-                width: (last.x - initial.x) + initial.width,
-                height: (last.y - initial.y) + initial.height
+                left : last.x + window.scrollX,
+                top: last.y + window.scrollY,
+                width: (initial.x - last.x),
+                height: (initial.y - last.y)
             }
         }
     }

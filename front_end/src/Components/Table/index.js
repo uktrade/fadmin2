@@ -60,16 +60,6 @@ function Table({rowData, cellCount}) {
           return element.id === cellId
         });
 
-
-        // TODO - reinstate after figuring out issue
-        // let newRows = update(rows, {[row]: {
-        //             [cellIndex]: {
-        //                 [property]: {$set: value}
-        //             }
-        //         }
-        //     }
-        // )
-
         let newRows = [...rows];
         newRows[row][cellIndex][property] = value
 
@@ -108,64 +98,6 @@ function Table({rowData, cellCount}) {
                 last: rect
             })
         );
-        // let newRows = [...rows];
-
-        // if (editCellRef.current) {
-        //     let cellIndex = getCellIndex(editCellRef.current.id, editCellRef.current.row)
-            
-        //     let newRows = update(rows, {[row]: {
-        //                 [cellIndex]: {
-        //                     ["editing"]: {$set: false}
-        //                 }
-        //             }
-        //         }
-        //     )
-
-        //     setRows(newRows);
-        // }
-
-        // for (let selected of selectedCellsRef.current) {
-        //     let cellIndex = getCellIndex(selected.id, selected.row)
-        //     newRows[selected.row][cellIndex]["selected"] = false
-        // }
-
-        // let cellIndex = getCellIndex(cellId, row)
-        // newRows[row][cellIndex]["selected"] = true
-
-        // setRows(newRows);
-
-
-
-        
-
-        // selectedCellsRef.current = [{
-        //     "id": cellId,
-        //     "row": row
-        // }]
-
-        // dispatch(
-        //     SET_INITIAL({
-        //         initial: rect
-        //     })
-        // );
-
-        // dispatch(
-        //     SET_LAST({
-        //         last: rect
-        //     })
-        // );
-
-        // setInitialSelection({
-        //     "id": cellId,
-        //     "row": row,
-        //     "col": col
-        // })
-
-        // setlastSelection({
-        //     "id": cellId,
-        //     "row": row,
-        //     "col": col
-        // })
     }
 
     const mouseUpOnCell = (cellId, row, col) => {
@@ -241,40 +173,7 @@ function Table({rowData, cellCount}) {
             let initial = getCellData(initialSelection.id, initialSelection.row)
             let last = getCellData(lastSelection.id, lastSelection.row)
         }
-
-        // bottom: 149
-        // height: 46
-        // left: 255
-        // right: 367
-        // top: 103
-        // width: 112
-        // x: 255
-        // y: 103
     }
-
-    console.log("Rendering table...")
-
-
-    // const updateSelection = (cellRects) => {
-
-    //     let startX = 0
-    //     let startY = 0
-
-    //     for (let rect of cellRects) {
-    //         if (rect.x) < 
-    //     }
-    // }
-
-    // const memoizedEditingCallback = useCallback(
-    //     () => {
-    //         if (editCellId === cellId) {
-    //             setIsEditing(true)
-    //         }
-    //     },
-    //     [editCellId],
-    // );
-
-
 
     return (
         <Fragment>
@@ -297,7 +196,12 @@ function Table({rowData, cellCount}) {
                 <caption className="govuk-table__caption">Edit forecast</caption>
                 <thead className="govuk-table__head">
                     <TableRow index="0">
+                        <th></th>
+                        <th className="govuk-table__header ">Natural Account Code</th>
                         <th className="govuk-table__header ">Programme</th>
+                        <th className="govuk-table__header ">Analysis Code Sector</th>
+                        <th className="govuk-table__header ">Analysis Code Market</th>
+                        <th className="govuk-table__header ">Project Code</th>
                         <ColumnHeader colKey="apr">Apr</ColumnHeader>
                         <ColumnHeader colKey="may">May</ColumnHeader>
                         <ColumnHeader colKey="jun">Jun</ColumnHeader>
@@ -316,9 +220,25 @@ function Table({rowData, cellCount}) {
                     {rows.map((rowData, rowIndex) => {
                         //console.log("rowData from table...", rowData)
                         return <TableRow key={rowIndex} index={(rowIndex + 1)}>
-                            <TableHandle rowIndex={rowIndex}>{
-                                rowData["programme__programme_code"]} - {rowData["programme__programme_description"]}
+                            <TableHandle rowIndex={rowIndex}>
+                                H
                             </TableHandle>
+                            <td>
+                                {rowData["nac"]}
+                            </td>
+                            <td>
+                                {rowData["programmeCode"]}
+                            </td>
+
+                            <td>
+                                {rowData["analysis1"]}
+                            </td>
+                            <td>
+                                {rowData["analysis2"]}
+                            </td>
+                            <td>
+                                {rowData["projectCode"]}
+                            </td>
                             {rowData.map((cell, cellIndex) => {
                                 //console.log("cell key", cell.key.toLowerCase())
 

@@ -57,8 +57,11 @@ function ForecastTable() {
                     editable: editable,
                     selected: false,
                     editing: false,
-                    programmeCode: rowdata["programme__programme_code"],
-                    naturalAccountCode: rowdata["natural_account_code__natural_account_code"]
+                    programmeCode: `${rowData["programme__programme_description"]} - ${rowData["programme__programme_code"]}`,
+                    nac: `${rowData["programme__programme_description"]} - ${rowData["programme__programme_code"]}`,
+                    analysis1: "analysis 1",
+                    analysis2: "analysis 2",
+                    projectCode: `${rowData["project_code__project_description"]} - ${rowData["project_code__project_code"]}`
                 }
 
                 if (months.includes(cell.key.toLowerCase())) {
