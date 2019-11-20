@@ -4,15 +4,18 @@ import Table from '../../Components/Table/index'
 import Selection from '../../Components/Selection/index'
 import EditCell from '../../Components/EditCell/index'
 
+import { useDispatch } from 'react-redux';
+import { SET_CELL_COUNT } from '../../Reducers/CellCount'
+
 import {
     getCellId,
     months
 } from '../../Util'
 
 function ForecastTable() {
+    const dispatch = useDispatch();
 
     const [rowData, setRowData] = useState([]);
-    const [cellCount, setCellCount] = useState(0);
 
     const timer = () => {
             setTimeout(() => {
@@ -76,15 +79,22 @@ function ForecastTable() {
         });
 
         setRowData(rows)
-        console.log("cellCounter", cellCounter)
-        setCellCount(cellCounter)
+
+        dispatch(
+            SET_CELL_COUNT({
+                "cellCount": cellCounter
+            })
+        );
     }
 
     return (
         <Fragment>
+            <a href="">Show natural account code</a>
+            <a href="">Show natural account code</a>
+
             <EditCell />
             <Selection />
-            <Table rowData={rowData} cellCount={cellCount} />
+            <Table rowData={rowData} />
         </Fragment>
     );
 }

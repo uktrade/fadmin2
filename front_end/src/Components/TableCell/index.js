@@ -88,6 +88,7 @@ const TableCell = ({index, cellId, initialValue, selected, selectInitialCell, ro
                 }}
 
                 onMouseOver={ () => {
+                    console.log(value)
                     mouseOverCell(cellId, row, col, cellRef.current.getBoundingClientRect())
                 }}
 
@@ -99,20 +100,9 @@ const TableCell = ({index, cellId, initialValue, selected, selectInitialCell, ro
                     selectInitialCell(cellId, row, col, cellRef.current.getBoundingClientRect())
                 }}
             >
-                {1 == 2 ? (
-                    <input
-                        className="cell-input"
-                        ref={inputRef}
-                        type="text"
-                        value={value}
-                        onChange={e => setContentState(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                    />
-                ) : (
-                    <Fragment>
-                        {value}
-                    </Fragment>
-                )}
+                <Fragment>
+                    {value}
+                </Fragment>
             </td>
         </Fragment>
     );

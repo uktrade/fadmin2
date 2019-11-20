@@ -4,19 +4,8 @@ import { createSlice } from 'redux-starter-kit';
 const select = createSlice({
     slice: 'select',
     initialState: {
-        useOffset: true,
-        initial: {
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0,
-        },
-        last: {
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0
-        }
+        showNAC: true,
+        showProg: true
     },
     reducers: {
         SET_INITIAL: (state, action) => {

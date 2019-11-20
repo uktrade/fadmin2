@@ -10,6 +10,7 @@ const Selection = () => {
 
     const initial = useSelector(state => state.select.initial);
     const last = useSelector(state => state.select.last);
+    const useOffset = useSelector(state => state.select.useOffset);
 
     let horizontalDirection = LEFT_TO_RIGHT;
     let verticalDirection = TOP_TO_BOTTOM;
@@ -27,21 +28,26 @@ const Selection = () => {
         verticalDirection = BOTTOM_TO_TOP
     }
 
+    let offSetX = 0
+    let offSetY = 0
+
+    if (useOffset) {
+        offSetX = window.scrollX
+        offSetY = window.scrollY
+    }
+
     if (horizontalDirection === LEFT_TO_RIGHT) {
         if (verticalDirection === TOP_TO_BOTTOM) {
             styles = {
-                left : initial.x + window.scrollX,
-                top: initial.y + window.scrollY,
+                left : initial.x + offSetX,
+                top: initial.y + offSetY,
                 width: (last.x - initial.x) + initial.width,
                 height: (last.y - initial.y) + initial.height
             }
         } else {
-            console.log("Bottom to top")
-            console.log("left to right")
-            console.log(last.x - initial.x)
             styles = {
-                left : initial.x + window.scrollX,
-                top: last.y + window.scrollY,
+                left : initial.x + offSetX,
+                top: last.y + offSetY,
                 width: (last.x - initial.x) + initial.width,
                 height: (initial.y - last.y) + initial.height
             }
@@ -49,15 +55,15 @@ const Selection = () => {
     } else { // RIGHT_TO_LEFT
         if (verticalDirection === TOP_TO_BOTTOM) {
             styles = {
-                left : last.x + window.scrollX,
-                top: initial.y + window.scrollY,
+                left : last.x + offSetX,
+                top: initial.y + offSetY,
                 width: (initial.x - last.x) + initial.width,
                 height: (last.y - initial.y) + initial.height
             }
         } else {
             styles = {
-                left : last.x + window.scrollX,
-                top: last.y + window.scrollY,
+                left : last.x + offSetX,
+                top: last.y + offSetY,
                 width: (initial.x - last.x),
                 height: (initial.y - last.y)
             }
@@ -65,10 +71,7 @@ const Selection = () => {
     }
 
     return (
-        <div style={styles} className="selection">
-
-            
-        </div>
+        <div style={styles} className="selection"></div>
     )
 }
 

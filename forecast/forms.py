@@ -143,3 +143,7 @@ class UploadActualsForm(forms.Form):
             "aria-describedby": "year-hint year-error",
         }
     )
+
+
+class PasteForecastRowForm(forms.Form):
+    pass

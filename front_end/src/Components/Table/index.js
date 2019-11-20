@@ -1,23 +1,15 @@
 import React, {Fragment, useState, useEffect, useRef, memo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import TableRow from '../../Components/TableRow/index'
 import TableCell from '../../Components/TableCell/index'
-import TableHandle from '../../Components/TableHandle/index'
 import ColumnHeader from '../../Components/ColumnHeader/index'
-import { SET_INITIAL, SET_LAST } from '../../Reducers/Select'
+import { SET_INITIAL, SET_LAST, SET_USE_OFFSET } from '../../Reducers/Select'
 
 import {
     months
 } from '../../Util'
 
-/* TODO
-List of selected cells
-Pasting
-Copying
-Cut down cell loop to relevant cells
-*/
-
-function Table({rowData, cellCount}) {
+function Table({rowData}) {
     const dispatch = useDispatch();
 
     const [errorMessage, setErrorMessage] = useState(null);
@@ -32,6 +24,7 @@ function Table({rowData, cellCount}) {
     const [initialSelection, setInitialSelection] = useState([])
     const [lastSelection, setlastSelection] = useState([])
 
+    const cellCount = useSelector(state => state.cellCount.cellCount);
 
     useEffect(() => {
         window.addEventListener("mousedown", captureMouseDn);
@@ -77,16 +70,15 @@ function Table({rowData, cellCount}) {
 
     const mouseOverCell = (cellId, row, col, lastRect) => {
         if (mouseRef.current) {
-                dispatch(
-                    SET_LAST({
-                        last: lastRect
-                    })
-                );
-           }
+            dispatch(
+                SET_LAST({
+                    last: lastRect
+                })
+            );
+       }
     }
 
     const selectInitialCell = (cellId, row, col, rect) => {
-
         dispatch(
             SET_INITIAL({
                 initial: rect
@@ -98,6 +90,12 @@ function Table({rowData, cellCount}) {
                 last: rect
             })
         );
+
+        dispatch(
+            SET_USE_OFFSET({
+                useOffset: true
+            })
+        )
     }
 
     const mouseUpOnCell = (cellId, row, col) => {
@@ -126,9 +124,30 @@ function Table({rowData, cellCount}) {
         mouseRef.current = true
     }
 
-    const setRect = (cellId, row, rect) => {
-        //console.log("Setitng rect...", cellCount, rects.length)
+    const selectRow = (rowIndex) => {
+        let initial = rows[rowIndex][0]
+        let last = rows[rowIndex][11]
 
+        dispatch(
+            SET_INITIAL({
+                initial: initial.rect
+            })
+        )
+
+        dispatch(
+            SET_LAST({
+                last: last.rect
+            })
+        )
+
+        dispatch(
+            SET_USE_OFFSET({
+                useOffset: false
+            })
+        )
+    }
+
+    const setRect = (cellId, row, rect) => {
         rects.push(rect)
 
         if (cellCount === rects.length) {
@@ -145,6 +164,7 @@ function Table({rowData, cellCount}) {
             })
 
             setRows(newRows);
+            console.log("ROWS", newRows)
         }
     }
 
@@ -161,12 +181,6 @@ function Table({rowData, cellCount}) {
         return cellIndex
     }
 
-    const [selectionArea, setSelectionArea] = useState({
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0
-    });
 
     const createSelectionArea = () => {
         if (mouseRef.current && initialSelection && lastSelection) {
@@ -218,11 +232,14 @@ function Table({rowData, cellCount}) {
                 </thead>
                 <tbody className="govuk-table__body">
                     {rows.map((rowData, rowIndex) => {
-                        //console.log("rowData from table...", rowData)
                         return <TableRow key={rowIndex} index={(rowIndex + 1)}>
-                            <TableHandle rowIndex={rowIndex}>
+                            <td className="handle govuk-table__cell indicate-action"
+                                onClick={() => { 
+                                    selectRow(rowIndex);
+                                }
+                            }>
                                 H
-                            </TableHandle>
+                            </td>
                             <td>
                                 {rowData["nac"]}
                             </td>

@@ -5,6 +5,7 @@ import { mouse } from './Reducers/Mouse';
 import allCells from './Reducers/Cells';
 import edit from './Reducers/Edit'
 import select from './Reducers/Select'
+import cellCount from './Reducers/CellCount'
 
 // const persistConfig = {
 //     key: 'root',
@@ -17,6 +18,7 @@ const appReducer = combineReducers({
     allCells,
     edit,
     select,
+    cellCount,
 });
 
 // const persistedReducer = persistReducer(persistConfig, appReducer)
