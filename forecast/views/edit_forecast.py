@@ -244,25 +244,75 @@ class PasteForecastView(
                 )
                 break
             else:
+                pass
 
+                # monthly_figure = MonthlyFigure.objects.filter(
+                #     cost_centre__cost_centre_code=cost_centre_code,
+                #     financial_year__financial_year=financial_year,
+                #     financial_period__period_short_name__iexact=cell["key"],
+                #     programme__programme_code=cell["programmeCode"],
+                #     natural_account_code__natural_account_code=cell[
+                #         "naturalAccountCode"
+                #     ],
+                # ).first()
+                # monthly_figure.amount = int(float(cell["value"]))
+                # monthly_figure.save()
 
         return super(PasteForecastView, self).form_valid(form)
 
     def get_success_url(self):
         return reverse(
             "edit_prototype",
-            # kwargs={
-            #     'cost_centre_code': self.cost_centre.cost_centre_code
-            # }
+            kwargs={
+                'cost_centre_code': self.cost_centre_code
+            }
         )
 
 
-def edit_forecast_prototype(request):
+class EditForecastPrototypeView(
+    CostCentrePermissionTest,
+    TemplateView,
+):
+    template_name = "forecast/edit/edit_prototype.html"
     financial_year = TEST_FINANCIAL_YEAR
-    cost_centre_code = TEST_COST_CENTRE
 
-    if request.method == "POST":
-        form = EditForm(request.POST)
+    def cost_centre_details(self):
+        return {
+            "group": "Test group",
+            "directorate": "Test directorate",
+            "cost_centre_name": "Test cost centre name",
+            "cost_centre_num": self.cost_centre_code,
+        }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        form = EditForm(
+            initial={
+                "financial_year": self.financial_year,
+                "cost_centre_code": self.cost_centre_code,
+            }
+        )
+
+        pivot_filter = {"cost_centre__cost_centre_code": "{}".format(
+            self.cost_centre_code
+        )}
+        monthly_figures = MonthlyFigure.pivot.pivot_data({}, pivot_filter)
+
+        # TODO - Luisella to restrict to financial year
+        actuals_periods = list(FinancialPeriod.objects.filter(actual_loaded=True).all())
+        actuals_periods_dump = serializers.serialize("json", actuals_periods)
+        forecast_dump = json.dumps(list(monthly_figures), cls=DjangoJSONEncoder)
+        paste_form = PasteForecastForm()
+
+        context["form"] = form
+        context["paste_form"] = paste_form
+        context["actuals_periods_dump"] = actuals_periods_dump
+        context["forecast_dump"] = forecast_dump
+        return context
+
+    def post(self):
+        form = EditForm(self.request.POST)
         if form.is_valid():
             cost_centre_code = form.cleaned_data["cost_centre_code"]
             financial_year = form.cleaned_data["financial_year"]
@@ -282,32 +332,3 @@ def edit_forecast_prototype(request):
                     ).first()
                     monthly_figure.amount = int(float(cell["value"]))
                     monthly_figure.save()
-    else:
-        form = EditForm(
-            initial={
-                "financial_year": financial_year,
-                "cost_centre_code": cost_centre_code,
-            }
-        )
-    pivot_filter = {"cost_centre__cost_centre_code": "{}".format(cost_centre_code)}
-    monthly_figures = MonthlyFigure.pivot.pivot_data({}, pivot_filter)
-
-    # TODO - Luisella to restrict to financial year
-    actuals_periods = list(FinancialPeriod.objects.filter(actual_loaded=True).all())
-
-    actuals_periods_dump = serializers.serialize("json", actuals_periods)
-
-    forecast_dump = json.dumps(list(monthly_figures), cls=DjangoJSONEncoder)
-
-    paste_form = PasteForecastForm()
-
-    return render(
-        request,
-        "forecast/edit/edit_prototype.html",
-        {
-            "form": form,
-            "paste_form": paste_form,
-            "actuals_periods_dump": actuals_periods_dump,
-            "forecast_dump": forecast_dump,
-        },
-    )
