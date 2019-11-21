@@ -125,6 +125,8 @@ class AddRowView(CostCentrePermissionTest, FormView):
     def form_valid(self, form):
         self.get_cost_centre()
         data = form.cleaned_data
+
+        # Don't add months that are actuals
         for financial_period in range(1, 13):
             monthly_figure = MonthlyFigure(
                 financial_year_id=self.financial_year_id,
@@ -216,7 +218,7 @@ class PasteForecastRowView(
 
     @has_upload_permission
     def dispatch(self, *args, **kwargs):
-        return super(UploadActualsView, self).dispatch(*args, **kwargs)
+        return super(PasteForecastRowView, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
@@ -225,23 +227,7 @@ class PasteForecastRowView(
         if form.is_valid():
             data = form.cleaned_data
 
-            file_upload = FileUpload(
-                document_file=request.FILES['file'],
-                uploading_user=request.user,
-            )
-            file_upload.save()
-            # Process file async
 
-            if settings.ASYNC_FILE_UPLOAD:
-                process_uploaded_file.delay(
-                    data['period'].period_calendar_code,
-                    data['year'].financial_year,
-                )
-            else:
-                process_uploaded_file(
-                    data['period'].period_calendar_code,
-                    data['year'].financial_year,
-                )
 
             return self.form_valid(form)
         else:

@@ -1,103 +1,41 @@
-import React, {Fragment, useState, useEffect, useRef, memo } from 'react';
-import { useDispatch } from 'react-redux';
-import { SET_EDIT_CELL } from '../../Reducers/Edit'
+import React, {Fragment, useState, useEffect, useRef, memo } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 
-const TableCell = ({index, cellId, initialValue, selected, selectInitialCell, row, col, mouseOverCell, mouseUpOnCell, setRect}) => {
+const TableCell = ({cell, isHidden}) => {
     const dispatch = useDispatch();
 
-    let cellRef = React.createRef();
-    const inputRef = useRef(null);
-    const [value, setValue] = useState(initialValue);
-
-    //const [rect, setRect] = useState(null);
-
-    // console.log("Re-rendering...");
-
-    // const selectCell = () => {
-    //     if (window.mouseDown) {
-    //         dispatch(
-    //             SELECT_CELL({
-    //                 id: cellId
-    //             })
-    //         );
-
-    //         dispatch(
-    //             SET_LAST_CELL({
-    //                 id: cellId
-    //             })
-    //         );
-    //     }
-    // }
-
-    useEffect(() => {
-        setRect(cellId, row, cellRef.current.getBoundingClientRect())
-    }, [])
-
-    // useEffect(() => {
-    //     if (inputRef && inputRef.current) {
-    //         inputRef.current.focus();
-    //     }
-    // });
+    const [value, setValue] = useState(cell.value);
+    const selectedRow = useSelector(state => state.selected.selectedRow);
 
     const isSelected = () => {
-        // let cellData = thisCell;
-
-        // if (cellData && cellData.selected) {
-        //     return true;
-        // }
-
-        // return false
-
-        return false
+        return (selectedRow === cell.rowIndex)
     }
 
-    const handleKeyPress = (event) => {
-        // if(event.key === 'Enter'){
-        //     dispatch({
-        //         type: SET_EDIT_CELL,
-        //         cellId: null
-        //     });
-        // }
-    }
+    const getClasses = () => {
+        let hiddenResult = '';
 
-    //console.log("re-render cell")
-
-    const setContentState = (value) => {
-        if (!parseInt(value)) {
-            return
+        if (isHidden) {
+            hiddenResult = isHidden(cell.key) ? ' hidden' : ''
         }
-
-        setValue(value)
+        return "govuk-table__cell " + (isSelected() ? 'selected' : '') + hiddenResult
     }
-
-    //sconsole.log("Cell ids: ",editCellId, cellId)
 
     return (
         <Fragment>
             <td
-                className={selected ? 'highlight govuk-table__cell' : 'no-select govuk-table__cell'}
-                ref={cellRef}
+                className={getClasses()}
+
                 onDoubleClick={ () => {
-                    console.log("cellId", cellId)
-                    dispatch(
-                        SET_EDIT_CELL({
-                            rect: cellRef.current.getBoundingClientRect(),
-                            content: value
-                        })
-                    )
+                    console.log("cellId", cell.id)
                 }}
 
                 onMouseOver={ () => {
                     console.log(value)
-                    mouseOverCell(cellId, row, col, cellRef.current.getBoundingClientRect())
+
                 }}
 
                 onMouseUp={ () => {
-                    mouseUpOnCell(cellId, row, col)
-                }}
 
-                onMouseDown={ () => {
-                    selectInitialCell(cellId, row, col, cellRef.current.getBoundingClientRect())
                 }}
             >
                 <Fragment>
@@ -110,9 +48,8 @@ const TableCell = ({index, cellId, initialValue, selected, selectInitialCell, ro
 
 const comparisonFn = function(prevProps, nextProps) {
     return (
-        prevProps.editing === nextProps.editing &&
-        prevProps.selected === nextProps.selected
+        prevProps.selectedRow === nextProps.selectedRow
     )
 };
 
-export default memo(TableCell, comparisonFn);
+export default TableCell // memo(TableCell, comparisonFn);

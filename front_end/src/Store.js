@@ -1,12 +1,10 @@
 import { createStore, combineReducers } from 'redux';
 // import { persistReducer } from 'redux-persist';
 // import storage from 'redux-persist/lib/storage';
-import { mouse } from './Reducers/Mouse';
-import allCells from './Reducers/Cells';
-import edit from './Reducers/Edit'
-import select from './Reducers/Select'
-import cellCount from './Reducers/CellCount'
 
+import allCells from './Reducers/Cells';
+import selected from './Reducers/Selected';
+import showHideCols from './Reducers/ShowHideCols';
 // const persistConfig = {
 //     key: 'root',
 //     //transforms: [encryptor],
@@ -14,11 +12,9 @@ import cellCount from './Reducers/CellCount'
 // }
 
 const appReducer = combineReducers({
-    mouse,
+	selected,
     allCells,
-    edit,
-    select,
-    cellCount,
+    showHideCols,
 });
 
 // const persistedReducer = persistReducer(persistConfig, appReducer)

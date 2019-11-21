@@ -1,9 +1,8 @@
 import React, {Fragment, useState, useEffect, useRef, memo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import TableRow from '../../Components/TableRow/index'
 import TableCell from '../../Components/TableCell/index'
-import ColumnHeader from '../../Components/ColumnHeader/index'
-import { SET_INITIAL, SET_LAST, SET_USE_OFFSET } from '../../Reducers/Select'
+import TableHeader from '../../Components/TableHeader/index'
+import { SET_SELECTED_ROW } from '../../Reducers/Selected'
 
 import {
     months
@@ -14,29 +13,19 @@ function Table({rowData}) {
 
     const [errorMessage, setErrorMessage] = useState(null);
 
-    const mouseRef = useRef(false);
-    const editCellRef = useRef(null)
-
-    const rects = []
-
     const [rows, setRows] = useState([]);
 
-    const [initialSelection, setInitialSelection] = useState([])
-    const [lastSelection, setlastSelection] = useState([])
-
-    const cellCount = useSelector(state => state.cellCount.cellCount);
-
     useEffect(() => {
-        window.addEventListener("mousedown", captureMouseDn);
-        window.addEventListener("mouseup", captureMouseUp);
-        // window.addEventListener("paste", capturePaste);
+        //window.addEventListener("mousedown", captureMouseDn);
+        //window.addEventListener("mouseup", captureMouseUp);
+        window.addEventListener("paste", capturePaste);
         // window.addEventListener("keydown", handleKeyDown);
         // window.addEventListener("copy", setClipBoardContent);
 
         return () => {
-           window.removeEventListener("onmouseup", captureMouseUp);
-            window.removeEventListener("mousedown", captureMouseDn);
-            // window.removeEventListener("paste", capturePaste);
+           //window.removeEventListener("onmouseup", captureMouseUp);
+            //window.removeEventListener("mousedown", captureMouseDn);
+            window.removeEventListener("paste", capturePaste);
             // window.removeEventListener("keydown", handleKeyDown);
             // window.removeEventListener("copy", setClipBoardContent);
         };
@@ -48,145 +37,34 @@ function Table({rowData}) {
         setRows(rowData)
     }, [rowData]);
 
-    const updateRow = (cellId, row, property, value=true) => {
-        let cellIndex = rows[row].findIndex(function(element) {
-          return element.id === cellId
-        });
+    const nac = useSelector(state => state.showHideCols.nac);
+    const programme = useSelector(state => state.showHideCols.programme);
+    const analysis1 = useSelector(state => state.showHideCols.analysis1);
+    const analysis2 = useSelector(state => state.showHideCols.analysis2);
+    const projectCode = useSelector(state => state.showHideCols.projectCode);
 
-        let newRows = [...rows];
-        newRows[row][cellIndex][property] = value
-
-        setRows(newRows);
-    }
-
-    const removeFromSelected = (arr, cellId) => {
-        var index = arr.findIndex(cell => cell.id === cellId);
-        if (index > -1) {
-            arr.splice(index, 1);
+    const isHidden = (key) => {
+        if (!nac && key === "cost_centre__cost_centre_code") {
+            return true
         }
 
-        return index
-    }
-
-    const mouseOverCell = (cellId, row, col, lastRect) => {
-        if (mouseRef.current) {
-            dispatch(
-                SET_LAST({
-                    last: lastRect
-                })
-            );
-       }
-    }
-
-    const selectInitialCell = (cellId, row, col, rect) => {
-        dispatch(
-            SET_INITIAL({
-                initial: rect
-            })
-        );
-
-        dispatch(
-            SET_LAST({
-                last: rect
-            })
-        );
-
-        dispatch(
-            SET_USE_OFFSET({
-                useOffset: true
-            })
-        )
-    }
-
-    const mouseUpOnCell = (cellId, row, col) => {
-        //setlastSelection([cellId, row, col])
-    }
-
-    const editCell = (cellId, row) => {
-        let newRows = [...rows];
-
-        let cellIndex = getCellIndex(cellId, row)
-        newRows[row][cellIndex]["editing"] = true
-
-        editCellRef.current = {
-            id: cellId,
-            row: row
+        if (!programme && key === "programme__programme_code") {
+            return true
         }
 
-        //setRows(newRows)
-    }
+        // if (!analysis1 && key === "cost_centre__cost_centre_code") {
+        //     return true
+        // }
 
-    const captureMouseUp = (e) => {
-        mouseRef.current = false
-    }
+        // if (!analysis2 && key === "cost_centre__cost_centre_code") {
+        //     return true
+        // }
 
-    const captureMouseDn = (e) => {
-        mouseRef.current = true
-    }
-
-    const selectRow = (rowIndex) => {
-        let initial = rows[rowIndex][0]
-        let last = rows[rowIndex][11]
-
-        dispatch(
-            SET_INITIAL({
-                initial: initial.rect
-            })
-        )
-
-        dispatch(
-            SET_LAST({
-                last: last.rect
-            })
-        )
-
-        dispatch(
-            SET_USE_OFFSET({
-                useOffset: false
-            })
-        )
-    }
-
-    const setRect = (cellId, row, rect) => {
-        rects.push(rect)
-
-        if (cellCount === rects.length) {
-            let newRows = [...rows];
-            let rectCounter = 0
-
-            newRows.forEach(function (row, i) {
-                row.forEach(function (cellData, j) {
-                    if (months.includes(cellData.key.toLowerCase())) {
-                        newRows[i][j]["rect"] = rects[rectCounter]
-                        rectCounter++
-                    }
-                })
-            })
-
-            setRows(newRows);
-            console.log("ROWS", newRows)
+        if (!projectCode && key === "project_code__project_code") {
+            return true
         }
-    }
 
-    const getCellData = (cellId, row) => {
-        let index = getCellIndex(cellId, row)
-        return rows[row][index]
-    }
-
-    const getCellIndex = (cellId, row) => {
-        var cellIndex = rows[row].findIndex(function(element) {
-          return element.id === cellId
-        });
-
-        return cellIndex
-    }
-
-
-    const createSelectionArea = () => {
-        if (mouseRef.current && initialSelection && lastSelection) {
-            let initial = getCellData(initialSelection.id, initialSelection.row)
-            let last = getCellData(lastSelection.id, lastSelection.row)
-        }
+        return false
     }
 
     return (
@@ -209,73 +87,60 @@ function Table({rowData}) {
                 className="govuk-table" id="forecast-table">
                 <caption className="govuk-table__caption">Edit forecast</caption>
                 <thead className="govuk-table__head">
-                    <TableRow index="0">
+                    <tr index="0">
                         <th></th>
-                        <th className="govuk-table__header ">Natural Account Code</th>
-                        <th className="govuk-table__header ">Programme</th>
-                        <th className="govuk-table__header ">Analysis Code Sector</th>
-                        <th className="govuk-table__header ">Analysis Code Market</th>
-                        <th className="govuk-table__header ">Project Code</th>
-                        <ColumnHeader colKey="apr">Apr</ColumnHeader>
-                        <ColumnHeader colKey="may">May</ColumnHeader>
-                        <ColumnHeader colKey="jun">Jun</ColumnHeader>
-                        <ColumnHeader colKey="jul">Jul</ColumnHeader>
-                        <ColumnHeader colKey="aug">Aug</ColumnHeader>
-                        <ColumnHeader colKey="sep">Sep</ColumnHeader>
-                        <ColumnHeader colKey="oct">Oct</ColumnHeader>
-                        <ColumnHeader colKey="nov">Nov</ColumnHeader>
-                        <ColumnHeader colKey="dec">Dec</ColumnHeader>
-                        <ColumnHeader colKey="jan">Jan</ColumnHeader>
-                        <ColumnHeader colKey="feb">Feb</ColumnHeader>
-                        <ColumnHeader colKey="mar">Mar</ColumnHeader>
-                    </TableRow>
+                        <TableHeader isHidden={isHidden} headerType="cost_centre__cost_centre_code">Natural Account Code</TableHeader>
+                        <TableHeader isHidden={isHidden} headerType="programme__programme_code">Programme</TableHeader>
+                        <TableHeader isHidden={isHidden} headerType="a1">Analysis Code Sector</TableHeader>
+                        <TableHeader isHidden={isHidden} headerType="a2">Analysis Code Market</TableHeader>
+                        <TableHeader isHidden={isHidden} headerType="project_code__project_code">Project Code</TableHeader>
+                        <th>Apr</th>
+                        <th>May</th>
+                        <th>Jun</th>
+                        <th>Jul</th>
+                        <th>Aug</th>
+                        <th>Sep</th>
+                        <th>Oct</th>
+                        <th>Nov</th>
+                        <th>Dec</th>
+                        <th>Jan</th>
+                        <th>Feb</th>
+                        <th>Mar</th>
+                    </tr>
                 </thead>
                 <tbody className="govuk-table__body">
-                    {rows.map((rowData, rowIndex) => {
-                        return <TableRow key={rowIndex} index={(rowIndex + 1)}>
+                    {rows.map((cells, rowIndex) => {
+                        return <tr key={rowIndex} index={(rowIndex + 1)}>
                             <td className="handle govuk-table__cell indicate-action"
                                 onClick={() => { 
-                                    selectRow(rowIndex);
+                                    console.log(rowIndex)
+                                    dispatch(
+                                        SET_SELECTED_ROW({
+                                            selectedRow: rowIndex
+                                        })
+                                    );
                                 }
                             }>
-                                H
+                                select
                             </td>
-                            <td>
-                                {rowData["nac"]}
-                            </td>
-                            <td>
-                                {rowData["programmeCode"]}
-                            </td>
-
-                            <td>
-                                {rowData["analysis1"]}
-                            </td>
-                            <td>
-                                {rowData["analysis2"]}
-                            </td>
-                            <td>
-                                {rowData["projectCode"]}
-                            </td>
-                            {rowData.map((cell, cellIndex) => {
-                                //console.log("cell key", cell.key.toLowerCase())
-
-                                if (months.includes(cell.key.toLowerCase())) {
-                                    return <TableCell
-                                        row={rowIndex}
-                                        col={cell.colIndex}
-                                        key={cellIndex}
-                                        index={cellIndex}
-                                        cellId={cell.id}
-                                        selected={cell.selected}
-                                        selectInitialCell={selectInitialCell}
-                                        initialValue={cell.value}
-                                        mouseOverCell={mouseOverCell}
-                                        mouseUpOnCell={mouseUpOnCell}
-                                        setRect={setRect}
-                                    />
-                                }
-                            })}
-                        </TableRow>
+                            <TableCell isHidden={isHidden} cell={cells["cost_centre__cost_centre_code"]} />
+                            <TableCell isHidden={isHidden} cell={cells["programme__programme_code"]} />
+                            <td>Analysis 1</td>
+                            <td>Analysis 2</td>
+                            <TableCell isHidden={isHidden} cell={cells["project_code__project_code"]} />
+                            <TableCell cell={cells["Apr"]} />
+                            <TableCell cell={cells["May"]} />
+                            <TableCell cell={cells["Jun"]} />
+                            <TableCell cell={cells["Jul"]} />
+                            <TableCell cell={cells["Aug"]} />
+                            <TableCell cell={cells["Sep"]} />
+                            <TableCell cell={cells["Oct"]} />
+                            <TableCell cell={cells["Nov"]} />
+                            <TableCell cell={cells["Dec"]} />
+                            <TableCell cell={cells["Jan"]} />
+                            <TableCell cell={cells["Feb"]} />
+                            <TableCell cell={cells["Mar"]} />
+                        </tr>
                     })}
                 </tbody>
             </table>
