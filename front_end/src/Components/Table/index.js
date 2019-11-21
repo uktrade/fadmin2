@@ -12,8 +12,8 @@ function Table({rowData}) {
     const dispatch = useDispatch();
 
     const [errorMessage, setErrorMessage] = useState(null);
-
     const [rows, setRows] = useState([]);
+    const selectedRow = useSelector(state => state.selected.selectedRow);
 
     useEffect(() => {
         //window.addEventListener("mousedown", captureMouseDn);
@@ -29,9 +29,16 @@ function Table({rowData}) {
             // window.removeEventListener("keydown", handleKeyDown);
             // window.removeEventListener("copy", setClipBoardContent);
         };
+    }, [selectedRow]);
 
+    const capturePaste = (event) => {
+        let clipBoardContent = event.clipboardData.getData('text/plain')
+        document.getElementById("id_paste_content").value = clipBoardContent
+        document.getElementById("id_pasted_at_row").value = selectedRow
 
-    }, []);
+        let form = document.getElementById("id_paste_data_form")
+        form.submit()
+    }
 
     useEffect(() => {
         setRows(rowData)
@@ -94,18 +101,18 @@ function Table({rowData}) {
                         <TableHeader isHidden={isHidden} headerType="a1">Analysis Code Sector</TableHeader>
                         <TableHeader isHidden={isHidden} headerType="a2">Analysis Code Market</TableHeader>
                         <TableHeader isHidden={isHidden} headerType="project_code__project_code">Project Code</TableHeader>
-                        <th>Apr</th>
-                        <th>May</th>
-                        <th>Jun</th>
-                        <th>Jul</th>
-                        <th>Aug</th>
-                        <th>Sep</th>
-                        <th>Oct</th>
-                        <th>Nov</th>
-                        <th>Dec</th>
-                        <th>Jan</th>
-                        <th>Feb</th>
-                        <th>Mar</th>
+                        <th className="govuk-table__header">Apr</th>
+                        <th className="govuk-table__header">May</th>
+                        <th className="govuk-table__header">Jun</th>
+                        <th className="govuk-table__header">Jul</th>
+                        <th className="govuk-table__header">Aug</th>
+                        <th className="govuk-table__header">Sep</th>
+                        <th className="govuk-table__header">Oct</th>
+                        <th className="govuk-table__header">Nov</th>
+                        <th className="govuk-table__header">Dec</th>
+                        <th className="govuk-table__header">Jan</th>
+                        <th className="govuk-table__header">Feb</th>
+                        <th className="govuk-table__header">Mar</th>
                     </tr>
                 </thead>
                 <tbody className="govuk-table__body">
@@ -125,8 +132,8 @@ function Table({rowData}) {
                             </td>
                             <TableCell isHidden={isHidden} cell={cells["cost_centre__cost_centre_code"]} />
                             <TableCell isHidden={isHidden} cell={cells["programme__programme_code"]} />
-                            <td>Analysis 1</td>
-                            <td>Analysis 2</td>
+                            <td className="govuk-table__cell">Analysis 1</td>
+                            <td className="govuk-table__cell">Analysis 2</td>
                             <TableCell isHidden={isHidden} cell={cells["project_code__project_code"]} />
                             <TableCell cell={cells["Apr"]} />
                             <TableCell cell={cells["May"]} />

@@ -13,11 +13,17 @@ const TableCell = ({cell, isHidden}) => {
 
     const getClasses = () => {
         let hiddenResult = '';
+        let editable = '';
 
         if (isHidden) {
             hiddenResult = isHidden(cell.key) ? ' hidden' : ''
         }
-        return "govuk-table__cell " + (isSelected() ? 'selected' : '') + hiddenResult
+
+        if (!cell.editable) {
+            editable = ' not-editable';
+        }
+
+        return "govuk-table__cell " + (isSelected() ? 'selected' : '') + hiddenResult + editable
     }
 
     return (

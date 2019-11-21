@@ -1,6 +1,8 @@
 import json
+import re
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core import serializers
 from django.core.exceptions import PermissionDenied
@@ -20,6 +22,7 @@ from costcentre.models import CostCentre
 from forecast.forms import (
     AddForecastRowForm,
     EditForm,
+    PasteForecastForm,
     UploadActualsForm,
 )
 from forecast.models import (
@@ -209,29 +212,49 @@ class UploadActualsView(FormView):
             return self.form_invalid(form)
 
 
-class PasteForecastRowView(
+class PasteForecastView(
     CostCentrePermissionTest,
     FormView,
 ):
-    form_class = UploadActualsForm
-    success_url = reverse_lazy("uploaded_files")
+    form_class = PasteForecastForm
+    cost_centre = None
 
-    @has_upload_permission
-    def dispatch(self, *args, **kwargs):
-        return super(PasteForecastRowView, self).dispatch(*args, **kwargs)
+    def form_valid(self, form):
+        paste_content = form.cleaned_data['paste_content']
+        pasted_at_row = form.cleaned_data['pasted_at_row']
 
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
+        rows = paste_content.splitlines()
 
-        if form.is_valid():
-            data = form.cleaned_data
+        # Check for header row
+        start = 0
+
+        if rows[0] == "Natural Account Code":
+            start = 1
+
+        for index, row in enumerate(rows, start=start):
+            cell_data = re.split(r'\t+', row.rstrip('\t'))
+
+            # Check cell data length against expected number of cols
+            if len(cell_data) != 17:
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    'Your pasted data does not match the expected '
+                    'format. There are not enough columns.',
+                )
+                break
+            else:
 
 
+        return super(PasteForecastView, self).form_valid(form)
 
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+    def get_success_url(self):
+        return reverse(
+            "edit_prototype",
+            # kwargs={
+            #     'cost_centre_code': self.cost_centre.cost_centre_code
+            # }
+        )
 
 
 def edit_forecast_prototype(request):
@@ -270,18 +293,21 @@ def edit_forecast_prototype(request):
     monthly_figures = MonthlyFigure.pivot.pivot_data({}, pivot_filter)
 
     # TODO - Luisella to restrict to financial year
-    editable_periods = list(FinancialPeriod.objects.filter(actual_loaded=False).all())
+    actuals_periods = list(FinancialPeriod.objects.filter(actual_loaded=True).all())
 
-    editable_periods_dump = serializers.serialize("json", editable_periods)
+    actuals_periods_dump = serializers.serialize("json", actuals_periods)
 
     forecast_dump = json.dumps(list(monthly_figures), cls=DjangoJSONEncoder)
+
+    paste_form = PasteForecastForm()
 
     return render(
         request,
         "forecast/edit/edit_prototype.html",
         {
             "form": form,
-            "editable_periods_dump": editable_periods_dump,
+            "paste_form": paste_form,
+            "actuals_periods_dump": actuals_periods_dump,
             "forecast_dump": forecast_dump,
         },
     )

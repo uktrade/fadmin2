@@ -35,12 +35,13 @@ function ForecastTable() {
             let cells = {}
             let colIndex = 0
             for (let key in rowdata) {
-                let editable = false;
+                let editable = true;
 
-                for (let i = 0; i < window.editable_periods.length; i++) {
-                    let shortName = window.editable_periods[i]["fields"]["period_short_name"];
-                    if (shortName && shortName.toLowerCase() == key) {
-                        editable = true;
+                for (let i = 0; i < window.actuals_periods.length; i++) {
+                    let shortName = window.actuals_periods[i]["fields"]["period_short_name"];
+
+                    if (shortName == key) {
+                        editable = false;
                         break;
                     }
                 }
@@ -50,6 +51,7 @@ function ForecastTable() {
                     index: cellIndex,
                     rowIndex: rowIndex,
                     colIndex: colIndex,
+                    editable: editable,
                     key: key,
                     value: rowdata[key],
                     programmeCode: `${rowData["programme__programme_description"]} - ${rowData["programme__programme_code"]}`,
@@ -64,6 +66,8 @@ function ForecastTable() {
             }
             rows.push(cells)
         });
+
+        console.log(rows)
 
         setRowData(rows)
     }
