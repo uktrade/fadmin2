@@ -1,11 +1,14 @@
 import React, {Fragment, useState, useEffect, useRef, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { SET_EDITING_CELL } from '../../Reducers/Edit'
+
 
 const TableCell = ({cell, isHidden}) => {
     const dispatch = useDispatch();
 
     const [value, setValue] = useState(cell.value);
     const selectedRow = useSelector(state => state.selected.selectedRow);
+    const editCellId = useSelector(state => state.edit.cellId);
 
     const isSelected = () => {
         return (selectedRow === cell.rowIndex)
@@ -26,12 +29,36 @@ const TableCell = ({cell, isHidden}) => {
         return "govuk-table__cell " + (isSelected() ? 'selected' : '') + hiddenResult + editable
     }
 
+    const handleKeyPress = (event) => {
+        console.log(event.key)
+        if(event.key === 'Enter'){
+            dispatch(
+                SET_EDITING_CELL({
+                    "cellId": null
+                })
+            );
+        }
+    }
+
+    const setContentState = (value) => {
+        if (!parseInt(value)) {
+            return
+        }
+
+        setValue(value)
+    }
+
     return (
         <Fragment>
             <td
                 className={getClasses()}
 
                 onDoubleClick={ () => {
+                    dispatch(
+                        SET_EDITING_CELL({
+                            "cellId": cell.id
+                        })
+                    );
                     console.log("cellId", cell.id)
                 }}
 
@@ -44,18 +71,22 @@ const TableCell = ({cell, isHidden}) => {
 
                 }}
             >
-                <Fragment>
-                    {value}
-                </Fragment>
+                {editCellId == cell.id ? (
+                    <input
+                        className="cell-input"
+                        type="text"
+                        value={value}
+                        onChange={e => setContentState(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                    />
+                ) : (
+                    <Fragment>
+                        {value}
+                    </Fragment>
+                )}
             </td>
         </Fragment>
     );
 }
 
-const comparisonFn = function(prevProps, nextProps) {
-    return (
-        prevProps.selectedRow === nextProps.selectedRow
-    )
-};
-
-export default TableCell // memo(TableCell, comparisonFn);
+export default TableCell

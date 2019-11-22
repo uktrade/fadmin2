@@ -5,7 +5,8 @@ import TableHeader from '../../Components/TableHeader/index'
 import { SET_SELECTED_ROW } from '../../Reducers/Selected'
 
 import {
-    months
+    months,
+    postData
 } from '../../Util'
 
 function Table({rowData}) {
@@ -31,13 +32,29 @@ function Table({rowData}) {
         };
     }, [selectedRow]);
 
-    const capturePaste = (event) => {
+    async function capturePaste(event) {
         let clipBoardContent = event.clipboardData.getData('text/plain')
-        document.getElementById("id_paste_content").value = clipBoardContent
-        document.getElementById("id_pasted_at_row").value = selectedRow
-
         let form = document.getElementById("id_paste_data_form")
-        form.submit()
+
+        console.log(clipBoardContent)
+        console.log("selectedRow", selectedRow)
+
+        let payload = new FormData();
+        payload.append("pasted_at_row", selectedRow)
+        payload.append("paste_content", clipBoardContent)
+
+
+        const response = await postData(
+            '/forecast/paste-forecast/888812/',
+            payload
+        );
+        //const test = await response.json();
+        if (response.error) {
+            console.log(response["error"])
+        } else {
+            console.log(response)
+        }
+        
     }
 
     useEffect(() => {

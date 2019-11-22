@@ -5,6 +5,7 @@ import { createStore, combineReducers } from 'redux';
 import allCells from './Reducers/Cells';
 import selected from './Reducers/Selected';
 import showHideCols from './Reducers/ShowHideCols';
+import edit from './Reducers/Edit';
 // const persistConfig = {
 //     key: 'root',
 //     //transforms: [encryptor],
@@ -15,6 +16,7 @@ const appReducer = combineReducers({
 	selected,
     allCells,
     showHideCols,
+    edit,
 });
 
 // const persistedReducer = persistReducer(persistConfig, appReducer)

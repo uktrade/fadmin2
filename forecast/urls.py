@@ -3,10 +3,9 @@ from django.urls import path
 from forecast.views.edit_forecast import (
     AddRowView,
     ChooseCostCentreView,
-    EditForecastPrototypeView,
     EditForecastView,
-    PasteForecastView,
     UploadActualsView,
+    pasted_forecast_content,
 )
 from forecast.views.view_forecast import (
     CostCentreView,
@@ -33,11 +32,6 @@ urlpatterns = [
         "add/<int:cost_centre_code>/",
         AddRowView.as_view(),
         name="add_forecast_row",
-    ),
-    path(
-        "edit-prototype/<cost_centre_code>/",
-        EditForecastPrototypeView.as_view(),
-        name="edit_prototype",
     ),
     path(
         "choose-cost-centre/",
@@ -71,7 +65,7 @@ urlpatterns = [
     ),
     path(
         "paste-forecast/<cost_centre_code>/",
-        PasteForecastView.as_view(),
+        pasted_forecast_content,
         name="paste_forecast"
     ),
 ]

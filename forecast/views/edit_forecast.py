@@ -7,10 +7,9 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core import serializers
 from django.core.exceptions import PermissionDenied
 from django.core.serializers.json import DjangoJSONEncoder
-from django.shortcuts import (
-    render,
-)
+from django.http import JsonResponse
 from django.urls import reverse, reverse_lazy
+from django.views.decorators.http import require_http_methods
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
@@ -147,32 +146,6 @@ class AddRowView(CostCentrePermissionTest, FormView):
         return super().form_valid(form)
 
 
-class EditForecastView(CostCentrePermissionTest, TemplateView):
-    template_name = "forecast/edit/edit.html"
-
-    def cost_centre_details(self):
-        return {
-            "group": "Test group",
-            "directorate": "Test directorate",
-            "cost_centre_name": "Test cost centre name",
-            "cost_centre_num": self.cost_centre_code,
-        }
-
-    def table(self):
-        field_dict = {
-            "cost_centre__directorate": "Directorate",
-            "cost_centre__directorate__directorate_name": "Name",
-            "natural_account_code": "NAC",
-            "cost_centre": self.cost_centre_code,
-        }
-
-        q1 = MonthlyFigure.pivot.pivot_data(
-            field_dict.keys(), {"cost_centre": self.cost_centre_code}
-        )
-
-        return ForecastTable(field_dict, q1)
-
-
 class UploadActualsView(FormView):
     template_name = "forecast/file_upload.html"
     form_class = UploadActualsForm
@@ -212,14 +185,15 @@ class UploadActualsView(FormView):
             return self.form_invalid(form)
 
 
-class PasteForecastView(
-    CostCentrePermissionTest,
-    FormView,
-):
-    form_class = PasteForecastForm
-    cost_centre = None
+# TODO permission decorator
+@require_http_methods(["POST", ])
+def pasted_forecast_content(request, cost_centre_code):
+    form = PasteForecastForm(
+        request.POST,
+    )
+    if form.is_valid():
+        # TODO check user has permission on cost centre
 
-    def form_valid(self, form):
         paste_content = form.cleaned_data['paste_content']
         pasted_at_row = form.cleaned_data['pasted_at_row']
 
@@ -234,46 +208,48 @@ class PasteForecastView(
         for index, row in enumerate(rows, start=start):
             cell_data = re.split(r'\t+', row.rstrip('\t'))
 
+            test = len(cell_data)
+
             # Check cell data length against expected number of cols
-            if len(cell_data) != 17:
-                messages.add_message(
-                    self.request,
-                    messages.ERROR,
-                    'Your pasted data does not match the expected '
-                    'format. There are not enough columns.',
-                )
-                break
+            if len(cell_data) != 16:
+                return JsonResponse({
+                    'error': 'Your pasted data does not '
+                             'match the expected format. '
+                             'There are not enough columns.'
+                })
             else:
-                pass
+                        # monthly_figure = MonthlyFigure.objects.filter(
+                        #     cost_centre__cost_centre_code=cost_centre_code,
+                        #     financial_year__financial_year=financial_year,
+                        #     financial_period__period_short_name__iexact=cell["key"],
+                        #     programme__programme_code=cell["programmeCode"],
+                        #     natural_account_code__natural_account_code=cell[
+                        #         "naturalAccountCode"
+                        #     ],
+                        # ).first()
+                        # monthly_figure.amount = int(float(cell["value"]))
+                        # monthly_figure.save()
 
-                # monthly_figure = MonthlyFigure.objects.filter(
-                #     cost_centre__cost_centre_code=cost_centre_code,
-                #     financial_year__financial_year=financial_year,
-                #     financial_period__period_short_name__iexact=cell["key"],
-                #     programme__programme_code=cell["programmeCode"],
-                #     natural_account_code__natural_account_code=cell[
-                #         "naturalAccountCode"
-                #     ],
-                # ).first()
-                # monthly_figure.amount = int(float(cell["value"]))
-                # monthly_figure.save()
+                pivot_filter = {"cost_centre__cost_centre_code": "{}".format(
+                    cost_centre_code
+                )}
+                monthly_figures = MonthlyFigure.pivot.pivot_data({}, pivot_filter)
+                forecast_dump = list(monthly_figures)
 
-        return super(PasteForecastView, self).form_valid(form)
+                return JsonResponse(forecast_dump, safe=False)
+    else:
 
-    def get_success_url(self):
-        return reverse(
-            "edit_prototype",
-            kwargs={
-                'cost_centre_code': self.cost_centre_code
-            }
-        )
+        return JsonResponse({
+            'error': 'There was a problem with your '
+                     'submission, please contact support'
+        })
 
 
-class EditForecastPrototypeView(
+class EditForecastView(
     CostCentrePermissionTest,
     TemplateView,
 ):
-    template_name = "forecast/edit/edit_prototype.html"
+    template_name = "forecast/edit/edit.html"
     financial_year = TEST_FINANCIAL_YEAR
 
     def cost_centre_details(self):

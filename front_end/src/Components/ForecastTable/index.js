@@ -67,8 +67,6 @@ function ForecastTable() {
             rows.push(cells)
         });
 
-        console.log(rows)
-
         setRowData(rows)
     }
 
