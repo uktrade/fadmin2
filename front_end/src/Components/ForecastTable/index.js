@@ -16,7 +16,7 @@ function ForecastTable() {
 
     const [rowData, setRowData] = useState([]);
     const errorMessage = useSelector(state => state.error.errorMessage)
-    const selectedRows = useSelector(state => state.selected.selectedRows)
+    const selectedRow = useSelector(state => state.selected.selectedRow)
     const allSelected = useSelector(state => state.selected.all)
 
     const timer = () => {
@@ -38,7 +38,7 @@ function ForecastTable() {
         if (!event)
             return
 
-        if (selectedRows.length == 0 && !allSelected) {
+        if (!selectedRow && !allSelected) {
             return
         }
 
@@ -54,15 +54,20 @@ function ForecastTable() {
         let payload = new FormData()
         payload.append("paste_content", clipBoardContent)
 
-        if (selectedRow) {
-            payload.append("pasted_at_row", JSON.stringify(rowData[selectedRow]))
-        }
-
-        console.log("allSelected", allSelected)
 
         if (allSelected) {
             payload.append("all_selected", allSelected)
+        } else {
+
+            if (selectedRow) {
+                payload.append("pasted_at_row", JSON.stringify(rowData[selectedRow]))
+            }
         }
+
+
+        console.log("allSelected", allSelected)
+
+
 
         setRowData([])
 
@@ -99,7 +104,7 @@ function ForecastTable() {
             // window.removeEventListener("keydown", handleKeyDown);
             // window.removeEventListener("copy", setClipBoardContent);
         };
-    }, [setRowData, selectedRows, allSelected]);
+    }, [setRowData, selectedRow, allSelected]);
 
     // async function capturePaste(event) {
     //     let clipBoardContent = event.clipboardData.getData('text/plain')

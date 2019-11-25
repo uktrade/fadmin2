@@ -9,7 +9,7 @@ const TableCell = ({cell, isHidden}) => {
     const [value, setValue] = useState(cell.value);
     const editCellId = useSelector(state => state.edit.cellId);
 
-    const selectedRows = useSelector(state => state.selected.selectedRows);
+    const selectedRow = useSelector(state => state.selected.selectedRow);
     const allSelected = useSelector(state => state.selected.all);
 
     const isSelected = () => {
@@ -17,11 +17,7 @@ const TableCell = ({cell, isHidden}) => {
             return true
         }
 
-        if (!selectedRows) {
-            return null
-        }
-
-        return selectedRows.indexOf(cell.rowIndex) > -1
+        return selectedRow === cell.rowIndex
     }
 
     const getClasses = () => {

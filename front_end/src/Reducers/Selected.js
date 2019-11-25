@@ -4,20 +4,19 @@ import { createSlice } from 'redux-starter-kit';
 const selected = createSlice({
     slice: 'select',
     initialState: {
-        selectedRows: [],
+        selectedRow: null,
         all: false
     },
     reducers: {
         SET_SELECTED_ROW: (state, action) => {
             state.all = false
-            state.selectedRows = []
-            state.selectedRows.push(action.payload.selectedRow)
+            state.selectedRow = action.payload.selectedRow
         },
         SELECT_ALL: (state, action) => {
             state.all = true
         },
         UNSELECT_ALL: (state, action) => {
-            state.selectedRows = []
+            state.selectedRow = null
             state.all = false
         },
     }
