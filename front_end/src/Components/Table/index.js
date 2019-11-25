@@ -6,60 +6,22 @@ import { SET_SELECTED_ROW } from '../../Reducers/Selected'
 
 import {
     months,
-    postData
+    processForecastData,
 } from '../../Util'
 
 function Table({rowData}) {
+
+    console.log("rowData", rowData)
+
     const dispatch = useDispatch();
 
-    const [errorMessage, setErrorMessage] = useState(null);
-    const [rows, setRows] = useState([]);
-    const selectedRow = useSelector(state => state.selected.selectedRow);
+    const [errorMessage, setErrorMessage] = useState(null)
+    //const [rows, setRows] = useState(rowData)
+    const selectedRow = useSelector(state => state.selected.selectedRow)
 
-    useEffect(() => {
-        //window.addEventListener("mousedown", captureMouseDn);
-        //window.addEventListener("mouseup", captureMouseUp);
-        window.addEventListener("paste", capturePaste);
-        // window.addEventListener("keydown", handleKeyDown);
-        // window.addEventListener("copy", setClipBoardContent);
-
-        return () => {
-           //window.removeEventListener("onmouseup", captureMouseUp);
-            //window.removeEventListener("mousedown", captureMouseDn);
-            window.removeEventListener("paste", capturePaste);
-            // window.removeEventListener("keydown", handleKeyDown);
-            // window.removeEventListener("copy", setClipBoardContent);
-        };
-    }, [selectedRow]);
-
-    async function capturePaste(event) {
-        let clipBoardContent = event.clipboardData.getData('text/plain')
-        let form = document.getElementById("id_paste_data_form")
-
-        console.log(clipBoardContent)
-        console.log("selectedRow", selectedRow)
-
-        let payload = new FormData();
-        payload.append("pasted_at_row", selectedRow)
-        payload.append("paste_content", clipBoardContent)
-
-
-        const response = await postData(
-            '/forecast/paste-forecast/888812/',
-            payload
-        );
-        //const test = await response.json();
-        if (response.error) {
-            console.log(response["error"])
-        } else {
-            console.log(response)
-        }
-        
-    }
-
-    useEffect(() => {
-        setRows(rowData)
-    }, [rowData]);
+    // useEffect(() => {
+    //     setRows(rowData)
+    // }, [rowData]);
 
     const nac = useSelector(state => state.showHideCols.nac);
     const programme = useSelector(state => state.showHideCols.programme);
@@ -113,7 +75,7 @@ function Table({rowData}) {
                 <thead className="govuk-table__head">
                     <tr index="0">
                         <th></th>
-                        <TableHeader isHidden={isHidden} headerType="cost_centre__cost_centre_code">Natural Account Code</TableHeader>
+                        <TableHeader isHidden={isHidden} headerType="natural_account_code__natural_account_code">Natural Account Code</TableHeader>
                         <TableHeader isHidden={isHidden} headerType="programme__programme_code">Programme</TableHeader>
                         <TableHeader isHidden={isHidden} headerType="a1">Analysis Code Sector</TableHeader>
                         <TableHeader isHidden={isHidden} headerType="a2">Analysis Code Market</TableHeader>
@@ -133,7 +95,7 @@ function Table({rowData}) {
                     </tr>
                 </thead>
                 <tbody className="govuk-table__body">
-                    {rows.map((cells, rowIndex) => {
+                    {rowData.map((cells, rowIndex) => {
                         return <tr key={rowIndex} index={(rowIndex + 1)}>
                             <td className="handle govuk-table__cell indicate-action"
                                 onClick={() => { 
@@ -147,10 +109,10 @@ function Table({rowData}) {
                             }>
                                 select
                             </td>
-                            <TableCell isHidden={isHidden} cell={cells["cost_centre__cost_centre_code"]} />
+                            <TableCell isHidden={isHidden} cell={cells["natural_account_code__natural_account_code"]} />
                             <TableCell isHidden={isHidden} cell={cells["programme__programme_code"]} />
-                            <td className="govuk-table__cell">Analysis 1</td>
-                            <td className="govuk-table__cell">Analysis 2</td>
+                            <TableCell isHidden={isHidden} cell={cells["analysis1_code__analysis1_code"]} />
+                            <TableCell isHidden={isHidden} cell={cells["analysis2_code__analysis2_code"]} />
                             <TableCell isHidden={isHidden} cell={cells["project_code__project_code"]} />
                             <TableCell cell={cells["Apr"]} />
                             <TableCell cell={cells["May"]} />
@@ -172,10 +134,10 @@ function Table({rowData}) {
     );
 }
 
-const comparisonFn = function(prevProps, nextProps) {
-    return (
-        prevProps.rowData === nextProps.rowData
-    )
-};
+// const comparisonFn = function(prevProps, nextProps) {
+//     return (
+//         prevProps.rowData === nextProps.rowData
+//     )
+// };
 
-export default memo(Table, comparisonFn);
+export default Table //memo(Table, comparisonFn);

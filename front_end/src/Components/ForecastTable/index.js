@@ -1,22 +1,26 @@
 import React, {Fragment, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Table from '../../Components/Table/index'
-import { useDispatch } from 'react-redux';
 import { TOGGLE_NAC, TOGGLE_PROG } from '../../Reducers/ShowHideCols'
-
 import {
     getCellId,
-    months
+    months,
+    postData,
+    processForecastData
 } from '../../Util'
+
 
 function ForecastTable() {
     const dispatch = useDispatch();
 
     const [rowData, setRowData] = useState([]);
+    const selectedRow = useSelector(state => state.selected.selectedRow)
 
     const timer = () => {
             setTimeout(() => {
             if (window.table_data) {
-                loadData()
+                let rows = processForecastData(window.table_data)
+                setRowData(rows)
             } else {
                 timer()
             }
@@ -25,50 +29,95 @@ function ForecastTable() {
 
     useEffect(() => {
         timer()
-    }, [])
+    }, []);
 
-    const loadData = () => {
-        let cellCounter = -1
-        let cellIndex = 0;
-        let rows = [];
-        window.table_data.forEach(function (rowdata, rowIndex) {
-            let cells = {}
-            let colIndex = 0
-            for (let key in rowdata) {
-                let editable = true;
+    useEffect(() => {
+        const capturePaste = (event) => {
 
-                for (let i = 0; i < window.actuals_periods.length; i++) {
-                    let shortName = window.actuals_periods[i]["fields"]["period_short_name"];
+            if (!event)
+                return
 
-                    if (shortName == key) {
-                        editable = false;
-                        break;
-                    }
-                }
+            let clipBoardContent = event.clipboardData.getData('text/plain')
+            let form = document.getElementById("id_paste_data_form")
 
-                cells[key] = {
-                    id: getCellId(key, rowIndex),
-                    index: cellIndex,
-                    rowIndex: rowIndex,
-                    colIndex: colIndex,
-                    editable: editable,
-                    key: key,
-                    value: rowdata[key],
-                    programmeCode: `${rowData["programme__programme_description"]} - ${rowData["programme__programme_code"]}`,
-                    nac: `${rowData["natural_account_code__natural_account_code_description"]} - ${rowData["natural_account_code__natural_account_code"]}`,
-                    analysis1: "analysis 1",
-                    analysis2: "analysis 2",
-                    projectCode: `${rowData["project_code__project_description"]} - ${rowData["project_code__project_code"]}`
-                }
+            let payload = new FormData()
+            payload.append("paste_content", clipBoardContent)
 
-                cellIndex++
-                colIndex++
+
+
+            if (selectedRow) {
+                console.log("rowData[selectedRow]", rowData[selectedRow])
+                payload.append("pasted_at_row", JSON.stringify(rowData[selectedRow]))
             }
-            rows.push(cells)
-        });
 
-        setRowData(rows)
-    }
+            setRowData([])
+
+            const response = postData(
+                '/forecast/paste-forecast/888812/',
+                payload
+            ).then((response) => {
+                let rows = processForecastData(response)
+                setRowData(rows)
+            })
+            
+
+
+
+
+            // if (response.error) {
+            //     console.log(response["error"])
+            // } else {
+            //     console.log(response)
+            //     console.log("Processing response...")
+
+            //     let rows = processForecastData(response)
+            //     setRowData(rows)
+
+            //     console.log('Setting rows...')
+            // }
+
+            // setRowData([])
+        };
+        capturePaste();
+        //window.addEventListener("mousedown", captureMouseDn);
+        //window.addEventListener("mouseup", captureMouseUp);
+        document.addEventListener("paste", capturePaste)
+        // window.addEventListener("keydown", handleKeyDown);
+        // window.addEventListener("copy", setClipBoardContent);
+
+        return () => {
+           //window.removeEventListener("onmouseup", captureMouseUp);
+            //window.removeEventListener("mousedown", captureMouseDn);
+            document.removeEventListener("paste", capturePaste)
+            // window.removeEventListener("keydown", handleKeyDown);
+            // window.removeEventListener("copy", setClipBoardContent);
+        };
+    }, [setRowData, selectedRow]);
+
+    // async function capturePaste(event) {
+    //     let clipBoardContent = event.clipboardData.getData('text/plain')
+    //     let form = document.getElementById("id_paste_data_form")
+
+    //     let payload = new FormData()
+    //     payload.append("paste_content", clipBoardContent)
+
+    //     const response = await postData(
+    //         '/forecast/paste-forecast/888812/',
+    //         payload
+    //     );
+
+    //     if (response.error) {
+    //         console.log(response["error"])
+    //     } else {
+    //         console.log(response)
+    //         console.log("Processing response...")
+
+    //         let rows = processForecastData(response)
+    //         setRowData(rows)
+
+    //         console.log(rows)
+    //     }
+    // }
 
     return (
         <Fragment>

@@ -13,6 +13,8 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
+from core.utils import check_empty
+
 from costcentre.forms import (
     MyCostCentresForm,
 )
@@ -46,6 +48,10 @@ from upload_file.models import FileUpload
 
 TEST_COST_CENTRE = 888812
 TEST_FINANCIAL_YEAR = 2019
+
+
+class MismatchedRowException(Exception):
+    pass
 
 
 class ChooseCostCentreView(UserPassesTestMixin, FormView):
@@ -195,48 +201,79 @@ def pasted_forecast_content(request, cost_centre_code):
         # TODO check user has permission on cost centre
 
         paste_content = form.cleaned_data['paste_content']
-        pasted_at_row = form.cleaned_data['pasted_at_row']
+        pasted_at_row = None
+
+        if form.cleaned_data['pasted_at_row']:
+            pasted_at_row = json.loads(form.cleaned_data['pasted_at_row'])
 
         rows = paste_content.splitlines()
 
+        actuals_count = FinancialPeriod.objects.filter(
+            actual_loaded=True
+        ).count()
+        start_period = 1 + actuals_count
+
         # Check for header row
-        start = 0
-
+        start_row = 0
         if rows[0] == "Natural Account Code":
-            start = 1
+            start_row = 1
 
-        for index, row in enumerate(rows, start=start):
-            cell_data = re.split(r'\t+', row.rstrip('\t'))
+        num_meta_cols = 5
 
-            test = len(cell_data)
+        for index, row in enumerate(rows, start=start_row):
+            cell_data = re.split(r'\t', row.rstrip('\t'))
+
+            if index == 0:
+                # Check that pasted at content and desired first row match
+                if pasted_at_row:
+                    if (
+                        pasted_at_row["natural_account_code__natural_account_code"] != cell_data[0] or
+                        pasted_at_row["programme__programme_code"] != cell_data[1] or
+                        pasted_at_row["analysis1_code__analysis1_code"] != cell_data[2] or
+                        pasted_at_row["analysis2_code__analysis2_code"] != cell_data[3] or
+                        pasted_at_row["project_code__project_code"] != cell_data[4]
+                    ):
+                        return JsonResponse({
+                            'error': 'Your pasted data does not match your selected row.'
+                        })
 
             # Check cell data length against expected number of cols
-            if len(cell_data) != 16:
+            if len(cell_data) != 12 + num_meta_cols:
                 return JsonResponse({
                     'error': 'Your pasted data does not '
                              'match the expected format. '
                              'There are not enough columns.'
                 })
             else:
-                        # monthly_figure = MonthlyFigure.objects.filter(
-                        #     cost_centre__cost_centre_code=cost_centre_code,
-                        #     financial_year__financial_year=financial_year,
-                        #     financial_period__period_short_name__iexact=cell["key"],
-                        #     programme__programme_code=cell["programmeCode"],
-                        #     natural_account_code__natural_account_code=cell[
-                        #         "naturalAccountCode"
-                        #     ],
-                        # ).first()
-                        # monthly_figure.amount = int(float(cell["value"]))
-                        # monthly_figure.save()
+                for financial_period in range(start_period, 13):
+                    monthly_figure = MonthlyFigure.objects.filter(
+                        cost_centre__cost_centre_code=cost_centre_code,
+                        financial_year__financial_year=TEST_FINANCIAL_YEAR,
+                        financial_period__financial_period_code=financial_period,
+                        programme__programme_code=check_empty(cell_data[1]),
+                        natural_account_code__natural_account_code=cell_data[0],
+                        analysis1_code=check_empty(cell_data[2]),
+                        analysis2_code=check_empty(cell_data[3]),
+                        project_code=check_empty(cell_data[4]),
+                    ).first()
 
-                pivot_filter = {"cost_centre__cost_centre_code": "{}".format(
-                    cost_centre_code
-                )}
-                monthly_figures = MonthlyFigure.pivot.pivot_data({}, pivot_filter)
-                forecast_dump = list(monthly_figures)
+                    if not monthly_figure:
+                        raise MismatchedRowException(
+                            f"Cannot find matching row for: {cell_data}"
+                        )
 
-                return JsonResponse(forecast_dump, safe=False)
+                    new_value = int(cell_data[(num_meta_cols + financial_period) - 1])
+                    monthly_figure.amount = new_value  # * 100
+
+                    monthly_figure.save()
+
+        pivot_filter = {"cost_centre__cost_centre_code": "{}".format(
+            cost_centre_code
+        )}
+        monthly_figures = MonthlyFigure.pivot.pivot_data({}, pivot_filter)
+        forecast_dump = list(monthly_figures)
+
+        return JsonResponse(forecast_dump, safe=False)
     else:
 
         return JsonResponse({

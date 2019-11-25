@@ -69,3 +69,52 @@ export async function postData(url = '', data = {}) {
     });
     return await response.json(); // parses JSON response into native JavaScript objects
 }
+
+export const processForecastData = (forecastData) => {
+
+
+
+    console.log("forecastData", forecastData)
+
+    let cellCounter = -1
+    let cellIndex = 0;
+    let rows = [];
+
+    forecastData.forEach(function (rowData, rowIndex) {
+        let cells = {}
+        let colIndex = 0
+        for (let key in rowData) {
+            let editable = true;
+
+            for (let i = 0; i < window.actuals_periods.length; i++) {
+                let shortName = window.actuals_periods[i]["fields"]["period_short_name"];
+
+                if (shortName == key) {
+                    editable = false;
+                    break;
+                }
+            }
+
+            cells[key] = {
+                id: getCellId(key, rowIndex),
+                index: cellIndex,
+                rowIndex: rowIndex,
+                colIndex: colIndex,
+                editable: editable,
+                key: key,
+                value: rowData[key],
+                programmeCode: `${rowData["programme__programme_description"]} - ${rowData["programme__programme_code"]}`,
+                nac: `${rowData["natural_account_code__natural_account_code_description"]} - ${rowData["natural_account_code__natural_account_code"]}`,
+                analysis1: "analysis 1",
+                analysis2: "analysis 2",
+                projectCode: `${rowData["project_code__project_description"]} - ${rowData["project_code__project_code"]}`
+            }
+
+            cellIndex++
+            colIndex++
+        }
+        rows.push(cells)
+    });
+
+    return rows;
+}
