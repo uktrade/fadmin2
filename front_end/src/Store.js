@@ -6,6 +6,8 @@ import allCells from './Reducers/Cells';
 import selected from './Reducers/Selected';
 import showHideCols from './Reducers/ShowHideCols';
 import edit from './Reducers/Edit';
+import error from './Reducers/Error';
+
 // const persistConfig = {
 //     key: 'root',
 //     //transforms: [encryptor],
@@ -17,6 +19,7 @@ const appReducer = combineReducers({
     allCells,
     showHideCols,
     edit,
+    error,
 });
 
 // const persistedReducer = persistReducer(persistConfig, appReducer)

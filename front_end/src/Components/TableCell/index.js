@@ -7,11 +7,21 @@ const TableCell = ({cell, isHidden}) => {
     const dispatch = useDispatch();
 
     const [value, setValue] = useState(cell.value);
-    const selectedRow = useSelector(state => state.selected.selectedRow);
     const editCellId = useSelector(state => state.edit.cellId);
 
+    const selectedRows = useSelector(state => state.selected.selectedRows);
+    const allSelected = useSelector(state => state.selected.all);
+
     const isSelected = () => {
-        return (selectedRow === cell.rowIndex)
+        if (allSelected) {
+            return true
+        }
+
+        if (!selectedRows) {
+            return null
+        }
+
+        return selectedRows.indexOf(cell.rowIndex) > -1
     }
 
     const getClasses = () => {
@@ -30,7 +40,6 @@ const TableCell = ({cell, isHidden}) => {
     }
 
     const handleKeyPress = (event) => {
-        console.log(event.key)
         if(event.key === 'Enter'){
             dispatch(
                 SET_EDITING_CELL({
@@ -54,12 +63,14 @@ const TableCell = ({cell, isHidden}) => {
                 className={getClasses()}
 
                 onDoubleClick={ () => {
-                    dispatch(
-                        SET_EDITING_CELL({
-                            "cellId": cell.id
-                        })
-                    );
-                    console.log("cellId", cell.id)
+                    if (cell.isEditable) {
+                        dispatch(
+                            SET_EDITING_CELL({
+                                "cellId": cell.id
+                            })
+                        );
+                        console.log("cellId", cell.id)
+                    }
                 }}
 
                 onMouseOver={ () => {

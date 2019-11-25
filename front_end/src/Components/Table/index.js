@@ -2,7 +2,7 @@ import React, {Fragment, useState, useEffect, useRef, memo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TableCell from '../../Components/TableCell/index'
 import TableHeader from '../../Components/TableHeader/index'
-import { SET_SELECTED_ROW } from '../../Reducers/Selected'
+import { SET_SELECTED_ROW, SELECT_ALL } from '../../Reducers/Selected'
 
 import {
     months,
@@ -15,7 +15,7 @@ function Table({rowData}) {
 
     const dispatch = useDispatch();
 
-    const [errorMessage, setErrorMessage] = useState(null)
+
     //const [rows, setRows] = useState(rowData)
     const selectedRow = useSelector(state => state.selected.selectedRow)
 
@@ -55,26 +55,20 @@ function Table({rowData}) {
 
     return (
         <Fragment>
-            {errorMessage &&
-                <div className="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabIndex="-1" data-module="govuk-error-summary">
-                    <h2 className="govuk-error-summary__title" id="error-summary-title">
-                        There is a problem
-                    </h2>
-                    <div className="govuk-error-summary__body">
-                        <ul className="govuk-list govuk-error-summary__list">
-                            <li>
-                                <a href="#passport-issued-error">{errorMessage}</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            }
             <table
                 className="govuk-table" id="forecast-table">
                 <caption className="govuk-table__caption">Edit forecast</caption>
                 <thead className="govuk-table__head">
                     <tr index="0">
-                        <th></th>
+                        <td className="handle govuk-table__cell indicate-action"
+                            onClick={() => { 
+                                dispatch(
+                                    SELECT_ALL()
+                                );
+                            }
+                        }>
+                            select all
+                        </td>
                         <TableHeader isHidden={isHidden} headerType="natural_account_code__natural_account_code">Natural Account Code</TableHeader>
                         <TableHeader isHidden={isHidden} headerType="programme__programme_code">Programme</TableHeader>
                         <TableHeader isHidden={isHidden} headerType="a1">Analysis Code Sector</TableHeader>

@@ -2,6 +2,7 @@ import React, {Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Table from '../../Components/Table/index'
 import { TOGGLE_NAC, TOGGLE_PROG } from '../../Reducers/ShowHideCols'
+import { SET_ERROR } from '../../Reducers/Error'
 import {
     getCellId,
     months,
@@ -14,7 +15,9 @@ function ForecastTable() {
     const dispatch = useDispatch();
 
     const [rowData, setRowData] = useState([]);
-    const selectedRow = useSelector(state => state.selected.selectedRow)
+    const errorMessage = useSelector(state => state.error.errorMessage)
+    const selectedRows = useSelector(state => state.selected.selectedRows)
+    const allSelected = useSelector(state => state.selected.all)
 
     const timer = () => {
             setTimeout(() => {
@@ -31,53 +34,57 @@ function ForecastTable() {
         timer()
     }, []);
 
-    useEffect(() => {
-        const capturePaste = (event) => {
+    const capturePaste = (event) => {
+        if (!event)
+            return
 
-            if (!event)
-                return
+        if (selectedRows.length == 0 && !allSelected) {
+            return
+        }
 
-            let clipBoardContent = event.clipboardData.getData('text/plain')
-            let form = document.getElementById("id_paste_data_form")
-
-            let payload = new FormData()
-            payload.append("paste_content", clipBoardContent)
-
-
-
-            if (selectedRow) {
-                console.log("rowData[selectedRow]", rowData[selectedRow])
-                payload.append("pasted_at_row", JSON.stringify(rowData[selectedRow]))
-            }
-
-            setRowData([])
-
-            const response = postData(
-                '/forecast/paste-forecast/888812/',
-                payload
-            ).then((response) => {
-                let rows = processForecastData(response)
-                setRowData(rows)
+        dispatch(
+            SET_ERROR({
+                errorMessage: null
             })
-            
+        );
 
+        let clipBoardContent = event.clipboardData.getData('text/plain')
+        let form = document.getElementById("id_paste_data_form")
 
+        let payload = new FormData()
+        payload.append("paste_content", clipBoardContent)
 
+        if (selectedRow) {
+            payload.append("pasted_at_row", JSON.stringify(rowData[selectedRow]))
+        }
 
-            // if (response.error) {
-            //     console.log(response["error"])
-            // } else {
-            //     console.log(response)
-            //     console.log("Processing response...")
+        console.log("allSelected", allSelected)
 
-            //     let rows = processForecastData(response)
-            //     setRowData(rows)
+        if (allSelected) {
+            payload.append("all_selected", allSelected)
+        }
 
-            //     console.log('Setting rows...')
-            // }
+        setRowData([])
 
-            // setRowData([])
-        };
+        const response = postData(
+            '/forecast/paste-forecast/888812/',
+            payload
+        ).then((response) => {
+            if (response.status === 200) {
+                let rows = processForecastData(response.data)
+                setRowData(rows)
+            } else {
+                dispatch(
+                    SET_ERROR({
+                        errorMessage: response.data.error
+                    })
+                );
+                setRowData(window.rowCache)
+            }
+        })
+    };
+
+    useEffect(() => {
         capturePaste();
         //window.addEventListener("mousedown", captureMouseDn);
         //window.addEventListener("mouseup", captureMouseUp);
@@ -92,7 +99,7 @@ function ForecastTable() {
             // window.removeEventListener("keydown", handleKeyDown);
             // window.removeEventListener("copy", setClipBoardContent);
         };
-    }, [setRowData, selectedRow]);
+    }, [setRowData, selectedRows, allSelected]);
 
     // async function capturePaste(event) {
     //     let clipBoardContent = event.clipboardData.getData('text/plain')
@@ -121,6 +128,20 @@ function ForecastTable() {
 
     return (
         <Fragment>
+            {errorMessage != null &&
+                <div className="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabIndex="-1" data-module="govuk-error-summary">
+                  <h2 className="govuk-error-summary__title" id="error-summary-title">
+                    There is a problem
+                  </h2>
+                  <div className="govuk-error-summary__body">
+                    <ul className="govuk-list govuk-error-summary__list">
+                      <li>
+                        <a href="#passport-issued-error">{errorMessage}</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+            }
             <p>
                 <a
                     href="#"

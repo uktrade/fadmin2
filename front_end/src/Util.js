@@ -67,7 +67,13 @@ export async function postData(url = '', data = {}) {
         referrer: 'no-referrer', // no-referrer, *client
         body: data // body data type must match "Content-Type" header
     });
-    return await response.json(); // parses JSON response into native JavaScript objects
+
+    let jsonData = await response.json()
+
+    return {
+        status: response.status,
+        data: jsonData // parses JSON response into native JavaScript objects
+    }
 }
 
 export const processForecastData = (forecastData) => {
@@ -84,7 +90,12 @@ export const processForecastData = (forecastData) => {
         let cells = {}
         let colIndex = 0
         for (let key in rowData) {
-            let editable = true;
+
+            let editable = false;
+
+            if (months.indexOf(key.toLowerCase()) > 0) {
+                editable = true
+            }
 
             for (let i = 0; i < window.actuals_periods.length; i++) {
                 let shortName = window.actuals_periods[i]["fields"]["period_short_name"];
@@ -103,11 +114,12 @@ export const processForecastData = (forecastData) => {
                 editable: editable,
                 key: key,
                 value: rowData[key],
-                programmeCode: `${rowData["programme__programme_description"]} - ${rowData["programme__programme_code"]}`,
-                nac: `${rowData["natural_account_code__natural_account_code_description"]} - ${rowData["natural_account_code__natural_account_code"]}`,
-                analysis1: "analysis 1",
-                analysis2: "analysis 2",
-                projectCode: `${rowData["project_code__project_description"]} - ${rowData["project_code__project_code"]}`
+                isEditable: editable
+                // programmeCode: `${rowData["programme__programme_description"]} - ${rowData["programme__programme_code"]}`,
+                // nac: `${rowData["natural_account_code__natural_account_code_description"]} - ${rowData["natural_account_code__natural_account_code"]}`,
+                // analysis1: "analysis 1",
+                // analysis2: "analysis 2",
+                // projectCode: `${rowData["project_code__project_description"]} - ${rowData["project_code__project_code"]}`
             }
 
             cellIndex++
@@ -115,6 +127,8 @@ export const processForecastData = (forecastData) => {
         }
         rows.push(cells)
     });
+
+    window.rowCache = rows;
 
     return rows;
 }

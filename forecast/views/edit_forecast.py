@@ -202,16 +202,38 @@ def pasted_forecast_content(request, cost_centre_code):
 
         paste_content = form.cleaned_data['paste_content']
         pasted_at_row = None
+        all_selected = False
 
         if form.cleaned_data['pasted_at_row']:
             pasted_at_row = json.loads(form.cleaned_data['pasted_at_row'])
 
+        if form.cleaned_data['all_selected']:
+            all_selected = form.cleaned_data['all_selected']
+
         rows = paste_content.splitlines()
+
+        pivot_filter = {"cost_centre__cost_centre_code": "{}".format(
+            cost_centre_code
+        )}
+        output = MonthlyFigure.pivot.pivot_data({}, pivot_filter)
+        forecast_dump = list(output)
+
+        test = len(forecast_dump)
+        test1 = len(rows)
+
+        if all_selected and len(forecast_dump) != len(rows):
+            return JsonResponse({
+                'error': 'Your pasted data does not match the selected rows.'
+            },
+                status=400,
+            )
 
         actuals_count = FinancialPeriod.objects.filter(
             actual_loaded=True
         ).count()
         start_period = 1 + actuals_count
+
+        monthly_figures = []
 
         # Check for header row
         start_row = 0
@@ -229,13 +251,15 @@ def pasted_forecast_content(request, cost_centre_code):
                     if (
                         pasted_at_row["natural_account_code__natural_account_code"] != cell_data[0] or
                         pasted_at_row["programme__programme_code"] != cell_data[1] or
-                        pasted_at_row["analysis1_code__analysis1_code"] != cell_data[2] or
-                        pasted_at_row["analysis2_code__analysis2_code"] != cell_data[3] or
-                        pasted_at_row["project_code__project_code"] != cell_data[4]
+                        pasted_at_row["analysis1_code__analysis1_code"] != check_empty(cell_data[2]) or
+                        pasted_at_row["analysis2_code__analysis2_code"] != check_empty(cell_data[3]) or
+                        pasted_at_row["project_code__project_code"] != check_empty(cell_data[4])
                     ):
                         return JsonResponse({
                             'error': 'Your pasted data does not match your selected row.'
-                        })
+                            },
+                            status=400,
+                        )
 
             # Check cell data length against expected number of cols
             if len(cell_data) != 12 + num_meta_cols:
@@ -243,7 +267,9 @@ def pasted_forecast_content(request, cost_centre_code):
                     'error': 'Your pasted data does not '
                              'match the expected format. '
                              'There are not enough columns.'
-                })
+                    },
+                    status=400,
+                )
             else:
                 for financial_period in range(start_period, 13):
                     monthly_figure = MonthlyFigure.objects.filter(
@@ -258,28 +284,37 @@ def pasted_forecast_content(request, cost_centre_code):
                     ).first()
 
                     if not monthly_figure:
-                        raise MismatchedRowException(
-                            f"Cannot find matching row for: {cell_data}"
+                        return JsonResponse({
+                            'error': 'Cannot find matching row for one of your inputs, '
+                                     'please check your source material'
+                        },
+                            status=400,
                         )
 
                     new_value = int(cell_data[(num_meta_cols + financial_period) - 1])
                     monthly_figure.amount = new_value  # * 100
 
-                    monthly_figure.save()
+                    # Don't save yet in case there is an error
+                    monthly_figures.append(monthly_figure)
+
+        # Update monthly figures
+        for monthly_figure in monthly_figures:
+            monthly_figure.save()
 
         pivot_filter = {"cost_centre__cost_centre_code": "{}".format(
             cost_centre_code
         )}
-        monthly_figures = MonthlyFigure.pivot.pivot_data({}, pivot_filter)
-        forecast_dump = list(monthly_figures)
+        output = MonthlyFigure.pivot.pivot_data({}, pivot_filter)
+        forecast_dump = list(output)
 
         return JsonResponse(forecast_dump, safe=False)
     else:
-
         return JsonResponse({
             'error': 'There was a problem with your '
                      'submission, please contact support'
-        })
+        },
+            status=400,
+        )
 
 
 class EditForecastView(

@@ -146,6 +146,9 @@ class UploadActualsForm(forms.Form):
 
 
 class PasteForecastForm(forms.Form):
+    all_selected = forms.BooleanField(
+        required=False
+    )
     pasted_at_row = forms.CharField(
         widget=forms.HiddenInput(),
         required=False,
