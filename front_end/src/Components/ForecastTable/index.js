@@ -100,31 +100,6 @@ function ForecastTable() {
         };
     }, [setRowData, selectedRow, allSelected]);
 
-    // async function capturePaste(event) {
-    //     let clipBoardContent = event.clipboardData.getData('text/plain')
-    //     let form = document.getElementById("id_paste_data_form")
-
-    //     let payload = new FormData()
-    //     payload.append("paste_content", clipBoardContent)
-
-    //     const response = await postData(
-    //         '/forecast/paste-forecast/888812/',
-    //         payload
-    //     );
-
-    //     if (response.error) {
-    //         console.log(response["error"])
-    //     } else {
-    //         console.log(response)
-    //         console.log("Processing response...")
-
-    //         let rows = processForecastData(response)
-    //         setRowData(rows)
-
-    //         console.log(rows)
-    //     }
-    // }
-
     return (
         <Fragment>
             {errorMessage != null &&

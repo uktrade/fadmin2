@@ -297,7 +297,11 @@ def pasted_forecast_content(request, cost_centre_code):
                         analysis1_code=check_empty(cell_data[2]),
                         analysis2_code=check_empty(cell_data[3]),
                         project_code=check_empty(cell_data[4]),
-                    ).first()
+                    )
+
+                    print(monthly_figure.query)
+
+                    monthly_figure = monthly_figure.first()
 
                     if not monthly_figure:
                         return JsonResponse({
