@@ -1,22 +1,17 @@
-import React, {Fragment, useState, useEffect, useRef, memo } from 'react';
+import React, {Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TableCell from '../../Components/TableCell/index'
 import TableHeader from '../../Components/TableHeader/index'
 import { SET_SELECTED_ROW, SELECT_ALL } from '../../Reducers/Selected'
 
-import {
-    months,
-    processForecastData,
-} from '../../Util'
 
 function Table({rowData}) {
     const dispatch = useDispatch();
 
-    const selectedRow = useSelector(state => state.selected.selectedRow)
     const nac = useSelector(state => state.showHideCols.nac);
     const programme = useSelector(state => state.showHideCols.programme);
-    const analysis1 = useSelector(state => state.showHideCols.analysis1);
-    const analysis2 = useSelector(state => state.showHideCols.analysis2);
+    // const analysis1 = useSelector(state => state.showHideCols.analysis1);
+    // const analysis2 = useSelector(state => state.showHideCols.analysis2);
     const projectCode = useSelector(state => state.showHideCols.projectCode);
 
     const isHidden = (key) => {

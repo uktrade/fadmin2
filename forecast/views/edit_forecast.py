@@ -220,6 +220,8 @@ def pasted_forecast_content(request, cost_centre_code):
         if rows[0] == "Natural Account Code":
             start_row = 1
 
+        monthly_figures = []
+
         try:
             for index, row in enumerate(rows, start=start_row):
                 cell_data = re.split(r'\t', row.rstrip('\t'))
@@ -234,10 +236,12 @@ def pasted_forecast_content(request, cost_centre_code):
                 # Check cell data length against expected number of cols
                 check_cols_match(cell_data)
 
-                monthly_figures = get_monthly_figures(
+                row_monthly_figures = get_monthly_figures(
                     cost_centre_code,
                     cell_data,
                 )
+
+                monthly_figures.extend(row_monthly_figures)
         except (
                 ColMatchException,
                 RowMatchException,

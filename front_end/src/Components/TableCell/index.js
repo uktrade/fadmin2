@@ -1,4 +1,4 @@
-import React, {Fragment, useState, useEffect, useRef, memo } from 'react'
+import React, {Fragment, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { SET_EDITING_CELL } from '../../Reducers/Edit'
 
@@ -77,7 +77,7 @@ const TableCell = ({cell, isHidden}) => {
 
                 }}
             >
-                {editCellId == cell.id ? (
+                {editCellId === cell.id ? (
                     <input
                         className="cell-input"
                         type="text"

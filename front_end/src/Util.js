@@ -1,7 +1,3 @@
-import { store } from './Store';
-
-const state = store.getState();
-
 export const getCellId = (key, index) => {
     return "id_" + key + "_" + index;
 }
@@ -77,13 +73,14 @@ export async function postData(url = '', data = {}) {
 }
 
 export const processForecastData = (forecastData) => {
-    let cellCounter = -1
     let cellIndex = 0;
     let rows = [];
 
     forecastData.forEach(function (rowData, rowIndex) {
         let cells = {}
         let colIndex = 0
+
+        // eslint-disable-next-line
         for (let key in rowData) {
 
             let editable = false;
@@ -95,7 +92,7 @@ export const processForecastData = (forecastData) => {
             for (let i = 0; i < window.actuals_periods.length; i++) {
                 let shortName = window.actuals_periods[i]["fields"]["period_short_name"];
 
-                if (shortName == key) {
+                if (shortName === key) {
                     editable = false;
                     break;
                 }

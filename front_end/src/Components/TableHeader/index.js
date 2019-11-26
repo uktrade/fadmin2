@@ -1,5 +1,4 @@
-import React, {Fragment, useState, useEffect, useRef, memo } from 'react'
-import { isHidden } from '../../Util';
+import React from 'react'
 
 const TableHeader = ({children, headerType, isHidden}) => {
     return (
