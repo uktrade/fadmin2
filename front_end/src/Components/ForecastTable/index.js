@@ -38,7 +38,7 @@ function ForecastTable() {
         if (!event)
             return
 
-        if (!selectedRow && !allSelected) {
+        if (selectedRow < 0 && !allSelected) {
             return
         }
 
@@ -54,20 +54,14 @@ function ForecastTable() {
         let payload = new FormData()
         payload.append("paste_content", clipBoardContent)
 
-
         if (allSelected) {
             payload.append("all_selected", allSelected)
         } else {
 
-            if (selectedRow) {
+            if (selectedRow > -1) {
                 payload.append("pasted_at_row", JSON.stringify(rowData[selectedRow]))
             }
         }
-
-
-        console.log("allSelected", allSelected)
-
-
 
         setRowData([])
 

@@ -4,7 +4,7 @@ import { createSlice } from 'redux-starter-kit';
 const selected = createSlice({
     slice: 'select',
     initialState: {
-        selectedRow: null,
+        selectedRow: -1,
         all: false
     },
     reducers: {
@@ -16,7 +16,7 @@ const selected = createSlice({
             state.all = true
         },
         UNSELECT_ALL: (state, action) => {
-            state.selectedRow = null
+            state.selectedRow = -1
             state.all = false
         },
     }
