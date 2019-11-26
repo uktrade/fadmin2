@@ -2,7 +2,6 @@ import json
 import re
 
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core import serializers
 from django.core.exceptions import PermissionDenied
@@ -13,6 +12,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
+from core.myutils import get_current_financial_year
 from core.utils import check_empty
 
 from costcentre.forms import (
@@ -34,10 +34,8 @@ from forecast.permission_shortcuts import (
     NoForecastViewPermission,
     get_objects_for_user,
 )
-from forecast.tables import (
-    ForecastTable,
-)
 from forecast.tasks import process_uploaded_file
+from forecast.utils import get_forecast_monthly_figures_pivot
 from forecast.views.base import (
     CostCentrePermissionTest,
     NoCostCentreCodeInURLError,
@@ -45,13 +43,6 @@ from forecast.views.base import (
 
 from upload_file.decorators import has_upload_permission
 from upload_file.models import FileUpload
-
-TEST_COST_CENTRE = 888812
-TEST_FINANCIAL_YEAR = 2019
-
-
-class MismatchedRowException(Exception):
-    pass
 
 
 class ChooseCostCentreView(UserPassesTestMixin, FormView):
@@ -93,7 +84,7 @@ class ChooseCostCentreView(UserPassesTestMixin, FormView):
 class AddRowView(CostCentrePermissionTest, FormView):
     template_name = "forecast/edit/add.html"
     form_class = AddForecastRowForm
-    financial_year_id = TEST_FINANCIAL_YEAR
+    financial_year_id = get_current_financial_year()
     cost_centre_code = None
 
     def get_cost_centre(self):
@@ -127,14 +118,15 @@ class AddRowView(CostCentrePermissionTest, FormView):
             "group": cost_centre.directorate.group.group_name,
             "directorate": cost_centre.directorate.directorate_name,
             "cost_centre_name": cost_centre.cost_centre_name,
-            "cost_centre_num": cost_centre.cost_centre_code,
+            "cost_centre_code": cost_centre.cost_centre_code,
         }
 
     def form_valid(self, form):
         self.get_cost_centre()
         data = form.cleaned_data
 
-        # Don't add months that are actuals
+        # TODO - investigate the following statement -
+        # "Don't add months that are actuals"
         for financial_period in range(1, 13):
             monthly_figure = MonthlyFigure(
                 financial_year_id=self.financial_year_id,
@@ -199,27 +191,15 @@ def pasted_forecast_content(request, cost_centre_code):
     )
     if form.is_valid():
         # TODO check user has permission on cost centre
-
         paste_content = form.cleaned_data['paste_content']
-        pasted_at_row = None
-        all_selected = False
+        pasted_at_row = form.cleaned_data.get('pasted_at_row', None)
+        all_selected = form.cleaned_data.get('all_selected', False)
 
-        if form.cleaned_data['pasted_at_row']:
-            pasted_at_row = json.loads(form.cleaned_data['pasted_at_row'])
-
-        if form.cleaned_data['all_selected']:
-            all_selected = form.cleaned_data['all_selected']
+        forecast_dump = get_forecast_monthly_figures_pivot(
+            cost_centre_code
+        )
 
         rows = paste_content.splitlines()
-
-        pivot_filter = {"cost_centre__cost_centre_code": "{}".format(
-            cost_centre_code
-        )}
-        output = MonthlyFigure.pivot.pivot_data({}, pivot_filter)
-        forecast_dump = list(output)
-
-        test = len(forecast_dump)
-        test1 = len(rows)
 
         if all_selected and len(forecast_dump) != len(rows):
             return JsonResponse({
@@ -228,11 +208,7 @@ def pasted_forecast_content(request, cost_centre_code):
                 status=400,
             )
 
-        actuals_count = FinancialPeriod.objects.filter(
-            actual_loaded=True
-        ).count()
-        start_period = 1 + actuals_count
-
+        start_period = FinancialPeriod.financial_period_info.actual_month() + 1
         monthly_figures = []
 
         # Check for header row
@@ -240,36 +216,28 @@ def pasted_forecast_content(request, cost_centre_code):
         if rows[0] == "Natural Account Code":
             start_row = 1
 
-        num_meta_cols = 5
-
         for index, row in enumerate(rows, start=start_row):
             cell_data = re.split(r'\t', row.rstrip('\t'))
 
             if index == 0:
                 # Check that pasted at content and desired first row match
                 if pasted_at_row:
-
-                    t = pasted_at_row["natural_account_code__natural_account_code"]["value"]
-                    t1 = int(cell_data[0])
-
-                    q = pasted_at_row["programme__programme_code"]["value"]
-                    q1 = cell_data[1]
-
-                    s = pasted_at_row["analysis1_code__analysis1_code"]["value"]
-                    s1 = check_empty(cell_data[2])
-
-                    u = pasted_at_row["analysis2_code__analysis2_code"]["value"]
-                    u1 = check_empty(cell_data[3])
-
-                    r = pasted_at_row["project_code__project_code"]["value"]
-                    r1 = check_empty(cell_data[4])
-
                     if (
-                        pasted_at_row["natural_account_code__natural_account_code"]["value"] != int(cell_data[0]) or
-                        pasted_at_row["programme__programme_code"]["value"] != cell_data[1] or
-                        pasted_at_row["analysis1_code__analysis1_code"]["value"] != check_empty(cell_data[2]) or
-                        pasted_at_row["analysis2_code__analysis2_code"]["value"] != check_empty(cell_data[3]) or
-                        pasted_at_row["project_code__project_code"]["value"] != check_empty(cell_data[4])
+                        pasted_at_row[
+                            "natural_account_code__natural_account_code"
+                        ]["value"] != int(cell_data[0]) or
+                        pasted_at_row[
+                            "programme__programme_code"
+                        ]["value"] != cell_data[1] or
+                        pasted_at_row[
+                            "analysis1_code__analysis1_code"
+                        ]["value"] != check_empty(cell_data[2]) or
+                        pasted_at_row[
+                            "analysis2_code__analysis2_code"
+                        ]["value"] != check_empty(cell_data[3]) or
+                        pasted_at_row[
+                            "project_code__project_code"
+                        ]["value"] != check_empty(cell_data[4])
                     ):
                         return JsonResponse({
                             'error': 'Your pasted data does not match your selected row.'
@@ -278,7 +246,7 @@ def pasted_forecast_content(request, cost_centre_code):
                         )
 
             # Check cell data length against expected number of cols
-            if len(cell_data) != 12 + num_meta_cols:
+            if len(cell_data) != 12 + settings.NUM_META_COLS:
                 return JsonResponse({
                     'error': 'Your pasted data does not '
                              'match the expected format. '
@@ -290,18 +258,14 @@ def pasted_forecast_content(request, cost_centre_code):
                 for financial_period in range(start_period, 13):
                     monthly_figure = MonthlyFigure.objects.filter(
                         cost_centre__cost_centre_code=cost_centre_code,
-                        financial_year__financial_year=TEST_FINANCIAL_YEAR,
+                        financial_year__financial_year=get_current_financial_year(),
                         financial_period__financial_period_code=financial_period,
                         programme__programme_code=check_empty(cell_data[1]),
                         natural_account_code__natural_account_code=cell_data[0],
                         analysis1_code=check_empty(cell_data[2]),
                         analysis2_code=check_empty(cell_data[3]),
                         project_code=check_empty(cell_data[4]),
-                    )
-
-                    print(monthly_figure.query)
-
-                    monthly_figure = monthly_figure.first()
+                    ).first()
 
                     if not monthly_figure:
                         return JsonResponse({
@@ -311,8 +275,10 @@ def pasted_forecast_content(request, cost_centre_code):
                             status=400,
                         )
 
-                    new_value = int(cell_data[(num_meta_cols + financial_period) - 1])
-                    monthly_figure.amount = new_value  # * 100
+                    new_value = int(cell_data[
+                        (settings.NUM_META_COLS + financial_period) - 1
+                    ])
+                    monthly_figure.amount = new_value
 
                     # Don't save yet in case there is an error
                     monthly_figures.append(monthly_figure)
@@ -321,11 +287,9 @@ def pasted_forecast_content(request, cost_centre_code):
         for monthly_figure in monthly_figures:
             monthly_figure.save()
 
-        pivot_filter = {"cost_centre__cost_centre_code": "{}".format(
+        forecast_dump = get_forecast_monthly_figures_pivot(
             cost_centre_code
-        )}
-        output = MonthlyFigure.pivot.pivot_data({}, pivot_filter)
-        forecast_dump = list(output)
+        )
 
         return JsonResponse(forecast_dump, safe=False)
     else:
@@ -342,14 +306,14 @@ class EditForecastView(
     TemplateView,
 ):
     template_name = "forecast/edit/edit.html"
-    financial_year = TEST_FINANCIAL_YEAR
+    financial_year = get_current_financial_year()
 
     def cost_centre_details(self):
         return {
             "group": "Test group",
             "directorate": "Test directorate",
             "cost_centre_name": "Test cost centre name",
-            "cost_centre_num": self.cost_centre_code,
+            "cost_centre_code": self.cost_centre_code,
         }
 
     def get_context_data(self, **kwargs):

@@ -10,19 +10,9 @@ import {
 } from '../../Util'
 
 function Table({rowData}) {
-
-    console.log("rowData", rowData)
-
     const dispatch = useDispatch();
 
-
-    //const [rows, setRows] = useState(rowData)
     const selectedRow = useSelector(state => state.selected.selectedRow)
-
-    // useEffect(() => {
-    //     setRows(rowData)
-    // }, [rowData]);
-
     const nac = useSelector(state => state.showHideCols.nac);
     const programme = useSelector(state => state.showHideCols.programme);
     const analysis1 = useSelector(state => state.showHideCols.analysis1);
@@ -128,10 +118,4 @@ function Table({rowData}) {
     );
 }
 
-// const comparisonFn = function(prevProps, nextProps) {
-//     return (
-//         prevProps.rowData === nextProps.rowData
-//     )
-// };
-
-export default Table //memo(Table, comparisonFn);
+export default Table

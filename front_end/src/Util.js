@@ -77,11 +77,6 @@ export async function postData(url = '', data = {}) {
 }
 
 export const processForecastData = (forecastData) => {
-
-
-
-    console.log("forecastData", forecastData)
-
     let cellCounter = -1
     let cellIndex = 0;
     let rows = [];
@@ -115,11 +110,6 @@ export const processForecastData = (forecastData) => {
                 key: key,
                 value: rowData[key],
                 isEditable: editable
-                // programmeCode: `${rowData["programme__programme_description"]} - ${rowData["programme__programme_code"]}`,
-                // nac: `${rowData["natural_account_code__natural_account_code_description"]} - ${rowData["natural_account_code__natural_account_code"]}`,
-                // analysis1: "analysis 1",
-                // analysis2: "analysis 2",
-                // projectCode: `${rowData["project_code__project_description"]} - ${rowData["project_code__project_code"]}`
             }
 
             cellIndex++

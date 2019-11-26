@@ -17,7 +17,7 @@
                     <p>AREA FOR DATE/PERIOD SELECTION</p>
                 </div>
                 <div class="govuk-grid-column-one-third">
-                    <a href="{% url 'add_forecast_row' view.cost_centre_details.cost_centre_num %}" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                    <a href="{% url 'add_forecast_row' view.cost_centre_details.cost_centre_code %}" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
                       Add a new row
                     </a>
                 </div>
@@ -29,30 +29,13 @@
             </div>
         </div>
     </div>
-    {% if messages %}
-        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-          <h2 class="govuk-error-summary__title" id="error-summary-title">
-            There is a problem
-          </h2>
-          <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                        {{ message }}
-                    </li>
-                {% endfor %}
-            </ul>
-          </div>
-        </div>
-    {% endif %}
-
     <div id="root"></div>
     <form onsubmit="setData()" id="table-data-submission" action="" method="post" novalidate="novalidate">
         {% csrf_token %}
         {{ form }}
         <input class="govuk-button" data-module="govuk-button" type="submit" value="Save changes" >
     </form>
-    <form id="id_paste_data_form" action="{% url 'paste_forecast' cost_centre_code=888812  %}" method="post" novalidate="novalidate">
+    <form id="id_paste_data_form" action="{% url 'paste_forecast' view.cost_centre_details.cost_centre_code  %}" method="post" novalidate="novalidate">
         {% csrf_token %}
         {{ paste_form }}
     </form>
@@ -63,11 +46,10 @@
     {% render_bundle 'runtime~main' %}
     <script>
         function setData() {
-            //console.log("FROM DJANGO TEMPLATE...", window.cell_data);
             document.getElementById("id_cell_data").value = JSON.stringify(window.cell_data);
-            //console.log(document.getElementById("table-data-submission").value);
         }
         window.actuals_periods = {{ actuals_periods_dump|safe }};
         window.table_data = {{ forecast_dump|safe }};
+        window.cost_centre = {{ view.cost_centre_details.cost_centre_code|safe }};
     </script>
 {% endblock %}

@@ -65,7 +65,6 @@ const TableCell = ({cell, isHidden}) => {
                                 "cellId": cell.id
                             })
                         );
-                        console.log("cellId", cell.id)
                     }
                 }}
 

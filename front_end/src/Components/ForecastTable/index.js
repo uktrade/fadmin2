@@ -66,7 +66,7 @@ function ForecastTable() {
         setRowData([])
 
         const response = postData(
-            '/forecast/paste-forecast/888812/',
+            `/forecast/paste-forecast/${window.cost_centre}/`,
             payload
         ).then((response) => {
             if (response.status === 200) {

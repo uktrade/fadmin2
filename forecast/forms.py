@@ -1,3 +1,5 @@
+import json
+
 from django import forms
 
 from chartofaccountDIT.models import (
@@ -158,3 +160,16 @@ class PasteForecastForm(forms.Form):
         widget=forms.HiddenInput(),
         required=False,
     )
+
+    def clean_pasted_at_row(self):
+        data = self.cleaned_data['pasted_at_row']
+
+        if not data:
+            return None
+
+        try:
+            json_data = json.loads(data)
+        except json.JSONDecodeError:
+            raise forms.ValidationError("Invalid row data supplied")
+
+        return json_data
