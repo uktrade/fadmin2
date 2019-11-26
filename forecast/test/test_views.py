@@ -53,6 +53,7 @@ from forecast.views.view_forecast import (
 class ViewPermissionsTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
+
         self.test_cost_centre = 888812
         self.cost_centre_code = self.test_cost_centre
         self.cost_centre = CostCentreFactory.create(
@@ -123,6 +124,7 @@ class ViewPermissionsTest(TestCase, RequestFactoryBase):
 class AddForecastRowTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
+
         self.nac_code = 999999
         self.cost_centre_code = 888812
         self.analysis_1_code = "1111111"
@@ -271,6 +273,7 @@ class AddForecastRowTest(TestCase, RequestFactoryBase):
 class ChooseCostCentreTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
+
         self.cost_centre_code = 109076
         self.cost_centre = CostCentreFactory.create(
             cost_centre_code=self.cost_centre_code
@@ -462,6 +465,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
 class UploadActualsTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
+
         self.financial_period_code = 1
         self.financial_year_id = 2019
 
