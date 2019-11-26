@@ -13,7 +13,6 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
 from core.myutils import get_current_financial_year
-from core.utils import check_empty
 
 from costcentre.forms import (
     MyCostCentresForm,
@@ -35,7 +34,15 @@ from forecast.permission_shortcuts import (
     get_objects_for_user,
 )
 from forecast.tasks import process_uploaded_file
-from forecast.utils import get_forecast_monthly_figures_pivot
+from forecast.utils import (
+    CannotFindMonthlyFigureException,
+    ColMatchException,
+    RowMatchException,
+    check_cols_match,
+    check_row_match,
+    get_forecast_monthly_figures_pivot,
+    get_monthly_figures,
+)
 from forecast.views.base import (
     CostCentrePermissionTest,
     NoCostCentreCodeInURLError,
@@ -208,80 +215,39 @@ def pasted_forecast_content(request, cost_centre_code):
                 status=400,
             )
 
-        start_period = FinancialPeriod.financial_period_info.actual_month() + 1
-        monthly_figures = []
-
         # Check for header row
         start_row = 0
         if rows[0] == "Natural Account Code":
             start_row = 1
 
-        for index, row in enumerate(rows, start=start_row):
-            cell_data = re.split(r'\t', row.rstrip('\t'))
+        try:
+            for index, row in enumerate(rows, start=start_row):
+                cell_data = re.split(r'\t', row.rstrip('\t'))
 
-            if index == 0:
                 # Check that pasted at content and desired first row match
-                if pasted_at_row:
-                    if (
-                        pasted_at_row[
-                            "natural_account_code__natural_account_code"
-                        ]["value"] != int(cell_data[0]) or
-                        pasted_at_row[
-                            "programme__programme_code"
-                        ]["value"] != cell_data[1] or
-                        pasted_at_row[
-                            "analysis1_code__analysis1_code"
-                        ]["value"] != check_empty(cell_data[2]) or
-                        pasted_at_row[
-                            "analysis2_code__analysis2_code"
-                        ]["value"] != check_empty(cell_data[3]) or
-                        pasted_at_row[
-                            "project_code__project_code"
-                        ]["value"] != check_empty(cell_data[4])
-                    ):
-                        return JsonResponse({
-                            'error': 'Your pasted data does not match your selected row.'
-                            },
-                            status=400,
-                        )
-
-            # Check cell data length against expected number of cols
-            if len(cell_data) != 12 + settings.NUM_META_COLS:
-                return JsonResponse({
-                    'error': 'Your pasted data does not '
-                             'match the expected format. '
-                             'There are not enough columns.'
-                    },
-                    status=400,
+                check_row_match(
+                    index,
+                    pasted_at_row,
+                    cell_data,
                 )
-            else:
-                for financial_period in range(start_period, 13):
-                    monthly_figure = MonthlyFigure.objects.filter(
-                        cost_centre__cost_centre_code=cost_centre_code,
-                        financial_year__financial_year=get_current_financial_year(),
-                        financial_period__financial_period_code=financial_period,
-                        programme__programme_code=check_empty(cell_data[1]),
-                        natural_account_code__natural_account_code=cell_data[0],
-                        analysis1_code=check_empty(cell_data[2]),
-                        analysis2_code=check_empty(cell_data[3]),
-                        project_code=check_empty(cell_data[4]),
-                    ).first()
 
-                    if not monthly_figure:
-                        return JsonResponse({
-                            'error': 'Cannot find matching row for one of your inputs, '
-                                     'please check your source material'
-                        },
-                            status=400,
-                        )
+                # Check cell data length against expected number of cols
+                check_cols_match(cell_data)
 
-                    new_value = int(cell_data[
-                        (settings.NUM_META_COLS + financial_period) - 1
-                    ])
-                    monthly_figure.amount = new_value
-
-                    # Don't save yet in case there is an error
-                    monthly_figures.append(monthly_figure)
+                monthly_figures = get_monthly_figures(
+                    cost_centre_code,
+                    cell_data,
+                )
+        except (
+                ColMatchException,
+                RowMatchException,
+                CannotFindMonthlyFigureException,
+        ) as ex:
+            return JsonResponse({
+                'error': str(ex)
+            },
+                status=400,
+            )
 
         # Update monthly figures
         for monthly_figure in monthly_figures:
