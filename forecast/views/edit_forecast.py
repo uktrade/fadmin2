@@ -91,7 +91,6 @@ class ChooseCostCentreView(UserPassesTestMixin, FormView):
 class AddRowView(CostCentrePermissionTest, FormView):
     template_name = "forecast/edit/add.html"
     form_class = AddForecastRowForm
-    financial_year_id = get_current_financial_year()
     cost_centre_code = None
 
     def get_cost_centre(self):
@@ -136,7 +135,7 @@ class AddRowView(CostCentrePermissionTest, FormView):
         # "Don't add months that are actuals"
         for financial_period in range(1, 13):
             monthly_figure = MonthlyFigure(
-                financial_year_id=self.financial_year_id,
+                financial_year_id=get_current_financial_year(),
                 financial_period_id=financial_period,
                 cost_centre_id=self.cost_centre_code,
                 programme=data["programme"],
@@ -276,7 +275,6 @@ class EditForecastView(
     TemplateView,
 ):
     template_name = "forecast/edit/edit.html"
-    financial_year = get_current_financial_year()
 
     def cost_centre_details(self):
         return {
@@ -291,7 +289,7 @@ class EditForecastView(
 
         form = EditForm(
             initial={
-                "financial_year": self.financial_year,
+                "financial_year": get_current_financial_year(),
                 "cost_centre_code": self.cost_centre_code,
             }
         )
