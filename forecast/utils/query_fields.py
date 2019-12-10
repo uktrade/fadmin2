@@ -15,8 +15,8 @@ directorate_columns = {
 
 group_columns = {
     "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display": "Budget Type",
-    "monthly_figure__financial_code__cost_centre__directorate__group__group_code": "Departmental Group Description",
     "monthly_figure__financial_code__cost_centre__directorate__group__group_name": "Departmental Group Code",
+    "monthly_figure__financial_code__cost_centre__directorate__group__group_code": "Departmental Group Description",
 }
 hierarchy_order_list = ["monthly_figure__financial_code__programme__budget_type_fk__budget_type_display_order"]
 hierarchy_sub_total = ["monthly_figure__financial_code__programme__budget_type_fk__budget_type_display"]

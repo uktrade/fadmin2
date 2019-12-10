@@ -490,7 +490,8 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
     def check_hierarchy_table(self, table, hierarchy_element):
         hierarchy_rows = table.find_all("tr")
         first_hierarchy_cols = hierarchy_rows[1].find_all("td")
-        assert (first_hierarchy_cols[1].get_text()) == hierarchy_element
+
+        assert first_hierarchy_cols[1].get_text() == hierarchy_element
         # Check the April value
         assert first_hierarchy_cols[4].get_text() == intcomma(self.amount_apr)
 
@@ -603,7 +604,39 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         table_rows = soup.find_all("tr", class_="govuk-table__row")
         assert len(table_rows) == 18
 
-        self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX], self.directorate.directorate_name)
+        self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
+                                   self.directorate.directorate_name)
+        # Check that the second table displays the programme and the correct totals
+        self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
+
+        # Check that the third table displays the expenditure and the correct totals
+        self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX])
+
+        # Check that the second table displays the project and the correct totals
+        self.check_project_table(tables[PROJECT_TABLE_INDEX])
+
+    def test_view_dit_summary(self):
+        response = self.factory_get(
+            reverse("forecast_dit"),
+            DITView,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "govuk-table")
+        soup = BeautifulSoup(response.content, features="html.parser")
+
+        # Check that there are 4 tables on the page
+        tables = soup.find_all("table", class_="govuk-table")
+        assert len(tables) == 4
+
+        # Check that the first table displays the cost centre code
+
+        # Check that all the subtotal hierachy_rows exist
+        table_rows = soup.find_all("tr", class_="govuk-table__row")
+        assert len(table_rows) == 18
+
+        self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
+                                   self.group_name)
         # Check that the second table displays the programme and the correct totals
         self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
 
