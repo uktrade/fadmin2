@@ -21,7 +21,6 @@ from forecast.import_utils import (
     validate_excel_file,
 )
 from forecast.models import (
-    ActualsTemporaryStore,
     FinancialCode,
     FinancialPeriod,
     MonthlyFigure,

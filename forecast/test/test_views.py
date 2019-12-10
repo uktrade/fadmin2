@@ -45,6 +45,14 @@ from forecast.views.view_forecast.forecast_summary import (
     GroupView,
 )
 
+TOTAL_COLUMN = -3
+SPEND_TO_DATE_COLUMN = -4
+UNDERSPEND_COLUMN = -2
+
+HIERARCHY_TABLE_INDEX = 0
+PROGRAMME_TABLE_INDEX = 1
+EXPENDITURE_TABLE_INDEX = 2
+PROJECT_TABLE_INDEX = 3
 
 class ViewPermissionsTest(TestCase, RequestFactoryBase):
     def setUp(self):
@@ -323,8 +331,9 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         )
         current_year = get_current_financial_year()
         self.amount_apr = 9876543
-        programme_obj = ProgrammeCodeFactory()
+        self.programme_obj = ProgrammeCodeFactory()
         nac_obj = NaturalCodeFactory()
+        self.project_obj = ProjectCodeFactory()
         year_obj = FinancialYear.objects.get(financial_year=current_year)
 
         apr_period = FinancialPeriod.objects.get(financial_period_code=1)
@@ -334,9 +343,10 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         # If you use the MonthlyFigureFactory the test fails.
         # I cannot work out why, it may be due to using a random year....
         financial_code_obj = FinancialCode.objects.create(
-            programme=programme_obj,
+            programme=self.programme_obj,
             cost_centre=self.cost_centre,
             natural_account_code=nac_obj,
+            project_code = self.project_obj
         )
         financial_code_obj.save
         apr_figure = MonthlyFigure.objects.create(
@@ -453,22 +463,66 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         assert len(tables) == 4
 
         # Check that the first table displays the cost centre code
-        rows = tables[0].find_all("tr")
-        cols = rows[1].find_all("td")
-        assert int(cols[2].get_text()) == self.cost_centre_code
-
+        hierachy_rows = tables[HIERARCHY_TABLE_INDEX].find_all("tr")
+        first_hierarchy_cols = hierachy_rows[1].find_all("td")
+        assert int(first_hierarchy_cols[2].get_text()) == self.cost_centre_code
         # Check the April value
-        assert cols[4].get_text() == intcomma(self.amount_apr)
+        assert first_hierarchy_cols[4].get_text() == intcomma(self.amount_apr)
 
+        last_hierarchy_cols = hierachy_rows[-1].find_all("td")
+        year_total = self.amount_apr + self.amount_may
+        underspend_total = -self.amount_apr - self.amount_may
+        spend_to_date_total = self.amount_apr
         # Check the total for the year
-        assert cols[-3].get_text() == intcomma(self.amount_apr + self.amount_may)
-
+        assert last_hierarchy_cols[TOTAL_COLUMN].get_text() == intcomma(year_total)
         # Check the difference between budget and year total
-        assert cols[-2].get_text() == intcomma(-self.amount_apr - self.amount_may)
-
+        assert last_hierarchy_cols[UNDERSPEND_COLUMN].get_text() == intcomma(underspend_total)
         # Check the spend to date
-        assert cols[-4].get_text() == intcomma(self.amount_apr)
+        assert last_hierarchy_cols[SPEND_TO_DATE_COLUMN].get_text() == intcomma(spend_to_date_total)
 
-        # Check that all the subtotals exist
+        # Check that all the subtotal hierachy_rows exist
         table_rows = soup.find_all("tr", class_="govuk-table__row")
         assert len(table_rows) == 18
+
+
+        # Check that the second table displays the programme and the correct totals
+        programme_rows = tables[PROGRAMME_TABLE_INDEX].find_all("tr")
+        first_programme_cols = programme_rows[1].find_all("td")
+        assert first_programme_cols[1].get_text() == self.programme_obj.programme_description
+        assert first_programme_cols[2].get_text() == self.programme_obj.programme_code
+
+        last_programme_cols = programme_rows[-1].find_all("td")
+        # Check the total for the year
+        assert last_programme_cols[TOTAL_COLUMN].get_text() == intcomma(year_total)
+        # Check the difference between budget and year total
+        assert last_programme_cols[UNDERSPEND_COLUMN].get_text() == intcomma(underspend_total)
+        # Check the spend to date
+        assert last_programme_cols[SPEND_TO_DATE_COLUMN].get_text() == intcomma(spend_to_date_total)
+
+        # Check that the third table displays the expenditure and the correct totals
+        expenditure_rows = tables[EXPENDITURE_TABLE_INDEX].find_all("tr")
+        first_expenditure_cols = expenditure_rows[1].find_all("td")
+        assert(first_expenditure_cols[1].get_text() == '—')
+
+        last_expenditure_cols = expenditure_rows[-1].find_all("td")
+        # Check the total for the year
+        assert last_expenditure_cols[TOTAL_COLUMN].get_text() == intcomma(year_total)
+        # Check the difference between budget and year total
+        assert last_expenditure_cols[UNDERSPEND_COLUMN].get_text() == intcomma(underspend_total)
+        # Check the spend to date
+        assert last_expenditure_cols[SPEND_TO_DATE_COLUMN].get_text() == intcomma(spend_to_date_total)
+
+        # Check that the second table displays the project and the correct totals
+        project_rows = tables[PROJECT_TABLE_INDEX].find_all("tr")
+        first_project_cols = project_rows[1].find_all("td")
+        assert first_project_cols[1].get_text() == self.project_obj.project_description
+        assert first_project_cols[2].get_text() == self.project_obj.project_code
+
+        last_project_cols = project_rows[-1].find_all("td")
+        # Check the total for the year
+        assert last_project_cols[TOTAL_COLUMN].get_text() == intcomma(year_total)
+        # Check the difference between budget and year total
+        assert last_project_cols[UNDERSPEND_COLUMN].get_text() == intcomma(underspend_total)
+        # Check the spend to date
+        assert last_project_cols[SPEND_TO_DATE_COLUMN].get_text() == intcomma(spend_to_date_total)
+

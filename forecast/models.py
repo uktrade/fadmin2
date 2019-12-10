@@ -548,11 +548,6 @@ class DataTemporaryStore(models.Model):
         )
 
 
-class ActualsTemporaryStore(DataTemporaryStore):
-    """Used as temporary storage for  uploading the actuals."""
-    pass
-
-
 class BudgetsTemporaryStore(DataTemporaryStore):
     """Used as temporary storage for  uploading the actuals."""
     pass
