@@ -36,16 +36,21 @@ const TableCell = ({isHidden, rowIndex, cellKey}) => {
     const getClasses = () => {
         let hiddenResult = ''
         let editable = ''
+        let negative = ''
 
         if (isHidden) {
             hiddenResult = isHidden(cellKey) ? ' hidden' : ''
         }
 
-        if (!cell.editable) {
+        if (!cell.isEditable) {
             editable = ' not-editable';
         }
 
-        return "govuk-table__cell " + (wasEdited() ? 'edited ' : '') + (isSelected() ? 'selected' : '') + hiddenResult + editable
+        if (cell.versions && cell.versions[0].amount < 0) {
+            negative = " negative"
+        }
+
+        return "govuk-table__cell " + (wasEdited() ? 'edited ' : '') + (isSelected() ? 'selected' : '') + hiddenResult + editable + negative
     }
 
     const handleKeyPress = (event) => {
@@ -76,6 +81,15 @@ const TableCell = ({isHidden, rowIndex, cellKey}) => {
     //         isMounted.current = true;
     //     }
     // }, [cell.value]);
+
+    const formatValue = (value) => {
+        return (value / 100).toLocaleString(
+            undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }
+        )
+    }
 
     return (
         <Fragment>
@@ -112,7 +126,8 @@ const TableCell = ({isHidden, rowIndex, cellKey}) => {
                 ) : (
                     <Fragment>
                         {cell.versions ? (
-                            <Fragment>{cell.versions[0].amount.toFixed(2)}</Fragment>
+                            <Fragment>{formatValue(cell.versions[0].amount)}
+                            </Fragment>
                         ) : (
                             <Fragment>{cell.value}</Fragment>
                         )}
