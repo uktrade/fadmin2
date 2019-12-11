@@ -1,5 +1,3 @@
-from django.db import connection
-
 from chartofaccountDIT.models import (
     NaturalCode,
     ProgrammeCode,
