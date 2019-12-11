@@ -33,8 +33,10 @@ from chartofaccountDIT.test.factories import (
 )
 
 from forecast.models import (
+    FinancialCode,
     FinancialPeriod,
     MonthlyFigure,
+    MonthlyFigureAmount,
 )
 from forecast.test.factories import FinancialPeriodFactory
 
@@ -101,18 +103,35 @@ def set_up_test_objects(context):
                 period_calendar_code=financial_month
             )
 
-        monthly_figure = MonthlyFigure(
-            financial_year_id=get_current_financial_year(),
-            financial_period_id=financial_period,
+        financial_code = FinancialCode.objects.filter(
             cost_centre_id=cost_centre_code,
             programme=programme,
             natural_account_code=nac_code,
             analysis1_code=analysis_1,
             analysis2_code=analysis_2,
             project_code=project_code,
+        ).first()
+
+        if not financial_code:
+            financial_code = FinancialCode.objects.create(
+                cost_centre_id=cost_centre_code,
+                programme=programme,
+                natural_account_code=nac_code,
+                analysis1_code=analysis_1,
+                analysis2_code=analysis_2,
+                project_code=project_code,
+            )
+
+        monthly_figure = MonthlyFigure.objects.create(
+            financial_year_id=get_current_financial_year(),
+            financial_period_id=financial_period,
+            financial_code=financial_code,
+        )
+
+        MonthlyFigureAmount.objects.create(
+            monthly_figure=monthly_figure,
             amount=0,
         )
-        monthly_figure.save()
 
 
 def create_test_user(context):
