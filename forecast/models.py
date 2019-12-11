@@ -195,12 +195,12 @@ class Budget(TimeStampedModel):
         )
 
     def __str__(self):
-        return f"{self.financial_code__cost_centre}" \
-               f"--{self.financial_code__programme}" \
-               f"--{self.financial_code__natural_account_code}" \
-               f"--{self.financial_code__analysis1_code}" \
-               f"--{self.financial_code__analysis2_code}" \
-               f"--{self.financial_code__project_code}:" \
+        return f"{self.financial_code.cost_centre}" \
+               f"--{self.financial_code.programme}" \
+               f"--{self.financial_code.natural_account_code}" \
+               f"--{self.financial_code.analysis1_code}" \
+               f"--{self.financial_code.analysis2_code}" \
+               f"--{self.financial_code.project_code}:" \
                f"{self.financial_year} " \
                f"{self.financial_period}"
 
@@ -492,12 +492,12 @@ class MonthlyFigure(TimeStampedModel):
         )
 
     def __str__(self):
-        return f"{self.financial_code__cost_centre}" \
-               f"--{self.financial_code__programme}" \
-               f"--{self.financial_code__natural_account_code}" \
-               f"--{self.financial_code__analysis1_code}" \
-               f"--{self.financial_code__analysis2_code}" \
-               f"--{self.financial_code__project_code}:" \
+        return f"{self.financial_code.cost_centre}" \
+               f"--{self.financial_code.programme}" \
+               f"--{self.financial_code.natural_account_code}" \
+               f"--{self.financial_code.analysis1_code}" \
+               f"--{self.financial_code.analysis2_code}" \
+               f"--{self.financial_code.project_code}:" \
                f"{self.financial_year} " \
                f"{self.financial_period}"
 
