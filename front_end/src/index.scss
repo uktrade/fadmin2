@@ -87,7 +87,7 @@ td {
 }
 
 .selected.edited {
-  background-color: govuk-colour("green");
+  background-color: govuk-colour("blue");
   color: white;
 }
 
@@ -100,6 +100,6 @@ td {
 }
 
 .edited {
-  background-color: govuk-colour("red");
+  background-color: govuk-colour("light-blue");
   color: white;
 }
