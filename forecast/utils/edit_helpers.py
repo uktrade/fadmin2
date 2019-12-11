@@ -106,14 +106,5 @@ def check_row_match(index, pasted_at_row, cell_data):
         )
 
 
-def forecast_encoder(obj):
-    print("WooWoo! Called!", obj)
-
-    if isinstance(obj, int):
-        return "{0:.2f}".format(obj)
-    else:
-        return obj
-
-
 def convert_forecast_amount(amount):
-    return round(Decimal(amount), 2) * 100
+    return round(Decimal(amount.replace(",", "")), 2) * 100

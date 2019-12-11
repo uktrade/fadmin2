@@ -17,8 +17,7 @@ forecast_figure_cols = [
 
 
 @register.filter()
-def is_forecast_figure(value, column):
-    print(str(column))
+def is_forecast_figure(_, column):
     if str(column) in calendar.month_name or str(column) in forecast_figure_cols:
         return True
 
