@@ -54,6 +54,7 @@ PROGRAMME_TABLE_INDEX = 1
 EXPENDITURE_TABLE_INDEX = 2
 PROJECT_TABLE_INDEX = 3
 
+
 class ViewPermissionsTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
@@ -346,21 +347,21 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
             programme=self.programme_obj,
             cost_centre=self.cost_centre,
             natural_account_code=nac_obj,
-            project_code = self.project_obj
+            project_code=self.project_obj
         )
         financial_code_obj.save
         apr_figure = MonthlyFigure.objects.create(
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=1
             ),
-            financial_code = financial_code_obj,
-            financial_year = year_obj
+            financial_code=financial_code_obj,
+            financial_year=year_obj
         )
         apr_figure.save
         apr_amount = MonthlyFigureAmount.objects.create(
-            version = 1,
-            monthly_figure = apr_figure,
-            amount = self.amount_apr
+            version=1,
+            monthly_figure=apr_figure,
+            amount=self.amount_apr
         )
         apr_amount.save()
         self.amount_may = 1234567
@@ -368,14 +369,14 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=4
             ),
-            financial_code = financial_code_obj,
-            financial_year = year_obj
+            financial_code=financial_code_obj,
+            financial_year=year_obj
         )
         may_figure.save
         may_amount = MonthlyFigureAmount.objects.create(
-            version = 1,
-            monthly_figure = may_figure,
-            amount = self.amount_may
+            version=1,
+            monthly_figure=may_figure,
+            amount=self.amount_may
         )
         may_amount.save()
         # Assign forecast view permission
@@ -385,7 +386,6 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.year_total = self.amount_apr + self.amount_may
         self.underspend_total = -self.amount_apr - self.amount_may
         self.spend_to_date_total = self.amount_apr
-
 
     def test_dit_view(self):
         response = self.factory_get(
@@ -448,30 +448,35 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
 
     def check_programme_table(self, table):
         programme_rows = table.find_all("tr")
-        first_programme_cols = programme_rows[1].find_all("td")
-        assert first_programme_cols[1].get_text() == self.programme_obj.programme_description
-        assert first_programme_cols[2].get_text() == self.programme_obj.programme_code
+        first_prog_cols = programme_rows[1].find_all("td")
+        assert first_prog_cols[1].get_text() == self.programme_obj.programme_description
+        assert first_prog_cols[2].get_text() == self.programme_obj.programme_code
 
         last_programme_cols = programme_rows[-1].find_all("td")
         # Check the total for the year
         assert last_programme_cols[TOTAL_COLUMN].get_text() == intcomma(self.year_total)
         # Check the difference between budget and year total
-        assert last_programme_cols[UNDERSPEND_COLUMN].get_text() == intcomma(self.underspend_total)
+        assert last_programme_cols[UNDERSPEND_COLUMN].get_text() == intcomma(
+            self.underspend_total)
         # Check the spend to date
-        assert last_programme_cols[SPEND_TO_DATE_COLUMN].get_text() == intcomma(self.spend_to_date_total)
+        assert last_programme_cols[SPEND_TO_DATE_COLUMN].get_text() == intcomma(
+            self.spend_to_date_total)
 
     def check_expenditure_table(self, table):
         expenditure_rows = table.find_all("tr")
         first_expenditure_cols = expenditure_rows[1].find_all("td")
-        assert(first_expenditure_cols[1].get_text() == '—')
+        assert (first_expenditure_cols[1].get_text() == '—')
 
         last_expenditure_cols = expenditure_rows[-1].find_all("td")
         # Check the total for the year
-        assert last_expenditure_cols[TOTAL_COLUMN].get_text() == intcomma(self.year_total)
+        assert last_expenditure_cols[TOTAL_COLUMN].get_text() == intcomma(
+            self.year_total)
         # Check the difference between budget and year total
-        assert last_expenditure_cols[UNDERSPEND_COLUMN].get_text() == intcomma(self.underspend_total)
+        assert last_expenditure_cols[UNDERSPEND_COLUMN].get_text() == intcomma(
+            self.underspend_total)
         # Check the spend to date
-        assert last_expenditure_cols[SPEND_TO_DATE_COLUMN].get_text() == intcomma(self.spend_to_date_total)
+        assert last_expenditure_cols[SPEND_TO_DATE_COLUMN].get_text() == intcomma(
+            self.spend_to_date_total)
 
     def check_project_table(self, table):
         project_rows = table.find_all("tr")
@@ -483,9 +488,11 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         # Check the total for the year
         assert last_project_cols[TOTAL_COLUMN].get_text() == intcomma(self.year_total)
         # Check the difference between budget and year total
-        assert last_project_cols[UNDERSPEND_COLUMN].get_text() == intcomma(self.underspend_total)
+        assert last_project_cols[UNDERSPEND_COLUMN].get_text() == intcomma(
+            self.underspend_total)
         # Check the spend to date
-        assert last_project_cols[SPEND_TO_DATE_COLUMN].get_text() == intcomma(self.spend_to_date_total)
+        assert last_project_cols[SPEND_TO_DATE_COLUMN].get_text() == intcomma(
+            self.spend_to_date_total)
 
     def check_hierarchy_table(self, table, hierarchy_element):
         hierarchy_rows = table.find_all("tr")
@@ -499,10 +506,11 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         # Check the total for the year
         assert last_hierarchy_cols[TOTAL_COLUMN].get_text() == intcomma(self.year_total)
         # Check the difference between budget and year total
-        assert last_hierarchy_cols[UNDERSPEND_COLUMN].get_text() == intcomma(self.underspend_total)
+        assert last_hierarchy_cols[UNDERSPEND_COLUMN].get_text() == intcomma(
+            self.underspend_total)
         # Check the spend to date
-        assert last_hierarchy_cols[SPEND_TO_DATE_COLUMN].get_text() == intcomma(self.spend_to_date_total)
-
+        assert last_hierarchy_cols[SPEND_TO_DATE_COLUMN].get_text() == intcomma(
+            self.spend_to_date_total)
 
     def test_view_cost_centre_summary(self):
         resp = self.factory_get(
@@ -530,7 +538,8 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         table_rows = soup.find_all("tr", class_="govuk-table__row")
         assert len(table_rows) == 18
 
-        self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX], self.cost_centre.cost_centre_name)
+        self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
+                                   self.cost_centre.cost_centre_name)
         # Check that the second table displays the programme and the correct totals
         self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
 
@@ -539,7 +548,6 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
 
         # Check that the second table displays the project and the correct totals
         self.check_project_table(tables[PROJECT_TABLE_INDEX])
-
 
     def test_view_directorate_summary(self):
         resp = self.factory_get(
@@ -567,7 +575,8 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         table_rows = soup.find_all("tr", class_="govuk-table__row")
         assert len(table_rows) == 18
 
-        self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX], self.cost_centre.cost_centre_name)
+        self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
+                                   self.cost_centre.cost_centre_name)
         # Check that the second table displays the programme and the correct totals
         self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
 
@@ -576,7 +585,6 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
 
         # Check that the second table displays the project and the correct totals
         self.check_project_table(tables[PROJECT_TABLE_INDEX])
-
 
     def test_view_group_summary(self):
         response = self.factory_get(
