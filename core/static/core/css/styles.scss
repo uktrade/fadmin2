@@ -12,7 +12,7 @@ $govuk-page-width: 1800px;
 
 .govuk-table__cell {
   white-space: nowrap;
-  padding-left:4px;
+  padding-left:8px!important;
 }
 
 .govuk-table__header {
@@ -80,4 +80,13 @@ input.cell-input {
 
 .negative {
   color: red;
+}
+
+.forecast-month {
+  text-align: right;
+  display: block;
+}
+
+.forecast-month-cell {
+  text-align: right!important;
 }

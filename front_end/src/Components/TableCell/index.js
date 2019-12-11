@@ -50,7 +50,7 @@ const TableCell = ({isHidden, rowIndex, cellKey}) => {
             negative = " negative"
         }
 
-        return "govuk-table__cell " + (wasEdited() ? 'edited ' : '') + (isSelected() ? 'selected' : '') + hiddenResult + editable + negative
+        return "govuk-table__cell forecast-month-cell " + (wasEdited() ? 'edited ' : '') + (isSelected() ? 'selected' : '') + hiddenResult + editable + negative
     }
 
     const handleKeyPress = (event) => {
