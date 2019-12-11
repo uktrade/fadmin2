@@ -218,7 +218,6 @@ def upload_trial_balance_report(file_upload, month_number, year):
             # No need to save 0 values, because the data has been cleared
             # before starting the upload
             if actual:
-                print(f'Processing row {row}, {chart_of_account}')
                 try:
                     save_trial_balance_row(chart_of_account,
                                            actual,
