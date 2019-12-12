@@ -11,6 +11,9 @@ from forecast.views.upload_file import (
     UploadActualsView,
     UploadBudgetView,
 )
+from forecast.views.view_forecast.expenditure_details import (
+    ExpenditureDetailsView,
+)
 from forecast.views.view_forecast.forecast_summary import (
     CostCentreView,
     DITView,
@@ -67,6 +70,11 @@ urlpatterns = [
         "cost-centre/<cost_centre_code>/",
         CostCentreView.as_view(),
         name="forecast_cost_centre",
+    ),
+    path(
+        "expenditure-code/<cost_centre_code>/<expenditure_category>/",
+        ExpenditureDetailsView.as_view(),
+        name="expenditure_details_cost_centre",
     ),
     path(
         "paste-forecast/<cost_centre_code>/",

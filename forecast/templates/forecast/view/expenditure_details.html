@@ -8,12 +8,14 @@
     {% breadcrumb view.cost_centre.directorate.group.group_name "forecast_group" view.cost_centre.directorate.group_id %}
     {% breadcrumb view.cost_centre.directorate.directorate_name "forecast_directorate" view.cost_centre.directorate.directorate_code %}
     {% breadcrumb view.cost_centre.cost_centre_name "forecast_cost_centre" view.cost_centre.cost_centre_code %}
+    {% breadcrumb view.expenditure_category.grouping_description "expenditure_details_cost_centre"  %}
 {% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-xl">{{ view.cost_centre.cost_centre_name }} - {{ view.cost_centre.cost_centre_code }}</h1>
+        <h3 class="govuk-heading-xl">{{ view.expenditure_category.NAC_category }} - {{ view.expenditure_category.grouping_description }}</h3>
       </div>
 
       <div class="govuk-grid-column-one-third directorate-cc-form">

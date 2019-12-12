@@ -97,3 +97,22 @@ hierarchy_sub_total_column = [
     'monthly_figure__financial_code__cost_centre__cost_centre_name',
     'monthly_figure__financial_code__cost_centre__cost_centre_name',
 ]
+
+
+# NAC data
+nac_columns = {
+    "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display": "Hidden",  # noqa
+    "monthly_figure__financial_code__natural_account_code__natural_account_code_description": "Natural Account Code Description",  # noqa
+    "monthly_figure__financial_code__natural_account_code__natural_account_code": "Code",  # noqa
+}
+nac_sub_total = [
+    "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display",
+]
+nac_display_sub_total_column = (
+    "monthly_figure__financial_code__natural_account_code__natural_account_code_description"  # noqa
+)
+nac_order_list = [
+    "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display_order",  # noqa
+    "monthly_figure__financial_code__natural_account_code__natural_account_code_description",  # noqa
+]
+
