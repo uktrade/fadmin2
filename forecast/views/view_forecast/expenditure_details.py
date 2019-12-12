@@ -12,7 +12,7 @@ from django_tables2 import (
 from chartofaccountDIT.models import ExpenditureCategory
 
 from costcentre.forms import (
-    DirectorateCostCentresForm,
+    ExpenditureTypeForm,
 )
 from costcentre.models import (
     CostCentre,
@@ -41,7 +41,7 @@ from forecast.utils.query_fields import (
 from forecast.views.base import ForecastViewPermissionMixin
 
 
-class ForecastSingleeMixin(MultiTableMixin):
+class ForecastSingleMixin(MultiTableMixin):
     hierarchy_type = -1
 
     def get_tables(self):
@@ -72,9 +72,10 @@ class ForecastSingleeMixin(MultiTableMixin):
         ]
         return self.tables
 
-class ExpenditureDetailsView(
+
+class ExpenditureDetailsMixin(
     ForecastViewPermissionMixin,
-    ForecastSingleeMixin,
+    ForecastSingleMixin,
     TemplateView,
 ):
     template_name = "forecast/view/expenditure_details.html"
@@ -91,24 +92,62 @@ class ExpenditureDetailsView(
             pk=self.kwargs['expenditure_category'],
         )
 
-    def cost_centres_form(self):
-        cost_centre = self.cost_centre()
-
-        return DirectorateCostCentresForm(
-            directorate_code=cost_centre.directorate.directorate_code
-        )
+    def expenditure_type_form(self):
+        return ExpenditureTypeForm()
 
     def post(self, request, *args, **kwargs):
-        cost_centre_code = request.POST.get(
-            'cost_centre',
+        expenditure_category_id = request.POST.get(
+            'expenditure_category',
             None,
         )
-        if cost_centre_code:
+
+        if expenditure_category_id:
             return HttpResponseRedirect(
                 reverse(
-                    "forecast_cost_centre",
-                    kwargs={'cost_centre_code': cost_centre_code}
+                    "expenditure_details_cost_centre",
+                    kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
+                            'expenditure_category' : expenditure_category_id}
                 )
             )
         else:
-            raise Http404("Cost Centre not found")
+            raise Http404("Budget Type not found")
+
+
+class CostCentreExpenditureDetailsView(
+    ForecastViewPermissionMixin,
+    ForecastSingleMixin,
+    TemplateView,
+):
+    template_name = "forecast/view/expenditure_details.html"
+    table_pagination = False
+    hierarchy_type = SHOW_COSTCENTRE
+
+    def cost_centre(self):
+        return CostCentre.objects.get(
+            cost_centre_code=self.kwargs[filter_codes[self.hierarchy_type]],
+        )
+
+    def expenditure_category(self):
+        return ExpenditureCategory.objects.get(
+            pk=self.kwargs['expenditure_category'],
+        )
+
+    def expenditure_type_form(self):
+        return ExpenditureTypeForm()
+
+    def post(self, request, *args, **kwargs):
+        expenditure_category_id = request.POST.get(
+            'expenditure_category',
+            None,
+        )
+
+        if expenditure_category_id:
+            return HttpResponseRedirect(
+                reverse(
+                    "expenditure_details_cost_centre",
+                    kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
+                            'expenditure_category' : expenditure_category_id}
+                )
+            )
+        else:
+            raise Http404("Budget Type not found")

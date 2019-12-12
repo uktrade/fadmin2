@@ -12,7 +12,7 @@ from forecast.views.upload_file import (
     UploadBudgetView,
 )
 from forecast.views.view_forecast.expenditure_details import (
-    ExpenditureDetailsView,
+    CostCentreExpenditureDetailsView,
 )
 from forecast.views.view_forecast.forecast_summary import (
     CostCentreView,
@@ -73,7 +73,7 @@ urlpatterns = [
     ),
     path(
         "expenditure-code/<cost_centre_code>/<expenditure_category>/",
-        ExpenditureDetailsView.as_view(),
+        CostCentreExpenditureDetailsView.as_view(),
         name="expenditure_details_cost_centre",
     ),
     path(

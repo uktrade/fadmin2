@@ -21,7 +21,7 @@
       <div class="govuk-grid-column-one-third directorate-cc-form">
         <form method="post" action ="">
             {% csrf_token %}
-            {% include "core/govt_uk_form.html" with form=view.cost_centres_form %}
+            {% include "core/govt_uk_form.html" with form=view.expenditure_type_form %}
             <input type="submit" value="Change" class="govuk-button" data-module="govuk-button"/>
         </form>
       </div>
