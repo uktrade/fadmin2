@@ -34,25 +34,3 @@
     {% endfor %}
 
 {% endblock %}
-
-{% block scripts %}
-<script type="application/javascript">
-    let allCC = document.getElementById("all-cc");
-    let myCC = document.getElementById("my-cc");
-
-    if (allCC && myCC) {
-        myCC.style.display = "none";
-        document.getElementById("id_mode_0").checked = true;
-
-        function swapCostCentreChoice(input) {
-            if (input.id === "id_mode_0") {
-                allCC.style.display = "block";
-                myCC.style.display = "none";
-            } else {
-                allCC.style.display = "none";
-                myCC.style.display = "block";
-            }
-        }
-    }
-</script>
-{% endblock %}
