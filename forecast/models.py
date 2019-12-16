@@ -344,7 +344,6 @@ class SubTotalForecast:
             field_name: False for field_name in self.subtotal_columns
         }
         for current_row in self.display_data:
-            self.output_row_to_table(current_row, "")
             subtotal_time = False
             # check if we need a subtotal.
             # we check from the inner subtotal
@@ -356,6 +355,7 @@ class SubTotalForecast:
                 self.do_output_subtotal(current_row)
             for k, totals in self.subtotals.items():
                 self.add_row_to_subtotal(current_row, totals)
+            self.output_row_to_table(current_row, "")
 
         # output all the subtotals, because it is finished
         for column in self.subtotal_columns:

@@ -216,12 +216,22 @@ class CostCentreExpenditureDetailsView(
             None,
         )
 
+        # if expenditure_category_id:
+        #     return HttpResponseRedirect(
+        #         reverse(
+        #             "expenditure_details_cost_centre",
+        #             kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
+        #                     'expenditure_category' : expenditure_category_id}
+        #         )
+        #     )
+        # else:
+        #     raise Http404("Budget Type not found")
         if expenditure_category_id:
             return HttpResponseRedirect(
                 reverse(
                     "expenditure_details_cost_centre",
-                    kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
-                            'expenditure_category' : expenditure_category_id}
+                    args=[self.cost_centre().cost_centre_code,
+                            expenditure_category_id]
                 )
             )
         else:

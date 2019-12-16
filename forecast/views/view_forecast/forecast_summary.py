@@ -22,6 +22,7 @@ from forecast.models import (
     MonthlyFigureAmount,
 )
 from forecast.tables import (
+    ForecastExpandTable,
     ForecastSubTotalTable,
 )
 from forecast.utils.query_fields import (
@@ -97,7 +98,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
         programme_table.attrs['caption'] = "Programme Report"
         expenditure_table = ForecastSubTotalTable(expenditure_columns, expenditure_data)
         expenditure_table.attrs['caption'] = "Expenditure Report"
-        project_table = ForecastSubTotalTable(project_columns, project_data)
+        project_table = ForecastExpandTable(project_columns, project_data)
         project_table.attrs['caption'] = "Project Report"
 
         self.tables = [

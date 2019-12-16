@@ -105,7 +105,7 @@ class ForecastTable(tables.Table):
     """Define the month columns format and their footer.
     Used every time we need to display a forecast"""
     display_footer = True
-
+    display_view_details = False
     def __init__(self, column_dict={}, *args, **kwargs):
         cols = [
             ("budg", SummingFooterCol(self.display_footer, "Budget", empty_values=()))
@@ -128,11 +128,22 @@ class ForecastTable(tables.Table):
         #  but they are not required
         #  in the displayed table.
         column_dict = {k: v for k, v in column_dict.items() if v != "Hidden"}
+
+
         extra_column_to_display = [
             (k, tables.Column(v)) for (k, v) in column_dict.items()
         ]
+        column_list = list(column_dict.keys())
+        if  self.display_view_details:
+            extra_column_to_display.extend(
+                [("Test",
+                    tables.Column(verbose_name="",default='View', linkify=True),
+                )]
+            )
+            column_list.insert(0, "Test")
 
-        column_list = column_dict.keys()
+
+
         actual_month_list = FinancialPeriod.financial_period_info.actual_month_list()
 
         extra_column_to_display.extend(
@@ -207,3 +218,9 @@ class ForecastSubTotalTable(ForecastTable, tables.Table):
         row_attrs = {
             "class": lambda record: "govuk-table__row {}".format(record["row_type"])
         }
+
+
+class ForecastExpandTable(ForecastSubTotalTable, tables.Table):
+    display_view_details = True
+    class Meta(ForecastSubTotalTable.Meta):
+        pass
