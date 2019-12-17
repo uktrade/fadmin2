@@ -54,6 +54,11 @@ jobs:
             . venv/bin/activate
             python manage.py test
       - run:
+          name: Collect static files
+          command: |
+            . venv/bin/activate
+            python manage.py collectstatic
+      - run:
           name: Run node BDD
           command: |
             npm run bdd
