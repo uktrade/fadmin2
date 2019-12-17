@@ -48,7 +48,7 @@ def step_impl(context):
     context.browser.get(f'{context.base_url}/forecast/edit/{888812}/')
 
     WebDriverWait(context.browser, 5000).until(
-        ec.presence_of_element_located((By.ID, "select_all"))
+        ec.presence_of_element_located((By.ID, "id_apr_0"))
     )
 
     april_value = context.browser.find_element_by_id(
@@ -58,6 +58,10 @@ def step_impl(context):
     )
 
     assert april_value == "0"
+
+    WebDriverWait(context.browser, 5000).until(
+        ec.presence_of_element_located((By.ID, "select_all"))
+    )
 
     first_select = context.browser.find_element_by_id("select_all")
     first_select.click()
