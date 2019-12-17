@@ -1,4 +1,4 @@
-Feature: Paste data to row
+Feature: Paste forecast row data
 
   Scenario: Pasting a valid row into the edit forecast table
     Given the user selects a row in the edit forecast table

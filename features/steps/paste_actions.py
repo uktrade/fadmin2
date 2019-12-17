@@ -17,7 +17,10 @@ from features.environment import (
 )
 
 from forecast.models import (
+    FinancialCode,
     FinancialPeriod,
+    MonthlyFigure,
+    MonthlyFigureAmount,
 )
 
 from forecast.test.factories import (
@@ -106,8 +109,6 @@ def step_impl(context):
     copy_text(context, no_error_paste_text)
     paste(context)
 
-    time.sleep(30)
-
 
 @when(u'the user pastes too many rows')
 def step_impl(context):
@@ -118,7 +119,7 @@ def step_impl(context):
 
 @then(u'the clipboard data is displayed in the forecast table')
 def step_impl(context):
-    time.sleep(.5)
+    time.sleep(2)
 
     april_value = context.browser.find_element_by_id(
         "id_apr_0"
@@ -184,3 +185,28 @@ def step_impl(context):
         'innerHTML'
     )
     assert april_value == "0"
+
+
+@when(u'the user pastes valid row data with a 5 decimal place value')
+def step_impl(context):
+    no_error_paste_text = "999999	123456	1111111	2222222	3000	1000.499999999	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
+    copy_text(context, no_error_paste_text)
+    paste(context)
+
+
+@then(u'the stored value has been rounded correctly')
+def step_impl(context):
+    financial_code = FinancialCode.objects.filter(
+        cost_centre_id=999999,
+    ).first()
+
+    monthly_figure = MonthlyFigure.objects.filter(
+        financial_period_id=1,
+        financial_code=financial_code,
+    ).first()
+
+    monthly_figure_amount = MonthlyFigureAmount.objects.filter(
+        monthly_figure=monthly_figure,
+    ).first()
+
+    assert monthly_figure_amount.amount == 100000
