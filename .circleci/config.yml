@@ -22,7 +22,10 @@ jobs:
 
     steps:
       - checkout
-      - run: mkdir test-reports
+      - run:
+          name: Create static file dir
+          command: |
+            sudo mkdir -p 0766 -p /app/front_end/build/static
       - run:
           name: Download Selenium
           command: |
