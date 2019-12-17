@@ -1,7 +1,5 @@
 from collections import OrderedDict
 
-from django.contrib.humanize.templatetags.humanize import intcomma
-
 import django_tables2 as tables
 
 from forecast.models import FinancialPeriod

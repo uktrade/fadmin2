@@ -1,4 +1,4 @@
-from decimal import *
+from decimal import Decimal
 
 from django.conf import settings
 
@@ -87,7 +87,7 @@ def get_monthly_figures(cost_centre_code, cell_data):
     return monthly_figures
 
 
-def check_row_match(index, pasted_at_row, cell_data):
+def check_row_match(index, pasted_at_row, cell_data):  # noqa C901
     if index != 0:
         return
 

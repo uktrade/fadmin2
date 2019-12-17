@@ -3,9 +3,8 @@ import re
 
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Subquery, OuterRef
 from django.http import JsonResponse
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
@@ -19,8 +18,8 @@ from costcentre.models import CostCentre
 
 from forecast.forms import (
     AddForecastRowForm,
-    PublishForm,
     PasteForecastForm,
+    PublishForm,
 )
 from forecast.models import (
     FinancialCode,
@@ -192,14 +191,20 @@ def pasted_forecast_content(request, cost_centre_code):
 
         if all_selected and row_count < len(rows):
             return JsonResponse({
-                'error': 'You have selected all forecast rows but the pasted data has too many rows.'
+                'error': (
+                    'You have selected all forecast rows '
+                    'but the pasted data has too many rows.'
+                )
             },
                 status=400,
             )
 
         if all_selected and row_count > len(rows):
             return JsonResponse({
-                'error': 'You have selected all forecast rows but the pasted data has too few rows.'
+                'error': (
+                    'You have selected all forecast rows '
+                    'but the pasted data has too few rows.'
+                )
             },
                 status=400,
             )
