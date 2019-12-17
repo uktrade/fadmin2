@@ -221,7 +221,7 @@ def before_feature(context, feature):
         )
         context.browser.implicitly_wait(5)
     else:
-        context.browser = webdriver.Chrome("./chromedriver")
+        context.browser = webdriver.Chrome()
 
 
 def after_feature(context, feature):
