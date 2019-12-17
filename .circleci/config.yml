@@ -23,10 +23,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Create static file dir
-          command: |
-            sudo mkdir -p 0766 -p /app/front_end/build/static
-      - run:
           name: Download Selenium
           command: |
             curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
@@ -56,11 +52,6 @@ jobs:
           command: |
             . venv/bin/activate
             python manage.py test
-      - run:
-          name: Collect static files
-          command: |
-            . venv/bin/activate
-            python manage.py collectstatic
       - run:
           name: Run node BDD
           command: |
