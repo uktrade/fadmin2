@@ -56,7 +56,7 @@ jobs:
       - run:
           name: Run node BDD
           command: |
-            npm run bdd
+            npm start
           background: true
       # wait for the server to start responding. We expect Bad Request 400 once it starts listening.
       # so override the shell and have the last command be the : { null } command to force exit code 0.

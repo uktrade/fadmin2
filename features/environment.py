@@ -203,8 +203,7 @@ def copy_text(context, text):
 
 
 def before_scenario(context, scenario):
-    if settings.USE_SELENIUM_HUB:
-        BehaviorDrivenTestCase.host = settings.SELENIUM_HOST
+    BehaviorDrivenTestCase.host = settings.SELENIUM_HOST
     set_up_test_objects(context)
 
 
@@ -218,7 +217,7 @@ def before_feature(context, feature):
         )
         context.browser.implicitly_wait(5)
     else:
-        context.browser = webdriver.Chrome()
+        context.browser = webdriver.Chrome("./chromedriver")
         #print(f"Base URL is {context.base_url}")
 
 
