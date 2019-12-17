@@ -22,14 +22,7 @@ const TableCell = ({isHidden, rowIndex, cellKey}) => {
     }
 
     const wasEdited = () => {
-        if (
-            cell.versions &&
-            cell.versions[0].version > 1 &&
-            cell.versions[0].amount != cell.versions[cell.versions.length - 1].amount
-        ) {
-            return true
-        }
-
+        // TODO - add function after "previous months" story
         return false
     }
 
@@ -71,24 +64,10 @@ const TableCell = ({isHidden, rowIndex, cellKey}) => {
         console.log(value)
     }
 
-    // const isMounted = useRef(false);
-    // useEffect(() => {
-    //     if (isMounted.current) {
-    //         setEdited(true)
-    //     }
-
-    //     if (cell.value) {
-    //         isMounted.current = true;
-    //     }
-    // }, [cell.value]);
-
     const formatValue = (value) => {
-        return (value / 100).toLocaleString(
-            undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            }
-        )
+        let nfObject = new Intl.NumberFormat('en-GB'); 
+        let pounds = Math.round(value / 100)
+        return nfObject.format(pounds); 
     }
 
     return (

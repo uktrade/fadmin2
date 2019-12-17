@@ -29,7 +29,7 @@ def format_figure(value, column):
     if str(column) in calendar.month_name or str(column) in forecast_figure_cols:
         try:
             figure_value = int(value) / 100
-            return f'{figure_value:,.2f}'
+            return f'{round(figure_value):,d}'
         except ValueError:
             pass
 

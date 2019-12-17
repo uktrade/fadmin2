@@ -70,10 +70,13 @@ function ForecastTable() {
                 }
             }
 
+            console.log("POSTING DATA")
+
             postData(
                 `/forecast/paste-forecast/${window.cost_centre}/`,
                 payload
             ).then((response) => {
+                console.log("response", response)
                 if (response.status === 200) {
                     let rows = processForecastData(response.data)
                       dispatch({

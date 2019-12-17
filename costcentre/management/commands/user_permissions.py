@@ -11,6 +11,15 @@ class Command(BaseCommand):
         parser.add_argument("--email", help="User's email address", dest="email")
 
     def handle(self, *args, **options):
+
+        group = Group.objects.create(name='employees')
+        assign_perm('change_task', group, task)
+
+
+
+
+
+
         _User = get_user_model()
         user = _User.objects.filter(email=options["email"]).first()
 
