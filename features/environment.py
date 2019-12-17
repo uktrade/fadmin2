@@ -216,10 +216,9 @@ def before_feature(context, feature):
             ),
             desired_capabilities=DesiredCapabilities.CHROME,
         )
+        context.browser.implicitly_wait(5)
     else:
         context.browser = webdriver.Chrome
-
-    context.browser.implicitly_wait(5)
 
 
 def after_feature(context, feature):
