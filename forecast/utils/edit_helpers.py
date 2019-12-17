@@ -124,4 +124,4 @@ def check_row_match(index, pasted_at_row, cell_data):
 
 
 def convert_forecast_amount(amount):
-    return round(Decimal(amount.replace(",", "")), 2) * 100
+    return round(Decimal(amount.replace(",", ""))) * 100

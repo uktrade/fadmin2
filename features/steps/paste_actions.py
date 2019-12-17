@@ -17,10 +17,7 @@ from features.environment import (
 )
 
 from forecast.models import (
-    FinancialCode,
     FinancialPeriod,
-    MonthlyFigure,
-    MonthlyFigureAmount,
 )
 
 from forecast.test.factories import (
@@ -97,16 +94,16 @@ def step_impl(context):
 
 @when(u'the user pastes valid row data')
 def step_impl(context):
-    no_error_paste_text = "999999	123456	1111111	2222222	3000	1000.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
-    copy_text(context, no_error_paste_text)
+    paste_text = "999999	123456	1111111	2222222	3000	1000.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
+    copy_text(context, paste_text)
     paste(context)
 
 
 @when(u'the user pastes valid sheet data')
 def step_impl(context):
-    no_error_paste_text = "999999	123456	1111111	2222222	3000	1000.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00\\n111111	123456	1111111	2222222	3000	1000.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
+    paste_text = "999999	123456	1111111	2222222	3000	1000.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00\\n111111	123456	1111111	2222222	3000	1000.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
 
-    copy_text(context, no_error_paste_text)
+    copy_text(context, paste_text)
     paste(context)
 
 
@@ -169,8 +166,8 @@ def step_impl(context):
     april.actual_loaded = True
     april.save()
 
-    no_error_paste_text = "999999	123456	1111111	2222222	3000	111.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
-    copy_text(context, no_error_paste_text)
+    paste_text = "999999	123456	1111111	2222222	3000	111.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
+    copy_text(context, paste_text)
     paste(context)
 
     april.actual_loaded = False
@@ -189,24 +186,55 @@ def step_impl(context):
 
 @when(u'the user pastes valid row data with a 5 decimal place value')
 def step_impl(context):
-    no_error_paste_text = "999999	123456	1111111	2222222	3000	1000.499999999	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
-    copy_text(context, no_error_paste_text)
+    paste_text = "999999	123456	1111111	2222222	3000	1000.49999	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
+    copy_text(context, paste_text)
     paste(context)
 
 
-@then(u'the stored value has been rounded correctly')
+@when(u'the user pastes too many column row data')
 def step_impl(context):
-    financial_code = FinancialCode.objects.filter(
-        cost_centre_id=999999,
-    ).first()
+    paste_text = "999999	123456	1111111	2222222	3000	1000.49999	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
+    copy_text(context, paste_text)
+    paste(context)
 
-    monthly_figure = MonthlyFigure.objects.filter(
-        financial_period_id=1,
-        financial_code=financial_code,
-    ).first()
 
-    monthly_figure_amount = MonthlyFigureAmount.objects.filter(
-        monthly_figure=monthly_figure,
-    ).first()
+@then(u'the too many columns error message is displayed')
+def step_impl(context):
+    check_error_message(
+        context,
+        'Your pasted data does not '
+        'match the expected format. '
+        'There are too many columns.'
+    )
 
-    assert monthly_figure_amount.amount == 100000
+
+@when(u'the user pastes too few column row data')
+def step_impl(context):
+    paste_text = "999999	123456	1111111	2222222	3000	1000.49999	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
+    copy_text(context, paste_text)
+    paste(context)
+
+
+@then(u'the too few columns error message is displayed')
+def step_impl(context):
+    check_error_message(
+        context,
+        'Your pasted data does not '
+        'match the expected format. '
+        'There are not enough columns.'
+    )
+
+
+@when(u'the user pastes mismatched columns')
+def step_impl(context):
+    paste_text = "333444	123456	1111111	2222222	3000	1000.49999	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
+    copy_text(context, paste_text)
+    paste(context)
+
+
+@then(u'the mismatched columns error message is displayed')
+def step_impl(context):
+    check_error_message(
+        context,
+        'There is a mismatch between your pasted and selected rows. Please check the following columns: "Natural account code".'
+    )
