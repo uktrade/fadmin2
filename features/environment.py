@@ -203,17 +203,22 @@ def copy_text(context, text):
 
 
 def before_scenario(context, scenario):
-    BehaviorDrivenTestCase.host = settings.SELENIUM_HOST
+    if settings.USE_SELENIUM_HUB:
+        BehaviorDrivenTestCase.host = settings.SELENIUM_HOST
     set_up_test_objects(context)
 
 
 def before_feature(context, feature):
-    context.browser = webdriver.Remote(
-        command_executor="http://{}:4444/wd/hub".format(
-            settings.SELENIUM_ADDRESS
-        ),
-        desired_capabilities=DesiredCapabilities.CHROME,
-    )
+    if settings.USE_SELENIUM_HUB:
+        context.browser = webdriver.Remote(
+            command_executor="http://{}:4444/wd/hub".format(
+                settings.SELENIUM_ADDRESS
+            ),
+            desired_capabilities=DesiredCapabilities.CHROME,
+        )
+    else:
+        context.browser = webdriver.Chrome
+
     context.browser.implicitly_wait(5)
 
 

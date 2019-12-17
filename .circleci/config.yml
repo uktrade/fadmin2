@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6-stretch-node-browsers-legacy
+      - image: circleci/python:3.6.2-stretch-browsers
         environment:
           FLASK_CONFIG: testing
           DATABASE_URL: psql://ubuntu@localhost:5432/fido_test
@@ -12,6 +12,7 @@ jobs:
           SELENIUM_ADDRESS: localhost
           SELENIUM_HOST: localhost
           PUBLIC_PATH: localhost:3000/
+          USE_SELENIUM_HUB: False
 
       - image: circleci/postgres:9.6.5-alpine-ram
         environment:
