@@ -1,5 +1,3 @@
-import time
-
 from behave import (
     given,
     when,
@@ -116,8 +114,6 @@ def step_impl(context):
 
 @then(u'the clipboard data is displayed in the forecast table')
 def step_impl(context):
-    time.sleep(2)
-
     april_value = context.browser.find_element_by_id(
         "id_apr_0"
     ).get_attribute(

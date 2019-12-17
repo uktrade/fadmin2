@@ -1,4 +1,5 @@
 import datetime
+import time
 
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -183,6 +184,9 @@ def paste(context):
     first_select = context.browser.find_element_by_id("clipboard-test")
     first_select.send_keys(Keys.CONTROL, "v")
 
+    # Wait for UI to update
+    time.sleep(2)
+
 
 def copy_text(context, text):
     context.browser.execute_script(
@@ -218,7 +222,6 @@ def before_feature(context, feature):
         context.browser.implicitly_wait(5)
     else:
         context.browser = webdriver.Chrome()
-        #print(f"Base URL is {context.base_url}")
 
 
 def after_feature(context, feature):
