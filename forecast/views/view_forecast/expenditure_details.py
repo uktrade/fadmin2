@@ -62,6 +62,7 @@ class ForecastSingleMixin(MultiTableMixin):
             nac_columns.keys(),
             pivot_filter,
             order_list=nac_order_list,
+            show_grand_total=False
         )
 
         nac_table = ForecastSubTotalTable(nac_columns, nac_data)

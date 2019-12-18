@@ -216,6 +216,7 @@ class SubTotalForecast:
     def __init__(self, data):
         self.display_data = data
 
+
     def output_row_to_table(self, row, style_name=""):
         #     Add the stile entry to the dictionary
         #     add the resulting dictionary to the list
@@ -301,6 +302,7 @@ class SubTotalForecast:
             self,
             display_total_column,
             subtotal_columns_arg,
+            show_grand_total,
     ):
         # The self.subtotals are passed in from
         # the outer totals for calculation,
@@ -368,11 +370,12 @@ class SubTotalForecast:
                 self.subtotals[column],
                 SUB_TOTAL_CLASS,
             )
-        self.subtotals["Gran_Total"][self.display_total_column] = \
-            "Total Managed Expenditure"
-        self.output_row_to_table(
-            self.subtotals["Gran_Total"], GRAN_TOTAL_CLASS
-        )
+        if show_grand_total:
+            self.subtotals["Gran_Total"][self.display_total_column] = \
+                "Total Managed Expenditure"
+            self.output_row_to_table(
+                self.subtotals["Gran_Total"], GRAN_TOTAL_CLASS
+            )
 
         return self.result_table
 
@@ -413,6 +416,7 @@ class PivotManager(models.Manager):
             filter_dict={},
             year=0,
             order_list=[],
+            show_grand_total = True
     ):
         # If requesting a subtotal, the
         # list of columns must be specified
@@ -444,6 +448,7 @@ class PivotManager(models.Manager):
         return r.subtotal_data(
             display_total_column,
             subtotal_columns,
+            show_grand_total,
         )
 
     def pivot_data(self, columns={}, filter_dict={}, year=0, order_list=[]):
