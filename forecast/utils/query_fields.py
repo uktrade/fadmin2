@@ -43,7 +43,7 @@ programme_display_sub_total_column = "monthly_figure__financial_code__programme_
 expenditure_columns = {
     "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display": "Hidden",  # noqa
     "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display": "linked",  # noqa
-    "monthly_figure__financial_code__natural_account_code__expenditure_category__NAC_category__id": "Linked",  # noqa
+    "monthly_figure__financial_code__natural_account_code__expenditure_category__id": "Link1",  # noqa
     "monthly_figure__financial_code__natural_account_code__expenditure_category__NAC_category__NAC_category_description": "Budget Grouping",  # noqa
     "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description":"Budget Category",  # noqa
 }

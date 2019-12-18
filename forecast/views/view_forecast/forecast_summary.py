@@ -96,18 +96,18 @@ class ForecastMultiTableMixin(MultiTableMixin):
         )
         programme_table = ForecastSubTotalTable(programme_columns, programme_data)
         programme_table.attrs['caption'] = "Programme Report"
-        expenditure_table = ForecastSubTotalTable(expenditure_columns, expenditure_data)
+        expenditure_table = ForecastExpandTable(expenditure_columns, expenditure_data)
         expenditure_table.attrs['caption'] = "Expenditure Report"
-        project_table = ForecastExpandTable(project_columns, project_data)
+        project_table = ForecastSubTotalTable(project_columns, project_data)
         project_table.attrs['caption'] = "Project Report"
 
         self.tables = [
-            ForecastSubTotalTable(
-                hierarchy_columns[self.hierarchy_type],
-                hierarchy_data),
-            programme_table,
+            # ForecastSubTotalTable(
+            #     hierarchy_columns[self.hierarchy_type],
+            #     hierarchy_data),
+            # programme_table,
             expenditure_table,
-            project_table,
+            # project_table,
         ]
         return self.tables
 

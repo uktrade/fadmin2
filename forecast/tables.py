@@ -3,8 +3,31 @@ from collections import OrderedDict
 from django.contrib.humanize.templatetags.humanize import intcomma
 
 import django_tables2 as tables
+from django_tables2.utils import A  # alias for Accessor
 
 from forecast.models import FinancialPeriod
+
+
+class MultiLinkCol(tables.Column):
+    # display 0 for null value instead of a dash
+    default = ''
+    tot_value = 0
+
+    def display_value(self, value):
+        if value:
+            return 'View'
+
+    def render(self, value):
+        v = value or 0
+        self.tot_value += v
+        return self.display_value(v)
+
+    def __init__(self, viewname, arg1, arg2, arg3 = '', *args, **kwargs):
+        self.arg1 = arg1
+        self.arg2 = arg2
+        self.arg3 = arg3
+        self.viewname = viewname
+        super().__init__(*args, **kwargs)
 
 
 class SummingFooterCol(tables.Column):
@@ -135,12 +158,23 @@ class ForecastTable(tables.Table):
         ]
         column_list = list(column_dict.keys())
         if  self.display_view_details:
+            # find linked columns
+            for key, value in column_dict.items():
+                if value == 'Link1':
+                    # col = extra_column_to_display[key]
+                    # col.visible = False
+                    arg1 = key
+            # user = tables.Column(linkify=("user_detail", [tables.A("user__pk")])) # (viewname, args)
+            # link_col = tables.Column(linkify = ("expenditure_details_dit", [tables.A(arg1),]))
+            link_col = tables.Column('TTT', arg1, linkify = {"viewname": "expenditure_details_dit", "args": [tables.A(arg1)]})
+
+
             extra_column_to_display.extend(
-                [("Test",
-                    tables.Column(verbose_name="",default='View', linkify=True),
+                [("Link",
+                    link_col,
                 )]
             )
-            column_list.insert(0, "Test")
+            column_list.insert(0, "Link")
 
 
 
