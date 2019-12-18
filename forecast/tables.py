@@ -1,11 +1,10 @@
 from collections import OrderedDict
 
-from django.contrib.humanize.templatetags.humanize import intcomma
-
 import django_tables2 as tables
 from django_tables2.utils import A  # alias for Accessor
 
 from forecast.models import FinancialPeriod
+
 
 
 class MultiLinkCol(tables.Column):
@@ -30,13 +29,15 @@ class MultiLinkCol(tables.Column):
         super().__init__(*args, **kwargs)
 
 
-class SummingFooterCol(tables.Column):
+
+class ForecastFigureCol(tables.Column):
+
     # display 0 for null value instead of a dash
     default = 0
     tot_value = 0
 
     def display_value(self, value):
-        return intcomma(value)
+        return value
 
     def render(self, value):
         v = value or 0
@@ -56,7 +57,7 @@ class SummingFooterCol(tables.Column):
         return self.display_value(self.tot_value)
 
 
-class SummingMonthFooterCol(SummingFooterCol):
+class SummingMonthFooterCol(ForecastFigureCol):
     """It expects a list of month as first argument.
     Used to calculate and display year to date, full year, etc"""
 
@@ -80,13 +81,13 @@ class SummingMonthFooterCol(SummingFooterCol):
         super().__init__(*args, **kwargs)
 
 
-class SubtractCol(SummingFooterCol):
+class SubtractCol(ForecastFigureCol):
     """Used to display the difference between the figures in two columns"""
 
     def calc_value(self, table):
         a = table.columns.columns[self.col1].current_value
         b = table.columns.columns[self.col2].current_value
-        val = int(a.replace(",", "")) - int(b.replace(",", ""))
+        val = a - b
         return self.display_value(val)
 
     def render(self, table):
@@ -101,16 +102,16 @@ class SubtractCol(SummingFooterCol):
         super().__init__(*args, **kwargs)
 
 
-class PercentageCol(SummingFooterCol):
+class PercentageCol(ForecastFigureCol):
     """Used to display the percentage of values in two columns"""
 
     def calc_value(self, table):
         a = table.columns.columns[self.col1].current_value
         b = table.columns.columns[self.col2].current_value
-        if b == "0":
+        if b == 0:
             return "No Budget"
-        val = int(a.replace(",", "")) / int(b.replace(",", ""))
-        return "{0:.0%}".format(val)
+        val = a / b
+        return self.display_value(val)
 
     def render(self, table):
         return self.calc_value(table)
@@ -131,14 +132,14 @@ class ForecastTable(tables.Table):
     display_view_details = False
     def __init__(self, column_dict={}, *args, **kwargs):
         cols = [
-            ("budg", SummingFooterCol(self.display_footer, "Budget", empty_values=()))
+            ("budg", ForecastFigureCol(self.display_footer, "Budget", empty_values=()))
         ]
 
         for month in FinancialPeriod.financial_period_info.periods():
             cols.append(
                 (
                     month[0],
-                    SummingFooterCol(self.display_footer, month[1], empty_values=()),
+                    ForecastFigureCol(self.display_footer, month[1], empty_values=()),
                 )
             )
 
