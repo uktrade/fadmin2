@@ -33,7 +33,9 @@ from forecast.utils.query_fields import (
     expenditure_columns,
     expenditure_display_sub_total_column,
     expenditure_order_list,
-    expenditure_sub_total, filter_codes,
+    expenditure_sub_total,
+    expenditure_view,
+    filter_codes,
     filter_selectors,
     hierarchy_columns,
     hierarchy_order_list,
@@ -58,12 +60,13 @@ class ForecastMultiTableMixin(MultiTableMixin):
         """
          Return an array of table instances containing data.
         """
+        filter_code = ''
+        pivot_filter = {}
         arg_name = filter_codes[self.hierarchy_type]
         if arg_name:
             filter_code = self.kwargs[arg_name]
             pivot_filter = {filter_selectors[self.hierarchy_type]: f"{filter_code}"}
-        else:
-            pivot_filter = {}
+
         hierarchy_data = MonthlyFigureAmount.pivot.subtotal_data(
             hierarchy_sub_total_column[self.hierarchy_type],
             hierarchy_sub_total,
@@ -96,18 +99,22 @@ class ForecastMultiTableMixin(MultiTableMixin):
         )
         programme_table = ForecastSubTotalTable(programme_columns, programme_data)
         programme_table.attrs['caption'] = "Programme Report"
-        expenditure_table = ForecastExpandTable(expenditure_columns, expenditure_data)
+        expenditure_table = ForecastExpandTable(expenditure_view[self.hierarchy_type],
+                                                'monthly_figure__financial_code__natural_account_code__expenditure_category__id',
+                                                filter_code,
+                                                expenditure_columns,
+                                                expenditure_data)
         expenditure_table.attrs['caption'] = "Expenditure Report"
         project_table = ForecastSubTotalTable(project_columns, project_data)
         project_table.attrs['caption'] = "Project Report"
 
         self.tables = [
-            # ForecastSubTotalTable(
-            #     hierarchy_columns[self.hierarchy_type],
-            #     hierarchy_data),
-            # programme_table,
+            ForecastSubTotalTable(
+                hierarchy_columns[self.hierarchy_type],
+                hierarchy_data),
+            programme_table,
             expenditure_table,
-            # project_table,
+            project_table,
         ]
         return self.tables
 

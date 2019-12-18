@@ -42,8 +42,7 @@ programme_display_sub_total_column = "monthly_figure__financial_code__programme_
 # Expenditure data
 expenditure_columns = {
     "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display": "Hidden",  # noqa
-    "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display": "linked",  # noqa
-    "monthly_figure__financial_code__natural_account_code__expenditure_category__id": "Link1",  # noqa
+    "monthly_figure__financial_code__natural_account_code__expenditure_category__id": "Hidden",  # noqa
     "monthly_figure__financial_code__natural_account_code__expenditure_category__NAC_category__NAC_category_description": "Budget Grouping",  # noqa
     "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description":"Budget Category",  # noqa
 }
@@ -100,7 +99,12 @@ hierarchy_sub_total_column = [
     'monthly_figure__financial_code__cost_centre__cost_centre_name',
 ]
 
-
+expenditure_view = [
+    'expenditure_details_dit',
+    'expenditure_details_group',
+    'expenditure_details_directorate',
+    'expenditure_details_cost_centre',
+]
 # NAC data
 nac_columns = {
     "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display": "Hidden",  # noqa

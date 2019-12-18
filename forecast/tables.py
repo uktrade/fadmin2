@@ -159,20 +159,9 @@ class ForecastTable(tables.Table):
         ]
         column_list = list(column_dict.keys())
         if  self.display_view_details:
-            # find linked columns
-            for key, value in column_dict.items():
-                if value == 'Link1':
-                    # col = extra_column_to_display[key]
-                    # col.visible = False
-                    arg1 = key
-            # user = tables.Column(linkify=("user_detail", [tables.A("user__pk")])) # (viewname, args)
-            # link_col = tables.Column(linkify = ("expenditure_details_dit", [tables.A(arg1),]))
-            link_col = tables.Column('TTT', arg1, linkify = {"viewname": "expenditure_details_dit", "args": [tables.A(arg1)]})
-
-
             extra_column_to_display.extend(
                 [("Link",
-                    link_col,
+                    self.link_col,
                 )]
             )
             column_list.insert(0, "Link")
@@ -257,5 +246,16 @@ class ForecastSubTotalTable(ForecastTable, tables.Table):
 
 class ForecastExpandTable(ForecastSubTotalTable, tables.Table):
     display_view_details = True
+
+    def __init__(self, viewname, link1, code = '', *args, **kwargs):
+        if code:
+            link_args = [code, tables.A(link1)]
+        else:
+            link_args = [tables.A(link1)]
+        self.link_col = tables.Column('TTT', link1, linkify = {"viewname": viewname, "args": link_args})
+
+        super().__init__(*args, **kwargs)
+
+
     class Meta(ForecastSubTotalTable.Meta):
         pass

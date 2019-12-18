@@ -1,9 +1,11 @@
+{% extends "forecast/view/expenditure_details/expenditure_details_base.html" %}
+{% load django_bootstrap_breadcrumbs %}
+
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb "DIT forecast" "forecast_dit" %}
-    {% breadcrumb view.cost_centre.directorate.group.group_name "forecast_group" view.cost_centre.directorate.group_id %}
-    {% breadcrumb view.cost_centre.directorate.directorate_name "forecast_directorate" view.cost_centre.directorate.directorate_code %}
-    {% breadcrumb view.expenditure_category.grouping_description "expenditure_details_cost_centre"  %}
+    {% breadcrumb view.cost_centre.directorate.group.group_name "forecast_group" view.directorate.group_id %}
+    {% breadcrumb view.cost_centre.directorate.directorate_name "forecast_directorate" view.directorate.directorate_code %}
+    {% breadcrumb view.expenditure_category.grouping_description "expenditure_details_directorate"  %}
 {% endblock %}
 
 {% block view_hierarchy_title %}
