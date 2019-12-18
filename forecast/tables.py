@@ -5,29 +5,12 @@ from django_tables2.utils import A  # alias for Accessor
 
 from forecast.models import FinancialPeriod
 
-
-
-class MultiLinkCol(tables.Column):
-    # display 0 for null value instead of a dash
-    default = ''
-    tot_value = 0
-
-    def display_value(self, value):
-        if value:
-            return 'View'
+class ForecastLinkCol(tables.Column):
 
     def render(self, value):
-        v = value or 0
-        self.tot_value += v
-        return self.display_value(v)
-
-    def __init__(self, viewname, arg1, arg2, arg3 = '', *args, **kwargs):
-        self.arg1 = arg1
-        self.arg2 = arg2
-        self.arg3 = arg3
-        self.viewname = viewname
-        super().__init__(*args, **kwargs)
-
+        if f'{value}'.strip():
+            return 'View'
+        return ''
 
 
 class ForecastFigureCol(tables.Column):
@@ -230,6 +213,7 @@ class ForecastTable(tables.Table):
             "th": {"class": "govuk-table__header"},
             "td": {"class": "govuk-table__cell"},
             "tf": {"class": "govuk-table__cell"},
+            "a": {"class": "govuk-link"},
         }
         orderable = False
         row_attrs = {"class": "govuk-table__row"}
@@ -244,7 +228,7 @@ class ForecastSubTotalTable(ForecastTable, tables.Table):
         }
 
 
-class ForecastExpandTable(ForecastSubTotalTable, tables.Table):
+class ForecastWithLinkTable(ForecastSubTotalTable, tables.Table):
     display_view_details = True
 
     def __init__(self, viewname, link1, code = '', *args, **kwargs):
@@ -252,7 +236,7 @@ class ForecastExpandTable(ForecastSubTotalTable, tables.Table):
             link_args = [code, tables.A(link1)]
         else:
             link_args = [tables.A(link1)]
-        self.link_col = tables.Column('TTT', link1, linkify = {"viewname": viewname, "args": link_args})
+        self.link_col = ForecastLinkCol('', link1, linkify = {"viewname": viewname, "args": link_args})
 
         super().__init__(*args, **kwargs)
 

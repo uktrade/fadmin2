@@ -22,7 +22,7 @@ from forecast.models import (
     MonthlyFigureAmount,
 )
 from forecast.tables import (
-    ForecastExpandTable,
+    ForecastWithLinkTable,
     ForecastSubTotalTable,
 )
 from forecast.utils.query_fields import (
@@ -99,11 +99,11 @@ class ForecastMultiTableMixin(MultiTableMixin):
         )
         programme_table = ForecastSubTotalTable(programme_columns, programme_data)
         programme_table.attrs['caption'] = "Programme Report"
-        expenditure_table = ForecastExpandTable(expenditure_view[self.hierarchy_type],
+        expenditure_table = ForecastWithLinkTable(expenditure_view[self.hierarchy_type],
                                                 'monthly_figure__financial_code__natural_account_code__expenditure_category__id',
-                                                filter_code,
-                                                expenditure_columns,
-                                                expenditure_data)
+                                                  filter_code,
+                                                  expenditure_columns,
+                                                  expenditure_data)
         expenditure_table.attrs['caption'] = "Expenditure Report"
         project_table = ForecastSubTotalTable(project_columns, project_data)
         project_table.attrs['caption'] = "Project Report"
