@@ -430,7 +430,7 @@ class PivotManager(models.Manager):
                 error_msg += f"'{elem}', "
         if not correct:
             raise SubTotalFieldDoesNotExistError(
-                "Sub-total column(s) {error_msg} not found."
+                f"Sub-total column(s) {error_msg} not found."
             )
 
         if display_total_column not in [*data_columns]:
