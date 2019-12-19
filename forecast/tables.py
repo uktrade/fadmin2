@@ -231,12 +231,16 @@ class ForecastSubTotalTable(ForecastTable, tables.Table):
 class ForecastWithLinkTable(ForecastSubTotalTable, tables.Table):
     display_view_details = True
 
-    def __init__(self, viewname, link1, code = '', *args, **kwargs):
+    def __init__(self, viewname, arg_link, code = '', *args, **kwargs):
+
+        link_args = []
         if code:
-            link_args = [code, tables.A(link1)]
-        else:
-            link_args = [tables.A(link1)]
-        self.link_col = ForecastLinkCol('', link1, linkify = {"viewname": viewname, "args": link_args})
+            link_args.append(code)
+
+        for item in arg_link:
+            link_args.append(tables.A(item))
+
+        self.link_col = ForecastLinkCol('', arg_link[0], linkify = {"viewname": viewname, "args": link_args})
 
         super().__init__(*args, **kwargs)
 

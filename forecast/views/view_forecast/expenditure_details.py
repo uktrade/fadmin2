@@ -27,6 +27,7 @@ from forecast.tables import (
     ForecastSubTotalTable,
 )
 from forecast.utils.query_fields import (
+    BUDGET_TYPE,
     EXPENDITURE_TYPE_ID,
     SHOW_COSTCENTRE,
     SHOW_DIRECTORATE,
@@ -51,6 +52,9 @@ class ForecastExpenditureDetailsMixin(MultiTableMixin):
             pk=self.kwargs['expenditure_category'],
         )
 
+    def budget_type(self):
+        return self.kwargs['budget_type']
+
     def expenditure_type_form(self):
         return ExpenditureTypeForm()
 
@@ -59,9 +63,13 @@ class ForecastExpenditureDetailsMixin(MultiTableMixin):
         """
          Return an array of table instances containing data.
         """
+        budget_type_id = self.kwargs['budget_type']
         expenditure_category_id = self.kwargs['expenditure_category']
         print(expenditure_category_id)
-        pivot_filter = {EXPENDITURE_TYPE_ID:f"{expenditure_category_id}"}
+        pivot_filter = {
+                        EXPENDITURE_TYPE_ID:f"{expenditure_category_id}",
+                        BUDGET_TYPE:f"{budget_type_id}",
+        }
         arg_name = filter_codes[self.hierarchy_type]
         if arg_name:
             filter_code = self.kwargs[arg_name]
@@ -103,7 +111,9 @@ class DITExpenditureDetailsView(
             return HttpResponseRedirect(
                 reverse(
                     "expenditure_details_dit",
-                    kwargs={'expenditure_category' : expenditure_category_id}
+                    kwargs={'expenditure_category' : expenditure_category_id,
+                            'budget_type' : self.budget_type(),
+                            }
 
                 )
             )
@@ -135,7 +145,9 @@ class GroupExpenditureDetailsView(
                 reverse(
                     "expenditure_details_group",
                     kwargs={'group_code': self.group().group_code,
-                            'expenditure_category' : expenditure_category_id}
+                            'expenditure_category' : expenditure_category_id,
+                            'budget_type' : self.budget_type(),
+                            }
                 )
             )
         else:
@@ -166,7 +178,9 @@ class DirectorateExpenditureDetailsView(
                 reverse(
                     "expenditure_details_directorate",
                     kwargs={'directorate_code': self.directorate().directorate_code,
-                            'expenditure_category' : expenditure_category_id}
+                            'expenditure_category' : expenditure_category_id,
+                            'budget_type' : self.budget_type(),
+                            }
                 )
             )
         else:
@@ -205,8 +219,10 @@ class CostCentreExpenditureDetailsView(
             return HttpResponseRedirect(
                 reverse(
                     "expenditure_details_cost_centre",
-                    args=[self.cost_centre().cost_centre_code,
-                            expenditure_category_id]
+                    kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
+                            'expenditure_category' : expenditure_category_id,
+                            'budget_type' : self.budget_type(),
+                            }
                 )
             )
         else:
