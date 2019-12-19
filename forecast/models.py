@@ -152,6 +152,7 @@ class FinancialCode(models.Model):
         )
 
     def save(self, *args, **kwargs):
+        # TODO it does not work
         # Override save to calculate the forecast_expenditure_type.
         if self.pk is None:
             # calculate the forecast_expenditure_type
@@ -244,21 +245,14 @@ class SubTotalForecast:
     def row_has_values(self, row):
         has_values = False
         for period in self.period_list:
-            if row[period]:
+            if row[period] and (row[period]> 50 or row[period] < -50):
                 has_values = True
                 break
         return has_values
 
     def remove_empty_rows(self):
-        # remove missing periods (like Adj1,
-        # etc from the list used to add the
-        # periods together.
         # period_list has to be initialised before we can check if the row
         # has values different from 0
-        self.period_list = [
-            value for value in self.full_list if value in self.display_data[0].keys()
-        ]
-        return
         how_many_row = len(self.display_data) - 1
         for i in range(how_many_row, -1, -1):
             row = self.display_data[i]
@@ -318,6 +312,12 @@ class SubTotalForecast:
         self.full_list = list(
             FinancialPeriod.objects.values_list("period_short_name", flat=True)
         )
+        # remove missing periods (like Adj1,
+        # etc from the list used to add the
+        # periods together.
+        self.period_list = [
+            value for value in self.full_list if value in self.display_data[0].keys()
+        ]
         self.remove_empty_rows()
         first_row = self.display_data.pop(0)
         self.output_row_to_table(first_row, "")

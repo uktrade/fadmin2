@@ -27,6 +27,7 @@ from forecast.tables import (
     ForecastSubTotalTable,
 )
 from forecast.utils.query_fields import (
+    EXPENDITURE_TYPE_ID,
     SHOW_COSTCENTRE,
     SHOW_DIRECTORATE,
     SHOW_DIT,
@@ -41,8 +42,18 @@ from forecast.utils.query_fields import (
 from forecast.views.base import ForecastViewPermissionMixin
 
 
-class ForecastSingleMixin(MultiTableMixin):
+class ForecastExpenditureDetailsMixin(MultiTableMixin):
     hierarchy_type = -1
+    table_pagination = False
+
+    def expenditure_category(self):
+        return ExpenditureCategory.objects.get(
+            pk=self.kwargs['expenditure_category'],
+        )
+
+    def expenditure_type_form(self):
+        return ExpenditureTypeForm()
+
 
     def get_tables(self):
         """
@@ -50,7 +61,7 @@ class ForecastSingleMixin(MultiTableMixin):
         """
         expenditure_category_id = self.kwargs['expenditure_category']
         print(expenditure_category_id)
-        pivot_filter = {'monthly_figure__financial_code__natural_account_code__expenditure_category__id':f"{expenditure_category_id}"}
+        pivot_filter = {EXPENDITURE_TYPE_ID:f"{expenditure_category_id}"}
         arg_name = filter_codes[self.hierarchy_type]
         if arg_name:
             filter_code = self.kwargs[arg_name]
@@ -76,20 +87,11 @@ class ForecastSingleMixin(MultiTableMixin):
 
 class DITExpenditureDetailsView(
     ForecastViewPermissionMixin,
-    ForecastSingleMixin,
+    ForecastExpenditureDetailsMixin,
     TemplateView,
 ):
     template_name = "forecast/view/expenditure_details/dit.html"
-    table_pagination = False
     hierarchy_type = SHOW_DIT
-
-    def expenditure_category(self):
-        return ExpenditureCategory.objects.get(
-            pk=self.kwargs['expenditure_category'],
-        )
-
-    def expenditure_type_form(self):
-        return ExpenditureTypeForm()
 
     def post(self, request, *args, **kwargs):
         expenditure_category_id = request.POST.get(
@@ -110,11 +112,10 @@ class DITExpenditureDetailsView(
 
 class GroupExpenditureDetailsView(
     ForecastViewPermissionMixin,
-    ForecastSingleMixin,
+    ForecastExpenditureDetailsMixin,
     TemplateView,
 ):
     template_name = "forecast/view/expenditure_details/group.html"
-    table_pagination = False
     hierarchy_type = SHOW_GROUP
 
     def group(self):
@@ -122,14 +123,6 @@ class GroupExpenditureDetailsView(
             group_code=self.kwargs['group_code'],
             active=True,
         )
-
-    def expenditure_category(self):
-        return ExpenditureCategory.objects.get(
-            pk=self.kwargs['expenditure_category'],
-        )
-
-    def expenditure_type_form(self):
-        return ExpenditureTypeForm()
 
     def post(self, request, *args, **kwargs):
         expenditure_category_id = request.POST.get(
@@ -150,11 +143,10 @@ class GroupExpenditureDetailsView(
 
 class DirectorateExpenditureDetailsView(
     ForecastViewPermissionMixin,
-    ForecastSingleMixin,
+    ForecastExpenditureDetailsMixin,
     TemplateView,
 ):
     template_name = "forecast/view/expenditure_details/directorate.html"
-    table_pagination = False
     hierarchy_type = SHOW_DIRECTORATE
 
     def directorate(self):
@@ -162,14 +154,6 @@ class DirectorateExpenditureDetailsView(
             directorate_code=self.kwargs['directorate_code'],
             active=True,
         )
-
-    def expenditure_category(self):
-        return ExpenditureCategory.objects.get(
-            pk=self.kwargs['expenditure_category'],
-        )
-
-    def expenditure_type_form(self):
-        return ExpenditureTypeForm()
 
     def post(self, request, *args, **kwargs):
         expenditure_category_id = request.POST.get(
@@ -191,7 +175,7 @@ class DirectorateExpenditureDetailsView(
 
 class CostCentreExpenditureDetailsView(
     ForecastViewPermissionMixin,
-    ForecastSingleMixin,
+    ForecastExpenditureDetailsMixin,
     TemplateView,
 ):
     template_name = "forecast/view/expenditure_details/cost_centre.html"
@@ -200,7 +184,7 @@ class CostCentreExpenditureDetailsView(
 
     def cost_centre(self):
         return CostCentre.objects.get(
-            cost_centre_code=self.kwargs[filter_codes[self.hierarchy_type]],
+            cost_centre_code=self.kwargs['cost_centre_code'],
         )
 
     def expenditure_category(self):
@@ -217,16 +201,6 @@ class CostCentreExpenditureDetailsView(
             None,
         )
 
-        # if expenditure_category_id:
-        #     return HttpResponseRedirect(
-        #         reverse(
-        #             "expenditure_details_cost_centre",
-        #             kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
-        #                     'expenditure_category' : expenditure_category_id}
-        #         )
-        #     )
-        # else:
-        #     raise Http404("Budget Type not found")
         if expenditure_category_id:
             return HttpResponseRedirect(
                 reverse(

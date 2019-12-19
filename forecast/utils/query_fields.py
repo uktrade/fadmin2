@@ -1,3 +1,7 @@
+EXPENDITURE_TYPE_ID = \
+    'monthly_figure__financial_code__natural_account_code__expenditure_category__id'
+
+
 # monthly_figure__financial_code__programme__budget_type_fk__budget_type_display
 # indicates if DEL, AME, ADMIN
 # It is used in every view
@@ -42,7 +46,7 @@ programme_display_sub_total_column = "monthly_figure__financial_code__programme_
 # Expenditure data
 expenditure_columns = {
     "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display": "Hidden",  # noqa
-    "monthly_figure__financial_code__natural_account_code__expenditure_category__id": "Hidden",  # noqa
+    EXPENDITURE_TYPE_ID: "Hidden",  # noqa
     "monthly_figure__financial_code__natural_account_code__expenditure_category__NAC_category__NAC_category_description": "Budget Grouping",  # noqa
     "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description":"Budget Category",  # noqa
 }
