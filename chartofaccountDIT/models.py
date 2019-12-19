@@ -358,6 +358,21 @@ class NaturalCode(NaturalCodeAbstract, TimeStampedModel, LogChangeModel):
         blank=True,
         null=True,
     )
+    def save(self, *args, **kwargs):
+         # Override save to copy the economic budget code, for convenience.
+         link_l5_code = None
+         if self.account_L5_code:
+             link_l5_code = self.account_L5_code.account_l5_code
+         else:
+             if self.account_L5_code_upload:
+                 link_l5_code = self.account_L5_code_upload.account_l5_code
+
+         if link_l5_code:
+            l5_linked = L5Account.objects.get(
+                account_l5_code=link_l5_code,
+            )
+            self.economic_budget_code = l5_linked.economic_budget_code
+         super(NaturalCode, self).save(*args, **kwargs)
 
 
 class HistoricalNaturalCode(NaturalCodeAbstract, ArchivedModel):

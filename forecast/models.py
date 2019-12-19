@@ -152,8 +152,7 @@ class FinancialCode(models.Model):
         )
 
     def save(self, *args, **kwargs):
-        # TODO it does not work
-        # Override save to calculate the forecast_expenditure_type.
+         # Override save to calculate the forecast_expenditure_type.
         if self.pk is None:
             # calculate the forecast_expenditure_type
             nac_economic_budget_code = (
