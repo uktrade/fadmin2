@@ -1,9 +1,9 @@
 from collections import OrderedDict
 
 import django_tables2 as tables
-from django_tables2.utils import A  # alias for Accessor
 
 from forecast.models import FinancialPeriod
+
 
 class ForecastLinkCol(tables.Column):
 
@@ -14,7 +14,6 @@ class ForecastLinkCol(tables.Column):
 
 
 class ForecastFigureCol(tables.Column):
-
     # display 0 for null value instead of a dash
     default = 0
     tot_value = 0
@@ -113,6 +112,7 @@ class ForecastTable(tables.Table):
     Used every time we need to display a forecast"""
     display_footer = True
     display_view_details = False
+
     def __init__(self, column_dict={}, *args, **kwargs):
         cols = [
             ("budg", ForecastFigureCol(self.display_footer, "Budget", empty_values=()))
@@ -136,20 +136,17 @@ class ForecastTable(tables.Table):
         #  in the displayed table.
         column_dict = {k: v for k, v in column_dict.items() if v != "Hidden"}
 
-
         extra_column_to_display = [
             (k, tables.Column(v)) for (k, v) in column_dict.items()
         ]
         column_list = list(column_dict.keys())
-        if  self.display_view_details:
+        if self.display_view_details:
             extra_column_to_display.extend(
                 [("Link",
-                    self.link_col,
-                )]
+                  self.link_col,
+                  )]
             )
             column_list.insert(0, "Link")
-
-
 
         actual_month_list = FinancialPeriod.financial_period_info.actual_month_list()
 
@@ -231,7 +228,7 @@ class ForecastSubTotalTable(ForecastTable, tables.Table):
 class ForecastWithLinkTable(ForecastSubTotalTable, tables.Table):
     display_view_details = True
 
-    def __init__(self, viewname, arg_link, code = '', *args, **kwargs):
+    def __init__(self, viewname, arg_link, code='', *args, **kwargs):
 
         link_args = []
         if code:
@@ -240,10 +237,11 @@ class ForecastWithLinkTable(ForecastSubTotalTable, tables.Table):
         for item in arg_link:
             link_args.append(tables.A(item))
 
-        self.link_col = ForecastLinkCol('', arg_link[0], linkify = {"viewname": viewname, "args": link_args})
+        self.link_col = ForecastLinkCol('', arg_link[0],
+                                        linkify={"viewname": viewname,
+                                                 "args": link_args})
 
         super().__init__(*args, **kwargs)
-
 
     class Meta(ForecastSubTotalTable.Meta):
         pass

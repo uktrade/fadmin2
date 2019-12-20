@@ -152,7 +152,7 @@ class FinancialCode(models.Model):
         )
 
     def save(self, *args, **kwargs):
-         # Override save to calculate the forecast_expenditure_type.
+        # Override save to calculate the forecast_expenditure_type.
         if self.pk is None:
             # calculate the forecast_expenditure_type
             nac_economic_budget_code = (
@@ -216,7 +216,6 @@ class SubTotalForecast:
     def __init__(self, data):
         self.display_data = data
 
-
     def output_row_to_table(self, row, style_name=""):
         #     Add the stile entry to the dictionary
         #     add the resulting dictionary to the list
@@ -244,7 +243,7 @@ class SubTotalForecast:
     def row_has_values(self, row):
         has_values = False
         for period in self.period_list:
-            if row[period] and (row[period]> 50 or row[period] < -50):
+            if row[period] and (row[period] > 50 or row[period] < -50):
                 has_values = True
                 break
         return has_values
@@ -389,7 +388,7 @@ class PivotManager(models.Manager):
             "Cost Centre Description",
         "monthly_figure__financial_code__natural_account_code__natural_account_code":
             "Natural Account Code",
-        "monthly_figure__financial_code__natural_account_code__natural_account_code_description": # noqa
+        "monthly_figure__financial_code__natural_account_code__natural_account_code_description":  # noqa
             "Natural Account Code Description",
         "monthly_figure__financial_code__programme__programme_code": "Programme Code",
         "monthly_figure__financial_code__programme__programme_description":
@@ -415,7 +414,7 @@ class PivotManager(models.Manager):
             filter_dict={},
             year=0,
             order_list=[],
-            show_grand_total = True
+            show_grand_total=True
     ):
         # If requesting a subtotal, the
         # list of columns must be specified
@@ -513,6 +512,7 @@ class Amount(TimeStampedModel):
     CURRENT_VERSION = 1
     TEMPORARY_VERSION = -1
     version = models.IntegerField(default=CURRENT_VERSION)
+
     # TODO don't save to month that have actuals
 
     class Meta:

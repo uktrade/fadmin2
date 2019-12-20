@@ -113,12 +113,12 @@ expenditure_view = [
 ]
 # NAC data
 nac_columns = {
-    "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description": "Hidden",
+    "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description": "Hidden",  # noqa
     "monthly_figure__financial_code__natural_account_code__natural_account_code_description": "Natural Account Code Description",  # noqa
     "monthly_figure__financial_code__natural_account_code__natural_account_code": "Code",  # noqa
 }
 nac_sub_total = [
-    "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description",
+    "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description",  # noqa
 ]
 nac_display_sub_total_column = (
     "monthly_figure__financial_code__natural_account_code__natural_account_code_description"  # noqa
@@ -126,4 +126,3 @@ nac_display_sub_total_column = (
 nac_order_list = [
     "monthly_figure__financial_code__natural_account_code__natural_account_code_description",  # noqa
 ]
-

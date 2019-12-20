@@ -22,8 +22,8 @@ from forecast.models import (
     MonthlyFigureAmount,
 )
 from forecast.tables import (
-    ForecastWithLinkTable,
     ForecastSubTotalTable,
+    ForecastWithLinkTable,
 )
 from forecast.utils.query_fields import (
     BUDGET_TYPE,
@@ -102,7 +102,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
         programme_table = ForecastSubTotalTable(programme_columns, programme_data)
         programme_table.attrs['caption'] = "Programme Report"
         expenditure_table = ForecastWithLinkTable(expenditure_view[self.hierarchy_type],
-                                                [EXPENDITURE_TYPE_ID, BUDGET_TYPE],
+                                                  [EXPENDITURE_TYPE_ID, BUDGET_TYPE],
                                                   filter_code,
                                                   expenditure_columns,
                                                   expenditure_data)
@@ -229,5 +229,3 @@ class CostCentreView(
             )
         else:
             raise Http404("Cost Centre not found")
-
-

@@ -33,12 +33,12 @@ from forecast.utils.query_fields import (
     SHOW_DIRECTORATE,
     SHOW_DIT,
     SHOW_GROUP,
+    filter_codes,
+    filter_selectors,
     nac_columns,
     nac_display_sub_total_column,
     nac_order_list,
     nac_sub_total,
-    filter_codes,
-    filter_selectors,
 )
 from forecast.views.base import ForecastViewPermissionMixin
 
@@ -58,7 +58,6 @@ class ForecastExpenditureDetailsMixin(MultiTableMixin):
     def expenditure_type_form(self):
         return ExpenditureTypeForm()
 
-
     def get_tables(self):
         """
          Return an array of table instances containing data.
@@ -67,8 +66,8 @@ class ForecastExpenditureDetailsMixin(MultiTableMixin):
         expenditure_category_id = self.kwargs['expenditure_category']
         print(expenditure_category_id)
         pivot_filter = {
-                        EXPENDITURE_TYPE_ID:f"{expenditure_category_id}",
-                        BUDGET_TYPE:f"{budget_type_id}",
+            EXPENDITURE_TYPE_ID: f"{expenditure_category_id}",
+            BUDGET_TYPE: f"{budget_type_id}",
         }
         arg_name = filter_codes[self.hierarchy_type]
         if arg_name:
@@ -111,14 +110,15 @@ class DITExpenditureDetailsView(
             return HttpResponseRedirect(
                 reverse(
                     "expenditure_details_dit",
-                    kwargs={'expenditure_category' : expenditure_category_id,
-                            'budget_type' : self.budget_type(),
+                    kwargs={'expenditure_category': expenditure_category_id,
+                            'budget_type': self.budget_type(),
                             }
 
                 )
             )
         else:
             raise Http404("Budget Type not found")
+
 
 class GroupExpenditureDetailsView(
     ForecastViewPermissionMixin,
@@ -145,13 +145,14 @@ class GroupExpenditureDetailsView(
                 reverse(
                     "expenditure_details_group",
                     kwargs={'group_code': self.group().group_code,
-                            'expenditure_category' : expenditure_category_id,
-                            'budget_type' : self.budget_type(),
+                            'expenditure_category': expenditure_category_id,
+                            'budget_type': self.budget_type(),
                             }
                 )
             )
         else:
             raise Http404("Budget Type not found")
+
 
 class DirectorateExpenditureDetailsView(
     ForecastViewPermissionMixin,
@@ -178,8 +179,8 @@ class DirectorateExpenditureDetailsView(
                 reverse(
                     "expenditure_details_directorate",
                     kwargs={'directorate_code': self.directorate().directorate_code,
-                            'expenditure_category' : expenditure_category_id,
-                            'budget_type' : self.budget_type(),
+                            'expenditure_category': expenditure_category_id,
+                            'budget_type': self.budget_type(),
                             }
                 )
             )
@@ -220,11 +221,10 @@ class CostCentreExpenditureDetailsView(
                 reverse(
                     "expenditure_details_cost_centre",
                     kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
-                            'expenditure_category' : expenditure_category_id,
-                            'budget_type' : self.budget_type(),
+                            'expenditure_category': expenditure_category_id,
+                            'budget_type': self.budget_type(),
                             }
                 )
             )
         else:
             raise Http404("Budget Type not found")
-
