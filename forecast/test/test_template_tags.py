@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 
 from costcentre.test.factories import (
@@ -10,7 +11,6 @@ from forecast.templatetags.forecast_permissions import (
     has_edit_permission,
     is_forecast_user,
 )
-from forecast.test.factories import ForecastPermissionFactory
 
 
 class EditPermissionTest(TestCase):
@@ -25,9 +25,11 @@ class EditPermissionTest(TestCase):
         assert not is_forecast_user(test_user)
 
         # Give user permission to view forecasts
-        ForecastPermissionFactory(
-            user=test_user,
+        can_view_forecasts = Permission.objects.get(
+            name='forecast.can_view_forecasts'
         )
+        test_user.user_permissions.add(can_view_forecasts)
+        test_user.save()
 
         assert is_forecast_user(test_user)
 
@@ -37,9 +39,11 @@ class EditPermissionTest(TestCase):
         )
 
         # Give user permission to view forecasts
-        ForecastPermissionFactory(
-            user=test_user,
+        can_view_forecasts = Permission.objects.get(
+            name='forecast.can_view_forecasts'
         )
+        test_user.user_permissions.add(can_view_forecasts)
+        test_user.save()
 
         cost_centre = CostCentreFactory.create(
             cost_centre_code=self.test_cost_centre

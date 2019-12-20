@@ -1,3 +1,5 @@
+from simple_history.admin import SimpleHistoryAdmin
+
 from django.contrib import admin
 
 from core.admin import (
@@ -9,12 +11,11 @@ from forecast.import_csv import import_adi_file_class
 from forecast.models import (
     Budget,
     FinancialPeriod,
-    ForecastPermission,
     MonthlyFigure,
 )
 
 
-class MonthlyFigureAdmin(AdminImportExport, AdminReadOnly):
+class MonthlyFigureAdmin(AdminImportExport, AdminReadOnly, SimpleHistoryAdmin):
     @property
     def import_info(self):
         return import_adi_file_class
@@ -47,4 +48,3 @@ class FinancialPeriodAdmin(AdminReadOnly):
 admin.site.register(MonthlyFigure, MonthlyFigureAdmin)
 admin.site.register(FinancialPeriod, FinancialPeriodAdmin)
 admin.site.register(Budget, BudgetAdmin)
-admin.site.register(ForecastPermission)

@@ -21,6 +21,7 @@ MIDDLEWARE = [
     "core.middleware.ThreadLocalMiddleware",
     #"authbroker_client.middleware.ProtectAllViewsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
 AUTHENTICATION_BACKENDS = [

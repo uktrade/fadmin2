@@ -162,14 +162,27 @@ class AddRowView(CostCentrePermissionTest, FormView):
         return super().form_valid(form)
 
 
-# TODO permission decorator
 @require_http_methods(["POST", ])
 def pasted_forecast_content(request, cost_centre_code):
+    # Check user has permission to edit forecast
+    if not request.user.has_perm("forecast.can_view_forecasts"):
+        raise PermissionDenied()
+
+    # Check that user has permission to edit cost centre
+    cost_centre = CostCentre.objects.filter(
+        cost_centre_code=cost_centre_code,
+    ).first()
+
+    if not (
+        request.user.has_perm("view_costcentre", cost_centre) and
+        request.user.has_perm("change_costcentre", cost_centre)
+    ):
+        raise PermissionDenied()
+
     form = PasteForecastForm(
         request.POST,
     )
     if form.is_valid():
-        # TODO check user has permission on cost centre
         paste_content = form.cleaned_data['paste_content']
         pasted_at_row = form.cleaned_data.get('pasted_at_row', None)
         all_selected = form.cleaned_data.get('all_selected', False)

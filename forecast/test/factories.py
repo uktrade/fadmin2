@@ -12,7 +12,6 @@ from costcentre.test.factories import CostCentreFactory
 from forecast.models import (
     Budget,
     FinancialPeriod,
-    ForecastPermission,
     MonthlyFigure,
 )
 
@@ -51,8 +50,3 @@ class MonthlyFigureFactory(factory.DjangoModelFactory):
     class Meta:
         model = MonthlyFigure
 
-
-class ForecastPermissionFactory(factory.DjangoModelFactory):
-
-    class Meta:
-        model = ForecastPermission

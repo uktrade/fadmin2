@@ -8,6 +8,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 
+from django.contrib.auth.models import Permission
+
 from features.environment import (
     create_test_user,
     copy_text,
@@ -16,10 +18,6 @@ from features.environment import (
 
 from forecast.models import (
     FinancialPeriod,
-)
-
-from forecast.test.factories import (
-    ForecastPermissionFactory,
 )
 
 
@@ -41,9 +39,11 @@ def step_impl(context):
     create_test_user(context)
 
     # Add forecast view permission
-    ForecastPermissionFactory(
-        user=context.user,
+    can_view_forecasts = Permission.objects.get(
+        name='forecast.can_view_forecasts'
     )
+    context.user.user_permissions.add(can_view_forecasts)
+    context.user.save()
 
     context.browser.get(f'{context.base_url}/forecast/edit/{888812}/')
 
@@ -72,9 +72,11 @@ def step_impl(context):
     create_test_user(context)
 
     # Add forecast view permission
-    ForecastPermissionFactory(
-        user=context.user,
+    can_view_forecasts = Permission.objects.get(
+        name='forecast.can_view_forecasts'
     )
+    context.user.user_permissions.add(can_view_forecasts)
+    context.user.save()
 
     context.browser.get(f'{context.base_url}/forecast/edit/{888812}/')
 

@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import TestCase
-
-from forecast.test.factories import ForecastPermissionFactory
 
 from upload_file.templatetags.upload_permissions import (
     has_upload_permission,
@@ -16,9 +15,10 @@ class UploadPermissionTestTestCase(TestCase):
 
         assert not has_upload_permission(test_user)
 
-        ForecastPermissionFactory(
-            user=test_user,
-            can_upload=True,
+        can_upload_files = Permission.objects.get(
+            name='forecast.can_upload_files',
         )
+        self.test_user_permissions.add(can_upload_files)
+        self.test_user.save()
 
         assert has_upload_permission(test_user) is True
