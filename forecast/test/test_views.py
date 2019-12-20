@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from chartofaccountDIT.test.factories import (
+    NaturalCode,
     Analysis1Factory,
     Analysis2Factory,
     ExpenditureCategoryFactory,
@@ -693,6 +694,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         # Check that the second table displays the project and the correct totals
         self.check_project_table(tables[PROJECT_TABLE_INDEX])
 
+
 class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
@@ -719,12 +721,14 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
         current_year = get_current_financial_year()
         self.amount1_apr = -9876543
         self.amount2_apr = 1000000
-        self.programme_obj = ProgrammeCodeFactory()
-        self.expenditure_obj = ExpenditureCategoryFactory()
+        programme_obj = ProgrammeCodeFactory()
+        self.budget_type = programme_obj.budget_type_fk.budget_type_display
+        expenditure_obj = ExpenditureCategoryFactory()
+        self.expenditure_id = expenditure_obj.id
         self.nac1_obj = NaturalCodeFactory( natural_account_code = 12345678,
-            expenditure_category = self.expenditure_obj
+            expenditure_category = expenditure_obj
         )
-        self.nac2_obj = NaturalCodeFactory(expenditure_category = self.expenditure_obj)
+        self.nac2_obj = NaturalCodeFactory(expenditure_category = expenditure_obj)
         year_obj = FinancialYear.objects.get(financial_year=current_year)
 
         apr_period = FinancialPeriod.objects.get(financial_period_code=1)
@@ -734,13 +738,13 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
         # If you use the MonthlyFigureFactory the test fails.
         # I cannot work out why, it may be due to using a random year....
         financial_code1_obj = FinancialCode.objects.create(
-            programme=self.programme_obj,
+            programme=programme_obj,
             cost_centre=self.cost_centre,
             natural_account_code=self.nac1_obj,
         )
         financial_code1_obj.save
         financial_code2_obj = FinancialCode.objects.create(
-            programme=self.programme_obj,
+            programme=programme_obj,
             cost_centre=self.cost_centre,
             natural_account_code=self.nac2_obj,
         )
@@ -829,14 +833,14 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
                 "expenditure_details_cost_centre",
                 kwargs={
                     'cost_centre_code': self.cost_centre_code,
-                    'expenditure_category': self.expenditure_obj.id,
-                    'budget_type': 'DEL',
+                    'expenditure_category': self.expenditure_id,
+                    'budget_type': self.budget_type,
                 },
             ),
             CostCentreExpenditureDetailsView,
             cost_centre_code=self.cost_centre_code,
-            expenditure_category= self.expenditure_obj.id,
-            budget_type= 'DEL'
+            expenditure_category= self.expenditure_id,
+            budget_type= self.budget_type
         )
 
         self.assertEqual(resp.status_code, 200)
@@ -851,6 +855,40 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
         # Check that all the subtotal hierachy_rows exist
         table_rows = soup.find_all("tr", class_="govuk-table__row")
         assert len(table_rows) == 4
+
+        self.check_negative_value_formatted(soup, 7)
+
+        # Check that the only table displays the nac and the correct totals
+        self.check_nac_table(tables[0])
+
+    def test_view_directory_nac_details(self):
+        resp = self.factory_get(
+            reverse(
+                "expenditure_details_directorate",
+                kwargs={
+                    'directorate_code': self.directorate.directorate_code,
+                    'expenditure_category': self.expenditure_id,
+                    'budget_type': self.budget_type,
+                },
+            ),
+            DirectorateExpenditureDetailsView,
+            directorate_code=self.directorate.directorate_code,
+            expenditure_category= self.nac1_obj.expenditure_category_id,
+            budget_type= self.budget_type
+        )
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "govuk-table")
+        # print(resp.content, file=open("ttt.html", "a"))
+        soup = BeautifulSoup(resp.content, features="html.parser")
+
+         # Check that there is 1 table
+        tables = soup.find_all("table", class_="govuk-table")
+        assert len(tables) == 1
+
+        # Check that all the subtotal hierachy_rows exist
+        table_rows = soup.find_all("tr", class_="govuk-table__row")
+        # assert len(table_rows) == 4
 
         self.check_negative_value_formatted(soup, 7)
 
