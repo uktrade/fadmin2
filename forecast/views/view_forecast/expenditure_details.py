@@ -64,7 +64,6 @@ class ForecastExpenditureDetailsMixin(MultiTableMixin):
         """
         budget_type_id = self.kwargs['budget_type']
         expenditure_category_id = self.kwargs['expenditure_category']
-        print(expenditure_category_id)
         pivot_filter = {
             EXPENDITURE_TYPE_ID: f"{expenditure_category_id}",
             BUDGET_TYPE: f"{budget_type_id}",
@@ -201,14 +200,6 @@ class CostCentreExpenditureDetailsView(
         return CostCentre.objects.get(
             cost_centre_code=self.kwargs['cost_centre_code'],
         )
-
-    def expenditure_category(self):
-        return ExpenditureCategory.objects.get(
-            pk=self.kwargs['expenditure_category'],
-        )
-
-    def expenditure_type_form(self):
-        return ExpenditureTypeForm()
 
     def post(self, request, *args, **kwargs):
         expenditure_category_id = request.POST.get(
