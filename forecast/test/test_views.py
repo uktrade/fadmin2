@@ -5,7 +5,6 @@ from django.test import TestCase
 from django.urls import reverse
 
 from chartofaccountDIT.test.factories import (
-    NaturalCode,
     Analysis1Factory,
     Analysis2Factory,
     ExpenditureCategoryFactory,
@@ -51,7 +50,6 @@ from forecast.views.view_forecast.forecast_summary import (
     DirectorateView,
     GroupView,
 )
-
 
 TOTAL_COLUMN = -3
 SPEND_TO_DATE_COLUMN = -4
@@ -470,13 +468,11 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
             self.year_total / 100
         )
         # Check the difference between budget and year total
-        assert last_programme_cols[
-            UNDERSPEND_COLUMN
-        ].get_text() == format_forecast_figure(self.underspend_total / 100)
+        assert last_programme_cols[UNDERSPEND_COLUMN].get_text() == \
+            format_forecast_figure(self.underspend_total / 100)
         # Check the spend to date
-        assert last_programme_cols[
-            SPEND_TO_DATE_COLUMN
-        ].get_text() == format_forecast_figure(self.spend_to_date_total / 100)
+        assert last_programme_cols[SPEND_TO_DATE_COLUMN].get_text() == \
+            format_forecast_figure(self.spend_to_date_total / 100)
 
     def check_expenditure_table(self, table):
         expenditure_rows = table.find_all("tr")
@@ -485,17 +481,14 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
 
         last_expenditure_cols = expenditure_rows[-1].find_all("td")
         # Check the total for the year
-        assert last_expenditure_cols[
-            TOTAL_COLUMN
-        ].get_text() == format_forecast_figure(self.year_total / 100)
+        assert last_expenditure_cols[TOTAL_COLUMN].get_text() == \
+            format_forecast_figure(self.year_total / 100)
         # Check the difference between budget and year total
-        assert last_expenditure_cols[
-            UNDERSPEND_COLUMN
-        ].get_text() == format_forecast_figure(self.underspend_total / 100)
+        assert last_expenditure_cols[UNDERSPEND_COLUMN].get_text() == \
+            format_forecast_figure(self.underspend_total / 100)
         # Check the spend to date
-        assert last_expenditure_cols[
-            SPEND_TO_DATE_COLUMN
-        ].get_text() == format_forecast_figure(self.spend_to_date_total / 100)
+        assert last_expenditure_cols[SPEND_TO_DATE_COLUMN].get_text() == \
+            format_forecast_figure(self.spend_to_date_total / 100)
 
     def check_project_table(self, table):
         project_rows = table.find_all("tr")
@@ -509,13 +502,11 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
             self.year_total / 100
         )
         # Check the difference between budget and year total
-        assert last_project_cols[
-            UNDERSPEND_COLUMN
-        ].get_text() == format_forecast_figure(self.underspend_total / 100)
+        assert last_project_cols[UNDERSPEND_COLUMN].get_text() == \
+            format_forecast_figure(self.underspend_total / 100)
         # Check the spend to date
-        assert last_project_cols[
-            SPEND_TO_DATE_COLUMN
-        ].get_text() == format_forecast_figure(self.spend_to_date_total / 100)
+        assert last_project_cols[SPEND_TO_DATE_COLUMN].get_text() == \
+            format_forecast_figure(self.spend_to_date_total / 100)
 
     def check_hierarchy_table(self, table, hierarchy_element):
         hierarchy_rows = table.find_all("tr")
@@ -725,10 +716,10 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
         self.budget_type = programme_obj.budget_type_fk.budget_type_display
         expenditure_obj = ExpenditureCategoryFactory()
         self.expenditure_id = expenditure_obj.id
-        self.nac1_obj = NaturalCodeFactory( natural_account_code = 12345678,
-            expenditure_category = expenditure_obj
-        )
-        self.nac2_obj = NaturalCodeFactory(expenditure_category = expenditure_obj)
+        self.nac1_obj = NaturalCodeFactory(natural_account_code=12345678,
+                                           expenditure_category=expenditure_obj
+                                           )
+        self.nac2_obj = NaturalCodeFactory(expenditure_category=expenditure_obj)
         year_obj = FinancialYear.objects.get(financial_year=current_year)
 
         apr_period = FinancialPeriod.objects.get(financial_period_code=1)
@@ -810,39 +801,20 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
 
         last_nac_cols = nac_rows[-1].find_all("td")
         # Check the total for the year
-        assert last_nac_cols[
-            TOTAL_COLUMN
-        ].get_text() == format_forecast_figure(self.year_total / 100)
+        assert last_nac_cols[TOTAL_COLUMN].get_text() == \
+            format_forecast_figure(self.year_total / 100)
         # Check the difference between budget and year total
-        assert last_nac_cols[
-            UNDERSPEND_COLUMN
-        ].get_text() == format_forecast_figure(self.underspend_total / 100)
+        assert last_nac_cols[UNDERSPEND_COLUMN].get_text() == \
+            format_forecast_figure(self.underspend_total / 100)
         # Check the spend to date
-        assert last_nac_cols[
-            SPEND_TO_DATE_COLUMN
-        ].get_text() == format_forecast_figure(self.spend_to_date_total / 100)
-
+        assert last_nac_cols[SPEND_TO_DATE_COLUMN].get_text() == \
+            format_forecast_figure(self.spend_to_date_total / 100)
 
     def check_negative_value_formatted(self, soup, lenght):
         negative_values = soup.find_all("span", class_="negative")
         assert len(negative_values) == lenght
 
-    def test_view_cost_centre_nac_details(self):
-        resp = self.factory_get(
-            reverse(
-                "expenditure_details_cost_centre",
-                kwargs={
-                    'cost_centre_code': self.cost_centre_code,
-                    'expenditure_category': self.expenditure_id,
-                    'budget_type': self.budget_type,
-                },
-            ),
-            CostCentreExpenditureDetailsView,
-            cost_centre_code=self.cost_centre_code,
-            expenditure_category= self.expenditure_id,
-            budget_type= self.budget_type
-        )
-
+    def check_response(self, resp):
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, "govuk-table")
 
@@ -861,6 +833,23 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
         # Check that the only table displays the nac and the correct totals
         self.check_nac_table(tables[0])
 
+    def test_view_cost_centre_nac_details(self):
+        resp = self.factory_get(
+            reverse(
+                "expenditure_details_cost_centre",
+                kwargs={
+                    'cost_centre_code': self.cost_centre_code,
+                    'expenditure_category': self.expenditure_id,
+                    'budget_type': self.budget_type,
+                },
+            ),
+            CostCentreExpenditureDetailsView,
+            cost_centre_code=self.cost_centre_code,
+            expenditure_category=self.expenditure_id,
+            budget_type=self.budget_type
+        )
+        self.check_response(resp)
+
     def test_view_directory_nac_details(self):
         resp = self.factory_get(
             reverse(
@@ -873,135 +862,41 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
             ),
             DirectorateExpenditureDetailsView,
             directorate_code=self.directorate.directorate_code,
-            expenditure_category= self.nac1_obj.expenditure_category_id,
-            budget_type= self.budget_type
+            expenditure_category=self.nac1_obj.expenditure_category_id,
+            budget_type=self.budget_type
+        )
+        self.check_response(resp)
+
+    def test_view_group_nac_details(self):
+        resp = self.factory_get(
+            reverse(
+                "expenditure_details_group",
+                kwargs={
+                    'group_code': self.group.group_code,
+                    'expenditure_category': self.expenditure_id,
+                    'budget_type': self.budget_type,
+                },
+            ),
+            GroupExpenditureDetailsView,
+            group_code=self.group.group_code,
+            expenditure_category=self.nac1_obj.expenditure_category_id,
+            budget_type=self.budget_type
         )
 
-        self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, "govuk-table")
-        # print(resp.content, file=open("ttt.html", "a"))
-        soup = BeautifulSoup(resp.content, features="html.parser")
+        self.check_response(resp)
 
-         # Check that there is 1 table
-        tables = soup.find_all("table", class_="govuk-table")
-        assert len(tables) == 1
+    def test_view_dit_nac_details(self):
+        resp = self.factory_get(
+            reverse(
+                "expenditure_details_dit",
+                kwargs={
+                    'expenditure_category': self.expenditure_id,
+                    'budget_type': self.budget_type,
+                },
+            ),
+            DITExpenditureDetailsView,
+            expenditure_category=self.nac1_obj.expenditure_category_id,
+            budget_type=self.budget_type
+        )
 
-        # Check that all the subtotal hierachy_rows exist
-        table_rows = soup.find_all("tr", class_="govuk-table__row")
-        # assert len(table_rows) == 4
-
-        self.check_negative_value_formatted(soup, 7)
-
-        # Check that the only table displays the nac and the correct totals
-        self.check_nac_table(tables[0])
-
-    # def test_view_directorate_summary(self):
-    #     resp = self.factory_get(
-    #         reverse(
-    #             "forecast_directorate",
-    #             kwargs={
-    #                 'directorate_code': self.directorate.directorate_code
-    #             },
-    #         ),
-    #         DirectorateView,
-    #         directorate_code=self.directorate.directorate_code,
-    #     )
-    #
-    #     self.assertEqual(resp.status_code, 200)
-    #     self.assertContains(resp, "govuk-table")
-    #     soup = BeautifulSoup(resp.content, features="html.parser")
-    #
-    #     # Check that there are 4 tables on the page
-    #     tables = soup.find_all("table", class_="govuk-table")
-    #     assert len(tables) == 4
-    #
-    #     # Check that the first table displays the cost centre code
-    #
-    #     # Check that all the subtotal hierachy_rows exist
-    #     table_rows = soup.find_all("tr", class_="govuk-table__row")
-    #     assert len(table_rows) == 18
-    #
-    #     self.check_negative_value_formatted(soup)
-    #
-    #     self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
-    #                                self.cost_centre.cost_centre_name)
-    #     # Check that the second table displays the programme and the correct totals
-    #     self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
-    #
-    #     # Check that the third table displays the expenditure and the correct totals
-    #     self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX])
-    #
-    #     # Check that the second table displays the project and the correct totals
-    #     self.check_project_table(tables[PROJECT_TABLE_INDEX])
-
-    # def test_view_group_summary(self):
-    #     response = self.factory_get(
-    #         reverse(
-    #             "forecast_group",
-    #             kwargs={
-    #                 'group_code': self.group.group_code
-    #             },
-    #         ),
-    #         GroupView,
-    #         group_code=self.group.group_code,
-    #     )
-    #
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertContains(response, "govuk-table")
-    #     soup = BeautifulSoup(response.content, features="html.parser")
-    #
-    #     # Check that there are 4 tables on the page
-    #     tables = soup.find_all("table", class_="govuk-table")
-    #     assert len(tables) == 4
-    #
-    #     # Check that the first table displays the cost centre code
-    #
-    #     # Check that all the subtotal hierachy_rows exist
-    #     table_rows = soup.find_all("tr", class_="govuk-table__row")
-    #     assert len(table_rows) == 18
-    #
-    #     self.check_negative_value_formatted(soup)
-    #
-    #     self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
-    #                                self.directorate.directorate_name)
-    #     # Check that the second table displays the programme and the correct totals
-    #     self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
-    #
-    #     # Check that the third table displays the expenditure and the correct totals
-    #     self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX])
-    #
-    #     # Check that the second table displays the project and the correct totals
-    #     self.check_project_table(tables[PROJECT_TABLE_INDEX])
-
-    # def test_view_dit_summary(self):
-    #     response = self.factory_get(
-    #         reverse("forecast_dit"),
-    #         DITView,
-    #     )
-    #
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertContains(response, "govuk-table")
-    #     soup = BeautifulSoup(response.content, features="html.parser")
-    #
-    #     # Check that there are 4 tables on the page
-    #     tables = soup.find_all("table", class_="govuk-table")
-    #     assert len(tables) == 4
-    #
-    #     # Check that the first table displays the cost centre code
-    #
-    #     # Check that all the subtotal hierarchy_rows exist
-    #     table_rows = soup.find_all("tr", class_="govuk-table__row")
-    #     assert len(table_rows) == 18
-    #
-    #     self.check_negative_value_formatted(soup)
-    #
-    #     self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
-    #                                self.group_name)
-    #     # Check that the second table displays the programme and the correct totals
-    #     self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
-    #
-    #     # Check that the third table displays the expenditure and the correct totals
-    #     self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX])
-    #
-    #     # Check that the second table displays the project and the correct totals
-    #     self.check_project_table(tables[PROJECT_TABLE_INDEX])
+        self.check_response(resp)
