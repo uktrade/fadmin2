@@ -130,3 +130,28 @@ nac_display_sub_total_column = (
 nac_order_list = [
     "monthly_figure__financial_code__natural_account_code__natural_account_code_description",  # noqa
 ]
+# programme details data
+dit_programme_details_columns = {
+    "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description": "Hidden",  # noqa
+    "monthly_figure__financial_code__cost_centre__directorate__group__group_name": "Departmental Group Code",  # noqa
+    "monthly_figure__financial_code__cost_centre__directorate__group__group_code": "Departmental Group Description",  # noqa
+}
+group_programme_details_columns = {
+    "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description": "Hidden",  # noqa
+    "monthly_figure__financial_code__natural_account_code__natural_account_code_description": "Natural Account Code Description",  # noqa
+    "monthly_figure__financial_code__natural_account_code__natural_account_code": "Code",  # noqa
+}
+directorate_programme_details_columns = {
+    "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description": "Hidden",  # noqa
+    "monthly_figure__financial_code__natural_account_code__natural_account_code_description": "Natural Account Code Description",  # noqa
+    "monthly_figure__financial_code__natural_account_code__natural_account_code": "Code",  # noqa
+}
+programme_details_sub_total = [
+    "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description",  # noqa
+]
+programme_details_display_sub_total_column = (
+    "monthly_figure__financial_code__natural_account_code__natural_account_code_description"  # noqa
+)
+programme_details_order_list = [
+    "monthly_figure__financial_code__natural_account_code__natural_account_code_description",  # noqa
+]
