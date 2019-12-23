@@ -1,6 +1,8 @@
 from simple_history import register
 
 from django.contrib.auth.models import Permission
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.db import models
 
 from .metamodels import TimeStampedModel
@@ -29,3 +31,5 @@ class Document(TimeStampedModel):
 
 # Track changes to permissions
 register(Permission)
+register(get_user_model())
+register(Group)

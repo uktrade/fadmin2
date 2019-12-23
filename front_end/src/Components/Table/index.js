@@ -97,18 +97,18 @@ function Table({rowData}) {
                             <TableCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"analysis1_code"} />
                             <TableCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"analysis2_code"} />
                             <TableCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"project_code"} />
-                            <TableCell rowIndex={rowIndex} cellKey={"apr"} />
-                            <TableCell rowIndex={rowIndex} cellKey={"may"} />
-                            <TableCell rowIndex={rowIndex} cellKey={"jun"} />
-                            <TableCell rowIndex={rowIndex} cellKey={"jul"} />
-                            <TableCell rowIndex={rowIndex} cellKey={"aug"} />
-                            <TableCell rowIndex={rowIndex} cellKey={"sep"} />
-                            <TableCell rowIndex={rowIndex} cellKey={"oct"} />
-                            <TableCell rowIndex={rowIndex} cellKey={"nov"} />
-                            <TableCell rowIndex={rowIndex} cellKey={"dec"} />
-                            <TableCell rowIndex={rowIndex} cellKey={"jan"} />
-                            <TableCell rowIndex={rowIndex} cellKey={"feb"} />
-                            <TableCell rowIndex={rowIndex} cellKey={"mar"} />
+                            <TableCell rowIndex={rowIndex} cellKey={4} />
+                            <TableCell rowIndex={rowIndex} cellKey={5} />
+                            <TableCell rowIndex={rowIndex} cellKey={6} />
+                            <TableCell rowIndex={rowIndex} cellKey={7} />
+                            <TableCell rowIndex={rowIndex} cellKey={8} />
+                            <TableCell rowIndex={rowIndex} cellKey={9} />
+                            <TableCell rowIndex={rowIndex} cellKey={10} />
+                            <TableCell rowIndex={rowIndex} cellKey={11} />
+                            <TableCell rowIndex={rowIndex} cellKey={12} />
+                            <TableCell rowIndex={rowIndex} cellKey={1} />
+                            <TableCell rowIndex={rowIndex} cellKey={2} />
+                            <TableCell rowIndex={rowIndex} cellKey={3} />
                         </tr>
                     })}
                 </tbody>

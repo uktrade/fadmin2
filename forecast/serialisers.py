@@ -33,7 +33,7 @@ class MonthlyFigureSerializer(serializers.ModelSerializer):
         ]
 
     def get_month(self, obj):
-        return obj.financial_period.period_short_name.lower()
+        return obj.financial_period.period_calendar_code
 
     def get_actual(self, obj):
         return obj.financial_period.actual_loaded

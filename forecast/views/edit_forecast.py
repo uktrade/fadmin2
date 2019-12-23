@@ -18,6 +18,7 @@ from costcentre.models import CostCentre
 
 from forecast.forms import (
     AddForecastRowForm,
+    EditForecastFigureForm,
     PasteForecastForm,
     PublishForm,
 )
@@ -271,6 +272,77 @@ def pasted_forecast_content(request, cost_centre_code):
             ).first()
             monthly_figure_amount.version = monthly_figure_amount.version + 1
             monthly_figure_amount.save()
+
+        financial_code = FinancialCode.objects.filter(
+            cost_centre_id=cost_centre_code,
+        )
+
+        financial_code_serialiser = FinancialCodeSerializer(
+            financial_code,
+            many=True,
+        )
+
+        return JsonResponse(financial_code_serialiser.data, safe=False)
+    else:
+        return JsonResponse({
+            'error': 'There was a problem with your '
+                     'submission, please contact support'
+        },
+            status=400,
+        )
+
+
+@require_http_methods(["POST", ])
+def update_forecast_figure(request, cost_centre_code):
+    # Check user has permission to edit forecast
+    if not request.user.has_perm("forecast.can_view_forecasts"):
+        raise PermissionDenied()
+
+    # Check that user has permission to edit cost centre
+    cost_centre = CostCentre.objects.filter(
+        cost_centre_code=cost_centre_code,
+    ).first()
+
+    if not (
+        request.user.has_perm("view_costcentre", cost_centre) and
+        request.user.has_perm("change_costcentre", cost_centre)
+    ):
+        raise PermissionDenied()
+
+    form = EditForecastFigureForm(
+        request.POST,
+    )
+
+    if form.is_valid():
+        test = form.cleaned_data.get('project_code', None)
+        test1 = form.cleaned_data.get('analysis1_code', None)
+
+        financial_code = FinancialCode.objects.filter(
+            natural_account_code=form.cleaned_data['natural_account_code'],
+            programme__programme_code=form.cleaned_data['programme_code'],
+            analysis1_code__analysis1_code=form.cleaned_data.get('analysis1_code', None),
+            analysis2_code__analysis2_code=form.cleaned_data.get('analysis2_code', None),
+            project_code__project_code=form.cleaned_data.get('project_code', None),
+        )
+
+        # print(financial_code.query)
+
+        if not financial_code.first():
+            pass  # TODO - raise exception
+
+        current_amount = MonthlyFigureAmount.objects.filter(
+            monthly_figure__financial_code=financial_code.first(),
+            monthly_figure__financial_period__period_calendar_code=form.cleaned_data['month'],
+        ).order_by(
+            "-version"
+        ).first()
+
+        monthly_figure_amount = MonthlyFigureAmount(
+            monthly_figure=current_amount.monthly_figure,
+            version=current_amount.version + 1,
+            amount=form.cleaned_data['amount'],
+        )
+        monthly_figure_amount.save()
 
         financial_code = FinancialCode.objects.filter(
             cost_centre_id=cost_centre_code,

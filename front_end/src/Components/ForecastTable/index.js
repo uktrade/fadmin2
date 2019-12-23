@@ -1,6 +1,8 @@
 import React, {Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Table from '../../Components/Table/index'
+import { SET_EDITING_CELL } from '../../Reducers/Edit'
+import { store } from '../../Store';
 import { 
     TOGGLE_NAC,
     TOGGLE_PROG, 
@@ -10,10 +12,10 @@ import {
 
 } from '../../Reducers/ShowHideCols'
 import { SET_ERROR } from '../../Reducers/Error'
-
 import { SET_CELLS } from '../../Reducers/Cells'
 
 import {
+    getCellId,
     postData,
     processForecastData
 } from '../../Util'
@@ -106,7 +108,7 @@ function ForecastTable() {
         //window.addEventListener("mousedown", captureMouseDn);
         //window.addEventListener("mouseup", captureMouseUp);
         document.addEventListener("paste", capturePaste)
-        // window.addEventListener("keydown", handleKeyDown);
+        //window.addEventListener("keydown", handleKeyDown);
         // window.addEventListener("copy", setClipBoardContent);
 
         return () => {
@@ -117,6 +119,54 @@ function ForecastTable() {
             // window.removeEventListener("copy", setClipBoardContent);
         };
     }, [dispatch, cells, selectedRow, allSelected]);
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === "Tab") {
+                const state = store.getState();
+
+                if (!state.edit.cellId)
+                    return
+
+                let idParts = state.edit.cellId.split("_")
+
+                let month = parseInt(idParts[1])
+                let rowIndex = parseInt(idParts[2])
+                let next_id = null
+
+                if (event.shiftKey) {
+                    if (month === (4 + window.actuals.length)) {
+                        month = 4
+                    } else if (month === 1) {
+                        month = 13
+                    }
+                    next_id = getCellId(month - 1, rowIndex)
+                } else {
+                    if (month === 12) {
+                        month = 0
+                    } else if (month === 3) {
+                        month = 3 + window.actuals.length
+                    }
+
+                    next_id = getCellId(month + 1, rowIndex)
+                }
+
+                dispatch(
+                    SET_EDITING_CELL({
+                        "cellId": next_id
+                    })
+                );
+
+                event.preventDefault()
+            }
+        }
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [dispatch]);
 
     return (
         <Fragment>
