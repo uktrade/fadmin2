@@ -231,7 +231,7 @@ class HistoricalExpenditureCategory(
             description=obj.description,
             further_description=obj.further_description,
             linked_budget_code=obj.linked_budget_code.natural_account_code,
-            linked_budget_code_description=obj.linked_budget_code.natural_account_code_description,  # noqa
+            linked_budget_code_description=obj.linked_budget_code.natural_account_code_description, # noqa
         )
         obj_hist.save()
         return obj_hist

@@ -76,3 +76,4 @@ class ExpenditureTypeForm(forms.Form):
         queryset=ExpenditureCategory.objects.all(),
         widget=Select(),
     )
+

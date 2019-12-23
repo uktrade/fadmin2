@@ -130,6 +130,7 @@ nac_display_sub_total_column = (
 nac_order_list = [
     "monthly_figure__financial_code__natural_account_code__natural_account_code_description",  # noqa
 ]
+
 # programme details data
 dit_programme_details_columns = {
     "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description": "Hidden",  # noqa
