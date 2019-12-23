@@ -84,8 +84,9 @@ urlpatterns = [
         name="expenditure_details_cost_centre",
     ),
 
+    #         dit-programme/310530/6/
     path(
-        "dit-programme/<programme_code>/<budget_type>/",
+        "dit-programme/<programme_code>/<forecast_expenditure_type>/",
         DITProgrammeDetailsView.as_view(),
         name="programme_details_dit",
     ),

@@ -29,19 +29,14 @@ from forecast.tables import (
 from forecast.utils.query_fields import (
     FORECAST_EXPENDITURE_TYPE_ID,
     PROGRAMME_CODE,
-    SHOW_COSTCENTRE,
     SHOW_DIRECTORATE,
     SHOW_DIT,
     SHOW_GROUP,
     filter_codes,
     filter_selectors,
-    nac_columns,
     programme_details_hierarchy_columns,
     programme_details_display_sub_total_column,
-    programme_details_dit_columns,
-    programme_details_directorate_columns,
-    programme_details_group_columns,
-    programme_details_order_list,
+    programme_details_hierarchy_order_list,
     programme_details_sub_total,
 )
 from forecast.views.base import ForecastViewPermissionMixin
@@ -77,20 +72,21 @@ class ForecastProgrammeDetailsMixin(MultiTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
-        nac_data = MonthlyFigureAmount.pivot.subtotal_data(
+        columns = programme_details_hierarchy_columns[self.hierarchy_type]
+        programme_details_data = MonthlyFigureAmount.pivot.subtotal_data(
             programme_details_display_sub_total_column,
             programme_details_sub_total,
-            nac_columns.keys(),
+            columns.keys(),
             pivot_filter,
-            order_list=programme_details_order_list,
+            order_list=programme_details_hierarchy_order_list[self.hierarchy_type],
             show_grand_total=False
         )
 
-        nac_table = ForecastSubTotalTable(nac_columns, nac_data)
-        nac_table.attrs['caption'] = "Expenditure Report"
+        programme_details_table = ForecastSubTotalTable(columns, programme_details_data)
+        programme_details_table.attrs['caption'] = "Programme Report"
 
         self.tables = [
-            nac_table,
+            programme_details_table,
         ]
         return self.tables
 
