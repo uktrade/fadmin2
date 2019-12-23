@@ -1,8 +1,6 @@
 from django import forms
 from django.forms import Select
 
-from chartofaccountDIT.models import ExpenditureCategory
-
 from costcentre.models import CostCentre
 
 from forecast.permission_shortcuts import get_objects_for_user
@@ -69,11 +67,3 @@ class MyCostCentresForm(forms.Form):
         queryset=None,
         widget=Select(),
     )
-
-
-class ExpenditureTypeForm(forms.Form):
-    expenditure_category = forms.ModelChoiceField(
-        queryset=ExpenditureCategory.objects.all(),
-        widget=Select(),
-    )
-
