@@ -34,13 +34,6 @@ class AllCostCentresForm(forms.Form):
         widget=Select(),
     )
 
-    cost_centre.widget.attrs.update(
-        {
-            "class": "govuk-select",
-            "aria-describedby": "cost_centre-hint cost_centre-error",
-        }
-    )
-
 
 class DirectorateCostCentresForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -57,13 +50,6 @@ class DirectorateCostCentresForm(forms.Form):
                 active=True,
             ),
             widget=Select(),
-        )
-
-        self.fields["cost_centre"].widget.attrs.update(
-            {
-                "class": "govuk-select",
-                "aria-describedby": "cost_centre-hint cost_centre-error",
-            }
         )
 
 
@@ -84,23 +70,9 @@ class MyCostCentresForm(forms.Form):
         widget=Select(),
     )
 
-    cost_centre.widget.attrs.update(
-        {
-            "class": "govuk-select",
-            "aria-describedby": "cost_centre-hint cost_centre-error",
-        }
-    )
-
 
 class ExpenditureTypeForm(forms.Form):
     expenditure_category = forms.ModelChoiceField(
         queryset=ExpenditureCategory.objects.all(),
         widget=Select(),
-    )
-    # TO ASK cost_centre-hint cost_centre-error
-    expenditure_category.widget.attrs.update(
-        {
-            "class": "govuk-select",
-            "aria-describedby": "cost_centre-hint cost_centre-error",
-        }
     )

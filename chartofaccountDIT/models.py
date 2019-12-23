@@ -231,7 +231,7 @@ class HistoricalExpenditureCategory(
             description=obj.description,
             further_description=obj.further_description,
             linked_budget_code=obj.linked_budget_code.natural_account_code,
-            linked_budget_code_description=obj.linked_budget_code.natural_account_code_description, # noqa
+            linked_budget_code_description=obj.linked_budget_code.natural_account_code_description,  # noqa
         )
         obj_hist.save()
         return obj_hist
@@ -437,7 +437,7 @@ class HistoricalNaturalCode(NaturalCodeAbstract, ArchivedModel):
             account_L5_code_val = None
             account_L5_description_val = None
         obj_hist = cls(
-            natural_account_code_description=obj.natural_account_code_description + suffix, # noqa
+            natural_account_code_description=obj.natural_account_code_description + suffix,  # noqa
             natural_account_code=obj.natural_account_code,
             used_for_budget=obj.used_for_budget,
             expenditure_category=expenditure_category_value,
