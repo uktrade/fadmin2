@@ -91,6 +91,20 @@ urlpatterns = [
         name="programme_details_dit",
     ),
 
+    #  group-programme/1090HT/310530/6/
+    path(
+        "group-programme/<group_code>/<programme_code>/<forecast_expenditure_type>/",
+        GroupProgrammeDetailsView.as_view(),
+        name="programme_details_group",
+    ),
+
+    #  directorate-programme/10907T/310530/6/
+    path(
+        "directorate-programme/<directorate_code>/<programme_code>/<forecast_expenditure_type>/",
+        DirectorateProgrammeDetailsView.as_view(),
+        name="programme_details_directorate",
+    ),
+
     path(
         "upload-actuals/",
         UploadActualsView.as_view(),

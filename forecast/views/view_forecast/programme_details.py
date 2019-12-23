@@ -124,34 +124,34 @@ class GroupProgrammeDetailsView(
     ForecastProgrammeDetailsMixin,
     TemplateView,
 ):
-    pass
-#     template_name = "forecast/view/programme_details/group.html"
-#     hierarchy_type = SHOW_GROUP
-#
-#     def group(self):
-#         return DepartmentalGroup.objects.get(
-#             group_code=self.kwargs['group_code'],
-#             active=True,
-#         )
-#
-#     def post(self, request, *args, **kwargs):
-#         programme_code_id = request.POST.get(
-#             'programme_code',
-#             None,
-#         )
-#
-#         if programme_code_id:
-#             return HttpResponseRedirect(
-#                 reverse(
-#                     "programme_details_group",
-#                     kwargs={'group_code': self.group().group_code,
-#                             'programme_code': programme_code_id,
-#                             'forecast_expenditure_type': self.forecast_expenditure_type(),
-#                             }
-#                 )
-#             )
-#         else:
-#             raise Http404("Budget Type not found")
+
+    template_name = "forecast/view/programme_details/group.html"
+    hierarchy_type = SHOW_GROUP
+
+    def group(self):
+        return DepartmentalGroup.objects.get(
+            group_code=self.kwargs['group_code'],
+            active=True,
+        )
+
+    def post(self, request, *args, **kwargs):
+        programme_code_id = request.POST.get(
+            'programme_code',
+            None,
+        )
+
+        if programme_code_id:
+            return HttpResponseRedirect(
+                reverse(
+                    "programme_details_group",
+                    kwargs={'group_code': self.group().group_code,
+                            'programme_code': programme_code_id,
+                            'forecast_expenditure_type': self.forecast_expenditure_type(),
+                            }
+                )
+            )
+        else:
+            raise Http404("Budget Type not found")
 
 
 class DirectorateProgrammeDetailsView(
@@ -159,33 +159,32 @@ class DirectorateProgrammeDetailsView(
     ForecastProgrammeDetailsMixin,
     TemplateView,
 ):
-    pass
-#     template_name = "forecast/view/programme_details/directorate.html"
-#     hierarchy_type = SHOW_DIRECTORATE
-#
-#     def directorate(self):
-#         return Directorate.objects.get(
-#             directorate_code=self.kwargs['directorate_code'],
-#             active=True,
-#         )
-#
-#     def post(self, request, *args, **kwargs):
-#         programme_code_id = request.POST.get(
-#             'programme_code',
-#             None,
-#         )
-#
-#         if programme_code_id:
-#             return HttpResponseRedirect(
-#                 reverse(
-#                     "programme_details_directorate",
-#                     kwargs={'directorate_code': self.directorate().directorate_code,
-#                             'programme_code': programme_code_id,
-#                             'forecast_expenditure_type': self.forecast_expenditure_type(),
-#                             }
-#                 )
-#             )
-#         else:
-#             raise Http404("Budget Type not found")
-#
+    template_name = "forecast/view/programme_details/directorate.html"
+    hierarchy_type = SHOW_DIRECTORATE
+
+    def directorate(self):
+        return Directorate.objects.get(
+            directorate_code=self.kwargs['directorate_code'],
+            active=True,
+        )
+
+    def post(self, request, *args, **kwargs):
+        programme_code_id = request.POST.get(
+            'programme_code',
+            None,
+        )
+
+        if programme_code_id:
+            return HttpResponseRedirect(
+                reverse(
+                    "programme_details_directorate",
+                    kwargs={'directorate_code': self.directorate().directorate_code,
+                            'programme_code': programme_code_id,
+                            'forecast_expenditure_type': self.forecast_expenditure_type(),
+                            }
+                )
+            )
+        else:
+            raise Http404("Budget Type not found")
+
 
