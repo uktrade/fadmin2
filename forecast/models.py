@@ -19,9 +19,11 @@ from core.metamodels import (
 )
 from core.models import FinancialYear
 from core.myutils import get_current_financial_year
-from core.utils import GRAN_TOTAL_CLASS, SUB_TOTAL_CLASS
+from core.utils import GRAND_TOTAL_CLASS, SUB_TOTAL_CLASS
 
 from costcentre.models import CostCentre
+
+GRAND_TOTAL_ROW = "grand_total"
 
 
 class SubTotalFieldDoesNotExistError(Exception):
@@ -339,7 +341,7 @@ class SubTotalForecast:
             field_name: sub_total_row.copy() for field_name in self.subtotal_columns
         }
 
-        self.subtotals["Gran_Total"] = sub_total_row.copy()
+        self.subtotals[GRAND_TOTAL_ROW] = sub_total_row.copy()
         self.output_subtotal = {
             field_name: False for field_name in self.subtotal_columns
         }
@@ -369,10 +371,10 @@ class SubTotalForecast:
                 SUB_TOTAL_CLASS,
             )
         if show_grand_total:
-            self.subtotals["Gran_Total"][self.display_total_column] = \
+            self.subtotals[GRAND_TOTAL_ROW][self.display_total_column] = \
                 "Total Managed Expenditure"
             self.output_row_to_table(
-                self.subtotals["Gran_Total"], GRAN_TOTAL_CLASS
+                self.subtotals[GRAND_TOTAL_ROW], GRAND_TOTAL_CLASS
             )
 
         return self.result_table
