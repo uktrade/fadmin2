@@ -26,8 +26,8 @@ from forecast.tables import (
     ForecastWithLinkTable,
 )
 from forecast.utils.query_fields import (
-    BUDGET_TYPE,
     BUDGET_CATEGORY_ID,
+    BUDGET_TYPE,
     FORECAST_EXPENDITURE_TYPE_ID,
     PROGRAMME_CODE,
     SHOW_COSTCENTRE,

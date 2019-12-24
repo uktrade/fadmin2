@@ -27,8 +27,8 @@ from forecast.tables import (
     ForecastSubTotalTable,
 )
 from forecast.utils.query_fields import (
-    BUDGET_TYPE,
     BUDGET_CATEGORY_ID,
+    BUDGET_TYPE,
     SHOW_COSTCENTRE,
     SHOW_DIRECTORATE,
     SHOW_DIT,

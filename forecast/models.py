@@ -27,6 +27,7 @@ from forecast.utils.query_fields import DEFAULT_PIVOT_COLUMNS
 
 GRAND_TOTAL_ROW = "grand_total"
 
+
 class SubTotalFieldDoesNotExistError(Exception):
     pass
 

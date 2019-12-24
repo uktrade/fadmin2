@@ -100,7 +100,7 @@ urlpatterns = [
 
     #  directorate-programme/10907T/310530/6/
     path(
-        "directorate-programme/<directorate_code>/<programme_code>/<forecast_expenditure_type>/",
+        "directorate-programme/<directorate_code>/<programme_code>/<forecast_expenditure_type>/",  # noqa
         DirectorateProgrammeDetailsView.as_view(),
         name="programme_details_directorate",
     ),

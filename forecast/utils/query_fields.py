@@ -220,19 +220,20 @@ programme_details_hierarchy_sub_total_column = [
     GROUP_NAME,
     DIRECTORATE_NAME,
     COST_CENTRE_NAME,
-    '',]
+    '',
+]
 
 DEFAULT_PIVOT_COLUMNS = {
-        COST_CENTRE_CODE: "Cost Centre Code",
-        COST_CENTRE_NAME: "Cost Centre Description",
-        NAC_CODE: "Natural Account Code",
-        NAC_NAME: "Natural Account Code Description",
-        PROGRAMME_CODE: "Programme Code",
-        PROGRAMME_NAME: "Programme Description",
-        ANALYSIS1_CODE: "Contract Code",
-        ANALYSIS1_NAME: "Contract Description",
-        ANALYSIS2_CODE:  "Market Code",
-        ANALYSIS2_NAME: "Market Description",
-        PROJECT_CODE: "Project Code",
-        PROJECT_NAME: "Project Description",
-    }
+    COST_CENTRE_CODE: "Cost Centre Code",
+    COST_CENTRE_NAME: "Cost Centre Description",
+    NAC_CODE: "Natural Account Code",
+    NAC_NAME: "Natural Account Code Description",
+    PROGRAMME_CODE: "Programme Code",
+    PROGRAMME_NAME: "Programme Description",
+    ANALYSIS1_CODE: "Contract Code",
+    ANALYSIS1_NAME: "Contract Description",
+    ANALYSIS2_CODE: "Market Code",
+    ANALYSIS2_NAME: "Market Description",
+    PROJECT_CODE: "Project Code",
+    PROJECT_NAME: "Project Description",
+}

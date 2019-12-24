@@ -15,10 +15,9 @@ from chartofaccountDIT.forms import (
 from chartofaccountDIT.models import ProgrammeCode
 
 from costcentre.models import (
-    CostCentre,
+    DepartmentalGroup,
     Directorate,
 )
-from costcentre.models import DepartmentalGroup
 
 from forecast.models import (
     MonthlyFigureAmount,
@@ -34,8 +33,8 @@ from forecast.utils.query_fields import (
     SHOW_GROUP,
     filter_codes,
     filter_selectors,
-    programme_details_hierarchy_columns,
     programme_details_display_sub_total_column,
+    programme_details_hierarchy_columns,
     programme_details_hierarchy_order_list,
     programme_details_sub_total,
 )
@@ -110,7 +109,7 @@ class DITProgrammeDetailsView(
                 reverse(
                     "programme_details_dit",
                     kwargs={'programme_code': programme_code_id,
-                            'forecast_expenditure_type': self.forecast_expenditure_type(),
+                            'forecast_expenditure_type': self.forecast_expenditure_type(),  # noqa
                             }
 
                 )
@@ -124,7 +123,6 @@ class GroupProgrammeDetailsView(
     ForecastProgrammeDetailsMixin,
     TemplateView,
 ):
-
     template_name = "forecast/view/programme_details/group.html"
     hierarchy_type = SHOW_GROUP
 
@@ -146,7 +144,7 @@ class GroupProgrammeDetailsView(
                     "programme_details_group",
                     kwargs={'group_code': self.group().group_code,
                             'programme_code': programme_code_id,
-                            'forecast_expenditure_type': self.forecast_expenditure_type(),
+                            'forecast_expenditure_type': self.forecast_expenditure_type(),  # noqa
                             }
                 )
             )
@@ -180,11 +178,9 @@ class DirectorateProgrammeDetailsView(
                     "programme_details_directorate",
                     kwargs={'directorate_code': self.directorate().directorate_code,
                             'programme_code': programme_code_id,
-                            'forecast_expenditure_type': self.forecast_expenditure_type(),
+                            'forecast_expenditure_type': self.forecast_expenditure_type(),  # noqa
                             }
                 )
             )
         else:
             raise Http404("Budget Type not found")
-
-
