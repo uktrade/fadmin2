@@ -1,19 +1,20 @@
-# monthly_figure__financial_code__programme__budget_type_fk__budget_type_display
 # indicates if DEL, AME, ADMIN
 # It is used in every view
 BUDGET_TYPE =  "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display"  # noqa
-
 BUDGET_TYPE_ORDER =  "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display_order"  # noqa
 
-EXPENDITURE_CATEGORY_ID = "monthly_figure__financial_code__natural_account_code__expenditure_category__id"  # noqa
+# Category defined by DIT.
+BUDGET_CATEGORY_ID = "monthly_figure__financial_code__natural_account_code__expenditure_category__id"  # noqa
+BUDGET_CATEGORY_NAME = "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description"   # noqa
 
 # Admin, Capital or Programme
-EXPENDITURE_TYPE_CODE = "monthly_figure__financial_code__forecast_expenditure_type__forecast_expenditure_type_name"  # noqa
+FORECAST_EXPENDITURE_TYPE_CODE = "monthly_figure__financial_code__forecast_expenditure_type__forecast_expenditure_type_name"  # noqa
+FORECAST_EXPENDITURE_TYPE_ID = "monthly_figure__financial_code__forecast_expenditure_type__id"  # noqa
+FORECAST_EXPENDITURE_TYPE_NAME = "monthly_figure__financial_code__forecast_expenditure_type__forecast_expenditure_type_description"  # noqa
+FORECAST_EXPENDITURE_TYPE_ORDER = "monthly_figure__financial_code__forecast_expenditure_type__forecast_expenditure_type_display_order"   # noqa
 
 PROGRAMME_CODE = "monthly_figure__financial_code__programme__programme_code"
-PROGRAMME_DESCRIPTION = "monthly_figure__financial_code__programme__programme_description"
-
-FORECAST_EXPENDITURE_TYPE_ID = "monthly_figure__financial_code__forecast_expenditure_type__id"  # noqa
+PROGRAMME_NAME = "monthly_figure__financial_code__programme__programme_description"
 
 COST_CENTRE_NAME = "monthly_figure__financial_code__cost_centre__cost_centre_name"
 COST_CENTRE_CODE = "monthly_figure__financial_code__cost_centre__cost_centre_code"
@@ -30,6 +31,14 @@ NAC_NAME = "monthly_figure__financial_code__natural_account_code__natural_accoun
 PROJECT_CODE = "monthly_figure__financial_code__project_code__project_code"
 PROJECT_NAME = "monthly_figure__financial_code__project_code__project_description"
 
+ANALYSIS1_CODE = "monthly_figure__financial_code__analysis1_code__analysis1_code"
+ANALYSIS1_NAME = "monthly_figure__financial_code__analysis1_code__analysis1_description"
+
+ANALYSIS2_CODE = "monthly_figure__financial_code__analysis2_code__analysis1_code"
+ANALYSIS2_NAME = "monthly_figure__financial_code__analysis2_code__analysis1_description"
+
+# PAY, NON-PAY, CAPITAL, NON-CASH
+BUDGET_GROUPING = "monthly_figure__financial_code__natural_account_code__expenditure_category__NAC_category__NAC_category_description"   # noqa
 
 SHOW_DIT = 0
 SHOW_GROUP = 1
@@ -61,20 +70,20 @@ hierarchy_sub_total = [BUDGET_TYPE]
 programme_columns = {
     BUDGET_TYPE: "Hidden",
     FORECAST_EXPENDITURE_TYPE_ID: "Hidden",
-    "monthly_figure__financial_code__forecast_expenditure_type__forecast_expenditure_type_description": "Hidden",  # noqa
-    EXPENDITURE_TYPE_CODE: "Expenditure Type",  # noqa
-    PROGRAMME_DESCRIPTION: "Programme Description",
+    FORECAST_EXPENDITURE_TYPE_NAME: "Hidden",
+    FORECAST_EXPENDITURE_TYPE_CODE: "Expenditure Type",
+    PROGRAMME_NAME: "Programme Description",
     PROGRAMME_CODE: "Programme Code",
 }
 programme_order_list = [
     BUDGET_TYPE_ORDER,
-    "monthly_figure__financial_code__forecast_expenditure_type__forecast_expenditure_type_display_order",  # noqa
+    FORECAST_EXPENDITURE_TYPE_ORDER,
 ]
 programme_sub_total = [
     BUDGET_TYPE,
-    "monthly_figure__financial_code__forecast_expenditure_type__forecast_expenditure_type_description",  # noqa
+    FORECAST_EXPENDITURE_TYPE_NAME,
 ]
-programme_display_sub_total_column = PROGRAMME_DESCRIPTION
+programme_display_sub_total_column = PROGRAMME_NAME
 
 programme_detail_view = [
     'programme_details_dit',
@@ -86,20 +95,19 @@ programme_detail_view = [
 # Expenditure data
 expenditure_columns = {
     BUDGET_TYPE: "Hidden",
-    EXPENDITURE_CATEGORY_ID: "Hidden",
-    "monthly_figure__financial_code__natural_account_code__expenditure_category__NAC_category__NAC_category_description": "Budget Grouping",  # noqa
-    "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description":"Budget Category",  # noqa
+    BUDGET_CATEGORY_ID: "Hidden",
+    BUDGET_GROUPING: "Budget Grouping",
+    BUDGET_CATEGORY_NAME: "Budget Category",
 }
 expenditure_sub_total = [
     BUDGET_TYPE,
-    "monthly_figure__financial_code__natural_account_code__expenditure_category__NAC_category__NAC_category_description",  # noqa
+    BUDGET_GROUPING,
 ]
-expenditure_display_sub_total_column = (
-    "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description"  # noqa
-)
+expenditure_display_sub_total_column = BUDGET_CATEGORY_NAME
+
 expenditure_order_list = [
-    BUDGET_TYPE_ORDER,  # noqa
-    "monthly_figure__financial_code__natural_account_code__expenditure_category__NAC_category__NAC_category_description",  # noqa
+    BUDGET_TYPE_ORDER,
+    BUDGET_GROUPING,
 ]
 
 # Project data
@@ -146,12 +154,12 @@ expenditure_view = [
 ]
 # NAC data
 nac_columns = {
-    "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description": "Hidden",  # noqa
+    BUDGET_CATEGORY_NAME: "Hidden",
     NAC_NAME: "Natural Account Code Description",
     NAC_CODE: "Code",
 }
 nac_sub_total = [
-    "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description",  # noqa
+    BUDGET_CATEGORY_NAME,
 ]
 nac_display_sub_total_column = NAC_NAME
 
@@ -161,28 +169,28 @@ nac_order_list = [
 
 # programme details data
 programme_details_dit_columns = {
-    PROGRAMME_DESCRIPTION: "Hidden",
-    EXPENDITURE_TYPE_CODE: "Expenditure Type",
+    PROGRAMME_NAME: "Hidden",
+    FORECAST_EXPENDITURE_TYPE_CODE: "Expenditure Type",
     GROUP_NAME: "Departmental Group Code",
     GROUP_CODE: "Departmental Group Description",
 }
 programme_details_group_columns = {
-    PROGRAMME_DESCRIPTION: "Hidden",
-    EXPENDITURE_TYPE_CODE: "Expenditure Type",
+    PROGRAMME_NAME: "Hidden",
+    FORECAST_EXPENDITURE_TYPE_CODE: "Expenditure Type",
     DIRECTORATE_NAME: "Directorate Description",
     DIRECTORATE_CODE: "Directorate Code",
 }
 programme_details_directorate_columns = {
-    PROGRAMME_DESCRIPTION: "Hidden",
-    EXPENDITURE_TYPE_CODE: "Expenditure Type",
+    PROGRAMME_NAME: "Hidden",
+    FORECAST_EXPENDITURE_TYPE_CODE: "Expenditure Type",
     COST_CENTRE_NAME: "Cost Centre Description",
     COST_CENTRE_CODE: "Cost Centre Code",
 }
 programme_details_sub_total = [
-    PROGRAMME_DESCRIPTION,
+    PROGRAMME_NAME,
 ]
 
-programme_details_display_sub_total_column = EXPENDITURE_TYPE_CODE
+programme_details_display_sub_total_column = FORECAST_EXPENDITURE_TYPE_CODE
 
 programme_details_dit_order_list = [
     GROUP_NAME,
@@ -214,4 +222,17 @@ programme_details_hierarchy_sub_total_column = [
     COST_CENTRE_NAME,
     '',]
 
-
+DEFAULT_PIVOT_COLUMNS = {
+        COST_CENTRE_CODE: "Cost Centre Code",
+        COST_CENTRE_NAME: "Cost Centre Description",
+        NAC_CODE: "Natural Account Code",
+        NAC_NAME: "Natural Account Code Description",
+        PROGRAMME_CODE: "Programme Code",
+        PROGRAMME_NAME: "Programme Description",
+        ANALYSIS1_CODE: "Contract Code",
+        ANALYSIS1_NAME: "Contract Description",
+        ANALYSIS2_CODE:  "Market Code",
+        ANALYSIS2_NAME: "Market Description",
+        PROJECT_CODE: "Project Code",
+        PROJECT_NAME: "Project Description",
+    }

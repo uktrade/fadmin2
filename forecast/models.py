@@ -23,8 +23,9 @@ from core.utils import GRAND_TOTAL_CLASS, SUB_TOTAL_CLASS
 
 from costcentre.models import CostCentre
 
-GRAND_TOTAL_ROW = "grand_total"
+from forecast.utils.query_fields import DEFAULT_PIVOT_COLUMNS
 
+GRAND_TOTAL_ROW = "grand_total"
 
 class SubTotalFieldDoesNotExistError(Exception):
     pass
@@ -383,30 +384,7 @@ class SubTotalForecast:
 class PivotManager(models.Manager):
     """Managers returning the data in Monthly figures pivoted"""
 
-    default_columns = {
-        "monthly_figure__financial_code__cost_centre__cost_centre_code":
-            "Cost Centre Code",
-        "monthly_figure__financial_code__cost_centre__cost_centre_name":
-            "Cost Centre Description",
-        "monthly_figure__financial_code__natural_account_code__natural_account_code":
-            "Natural Account Code",
-        "monthly_figure__financial_code__natural_account_code__natural_account_code_description":  # noqa
-            "Natural Account Code Description",
-        "monthly_figure__financial_code__programme__programme_code": "Programme Code",
-        "monthly_figure__financial_code__programme__programme_description":
-            "Programme Description",
-        "monthly_figure__financial_code__analysis1_code__analysis1_code":
-            "Contract Code",
-        "monthly_figure__financial_code__analysis1_code__analysis1_description":
-            "Contract Description",
-        "monthly_figure__financial_code__analysis2_code__analysis2_code":
-            "Market Code",
-        "monthly_figure__financial_code__analysis2_code__analysis2_description":
-            "Market Description",
-        "monthly_figure__financial_code__project_code__project_code": "Project Code",
-        "monthly_figure__financial_code__project_code__project_description":
-            "Project Description",
-    }
+    default_columns = DEFAULT_PIVOT_COLUMNS
 
     def subtotal_data(
             self,
