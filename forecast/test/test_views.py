@@ -456,11 +456,11 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         # Check directorate is shown
         assert str(self.cost_centre_code) in str(response.rendered_content)
 
-    def check_programme_table(self, table):
+    def check_programme_table(self, table, prog_index = 2):
         programme_rows = table.find_all("tr")
         first_prog_cols = programme_rows[1].find_all("td")
-        assert first_prog_cols[1].get_text() == self.programme_obj.programme_description
-        assert first_prog_cols[2].get_text() == self.programme_obj.programme_code
+        assert first_prog_cols[prog_index].get_text() == self.programme_obj.programme_description
+        assert first_prog_cols[prog_index + 1].get_text() == self.programme_obj.programme_code
 
         last_programme_cols = programme_rows[-1].find_all("td")
         # Check the total for the year
@@ -566,7 +566,9 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
                                    self.cost_centre.cost_centre_name)
         # Check that the second table displays the programme and the correct totals
-        self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
+        # The programme table in the cost centre does not show the 'View'
+        # so the programme is displayed in a different column
+        self.check_programme_table(tables[PROGRAMME_TABLE_INDEX], 1)
 
         # Check that the third table displays the expenditure and the correct totals
         self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX])
