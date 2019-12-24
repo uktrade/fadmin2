@@ -60,8 +60,8 @@ hierarchy_sub_total = [BUDGET_TYPE]
 # programme data
 programme_columns = {
     BUDGET_TYPE: "Hidden",
-    FORECAST_EXPENDITURE_TYPE_ID: "Hidden1",
-    "monthly_figure__financial_code__forecast_expenditure_type__forecast_expenditure_type_description": "Hidden1",  # noqa
+    FORECAST_EXPENDITURE_TYPE_ID: "Hidden",
+    "monthly_figure__financial_code__forecast_expenditure_type__forecast_expenditure_type_description": "Hidden",  # noqa
     EXPENDITURE_TYPE_CODE: "Expenditure Type",  # noqa
     PROGRAMME_DESCRIPTION: "Programme Description",
     PROGRAMME_CODE: "Programme Code",
@@ -75,6 +75,13 @@ programme_sub_total = [
     "monthly_figure__financial_code__forecast_expenditure_type__forecast_expenditure_type_description",  # noqa
 ]
 programme_display_sub_total_column = PROGRAMME_DESCRIPTION
+
+programme_detail_view = [
+    'programme_details_dit',
+    'programme_details_group',
+    'programme_details_directorate',
+]
+
 
 # Expenditure data
 expenditure_columns = {
@@ -151,10 +158,6 @@ nac_display_sub_total_column = NAC_NAME
 nac_order_list = [
     NAC_NAME,
 ]
-
-# BUDGET_TYPE: "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display",
-# "monthly_figure__financial_code__forecast_expenditure_type__id": "Hidden1",  # noqa
-# "monthly_figure__financial_code__programme__programme_code": "Programme Code",
 
 # programme details data
 programme_details_dit_columns = {
