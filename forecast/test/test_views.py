@@ -55,6 +55,7 @@ from forecast.views.view_forecast.programme_details import (
     DirectorateProgrammeDetailsView,
     GroupProgrammeDetailsView,
 )
+
 TOTAL_COLUMN = -3
 SPEND_TO_DATE_COLUMN = -4
 UNDERSPEND_COLUMN = -2
@@ -460,17 +461,18 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         # Check directorate is shown
         assert str(self.cost_centre_code) in str(response.rendered_content)
 
-    def check_programme_table(self, table, prog_index = 2):
+    def check_programme_table(self, table, prog_index=2):
         programme_rows = table.find_all("tr")
         first_prog_cols = programme_rows[1].find_all("td")
-        assert first_prog_cols[prog_index].get_text() == self.programme_obj.programme_description
-        assert first_prog_cols[prog_index + 1].get_text() == self.programme_obj.programme_code
+        assert first_prog_cols[prog_index].get_text() == \
+            self.programme_obj.programme_description
+        assert first_prog_cols[prog_index + 1].get_text() == \
+            self.programme_obj.programme_code
 
         last_programme_cols = programme_rows[-1].find_all("td")
         # Check the total for the year
-        assert last_programme_cols[TOTAL_COLUMN].get_text() == format_forecast_figure(
-            self.year_total / 100
-        )
+        assert last_programme_cols[TOTAL_COLUMN].get_text() == \
+            format_forecast_figure(self.year_total / 100)
         # Check the difference between budget and year total
         assert last_programme_cols[UNDERSPEND_COLUMN].get_text() == \
             format_forecast_figure(self.underspend_total / 100)
@@ -502,9 +504,8 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
 
         last_project_cols = project_rows[-1].find_all("td")
         # Check the total for the year
-        assert last_project_cols[TOTAL_COLUMN].get_text() == format_forecast_figure(
-            self.year_total / 100
-        )
+        assert last_project_cols[TOTAL_COLUMN].get_text() == \
+            format_forecast_figure(self.year_total / 100)
         # Check the difference between budget and year total
         assert last_project_cols[UNDERSPEND_COLUMN].get_text() == \
             format_forecast_figure(self.underspend_total / 100)
@@ -523,17 +524,14 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         )
         last_hierarchy_cols = hierarchy_rows[-1].find_all("td")
         # Check the total for the year
-        assert last_hierarchy_cols[TOTAL_COLUMN].get_text() == format_forecast_figure(
-            self.year_total / 100
-        )
+        assert last_hierarchy_cols[TOTAL_COLUMN].get_text() == \
+            format_forecast_figure(self.year_total / 100)
         # Check the difference between budget and year total
-        assert last_hierarchy_cols[
-            UNDERSPEND_COLUMN
-        ].get_text() == format_forecast_figure(self.underspend_total / 100)
+        assert last_hierarchy_cols[UNDERSPEND_COLUMN].get_text() == \
+            format_forecast_figure(self.underspend_total / 100)
         # Check the spend to date
-        assert last_hierarchy_cols[
-            SPEND_TO_DATE_COLUMN
-        ].get_text() == format_forecast_figure(self.spend_to_date_total / 100)
+        assert last_hierarchy_cols[SPEND_TO_DATE_COLUMN].get_text() == \
+            format_forecast_figure(self.spend_to_date_total / 100)
 
     def check_negative_value_formatted(self, soup):
         negative_values = soup.find_all("span", class_="negative")
@@ -908,6 +906,7 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
 
         self.check_response(resp)
 
+
 class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
@@ -938,9 +937,9 @@ class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
         expenditure_obj = ExpenditureCategoryFactory()
         self.expenditure_id = expenditure_obj.id
         nac_obj = NaturalCodeFactory(natural_account_code=12345678,
-                                        expenditure_category=expenditure_obj,
-                                        economic_budget_code = 'RESOURCE'
-                                          )
+                                     expenditure_category=expenditure_obj,
+                                     economic_budget_code='RESOURCE'
+                                     )
 
         year_obj = FinancialYear.objects.get(financial_year=current_year)
 
@@ -956,7 +955,8 @@ class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
             natural_account_code=nac_obj,
         )
         financial_code_obj.save
-        self.forecast_expenditure_type_id = financial_code_obj.forecast_expenditure_type_id
+        self.forecast_expenditure_type_id = \
+            financial_code_obj.forecast_expenditure_type_id
         apr_figure = MonthlyFigure.objects.create(
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=1
@@ -993,7 +993,7 @@ class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
         ForecastPermissionFactory(
             user=self.test_user,
         )
-        self.year_total = amount_apr +  self.amount_may
+        self.year_total = amount_apr + self.amount_may
         self.underspend_total = -amount_apr - self.amount_may
         self.spend_to_date_total = amount_apr
 
