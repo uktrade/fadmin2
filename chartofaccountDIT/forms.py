@@ -10,6 +10,11 @@ class ExpenditureTypeForm(forms.Form):
         queryset=ExpenditureCategory.objects.all(),
         widget=Select(),
     )
+    expenditure_category.widget.attrs.update(
+        {
+            "class": "govuk-select",
+        }
+    )
 
 
 class ProgrammeForm(forms.Form):
@@ -18,4 +23,9 @@ class ProgrammeForm(forms.Form):
             active=True,
         ),
         widget=Select(),
+    )
+    programme_code.widget.attrs.update(
+        {
+            "class": "govuk-select",
+        }
     )

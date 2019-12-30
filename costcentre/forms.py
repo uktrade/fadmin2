@@ -31,6 +31,11 @@ class AllCostCentresForm(forms.Form):
         ),
         widget=Select(),
     )
+    cost_centre.widget.attrs.update(
+        {
+            "class": "govuk-select",
+        }
+    )
 
 
 class DirectorateCostCentresForm(forms.Form):
@@ -49,6 +54,11 @@ class DirectorateCostCentresForm(forms.Form):
             ),
             widget=Select(),
         )
+        self.fields["cost_centre"].widget.attrs.update(
+            {
+                "class": "govuk-select",
+            }
+        )
 
 
 class MyCostCentresForm(forms.Form):
@@ -66,4 +76,10 @@ class MyCostCentresForm(forms.Form):
     cost_centre = forms.ModelChoiceField(
         queryset=None,
         widget=Select(),
+    )
+
+    cost_centre.widget.attrs.update(
+        {
+            "class": "govuk-select",
+        }
     )

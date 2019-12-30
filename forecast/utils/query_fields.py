@@ -1,9 +1,8 @@
 # indicates if DEL, AME, ADMIN
-# It is used in every view
 BUDGET_TYPE =  "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display"  # noqa
 BUDGET_TYPE_ORDER =  "monthly_figure__financial_code__programme__budget_type_fk__budget_type_display_order"  # noqa
 
-# Category defined by DIT.
+# Categories defined by DIT: i.e. Consultancy, Contingency, Contractors, etc
 BUDGET_CATEGORY_ID = "monthly_figure__financial_code__natural_account_code__expenditure_category__id"  # noqa
 BUDGET_CATEGORY_NAME = "monthly_figure__financial_code__natural_account_code__expenditure_category__grouping_description"   # noqa
 
