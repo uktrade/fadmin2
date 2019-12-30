@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect } from 'react';
+import React, {Fragment, useEffect, ReactDOM, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Table from '../../Components/Table/index'
 import { SET_EDITING_CELL } from '../../Reducers/Edit'
@@ -35,14 +35,15 @@ function ForecastTable() {
     const allSelected = useSelector(state => state.selected.all)
 
     const cells = useSelector(state => state.allCells.cells);
+    const editCellId = useSelector(state => state.edit.cellId);
+
+    const lastTabIndexRef = useRef(null);
 
     useEffect(() => {
         const timer = () => {
                 setTimeout(() => {
                 if (window.table_data) {
                     let rows = processForecastData(window.table_data)
-
-                    console.log(rows)
                       dispatch({
                         type: SET_CELLS,
                         cells: rows
@@ -122,33 +123,85 @@ function ForecastTable() {
 
     useEffect(() => {
         const handleKeyDown = (event) => {
+            let next_id = null
+            let footerLink = document.getElementsByClassName("govuk-footer__link")[0]
+
             if (event.key === "Tab") {
-                const state = store.getState();
+                if (document.activeElement.className === "select_row_btn") {
+                    let parts = document.activeElement.id.split("_")
+                    let row = parseInt(parts[2])
 
-                if (!state.edit.cellId)
-                    return
-
-                let idParts = state.edit.cellId.split("_")
-
-                let month = parseInt(idParts[1])
-                let rowIndex = parseInt(idParts[2])
-                let next_id = null
-
-                if (event.shiftKey) {
-                    if (month === (4 + window.actuals.length)) {
-                        month = 4
-                    } else if (month === 1) {
-                        month = 13
+                    if (event.shiftKey) {
+                        if (row === 0) {
+                            return
+                        } else {
+                            next_id = getCellId(3, (row - 1))
+                        }
+                    } else {
+                        next_id = getCellId(4 + window.actuals.length, row)
                     }
-                    next_id = getCellId(month - 1, rowIndex)
+
+                    document.activeElement.blur();
+                    event.preventDefault()
+                } else if (event.shiftKey && document.activeElement === footerLink) {
+                    next_id = getCellId(3, cells.length - 1)
+                    document.activeElement.blur();
+                    event.preventDefault()
                 } else {
-                    if (month === 12) {
-                        month = 0
-                    } else if (month === 3) {
-                        month = 3 + window.actuals.length
-                    }
+                    if (!editCellId)
+                        return
+                }
 
-                    next_id = getCellId(month + 1, rowIndex)
+                if (!next_id) {
+                    const state = store.getState();
+
+                    if (!state.edit.cellId)
+                        return
+
+                    let idParts = state.edit.cellId.split("_")
+
+                    let month = parseInt(idParts[1])
+                    let rowIndex = parseInt(idParts[2])
+
+                    if (event.shiftKey) { // reverse tab
+                        // check for start of table
+                        if (rowIndex == 0 && month === (4 + window.actuals.length)) {
+                            next_id = null
+                        } else {
+                            // 4 is march and the end of the financial year
+                            if (month === (4 + window.actuals.length)) {
+                                let selectRowBtn = document.getElementById("select_row_" + rowIndex)
+                                selectRowBtn.focus()
+                                next_id = null
+                            } else if (month === 1) { // 1 is april, the start of fin year
+                                month = 13
+                                next_id = getCellId(month - 1, rowIndex)
+                            } else {
+                                next_id = getCellId(month - 1, rowIndex)
+                            }
+                            event.preventDefault()
+                        }
+                    } else { // tab
+                        // check for end of table
+                        if (rowIndex === (cells.length - 1) && month === 3) {
+                            next_id = null
+                            footerLink.focus()
+                            event.preventDefault()
+                        } else {
+                            if (month === 12) { // allow for financial year
+                                month = 0
+                                next_id = getCellId(month + 1, rowIndex)
+                            } else if (month === 3) { // jump to select to btn if 3
+                                rowIndex++
+                                let selectRowBtn = document.getElementById("select_row_" + rowIndex)
+                                selectRowBtn.focus()
+                                next_id = null
+                            } else {
+                                next_id = getCellId(month + 1, rowIndex)
+                            }
+                            event.preventDefault()
+                        }
+                    }
                 }
 
                 dispatch(
@@ -156,8 +209,6 @@ function ForecastTable() {
                         "cellId": next_id
                     })
                 );
-
-                event.preventDefault()
             }
         }
 
@@ -166,7 +217,7 @@ function ForecastTable() {
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
         };
-    }, [dispatch]);
+    }, [dispatch, cells, editCellId]);
 
     return (
         <Fragment>

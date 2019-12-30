@@ -16,8 +16,6 @@ function Table({rowData}) {
 
     const rows = useSelector(state => state.allCells.cells);
 
-    console.log("rows", rows)
-
     const isHidden = (key) => {
         if (!nac && key === "natural_account_code") {
             return true
@@ -56,7 +54,7 @@ function Table({rowData}) {
                                 );
                             }
                         }>
-                            select all
+                            <button>select all</button>
                         </td>
                         <TableHeader isHidden={isHidden} id="natural_account_code_header" headerType="natural_account_code">Natural Account Code</TableHeader>
                         <TableHeader isHidden={isHidden} headerType="programme">Programme</TableHeader>
@@ -80,9 +78,8 @@ function Table({rowData}) {
                 <tbody className="govuk-table__body">
                     {rows.map((cells, rowIndex) => {
                         return <tr key={rowIndex} index={(rowIndex + 1)}>
-                            <td id={"select_" + rowIndex}  className="handle govuk-table__cell indicate-action"
+                            <td id={"select_" + rowIndex} className="handle govuk-table__cell indicate-action"
                                 onClick={() => { 
-                                    console.log(rowIndex)
                                     dispatch(
                                         SET_SELECTED_ROW({
                                             selectedRow: rowIndex
@@ -90,7 +87,7 @@ function Table({rowData}) {
                                     );
                                 }
                             }>
-                                select
+                                <button className="select_row_btn" id={"select_row_" + rowIndex}>select</button>
                             </td>
                             <TableCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"natural_account_code"} />
                             <TableCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"programme"} />
