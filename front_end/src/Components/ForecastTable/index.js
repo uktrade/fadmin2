@@ -166,7 +166,10 @@ function ForecastTable() {
                     if (event.shiftKey) { // reverse tab
                         // check for start of table
                         if (rowIndex == 0 && month === (4 + window.actuals.length)) {
+                            let selectRowBtn = document.getElementById("select_row_0")
+                            selectRowBtn.focus()
                             next_id = null
+                            event.preventDefault()
                         } else {
                             // 4 is march and the end of the financial year
                             if (month === (4 + window.actuals.length)) {
