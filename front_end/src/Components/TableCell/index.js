@@ -119,6 +119,10 @@ const TableCell = ({isHidden, rowIndex, cellKey}) => {
         })
     }
 
+    const handleBlur = (event) => {
+        updateValue()
+    }
+
     const handleKeyDown = (event) => {
         if (event.key === "Tab") {
             updateValue()
@@ -152,15 +156,6 @@ const TableCell = ({isHidden, rowIndex, cellKey}) => {
                         );
                     }
                 }}
-
-                onMouseOver={ () => {
-                    //console.log(value)
-
-                }}
-
-                onMouseUp={ () => {
-
-                }}
             >
                 {isUpdating ? (
                     <Fragment>
@@ -176,6 +171,7 @@ const TableCell = ({isHidden, rowIndex, cellKey}) => {
                                 onChange={e => setContentState(e.target.value)}
                                 onKeyPress={handleKeyPress}
                                 onKeyDown={handleKeyDown}
+                                onBlur={handleBlur}
                             />
                         ) : (
                             <Fragment>

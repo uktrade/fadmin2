@@ -106,18 +106,10 @@ function ForecastTable() {
         }
 
         capturePaste();
-        //window.addEventListener("mousedown", captureMouseDn);
-        //window.addEventListener("mouseup", captureMouseUp);
         document.addEventListener("paste", capturePaste)
-        //window.addEventListener("keydown", handleKeyDown);
-        // window.addEventListener("copy", setClipBoardContent);
 
         return () => {
-           //window.removeEventListener("onmouseup", captureMouseUp);
-            //window.removeEventListener("mousedown", captureMouseDn);
             document.removeEventListener("paste", capturePaste)
-            // window.removeEventListener("keydown", handleKeyDown);
-            // window.removeEventListener("copy", setClipBoardContent);
         };
     }, [dispatch, cells, selectedRow, allSelected]);
 
