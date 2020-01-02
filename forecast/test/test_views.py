@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.core.exceptions import PermissionDenied
 from django.test import TestCase
@@ -793,10 +794,19 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
             amount=self.amount_may
         )
         may_amount.save()
+
         # Assign forecast view permission
-        ForecastPermissionFactory(
-            user=self.test_user,
+        can_view_forecasts = Permission.objects.get(
+            codename='can_view_forecasts'
         )
+        self.test_user.user_permissions.add(can_view_forecasts)
+        self.test_user.save()
+
+        # Bust permissions cache (refresh_from_db does not work)
+        self.test_user, _ = get_user_model().objects.get_or_create(
+            email="test@test.com"
+        )
+
         self.year_total = self.amount1_apr + self.amount2_apr + self.amount_may
         self.underspend_total = -self.amount1_apr - self.amount_may - self.amount2_apr
         self.spend_to_date_total = self.amount1_apr + self.amount2_apr
@@ -992,10 +1002,19 @@ class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
             amount=self.amount_may
         )
         may_amount.save()
+
         # Assign forecast view permission
-        ForecastPermissionFactory(
-            user=self.test_user,
+        can_view_forecasts = Permission.objects.get(
+            codename='can_view_forecasts'
         )
+        self.test_user.user_permissions.add(can_view_forecasts)
+        self.test_user.save()
+
+        # Bust permissions cache (refresh_from_db does not work)
+        self.test_user, _ = get_user_model().objects.get_or_create(
+            email="test@test.com"
+        )
+
         self.year_total = amount_apr + self.amount_may
         self.underspend_total = -amount_apr - self.amount_may
         self.spend_to_date_total = amount_apr
