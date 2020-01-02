@@ -121,12 +121,19 @@ class FinancialPeriod(models.Model):
 
 class FinancialCode(models.Model):
     """Contains the members of Chart of Account needed to create a unique key"""
-
     class Meta:
-        permissions = (
+        unique_together = (
+            "programme",
+            "cost_centre",
+            "natural_account_code",
+            "analysis1_code",
+            "analysis2_code",
+            "project_code",
+        )
+        permissions = [
             ("can_view_forecasts", "Can view forecast"),
             ("can_upload_files", "Can upload files"),
-        )
+        ]
 
     programme = models.ForeignKey(ProgrammeCode, on_delete=models.PROTECT)
     cost_centre = models.ForeignKey(CostCentre, on_delete=models.PROTECT)
@@ -149,16 +156,6 @@ class FinancialCode(models.Model):
         null=True
     )
     history = HistoricalRecords()
-
-    class Meta:
-        unique_together = (
-            "programme",
-            "cost_centre",
-            "natural_account_code",
-            "analysis1_code",
-            "analysis2_code",
-            "project_code",
-        )
 
     def save(self, *args, **kwargs):
         # Override save to calculate the forecast_expenditure_type.
@@ -484,6 +481,7 @@ class MonthlyFigure(TimeStampedModel):
     financial_period = models.ForeignKey(
         FinancialPeriod,
         on_delete=models.PROTECT,
+        related_name="financial_periods"
     )
 
     financial_code = models.ForeignKey(

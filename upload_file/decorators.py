@@ -3,7 +3,7 @@ from django.core.exceptions import PermissionDenied
 
 def has_upload_permission(function):
     def wrap(view_func, *args, **kwargs):
-        if view_func.request.user.has_permission("forecast.can_upload_files"):
+        if view_func.request.user.has_perm("forecast.can_upload_files"):
             return function(view_func, *args, **kwargs)
         else:
             raise PermissionDenied

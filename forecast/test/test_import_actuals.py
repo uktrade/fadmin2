@@ -489,7 +489,7 @@ class UploadActualsTest(TestCase, RequestFactoryBase):
             )
 
         can_upload_files = Permission.objects.get(
-            name='forecast.can_upload_files'
+            codename='can_upload_files'
         )
         self.test_user.user_permissions.add(can_upload_files)
         self.test_user.save()

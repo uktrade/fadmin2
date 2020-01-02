@@ -85,7 +85,7 @@ class ViewPermissionsTest(TestCase, RequestFactoryBase):
     def test_edit_forecast_view(self):
         # Add forecast view permission
         can_view_forecasts = Permission.objects.get(
-            name='forecast.can_view_forecasts'
+            codename='can_view_forecasts'
         )
         self.test_user.user_permissions.add(can_view_forecasts)
         self.test_user.save()
@@ -384,7 +384,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         may_amount.save()
         # Assign forecast view permission
         can_view_forecasts = Permission.objects.get(
-            name='forecast.can_view_forecasts'
+            codename='can_view_forecasts'
         )
         self.test_user.user_permissions.add(can_view_forecasts)
         self.test_user.save()

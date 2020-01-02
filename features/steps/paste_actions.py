@@ -8,9 +8,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 
-from django.contrib.auth.models import Permission
-
 from features.environment import (
+    TEST_COST_CENTRE_CODE,
     create_test_user,
     copy_text,
     paste,
@@ -38,21 +37,14 @@ def check_error_message(context, msg):
 def step_impl(context):
     create_test_user(context)
 
-    # Add forecast view permission
-    can_view_forecasts = Permission.objects.get(
-        name='forecast.can_view_forecasts'
-    )
-    context.user.user_permissions.add(can_view_forecasts)
-    context.user.save()
-
-    context.browser.get(f'{context.base_url}/forecast/edit/{888812}/')
+    context.browser.get(f'{context.base_url}/forecast/edit/{TEST_COST_CENTRE_CODE}/')
 
     WebDriverWait(context.browser, 5000).until(
-        ec.presence_of_element_located((By.ID, "id_apr_0"))
+        ec.presence_of_element_located((By.ID, "id_4_0"))
     )
 
     april_value = context.browser.find_element_by_id(
-        "id_apr_0"
+        "id_4_0"
     ).get_attribute(
         'innerHTML'
     )
@@ -71,21 +63,14 @@ def step_impl(context):
 def step_impl(context):
     create_test_user(context)
 
-    # Add forecast view permission
-    can_view_forecasts = Permission.objects.get(
-        name='forecast.can_view_forecasts'
-    )
-    context.user.user_permissions.add(can_view_forecasts)
-    context.user.save()
-
-    context.browser.get(f'{context.base_url}/forecast/edit/{888812}/')
+    context.browser.get(f'{context.base_url}/forecast/edit/{TEST_COST_CENTRE_CODE}/')
 
     WebDriverWait(context.browser, 5000).until(
         ec.presence_of_element_located((By.ID, "select_0"))
     )
 
     april_value = context.browser.find_element_by_id(
-        "id_apr_0"
+        "id_4_0"
     ).get_attribute(
         'innerHTML'
     )
@@ -121,7 +106,7 @@ def step_impl(context):
 @then(u'the clipboard data is displayed in the forecast table')
 def step_impl(context):
     april_value = context.browser.find_element_by_id(
-        "id_apr_0"
+        "id_4_0"
     ).get_attribute(
         'innerHTML'
     )
@@ -179,7 +164,7 @@ def step_impl(context):
 @then(u'the actuals data is unchanged')
 def step_impl(context):
     april_value = context.browser.find_element_by_id(
-        "id_apr_0"
+        "id_4_0"
     ).get_attribute(
         'innerHTML'
     )

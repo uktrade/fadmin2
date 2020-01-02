@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, ReactDOM, useRef } from 'react';
+import React, {Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Table from '../../Components/Table/index'
 import { SET_EDITING_CELL } from '../../Reducers/Edit'
@@ -36,8 +36,6 @@ function ForecastTable() {
 
     const cells = useSelector(state => state.allCells.cells);
     const editCellId = useSelector(state => state.edit.cellId);
-
-    const lastTabIndexRef = useRef(null);
 
     useEffect(() => {
         const timer = () => {
@@ -115,11 +113,14 @@ function ForecastTable() {
 
     useEffect(() => {
         const handleKeyDown = (event) => {
+            // This function puts editing cells into the tab order of the page
             let next_id = null
             let footerLink = document.getElementsByClassName("govuk-footer__link")[0]
 
             if (event.key === "Tab") {
-                if (document.activeElement.className === "select_row_btn") {
+                console.log("document.activeElement.className", document.activeElement.className)
+
+                if (document.activeElement.className === "select_row_btn link-button") {
                     let parts = document.activeElement.id.split("_")
                     let row = parseInt(parts[2])
 
@@ -157,7 +158,7 @@ function ForecastTable() {
 
                     if (event.shiftKey) { // reverse tab
                         // check for start of table
-                        if (rowIndex == 0 && month === (4 + window.actuals.length)) {
+                        if (rowIndex === 0 && month === (4 + window.actuals.length)) {
                             let selectRowBtn = document.getElementById("select_row_0")
                             selectRowBtn.focus()
                             next_id = null
@@ -232,6 +233,7 @@ function ForecastTable() {
             }
             <div className="toggle-links">
                 <button id="show_hide_nac"
+                    className="link-button"
                     onClick={(e) => {
                         dispatch(
                             TOGGLE_NAC()
@@ -244,6 +246,7 @@ function ForecastTable() {
                         <Fragment>Show</Fragment>
                     )} NAC</button>
                 <button id="show_hide_prog"
+                    className="link-button"
                     onClick={(e) => {
                         dispatch(
                             TOGGLE_PROG()
@@ -256,6 +259,7 @@ function ForecastTable() {
                         <Fragment>Show</Fragment>
                     )} programme</button>
                 <button id="show_hide_a1"
+                    className="link-button"
                     onClick={(e) => {
                         dispatch(
                             TOGGLE_AN1()
@@ -268,6 +272,7 @@ function ForecastTable() {
                         <Fragment>Show</Fragment>
                     )} analysis code sector</button>
                 <button id="show_hide_a2"
+                    className="link-button"
                     onClick={(e) => {
                         dispatch(
                             TOGGLE_AN2()
@@ -280,6 +285,7 @@ function ForecastTable() {
                         <Fragment>Show</Fragment>
                     )} analysis code market</button>
                 <button id="show_hide_proj"
+                    className="link-button"
                     onClick={(e) => {
                         dispatch(
                             TOGGLE_PROJ_CODE()

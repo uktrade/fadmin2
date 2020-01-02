@@ -47,14 +47,15 @@ function Table({rowData}) {
                 <caption className="govuk-table__caption">Edit forecast</caption>
                 <thead className="govuk-table__head">
                     <tr index="0">
-                        <td id="select_all" className="handle govuk-table__cell indicate-action"
-                            onClick={() => { 
-                                dispatch(
-                                    SELECT_ALL()
-                                );
-                            }
-                        }>
-                            <button>select all</button>
+                        <td className="handle govuk-table__cell indicate-action">
+                            <button className="link-button"
+                                id="select_all"                          
+                                onClick={() => { 
+                                    dispatch(
+                                        SELECT_ALL()
+                                    );
+                                }
+                            }>select all</button>
                         </td>
                         <TableHeader isHidden={isHidden} id="natural_account_code_header" headerType="natural_account_code">Natural Account Code</TableHeader>
                         <TableHeader isHidden={isHidden} headerType="programme">Programme</TableHeader>
@@ -78,16 +79,18 @@ function Table({rowData}) {
                 <tbody className="govuk-table__body">
                     {rows.map((cells, rowIndex) => {
                         return <tr key={rowIndex} index={(rowIndex + 1)}>
-                            <td id={"select_" + rowIndex} className="handle govuk-table__cell indicate-action"
-                                onClick={() => { 
-                                    dispatch(
-                                        SET_SELECTED_ROW({
-                                            selectedRow: rowIndex
-                                        })
-                                    );
-                                }
-                            }>
-                                <button className="select_row_btn" id={"select_row_" + rowIndex}>select</button>
+                            <td id={"select_" + rowIndex} className="handle govuk-table__cell indicate-action">
+                                <button
+                                    className="select_row_btn link-button"
+                                    id={"select_row_" + rowIndex}
+                                    onClick={() => { 
+                                        dispatch(
+                                            SET_SELECTED_ROW({
+                                                selectedRow: rowIndex
+                                            })
+                                        );
+                                    }
+                                }>select</button>
                             </td>
                             <TableCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"natural_account_code"} />
                             <TableCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"programme"} />

@@ -38,6 +38,11 @@ class PermissionShortcutsTest(
             self.cost_centre,
         )
 
+        # Bust permissions cache (refresh_from_db does not work)
+        self.test_user, _ = get_user_model().objects.get_or_create(
+            email="test@test.com"
+        )
+
         assert self.test_user.has_perm("forecast.can_view_forecasts")
 
         # check guardian permissions created
@@ -56,10 +61,15 @@ class PermissionShortcutsTest(
             )
 
         can_view_forecasts = Permission.objects.get(
-            name='forecast.can_view_forecasts'
+            codename='can_view_forecasts'
         )
         self.test_user.user_permissions.add(can_view_forecasts)
         self.test_user.save()
+
+        # Bust permissions cache (refresh_from_db does not work)
+        self.test_user, _ = get_user_model().objects.get_or_create(
+            email="test@test.com"
+        )
 
         guardian_assign_perm(
             "change_costcentre",

@@ -35,6 +35,7 @@ from forecast.serialisers import FinancialCodeSerializer
 from forecast.utils.edit_helpers import (
     BadFormatException,
     CannotFindMonthlyFigureException,
+    NoFinancialCodeForEditedValue,
     NotEnoughMatchException,
     RowMatchException,
     TooManyMatchException,
@@ -275,7 +276,7 @@ def pasted_forecast_content(request, cost_centre_code):
 
         financial_code = FinancialCode.objects.filter(
             cost_centre_id=cost_centre_code,
-        )
+        ).prefetch_related('monthly_figures')
 
         financial_code_serialiser = FinancialCodeSerializer(
             financial_code,
@@ -314,9 +315,6 @@ def update_forecast_figure(request, cost_centre_code):
     )
 
     if form.is_valid():
-        test = form.cleaned_data.get('project_code', None)
-        test1 = form.cleaned_data.get('analysis1_code', None)
-
         financial_code = FinancialCode.objects.filter(
             natural_account_code=form.cleaned_data['natural_account_code'],
             programme__programme_code=form.cleaned_data['programme_code'],
@@ -325,10 +323,8 @@ def update_forecast_figure(request, cost_centre_code):
             project_code__project_code=form.cleaned_data.get('project_code', None),
         )
 
-        # print(financial_code.query)
-
         if not financial_code.first():
-            pass  # TODO - raise exception
+            raise NoFinancialCodeForEditedValue()
 
         current_amount = MonthlyFigureAmount.objects.filter(
             monthly_figure__financial_code=financial_code.first(),
@@ -346,7 +342,7 @@ def update_forecast_figure(request, cost_centre_code):
 
         financial_code = FinancialCode.objects.filter(
             cost_centre_id=cost_centre_code,
-        )
+        ).prefetch_related('monthly_figures')
 
         financial_code_serialiser = FinancialCodeSerializer(
             financial_code,

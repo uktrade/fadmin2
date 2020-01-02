@@ -16,9 +16,14 @@ class UploadPermissionTestTestCase(TestCase):
         assert not has_upload_permission(test_user)
 
         can_upload_files = Permission.objects.get(
-            name='forecast.can_upload_files',
+            codename='can_upload_files',
         )
-        self.test_user_permissions.add(can_upload_files)
-        self.test_user.save()
+        test_user.user_permissions.add(can_upload_files)
+        test_user.save()
+
+        # Bust permissions cache (refresh_from_db does not work)
+        test_user, _ = get_user_model().objects.get_or_create(
+            email="test@test.com"
+        )
 
         assert has_upload_permission(test_user) is True

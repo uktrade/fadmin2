@@ -14,6 +14,7 @@ class MonthlyFigureAmountSerializer(serializers.ModelSerializer):
             'amount',
             'version',
         ]
+        read_only_fields = fields
 
 
 class MonthlyFigureSerializer(serializers.ModelSerializer):
@@ -31,6 +32,7 @@ class MonthlyFigureSerializer(serializers.ModelSerializer):
             'month',
             'monthly_figure_amounts',
         ]
+        read_only_fields = fields
 
     def get_month(self, obj):
         return obj.financial_period.period_calendar_code
@@ -56,3 +58,4 @@ class FinancialCodeSerializer(serializers.ModelSerializer):
             'project_code',
             'monthly_figures',
         ]
+        read_only_fields = fields

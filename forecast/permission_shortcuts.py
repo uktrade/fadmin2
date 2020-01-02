@@ -13,8 +13,8 @@ class NoForecastViewPermission(Exception):
 def assign_perm(perm, user, *args, **kwargs):
     # Check user can view forecasts
 
-    if not user.has_perm("account.can_view_forecasts"):
-        can_view_forecasts = Permission.objects.get(name='can_view_forecasts')
+    if not user.has_perm("forecast.can_view_forecasts"):
+        can_view_forecasts = Permission.objects.get(codename='can_view_forecasts')
         user.user_permissions.add(can_view_forecasts)
         user.save()
 
@@ -23,7 +23,7 @@ def assign_perm(perm, user, *args, **kwargs):
 
 def get_objects_for_user(user, perms, *args, **kwargs):
     # Check user can view forecasts
-    if not user.has_perm("account.can_view_forecasts"):
+    if not user.has_perm("forecast.can_view_forecasts"):
         raise NoForecastViewPermission(
             "Users without forecast view "
             "permission cannot edit cost centres"

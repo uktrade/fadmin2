@@ -1,4 +1,4 @@
-import React, {Fragment, useState, useEffect } from 'react'
+import React, {Fragment, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { SET_EDITING_CELL } from '../../Reducers/Edit'
 import {
@@ -26,7 +26,6 @@ const TableCell = ({isHidden, rowIndex, cellKey}) => {
         initialValue = cell.versions[0].amount
     }
 
-    const [value, setValue] = useState(initialValue)
     const [editValue, setEditValue] = useState((initialValue/100).toFixed(2))
 
     const isSelected = () => {
@@ -81,7 +80,7 @@ const TableCell = ({isHidden, rowIndex, cellKey}) => {
     const updateValue = () => {
         let newAmount = parseInt(editValue * 100)
 
-        if (newAmount == cell.versions[0].amount) {
+        if (newAmount === cell.versions[0].amount) {
             return
         }
 
@@ -165,6 +164,7 @@ const TableCell = ({isHidden, rowIndex, cellKey}) => {
                     <Fragment>
                         {editCellId === cell.id ? (
                             <input
+                                id={cell.id + "_input"}
                                 className="cell-input"
                                 type="text"
                                 value={editValue}
