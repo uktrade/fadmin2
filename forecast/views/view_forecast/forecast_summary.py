@@ -23,8 +23,13 @@ from forecast.models import (
 )
 from forecast.tables import (
     ForecastSubTotalTable,
+    ForecastWithLinkTable,
 )
 from forecast.utils.query_fields import (
+    BUDGET_CATEGORY_ID,
+    BUDGET_TYPE,
+    FORECAST_EXPENDITURE_TYPE_ID,
+    PROGRAMME_CODE,
     SHOW_COSTCENTRE,
     SHOW_DIRECTORATE,
     SHOW_DIT,
@@ -32,13 +37,16 @@ from forecast.utils.query_fields import (
     expenditure_columns,
     expenditure_display_sub_total_column,
     expenditure_order_list,
-    expenditure_sub_total, filter_codes,
+    expenditure_sub_total,
+    expenditure_view,
+    filter_codes,
     filter_selectors,
     hierarchy_columns,
     hierarchy_order_list,
     hierarchy_sub_total,
     hierarchy_sub_total_column,
     programme_columns,
+    programme_detail_view,
     programme_display_sub_total_column,
     programme_order_list,
     programme_sub_total,
@@ -57,12 +65,13 @@ class ForecastMultiTableMixin(MultiTableMixin):
         """
          Return an array of table instances containing data.
         """
+        filter_code = ''
+        pivot_filter = {}
         arg_name = filter_codes[self.hierarchy_type]
         if arg_name:
             filter_code = self.kwargs[arg_name]
             pivot_filter = {filter_selectors[self.hierarchy_type]: f"{filter_code}"}
-        else:
-            pivot_filter = {}
+
         hierarchy_data = MonthlyFigureAmount.pivot.subtotal_data(
             hierarchy_sub_total_column[self.hierarchy_type],
             hierarchy_sub_total,
@@ -93,9 +102,22 @@ class ForecastMultiTableMixin(MultiTableMixin):
             pivot_filter,
             order_list=project_order_list,
         )
-        programme_table = ForecastSubTotalTable(programme_columns, programme_data)
+        if self.hierarchy_type == SHOW_COSTCENTRE:
+            programme_table = ForecastSubTotalTable(programme_columns, programme_data)
+        else:
+            programme_table = ForecastWithLinkTable(
+                programme_detail_view[self.hierarchy_type],
+                [PROGRAMME_CODE, FORECAST_EXPENDITURE_TYPE_ID],
+                filter_code,
+                programme_columns,
+                programme_data)
+
         programme_table.attrs['caption'] = "Programme Report"
-        expenditure_table = ForecastSubTotalTable(expenditure_columns, expenditure_data)
+        expenditure_table = ForecastWithLinkTable(expenditure_view[self.hierarchy_type],
+                                                  [BUDGET_CATEGORY_ID, BUDGET_TYPE],
+                                                  filter_code,
+                                                  expenditure_columns,
+                                                  expenditure_data)
         expenditure_table.attrs['caption'] = "Expenditure Report"
         project_table = ForecastSubTotalTable(project_columns, project_data)
         project_table.attrs['caption'] = "Project Report"

@@ -31,11 +31,9 @@ class AllCostCentresForm(forms.Form):
         ),
         widget=Select(),
     )
-
     cost_centre.widget.attrs.update(
         {
             "class": "govuk-select",
-            "aria-describedby": "cost_centre-hint cost_centre-error",
         }
     )
 
@@ -56,11 +54,9 @@ class DirectorateCostCentresForm(forms.Form):
             ),
             widget=Select(),
         )
-
         self.fields["cost_centre"].widget.attrs.update(
             {
                 "class": "govuk-select",
-                "aria-describedby": "cost_centre-hint cost_centre-error",
             }
         )
 
@@ -85,6 +81,5 @@ class MyCostCentresForm(forms.Form):
     cost_centre.widget.attrs.update(
         {
             "class": "govuk-select",
-            "aria-describedby": "cost_centre-hint cost_centre-error",
         }
     )
