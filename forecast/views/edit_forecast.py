@@ -164,7 +164,7 @@ class AddRowView(CostCentrePermissionTest, FormView):
         return super().form_valid(form)
 
 
-@require_http_methods(["POST", ])
+@require_http_methods(["POST", ])  # noqa: C901
 def pasted_forecast_content(request, cost_centre_code):
     # Check user has permission to edit forecast
     if not request.user.has_perm("forecast.can_view_forecasts"):
@@ -318,9 +318,18 @@ def update_forecast_figure(request, cost_centre_code):
         financial_code = FinancialCode.objects.filter(
             natural_account_code=form.cleaned_data['natural_account_code'],
             programme__programme_code=form.cleaned_data['programme_code'],
-            analysis1_code__analysis1_code=form.cleaned_data.get('analysis1_code', None),
-            analysis2_code__analysis2_code=form.cleaned_data.get('analysis2_code', None),
-            project_code__project_code=form.cleaned_data.get('project_code', None),
+            analysis1_code__analysis1_code=form.cleaned_data.get(
+                'analysis1_code',
+                None,
+            ),
+            analysis2_code__analysis2_code=form.cleaned_data.get(
+                'analysis2_code',
+                None,
+            ),
+            project_code__project_code=form.cleaned_data.get(
+                'project_code',
+                None,
+            ),
         )
 
         if not financial_code.first():
@@ -328,7 +337,9 @@ def update_forecast_figure(request, cost_centre_code):
 
         current_amount = MonthlyFigureAmount.objects.filter(
             monthly_figure__financial_code=financial_code.first(),
-            monthly_figure__financial_period__period_calendar_code=form.cleaned_data['month'],
+            monthly_figure__financial_period__period_calendar_code=form.cleaned_data[
+                'month'
+            ],
         ).order_by(
             "-version"
         ).first()

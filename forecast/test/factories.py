@@ -49,4 +49,3 @@ class MonthlyFigureFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = MonthlyFigure
-

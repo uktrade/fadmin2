@@ -1,11 +1,10 @@
-from simple_history.models import HistoricalRecords
-
-from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Max
 
 # https://github.com/martsberger/django-pivot/blob/master/django_pivot/pivot.py # noqa
 from django_pivot.pivot import pivot
+
+from simple_history.models import HistoricalRecords
 
 from chartofaccountDIT.models import (
     Analysis1,
