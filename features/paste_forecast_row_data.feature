@@ -34,8 +34,3 @@ Feature: Paste forecast row data
     Given the user selects a row in the edit forecast table
      When the user pastes mismatched columns
      Then the mismatched columns error message is displayed
-
-  Scenario: Pasting valid data causes "updating" message to be displayed
-    Given the user selects a row in the edit forecast table
-     When the user pastes valid row data
-     Then the "updating" message is displayed whilst the data updates

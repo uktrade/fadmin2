@@ -14,8 +14,3 @@ Feature: Paste forecast sheet data
     Given the user selects all rows in the edit forecast table
      When the user pastes too many rows
      Then the too many rows error is displayed
-
-  Scenario: Pasting valid sheet data causes "updating" message to be displayed
-    Given the user selects a row in the edit forecast table
-     When the user pastes valid row data
-     Then the "updating" message is displayed whilst the data updates

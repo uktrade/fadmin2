@@ -224,13 +224,3 @@ def step_impl(context):
         context,
         'There is a mismatch between your pasted and selected rows. Please check the following columns: "Natural account code".'
     )
-
-
-@then(u'the "updating" message is displayed whilst the data updates')
-def step_impl(context):
-    WebDriverWait(context.browser, 5000).until(
-        ec.presence_of_element_located((By.CLASS_NAME, "updating"))
-    )
-
-
-
