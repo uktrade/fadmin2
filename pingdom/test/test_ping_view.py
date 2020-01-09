@@ -1,5 +1,5 @@
-from django.test import TestCase
 from django.shortcuts import reverse
+from django.test import TestCase
 
 
 class PingdomTest(TestCase):
@@ -9,6 +9,4 @@ class PingdomTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         assert "<status>OK</status>" in str(response.content)
-        assert response._headers[
-           "content-type"
-        ] == ("Content-Type", "text/xml")
+        assert response._headers["content-type"] == ("Content-Type", "text/xml")

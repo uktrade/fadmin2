@@ -1,4 +1,3 @@
-from django.core.cache import cache
 from django.http import Http404
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import (
