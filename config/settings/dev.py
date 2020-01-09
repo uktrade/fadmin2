@@ -30,11 +30,3 @@ AUTHENTICATION_BACKENDS = [
 ASYNC_FILE_UPLOAD = True
 
 IGNORE_ANTI_VIRUS = True
-
-SENTRY_KEY = env("SENTRY_KEY", default=None)
-SENTRY_PROJECT = env("SENTRY_PROJECT", default=None)
-
-sentry_sdk.init(
-    dsn=f"https://{SENTRY_KEY}@sentry.ci.uktrade.io/{SENTRY_PROJECT}",
-    integrations=[DjangoIntegration()]
-)
