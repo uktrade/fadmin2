@@ -1,4 +1,6 @@
 from .base import *  # noqa
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 CAN_ELEVATE_SSO_USER_PERMISSIONS = True
 
@@ -32,3 +34,11 @@ AUTHENTICATION_BACKENDS = [
 ASYNC_FILE_UPLOAD = True
 
 IGNORE_ANTI_VIRUS = True
+
+SENTRY_KEY = env("SENTRY_KEY", default=None)
+SENTRY_PROJECT = env("SENTRY_PROJECT", default=None)
+
+sentry_sdk.init(
+    dsn=f"https://{SENTRY_KEY}@sentry.ci.uktrade.io/{SENTRY_PROJECT}",
+    integrations=[DjangoIntegration()]
+)

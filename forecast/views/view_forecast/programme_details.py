@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.http import Http404
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import (
@@ -87,6 +88,7 @@ class ForecastProgrammeDetailsMixin(MultiTableMixin):
         self.tables = [
             programme_details_table,
         ]
+
         return self.tables
 
 
@@ -115,7 +117,7 @@ class DITProgrammeDetailsView(
                 )
             )
         else:
-            raise Http404("Budget Type not found")
+            raise Http404("Programme not found")
 
 
 class GroupProgrammeDetailsView(
@@ -149,7 +151,7 @@ class GroupProgrammeDetailsView(
                 )
             )
         else:
-            raise Http404("Budget Type not found")
+            raise Http404("Programme not found")
 
 
 class DirectorateProgrammeDetailsView(
@@ -183,4 +185,4 @@ class DirectorateProgrammeDetailsView(
                 )
             )
         else:
-            raise Http404("Budget Type not found")
+            raise Http404("Programme not found")
