@@ -51,7 +51,6 @@ def import_adi_file(csvfile):
     fin_year = 2019
     # Clear the table first. The adi file has several lines with the same key,
     # so the figures have to be added and we don't want to add to existing data!
-    MonthlyFigureAmount.objects.filter(monthly_figure__financial_year=fin_year).delete()
     MonthlyFigure.objects.filter(financial_year=fin_year).delete()
     reader = csv.reader(csvfile)
     col_key = csv_header_to_dict(next(reader))
@@ -92,16 +91,12 @@ def import_adi_file(csvfile):
                         financial_period=per_obj,
                         financial_code=financial_code,
                     )
-                    month_figure_obj.save
-                    amount_obj, created = MonthlyFigureAmount.objects.get_or_create(
-                        version=1,
-                        monthly_figure=month_figure_obj,
-                    )
                     if created:
-                        amount_obj.amount = period_amount
+                        month_figure_obj.amount = period_amount
                     else:
-                        amount_obj.amount += period_amount
-                    amount_obj.save()
+                        month_figure_obj.amount += period_amount
+                    month_figure_obj.current_amunt = month_figure_obj.amount
+                    month_figure_obj.save()
         else:
             print(line, err_msg)
 

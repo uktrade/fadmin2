@@ -439,7 +439,6 @@ class MonthlyFigureAbstract(SimpleTimeStampedModel):
         on_delete=models.PROTECT,
         related_name="%(app_label)s_%(class)s_related",
     )
-    history = HistoricalRecords()
     objects = models.Manager()  # The default manager.
     pivot = PivotManager()
 
@@ -470,13 +469,23 @@ class HistoricalMonthlyFigures(MonthlyFigureAbstract):
 
 
 class MonthlyFigure(MonthlyFigureAbstract):
+    history = HistoricalRecords()
     starting_amount = models.BigIntegerField(default=0)
+
+
+class TemporaryMonthlyFigure(MonthlyFigureAbstract):
+    pass
 
 
 class Budget(MonthlyFigureAbstract):
     """Used to store the budgets
     for the financial year."""
+    history = HistoricalRecords()
     starting_amount = models.BigIntegerField(default=0)
+
+
+class TemporaryBudget(MonthlyFigureAbstract):
+    pass
 
 
 # class Amount(TimeStampedModel):
