@@ -8,7 +8,6 @@ from core.utils import check_empty
 from forecast.models import (
     FinancialPeriod,
     MonthlyFigure,
-    MonthlyFigureAmount,
 )
 
 

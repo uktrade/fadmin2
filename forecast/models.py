@@ -16,6 +16,7 @@ from chartofaccountDIT.models import (
 )
 
 from core.metamodels import (
+    SimpleTimeStampedModel,
     TimeStampedModel,
 )
 from core.models import FinancialYear
@@ -177,41 +178,6 @@ class FinancialCode(models.Model):
             self.forecast_expenditure_type = forecast_type.first()
 
         super(FinancialCode, self).save(*args, **kwargs)
-
-
-class Budget(TimeStampedModel):
-    """Used to store the budgets
-    for the financial year."""
-
-    id = models.AutoField("Budget ID", primary_key=True)
-    financial_year = models.ForeignKey(FinancialYear, on_delete=models.PROTECT)
-    financial_period = models.ForeignKey(
-        FinancialPeriod,
-        on_delete=models.PROTECT,
-    )
-    amount = models.BigIntegerField(default=0)
-    financial_code = models.ForeignKey(
-        FinancialCode,
-        on_delete=models.PROTECT,
-        related_name="budgets",
-    )
-
-    class Meta:
-        unique_together = (
-            "financial_code",
-            "financial_year",
-            "financial_period",
-        )
-
-    def __str__(self):
-        return f"{self.financial_code.cost_centre}" \
-               f"--{self.financial_code.programme}" \
-               f"--{self.financial_code.natural_account_code}" \
-               f"--{self.financial_code.analysis1_code}" \
-               f"--{self.financial_code.analysis2_code}" \
-               f"--{self.financial_code.project_code}:" \
-               f"{self.financial_year} " \
-               f"{self.financial_period}"
 
 
 class SubTotalForecast:
@@ -448,15 +414,16 @@ class PivotManager(models.Manager):
         )
         pivot_data = pivot(q1, columns,
                            "monthly_figure__financial_period__period_short_name",
-                           "amount")
+                           "current_amount")
         # print(pivot_data.query)
         return pivot_data
 
 
-class MonthlyFigure(TimeStampedModel):
+class MonthlyFigureAbstract(SimpleTimeStampedModel):
     """It contains the forecast and the actuals.
     The current month defines what is Actual and what is Forecast"""
-    id = models.AutoField("Monthly ID", primary_key=True)
+    amount = models.BigIntegerField(default=0)
+    id = models.AutoField(primary_key=True)
     financial_year = models.ForeignKey(
         FinancialYear,
         on_delete=models.PROTECT,
@@ -464,17 +431,21 @@ class MonthlyFigure(TimeStampedModel):
     financial_period = models.ForeignKey(
         FinancialPeriod,
         on_delete=models.PROTECT,
-        related_name="financial_periods"
+        related_name="%(app_label)s_%(class)s_related",
     )
 
     financial_code = models.ForeignKey(
         FinancialCode,
         on_delete=models.PROTECT,
-        related_name="monthly_figures",
+        related_name="%(app_label)s_%(class)s_related",
     )
     history = HistoricalRecords()
+    objects = models.Manager()  # The default manager.
+    pivot = PivotManager()
 
+    # TODO don't save to month that have actuals
     class Meta:
+        abstract = True
         unique_together = (
             "financial_code",
             "financial_year",
@@ -489,54 +460,68 @@ class MonthlyFigure(TimeStampedModel):
                f"--{self.financial_code.analysis2_code}" \
                f"--{self.financial_code.project_code}:" \
                f"{self.financial_year} " \
-               f"{self.financial_period}"
+               f"{self.financial_period} " \
+               f"{self.amount}"
 
 
-class Amount(TimeStampedModel):
-    # The figures are stored ar pence, to avoid rounding problems.
-    # Some formatting will take care of displaying the figures as pounds only
-    amount = models.BigIntegerField(default=0)
-    CURRENT_VERSION = 1
-    TEMPORARY_VERSION = -1
-    version = models.IntegerField(default=CURRENT_VERSION)
-
-    # TODO don't save to month that have actuals
-
-    class Meta:
-        abstract = True
+class HistoricalMonthlyFigures(MonthlyFigureAbstract):
+    is_actual = models.BooleanField(default = False)
+    version = models.IntegerField()
 
 
-class MonthlyFigureAmount(Amount):
-    monthly_figure = models.ForeignKey(
-        MonthlyFigure,
-        on_delete=models.CASCADE,
-        related_name="monthly_figure_amounts",
-    )
-    history = HistoricalRecords()
-
-    objects = models.Manager()  # The default manager.
-    pivot = PivotManager()
-
-    class Meta:
-        unique_together = (
-            "monthly_figure",
-            "version",
-        )
+class MonthlyFigure(MonthlyFigureAbstract):
+    starting_amount = models.BigIntegerField(default=0)
 
 
-class BudgetAmount(Amount):
-    budget_figure = models.ForeignKey(
-        Budget,
-        on_delete=models.CASCADE,
-        related_name="budget_amounts",
-    )
+class Budget(MonthlyFigureAbstract):
+    """Used to store the budgets
+    for the financial year."""
+    starting_amount = models.BigIntegerField(default=0)
 
-    class Meta:
-        unique_together = (
-            "budget_figure",
-            "version",
-        )
 
+# class Amount(TimeStampedModel):
+#     # The figures are stored ar pence, to avoid rounding problems.
+#     # Some formatting will take care of displaying the figures as pounds only
+#     amount = models.BigIntegerField(default=0)
+#     CURRENT_VERSION = 1
+#     TEMPORARY_VERSION = -1
+#     version = models.IntegerField(default=CURRENT_VERSION)
+#
+#
+#
+#     class Meta:
+#         abstract = True
+#
+#
+# class MonthlyFigureAmount(Amount):
+#     monthly_figure = models.ForeignKey(
+#         MonthlyFigure,
+#         on_delete=models.CASCADE,
+#         related_name="monthly_figure_amounts",
+#     )
+#     history = HistoricalRecords()
+#
+#
+#     class Meta:
+#         unique_together = (
+#             "monthly_figure",
+#             "version",
+#         )
+#
+
+# class BudgetAmount(Amount):
+#     budget_figure = models.ForeignKey(
+#         Budget,
+#         on_delete=models.CASCADE,
+#         related_name="budget_amounts",
+#     )
+#
+#     class Meta:
+#         unique_together = (
+#             "budget_figure",
+#             "version",
+#         )
+#
 
 class OSCARReturn(models.Model):
     """Used for downloading the Oscar return.

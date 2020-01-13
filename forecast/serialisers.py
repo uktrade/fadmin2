@@ -3,13 +3,12 @@ from rest_framework import serializers
 from .models import (
     FinancialCode,
     MonthlyFigure,
-    MonthlyFigureAmount,
 )
 
 
 class MonthlyFigureAmountSerializer(serializers.ModelSerializer):
     class Meta:
-        model = MonthlyFigureAmount
+        # model = MonthlyFigureAmount
         fields = [
             'amount',
             'version',

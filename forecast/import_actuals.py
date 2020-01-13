@@ -21,7 +21,6 @@ from forecast.models import (
     FinancialCode,
     FinancialPeriod,
     MonthlyFigure,
-    MonthlyFigureAmount,
 )
 
 from upload_file.utils import set_file_upload_error

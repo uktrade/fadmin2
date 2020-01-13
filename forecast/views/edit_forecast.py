@@ -25,7 +25,6 @@ from forecast.forms import (
 from forecast.models import (
     FinancialCode,
     MonthlyFigure,
-    MonthlyFigureAmount,
 )
 from forecast.permission_shortcuts import (
     NoForecastViewPermission,

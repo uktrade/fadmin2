@@ -12,7 +12,6 @@ from forecast.models import (
     Budget,
     FinancialPeriod,
     MonthlyFigure,
-    MonthlyFigureAmount,
 )
 
 
@@ -46,7 +45,6 @@ class FinancialPeriodAdmin(AdminReadOnly):
             ]
 
 
-admin.site.register(MonthlyFigureAmount, SimpleHistoryAdmin)
 admin.site.register(MonthlyFigure, MonthlyFigureAdmin)
 admin.site.register(FinancialPeriod, FinancialPeriodAdmin)
 admin.site.register(Budget, BudgetAdmin)

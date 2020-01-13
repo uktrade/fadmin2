@@ -20,7 +20,6 @@ from forecast.import_utils import (
 )
 from forecast.models import (
     Budget,
-    BudgetAmount,
     FinancialCode,
 )
 

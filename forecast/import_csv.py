@@ -22,7 +22,6 @@ from forecast.models import (
     FinancialPeriod,
     FinancialYear,
     MonthlyFigure,
-    MonthlyFigureAmount,
 )
 
 
