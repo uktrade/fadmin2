@@ -95,7 +95,7 @@ def import_adi_file(csvfile):
                         month_figure_obj.amount = period_amount
                     else:
                         month_figure_obj.amount += period_amount
-                    month_figure_obj.current_amunt = month_figure_obj.amount
+                    month_figure_obj.current_amount = month_figure_obj.amount
                     month_figure_obj.save()
         else:
             print(line, err_msg)

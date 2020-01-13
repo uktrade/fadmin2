@@ -409,12 +409,12 @@ class PivotManager(models.Manager):
 
         q1 = (
             self.get_queryset()
-                .filter(monthly_figure__financial_year=year, version=1, **filter_dict)
+                .filter(financial_year=year, **filter_dict)
                 .order_by(*order_list)
         )
         pivot_data = pivot(q1, columns,
-                           "monthly_figure__financial_period__period_short_name",
-                           "current_amount")
+                           "financial_period__period_short_name",
+                           "amount")
         # print(pivot_data.query)
         return pivot_data
 
@@ -468,7 +468,7 @@ class ForecastMonthlyFigure(MonthlyFigureAbstract):
     starting_amount = models.BigIntegerField(default=0)
 
 
-class HistoricalForecastMonthlyFigure(MonthlyFigureAbstract):
+class ArchivedForecastMonthlyFigure(MonthlyFigureAbstract):
     is_actual = models.BooleanField(default = False)
     forecast_month = models.ForeignKey(
         FinancialPeriod,
