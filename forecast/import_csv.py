@@ -73,7 +73,7 @@ def import_adi_file(csvfile):
         proj_obj, msg = get_fk(ProjectCode, row[col_key["spare2"]].strip())
         # Now read the twelve month values into a dict
         if err_msg == "":
-            financial_code = FinancialCode.objects.create(
+            financial_code, created = FinancialCode.objects.get_or_create(
                 programme=prog_obj,
                 cost_centre=cc_obj,
                 natural_account_code=nac_obj,
@@ -81,7 +81,8 @@ def import_adi_file(csvfile):
                 analysis2_code=an2_obj,
                 project_code=proj_obj,
             )
-            financial_code.save()
+            if created:
+                financial_code.save()
 
             for month, per_obj in month_dict.items():
                 period_amount = int(row[col_key[month.lower()]])

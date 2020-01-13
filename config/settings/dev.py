@@ -29,6 +29,6 @@ AUTHENTICATION_BACKENDS = [
     "guardian.backends.ObjectPermissionBackend",
 ]
 
-ASYNC_FILE_UPLOAD = True
+ASYNC_FILE_UPLOAD = False
 
 IGNORE_ANTI_VIRUS = True

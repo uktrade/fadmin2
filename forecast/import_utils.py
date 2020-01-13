@@ -14,6 +14,7 @@ from forecast.models import (
     FinancialPeriod,
 )
 
+from upload_file.models import FileUpload
 from upload_file.utils import set_file_upload_error
 
 
@@ -22,6 +23,48 @@ ANALYSIS1_CODE_LENGTH = 5
 ANALYSIS2_CODE_LENGTH = 5
 PROJECT_CODE_LENGTH = 4
 
+def sql_for_data_copy(data_type):
+    if data_type == FileUpload.ACTUALS:
+        temp_data_file = 'forecast_ActualsTemporaryStore'
+        target = 'forecast_monthlyfigure'
+    else:
+        if data_type == FileUpload.BUDGET:
+            temp_data_file = 'forecast_BudgetsTemporaryStore'
+            target = 'forecast_budget'
+        else:
+            raise UploadFileDataError(
+                'Unknown upload type.'
+            )
+
+    return 'INSERT INTO {}(' \
+           'created, ' \
+           'updated, ' \
+           'active,  ' \
+           'analysis1_code_id, ' \
+           'analysis2_code_id, ' \
+           'cost_centre_id, ' \
+           'financial_period_id, ' \
+           'financial_year_id, ' \
+           'natural_account_code_id, ' \
+           'programme_id, ' \
+           'project_code_id, ' \
+           'amount, ' \
+           'forecast_expenditure_type_id)' \
+           ' SELECT  ' \
+           'now(), ' \
+           'now(), ' \
+           'active,  ' \
+           'analysis1_code_id, ' \
+           'analysis2_code_id, ' \
+           'cost_centre_id, ' \
+           'financial_period_id, ' \
+           'financial_year_id, ' \
+           'natural_account_code_id, ' \
+           'programme_id, ' \
+           'project_code_id, ' \
+           'amount, ' \
+           'forecast_expenditure_type_id ' \
+           ' FROM {};'.format(target, temp_data_file)
 
 class UploadFileFormatError(Exception):
     pass

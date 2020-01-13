@@ -1,5 +1,11 @@
 from django.db import models
-from django.db.models import Max
+from django.db.models import (
+    Max,
+    Q,
+    UniqueConstraint,
+)
+
+
 
 # https://github.com/martsberger/django-pivot/blob/master/django_pivot/pivot.py # noqa
 from django_pivot.pivot import pivot
@@ -126,14 +132,99 @@ class FinancialPeriod(models.Model):
 class FinancialCode(models.Model):
     """Contains the members of Chart of Account needed to create a unique key"""
     class Meta:
-        unique_together = (
-            "programme",
-            "cost_centre",
-            "natural_account_code",
-            "analysis1_code",
-            "analysis2_code",
-            "project_code",
-        )
+        # Several constraints required, to cover all the permutations of
+        # fields that can be Null
+        constraints = [
+            UniqueConstraint(fields=["programme",
+                                     "cost_centre",
+                                     "natural_account_code",
+                                     "analysis1_code",
+                                     "analysis2_code",
+                                     "project_code",
+                                     ],
+                             name="financial_row_unique_6",
+                             condition=Q(analysis1_code__isnull=False)
+                                       & Q(analysis2_code__isnull=False)
+                                       & Q(project_code__isnull=False)
+                             ),
+            UniqueConstraint(fields=["programme",
+                                     "cost_centre",
+                                     "natural_account_code",
+                                     "analysis2_code",
+                                     "project_code",
+                                     ],
+                             name="financial_row_unique_5a",
+                             condition=Q(analysis1_code__isnull=True)
+                                       & Q(analysis2_code__isnull=False)
+                                       & Q(project_code__isnull=False)
+                             ),
+
+            UniqueConstraint(fields=["programme",
+                                     "cost_centre",
+                                     "natural_account_code",
+                                     "analysis1_code",
+                                     "project_code",
+                                     ],
+                             name="financial_row_unique_5b",
+                             condition=Q(analysis1_code__isnull=False)
+                                       & Q(analysis2_code__isnull=True)
+                                       & Q(project_code__isnull=False)
+                             ),
+
+            UniqueConstraint(fields=["programme",
+                                     "cost_centre",
+                                     "natural_account_code",
+                                     "analysis1_code",
+                                     "analysis2_code",
+                                     ],
+                             name="financial_row_unique_5c",
+                             condition=Q(analysis1_code__isnull=False)
+                                       & Q(analysis2_code__isnull=False)
+                                       & Q(project_code__isnull=True)
+                             ),
+
+            UniqueConstraint(fields=["programme",
+                                     "cost_centre",
+                                     "natural_account_code",
+                                     "project_code",
+                                     ],
+                             name="financial_row_unique_4a",
+                             condition=Q(analysis1_code__isnull=True)
+                                       & Q(analysis2_code__isnull=True)
+                                       & Q(project_code__isnull=False)
+                             ),
+
+            UniqueConstraint(fields=["programme",
+                                     "cost_centre",
+                                     "natural_account_code",
+                                     "analysis1_code",
+                                     ],
+                             name="financial_row_unique_4b",
+                             condition=Q(analysis1_code__isnull=False)
+                                       & Q(analysis2_code__isnull=True)
+                                       & Q(project_code__isnull=True)
+                             ),
+            UniqueConstraint(fields=["programme",
+                                     "cost_centre",
+                                     "natural_account_code",
+                                     "analysis2_code",
+                                     ],
+                             name="financial_row_unique_4c",
+                             condition=Q(analysis1_code__isnull=True)
+                                       & Q(analysis2_code__isnull=False)
+                                       & Q(project_code__isnull=True)
+                             ),
+
+            UniqueConstraint(fields=["programme",
+                                     "cost_centre",
+                                     "natural_account_code",
+                                     ],
+                             name="financial_row_unique_3",
+                             condition=Q(analysis1_code__isnull=True)
+                                       & Q(analysis2_code__isnull=True)
+                                       & Q(project_code__isnull=True)
+                             ),
+        ]
         permissions = [
             ("can_view_forecasts", "Can view forecast"),
             ("can_upload_files", "Can upload files"),
