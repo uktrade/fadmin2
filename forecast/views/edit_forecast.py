@@ -24,7 +24,7 @@ from forecast.forms import (
 )
 from forecast.models import (
     FinancialCode,
-    MonthlyFigure,
+    ForecastMonthlyFigure,
 )
 from forecast.permission_shortcuts import (
     NoForecastViewPermission,
@@ -149,7 +149,7 @@ class AddRowView(CostCentrePermissionTest, FormView):
             )
 
         for financial_period in range(1, 13):
-            monthly_figure = MonthlyFigure.objects.create(
+            monthly_figure = ForecastMonthlyFigure.objects.create(
                 financial_year_id=get_current_financial_year(),
                 financial_period_id=financial_period,
                 financial_code=financial_code,
@@ -188,7 +188,7 @@ def pasted_forecast_content(request, cost_centre_code):
         pasted_at_row = form.cleaned_data.get('pasted_at_row', None)
         all_selected = form.cleaned_data.get('all_selected', False)
 
-        figure_count = MonthlyFigure.objects.filter(
+        figure_count = ForecastMonthlyFigure.objects.filter(
             financial_code__cost_centre_id=cost_centre_code,
         ).count()
 

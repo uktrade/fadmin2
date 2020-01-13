@@ -21,7 +21,7 @@ from forecast.models import (
     FinancialCode,
     FinancialPeriod,
     FinancialYear,
-    MonthlyFigure,
+    ForecastMonthlyFigure,
 )
 
 
@@ -51,7 +51,7 @@ def import_adi_file(csvfile):
     fin_year = 2019
     # Clear the table first. The adi file has several lines with the same key,
     # so the figures have to be added and we don't want to add to existing data!
-    MonthlyFigure.objects.filter(financial_year=fin_year).delete()
+    ForecastMonthlyFigure.objects.filter(financial_year=fin_year).delete()
     reader = csv.reader(csvfile)
     col_key = csv_header_to_dict(next(reader))
     line = 1
@@ -86,7 +86,7 @@ def import_adi_file(csvfile):
             for month, per_obj in month_dict.items():
                 period_amount = int(row[col_key[month.lower()]])
                 if period_amount:
-                    month_figure_obj, created = MonthlyFigure.objects.get_or_create(
+                    month_figure_obj, created = ForecastMonthlyFigure.objects.get_or_create(
                         financial_year=fin_obj,
                         financial_period=per_obj,
                         financial_code=financial_code,

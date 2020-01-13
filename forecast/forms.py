@@ -18,7 +18,7 @@ from core.myutils import (
 from forecast.models import (
     FinancialCode,
     FinancialPeriod,
-    MonthlyFigure,
+    ForecastMonthlyFigure,
 )
 
 
@@ -44,7 +44,7 @@ class AddForecastRowForm(forms.Form):
         ).first()
 
         if financial_code:
-            existing_row_count = MonthlyFigure.objects.filter(
+            existing_row_count = ForecastMonthlyFigure.objects.filter(
                 financial_year_id=get_current_financial_year(),
                 financial_code=financial_code,
             ).count()

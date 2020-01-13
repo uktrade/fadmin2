@@ -20,7 +20,7 @@ from forecast.import_utils import (
 from forecast.models import (
     FinancialCode,
     FinancialPeriod,
-    TemporaryMonthlyFigure,
+    ActualUploadMonthlyFigure,
 )
 
 from upload_file.utils import set_file_upload_error
@@ -122,13 +122,13 @@ def save_trial_balance_row(chart_of_account, value, period_obj, year_obj):
         project_code=project_obj,
     )
     financialcode_obj.save()
-    monthlyfigure_obj, created = TemporaryMonthlyFigure.objects.get_or_create(
+    monthlyfigure_obj, created = ActualUploadMonthlyFigure.objects.get_or_create(
         financial_year=year_obj,
         financial_code=financialcode_obj,
         financial_period=period_obj,
     )
     monthlyfigure_obj.save()
-    amount_obj, created = TemporaryMonthlyFigure.objects.get_or_create(
+    amount_obj, created = ActualUploadMonthlyFigure.objects.get_or_create(
         monthly_figure=monthlyfigure_obj,
     )
     if created:
@@ -201,7 +201,7 @@ def upload_trial_balance_report(file_upload, month_number, year):
     # The actuals are uploaded to to a temporary storage, and copied
     # to the MonthlyFigure when the upload is completed successfully.
     # This means that we always have a full upload.
-    TemporaryMonthlyFigure.objects.filter(
+    ActualUploadMonthlyFigure.objects.filter(
         monthly_figure__financial_year=year,
         monthly_figure__financial_period=period_obj,
     ).delete()

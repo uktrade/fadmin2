@@ -9,13 +9,13 @@ from costcentre.models import CostCentre
 from forecast.models import (
     FinancialCode,
     FinancialPeriod,
-    MonthlyFigure,
+    ForecastMonthlyFigure,
     MonthlyFigureAmount,
 )
 
 
 def monthly_figures_clear():
-    MonthlyFigure.objects.all().delete()
+    ForecastMonthlyFigure.objects.all().delete()
     FinancialCode.objects.all().delete()
 
 
@@ -40,7 +40,7 @@ def monthly_figures_create():
             financial_code.save()
 
             for f in financial_periods:
-                monthly_figure = MonthlyFigure.objects.create(
+                monthly_figure = ForecastMonthlyFigure.objects.create(
                     financial_year=current_financial_year,
                     financial_period=f,
                     financial_code=financial_code,

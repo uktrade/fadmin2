@@ -7,7 +7,7 @@ from core.utils import check_empty
 
 from forecast.models import (
     FinancialPeriod,
-    MonthlyFigure,
+    ForecastMonthlyFigure,
 )
 
 
@@ -55,7 +55,7 @@ def get_monthly_figures(cost_centre_code, cell_data):
     monthly_figures = []
 
     for financial_period in range(start_period, 13):
-        monthly_figure = MonthlyFigure.objects.filter(
+        monthly_figure = ForecastMonthlyFigure.objects.filter(
             financial_code__cost_centre__cost_centre_code=cost_centre_code,
             financial_year__financial_year=get_current_financial_year(),
             financial_period__financial_period_code=financial_period,

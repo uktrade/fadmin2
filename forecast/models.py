@@ -463,28 +463,37 @@ class MonthlyFigureAbstract(SimpleTimeStampedModel):
                f"{self.amount}"
 
 
-class HistoricalMonthlyFigures(MonthlyFigureAbstract):
-    is_actual = models.BooleanField(default = False)
-    version = models.IntegerField()
-
-
-class MonthlyFigure(MonthlyFigureAbstract):
+class ForecastMonthlyFigure(MonthlyFigureAbstract):
     history = HistoricalRecords()
     starting_amount = models.BigIntegerField(default=0)
 
 
-class TemporaryMonthlyFigure(MonthlyFigureAbstract):
+class HistoricalForecastMonthlyFigure(MonthlyFigureAbstract):
+    is_actual = models.BooleanField(default = False)
+    forecast_month = models.ForeignKey(
+        FinancialPeriod,
+        on_delete=models.PROTECT,
+        related_name='historical_forecast_monthly_figures'
+    )
+    forecast_year = models.ForeignKey(
+        FinancialYear,
+        on_delete=models.PROTECT,
+        related_name='historical_forecast_monthly_figures'
+    )
+
+
+class ActualUploadMonthlyFigure(MonthlyFigureAbstract):
     pass
 
 
-class Budget(MonthlyFigureAbstract):
+class BudgetMonthlyFigure(MonthlyFigureAbstract):
     """Used to store the budgets
     for the financial year."""
     history = HistoricalRecords()
     starting_amount = models.BigIntegerField(default=0)
 
 
-class TemporaryBudget(MonthlyFigureAbstract):
+class BudgetUploadMonthlyFigure(MonthlyFigureAbstract):
     pass
 
 

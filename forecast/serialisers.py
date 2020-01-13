@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models import (
     FinancialCode,
-    MonthlyFigure,
+    ForecastMonthlyFigure,
 )
 
 
@@ -25,7 +25,7 @@ class MonthlyFigureSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = MonthlyFigure
+        model = ForecastMonthlyFigure
         fields = [
             'actual',
             'month',
