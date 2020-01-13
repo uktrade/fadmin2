@@ -127,18 +127,14 @@ def save_trial_balance_row(chart_of_account, value, period_obj, year_obj):
         financial_code=financialcode_obj,
         financial_period=period_obj,
     )
-    monthlyfigure_obj.save()
-    amount_obj, created = ActualUploadMonthlyFigure.objects.get_or_create(
-        monthly_figure=monthlyfigure_obj,
-    )
     if created:
         # to avoid problems with precision,
         # we store the figures in pence
-        amount_obj.amount = value * 100
+        monthlyfigure_obj.amount = value * 100
     else:
-        amount_obj.amount += value * 100
+        monthlyfigure_obj.amount += value * 100
 
-    amount_obj.save()
+    monthlyfigure_obj.save()
     return True
 
 
@@ -202,8 +198,8 @@ def upload_trial_balance_report(file_upload, month_number, year):
     # to the MonthlyFigure when the upload is completed successfully.
     # This means that we always have a full upload.
     ActualUploadMonthlyFigure.objects.filter(
-        monthly_figure__financial_year=year,
-        monthly_figure__financial_period=period_obj,
+        financial_year=year,
+        financial_period=period_obj,
     ).delete()
 
     for row in range(TRIAL_BALANCE_FIRST_DATA_ROW, worksheet.max_row + 1):
