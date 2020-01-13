@@ -93,7 +93,6 @@ export const processForecastData = (forecastData) => {
         // eslint-disable-next-line
         for (const financialCodeCol of financialCodeCols) {
             cells[financialCodeCol] = {
-                id: getCellId(financialCodeCol, rowIndex),
                 rowIndex: rowIndex,
                 colIndex: colIndex,
                 key: financialCodeCol,
@@ -107,7 +106,6 @@ export const processForecastData = (forecastData) => {
         // eslint-disable-next-line
         for (const [key, monthlyFigure] of Object.entries(rowData["monthly_figures"])) {
             cells[monthlyFigure.month] = {
-                id: getCellId(monthlyFigure.month, rowIndex),
                 rowIndex: rowIndex,
                 colIndex: colIndex,
                 key: monthlyFigure.month,

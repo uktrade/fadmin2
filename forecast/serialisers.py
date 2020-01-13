@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.serializers import PrimaryKeyRelatedField
 
 from .models import (
     FinancialCode,
@@ -14,7 +15,7 @@ class MonthlyFigureAmountSerializer(serializers.ModelSerializer):
             'amount',
             'version',
         ]
-        read_only_fields = fields
+        #read_only_fields = fields
 
 
 class MonthlyFigureSerializer(serializers.ModelSerializer):
@@ -22,7 +23,7 @@ class MonthlyFigureSerializer(serializers.ModelSerializer):
     actual = serializers.SerializerMethodField('get_actual')
     monthly_figure_amounts = MonthlyFigureAmountSerializer(
         many=True,
-        read_only=True,
+        #source="monthly_figure_amounts"
     )
 
     class Meta:
@@ -32,7 +33,7 @@ class MonthlyFigureSerializer(serializers.ModelSerializer):
             'month',
             'monthly_figure_amounts',
         ]
-        read_only_fields = fields
+        #read_only_fields = fields
 
     def get_month(self, obj):
         return obj.financial_period.period_calendar_code
@@ -44,7 +45,7 @@ class MonthlyFigureSerializer(serializers.ModelSerializer):
 class FinancialCodeSerializer(serializers.ModelSerializer):
     monthly_figures = MonthlyFigureSerializer(
         many=True,
-        read_only=True,
+        #read_only=True,
     )
 
     class Meta:
@@ -58,4 +59,4 @@ class FinancialCodeSerializer(serializers.ModelSerializer):
             'project_code',
             'monthly_figures',
         ]
-        read_only_fields = fields
+        #read_only_fields = fields

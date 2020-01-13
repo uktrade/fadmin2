@@ -218,3 +218,23 @@ class EditForecastFigureForm(forms.Form):
             return None
 
         return project_code
+
+    def clean_analysis1_code(self):
+        # Had to add this to prevent null coming through
+        # as string - looks like a bug in Django
+        analysis1_code = self.cleaned_data['analysis1_code']
+
+        if analysis1_code == "null" or analysis1_code == "":
+            return None
+
+        return analysis1_code
+
+    def clean_analysis2_code(self):
+        # Had to add this to prevent null coming through
+        # as string - looks like a bug in Django
+        analysis2_code = self.cleaned_data['analysis2_code']
+
+        if analysis2_code == "null" or analysis2_code == "":
+            return None
+
+        return analysis2_code

@@ -9,6 +9,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
+from core.models import FinancialYear
 from core.myutils import get_current_financial_year
 
 from costcentre.forms import (
@@ -24,6 +25,7 @@ from forecast.forms import (
 )
 from forecast.models import (
     FinancialCode,
+    FinancialPeriod,
     MonthlyFigure,
     MonthlyFigureAmount,
 )
@@ -332,21 +334,43 @@ def update_forecast_figure(request, cost_centre_code):
             ),
         )
 
+        month = form.cleaned_data['month']
+
         if not financial_code.first():
             raise NoFinancialCodeForEditedValue()
 
+        monthly_figure = MonthlyFigure.objects.filter(
+            financial_code=financial_code.first(),
+            financial_period__period_calendar_code=month,
+        ).first()
+
+        if not monthly_figure:
+            financial_year = FinancialYear.objects.filter(current=True).first()
+            financial_period = FinancialPeriod.objects.filter(
+                period_calendar_code=month
+            ).first()
+            monthly_figure = MonthlyFigure(
+                financial_year=financial_year,
+                financial_code=financial_code.first(),
+                financial_period=financial_period,
+            )
+            monthly_figure.save()
+
         current_amount = MonthlyFigureAmount.objects.filter(
             monthly_figure__financial_code=financial_code.first(),
-            monthly_figure__financial_period__period_calendar_code=form.cleaned_data[
-                'month'
-            ],
+            monthly_figure__financial_period__period_calendar_code=month,
         ).order_by(
             "-version"
         ).first()
 
+        new_version = 1
+
+        if current_amount:
+            new_version = current_amount.version + 1
+
         monthly_figure_amount = MonthlyFigureAmount(
-            monthly_figure=current_amount.monthly_figure,
-            version=current_amount.version + 1,
+            monthly_figure=monthly_figure,
+            version=new_version,
             amount=form.cleaned_data['amount'],
         )
         monthly_figure_amount.save()
@@ -395,15 +419,22 @@ class EditForecastView(
 
         financial_code = FinancialCode.objects.filter(
             cost_centre_id=self.cost_centre_code,
-        )
+        )#.prefetch_related('monthly_figures')
 
         financial_code_serialiser = FinancialCodeSerializer(
             financial_code,
-            many=True,
+            #many=True,
         )
 
         forecast_dump = json.dumps(financial_code_serialiser.data)
         paste_form = PasteForecastForm()
+
+        from forecast.serialisers import MonthlyFigureSerializer
+
+        monthly_figure = MonthlyFigure.objects.get(pk=51865)
+        test = MonthlyFigureSerializer(
+            monthly_figure,
+        )
 
         context["form"] = form
         context["paste_form"] = paste_form

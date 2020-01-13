@@ -2,6 +2,7 @@ import React, {Fragment, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { SET_EDITING_CELL } from '../../Reducers/Edit'
 import {
+    getCellId,
     postData,
     processForecastData
 } from '../../Util'
@@ -20,15 +21,18 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
     const selectedRow = useSelector(state => state.selected.selectedRow);
     const allSelected = useSelector(state => state.selected.all);
 
-    let initialValue = null
+    let initialValue = 0
 
-    if (cell.versions && cell.versions.length > 0) {
+    if (cell && cell.versions && cell.versions.length > 0) {
         initialValue = cell.versions[0].amount
     }
 
     const [editValue, setEditValue] = useState((initialValue/100).toFixed(2))
 
     const isSelected = () => {
+        if (!cell)
+            return
+
         if (allSelected) {
             return true
         }
@@ -42,6 +46,9 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
     }
 
     const getClasses = () => {
+        if (!cell)
+            return "govuk-table__cell forecast-month-cell"
+
         let hiddenResult = ''
         let editable = ''
         let negative = ''
@@ -54,7 +61,7 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
             editable = ' not-editable';
         }
 
-        if (cell.versions && cell.versions[0].amount < 0) {
+        if (cell && cell.versions && cell.versions[0].amount < 0) {
             negative = " negative"
         }
 
@@ -80,7 +87,7 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
     const updateValue = () => {
         let newAmount = parseInt(editValue * 100)
 
-        if (newAmount === cell.versions[0].amount) {
+        if (cell && newAmount === cell.versions[0].amount) {
             return
         }
 
@@ -94,7 +101,7 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
         payload.append("analysis1_code", cells[rowIndex]["analysis1_code"].value)
         payload.append("analysis2_code", cells[rowIndex]["analysis2_code"].value)
 
-        payload.append("month", cell.key)
+        payload.append("month", cellKey)
         payload.append("amount", newAmount)
 
         postData(
@@ -142,6 +149,9 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
     }
 
     const getId = () => {
+        if (!cell)
+            return
+
         if (isUpdating) {
             return cell.id + "_updating"
         }
@@ -160,16 +170,18 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
         return false
     }
 
+    const cellId = getCellId(rowIndex, cellKey)
+
     return (
         <Fragment>
             <td
                 className={getClasses()}
                 id={getId()}
                 onDoubleClick={ () => {
-                    if (cell.isEditable) {
+                    if (!cell || cell.isEditable) {
                         dispatch(
                             SET_EDITING_CELL({
-                                "cellId": cell.id
+                                "cellId": cellId
                             })
                         );
                     }
@@ -177,13 +189,13 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
             >
                 {isCellUpdating() ? (
                     <Fragment>
-                        <span className="updaing">UPDATING...</span>
+                        <span className="updating">UPDATING...</span>
                     </Fragment>
                 ) : (
                     <Fragment>
-                        {editCellId === cell.id ? (
+                        {editCellId === cellId ? (
                             <input
-                                id={cell.id + "_input"}
+                                id={cellId}
                                 className="cell-input"
                                 type="text"
                                 value={editValue}
@@ -194,10 +206,16 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
                             />
                         ) : (
                             <Fragment>
-                                {cell.versions && cell.versions.length > 0 ? (
-                                    <Fragment>{formatValue(cell.versions[0].amount)}</Fragment>
+                                {cell ? (
+                                    <Fragment>
+                                        {cell.versions && cell.versions.length > 0 ? (
+                                            <Fragment>{formatValue(cell.versions[0].amount)}</Fragment>
+                                        ) : (
+                                            <Fragment>{cell.value}</Fragment>
+                                        )}
+                                    </Fragment>
                                 ) : (
-                                    <Fragment>{cell.value}</Fragment>
+                                    <Fragment>{editValue}</Fragment>
                                 )}
                             </Fragment>
                         )}
