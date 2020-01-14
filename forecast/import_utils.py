@@ -51,11 +51,15 @@ def sql_for_data_copy(data_type, financial_period_id, financial_year_id):
             f'financial_period_id, financial_year_id) ' \
 	f'SELECT now(), now(), amount, amount, financial_code_id, ' \
             f'financial_period_id, financial_year_id ' \
-	f'FROM {temp_data_file} where financial_code_id ' \
-	f'not in (select financial_code_id ' \
-            f'from {target} where ' \
+	f'FROM {temp_data_file} ' \
+    f'WHERE ' \
             f'financial_period_id = {financial_period_id} and ' \
-            f'financial_year_id = {financial_year_id});'
+            f'financial_year_id = {financial_year_id}  and '\
+            f' financial_code_id ' \
+	        f'not in (select financial_code_id ' \
+                    f'from {target} where ' \
+                    f'financial_period_id = {financial_period_id} and ' \
+                    f'financial_year_id = {financial_year_id});'
 
     return sql_update, sql_insert
 

@@ -10,8 +10,6 @@ from core.models import FinancialYear
 
 from costcentre.models import CostCentre
 
-from upload_file.models import FileUpload
-
 from forecast.import_utils import (
     UploadFileDataError,
     UploadFileFormatError,
@@ -29,6 +27,7 @@ from forecast.models import (
     ForecastMonthlyFigure,
 )
 
+from upload_file.models import FileUpload
 from upload_file.utils import set_file_upload_error
 
 CHART_OF_ACCOUNT_COL = "D"
