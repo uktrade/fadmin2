@@ -87,11 +87,12 @@ def import_adi_file(csvfile):
             for month, per_obj in month_dict.items():
                 period_amount = int(row[col_key[month.lower()]])
                 if period_amount:
-                    month_figure_obj, created = ForecastMonthlyFigure.objects.get_or_create(
-                        financial_year=fin_obj,
-                        financial_period=per_obj,
-                        financial_code=financial_code,
-                    )
+                    month_figure_obj, created = \
+                        ForecastMonthlyFigure.objects.get_or_create(
+                            financial_year=fin_obj,
+                            financial_period=per_obj,
+                            financial_code=financial_code,
+                        )
                     if created:
                         month_figure_obj.amount = period_amount
                     else:

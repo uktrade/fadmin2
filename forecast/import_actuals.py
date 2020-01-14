@@ -61,7 +61,7 @@ GENERIC_PROGRAMME_CODE = 310940
 
 
 def copy_actuals_to_monthly_figure(period_obj, year):
-     # Now copy the newly uploaded actuals to the monthly figure table
+    # Now copy the newly uploaded actuals to the monthly figure table
     ForecastMonthlyFigure.objects.filter(
         financial_year=year,
         financial_period=period_obj,

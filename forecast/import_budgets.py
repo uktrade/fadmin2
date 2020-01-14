@@ -65,12 +65,13 @@ def check_budget_header(header_dict, correct_header):
 
 def copy_uploaded_budget(year, month_dict):
     for m, period_obj in month_dict.items():
-    # Now copy the newly uploaded actuals to the monthly figure table
+        # Now copy the newly uploaded actuals to the monthly figure table
         BudgetMonthlyFigure.objects.filter(
             financial_year=year,
             financial_period=period_obj,
         ).update(amount=0, starting_amount=0)
-        sql_update, sql_insert = sql_for_data_copy(FileUpload.BUDGET, period_obj.pk, year)
+        sql_update, sql_insert = \
+            sql_for_data_copy(FileUpload.BUDGET, period_obj.pk, year)
         with connection.cursor() as cursor:
             cursor.execute(sql_insert)
             cursor.execute(sql_update)
