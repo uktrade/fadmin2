@@ -17,11 +17,11 @@ from forecast.models import (
 from upload_file.models import FileUpload
 from upload_file.utils import set_file_upload_error
 
-
 # When the following codes are used, they must be a fixed length and padded with "0"
 ANALYSIS1_CODE_LENGTH = 5
 ANALYSIS2_CODE_LENGTH = 5
 PROJECT_CODE_LENGTH = 4
+
 
 def sql_for_data_copy(data_type, financial_period_id, financial_year_id):
     if data_type == FileUpload.ACTUALS:
@@ -37,29 +37,29 @@ def sql_for_data_copy(data_type, financial_period_id, financial_year_id):
             )
 
     sql_update = f'UPDATE {target} t ' \
-	f'SET  updated=now(), amount=u.amount, starting_amount=u.amount	' \
-	f'FROM {temp_data_file} u ' \
-           f'WHERE  ' \
-           f't.financial_code_id = u.financial_code_id and ' \
-           f't.financial_period_id = u.financial_period_id and ' \
-           f't.financial_year_id = u.financial_year_id and ' \
-            f't.financial_period_id = {financial_period_id} and ' \
-            f't.financial_year_id = {financial_year_id};'
+                 f'SET  updated=now(), amount=u.amount, starting_amount=u.amount	' \
+                 f'FROM {temp_data_file} u ' \
+                 f'WHERE  ' \
+                 f't.financial_code_id = u.financial_code_id and ' \
+                 f't.financial_period_id = u.financial_period_id and ' \
+                 f't.financial_year_id = u.financial_year_id and ' \
+                 f't.financial_period_id = {financial_period_id} and ' \
+                 f't.financial_year_id = {financial_year_id};'
 
-    sql_insert  =   f'INSERT INTO {target}(created, ' \
-            f'updated, amount, starting_amount, financial_code_id, ' \
-            f'financial_period_id, financial_year_id) ' \
-	f'SELECT now(), now(), amount, amount, financial_code_id, ' \
-            f'financial_period_id, financial_year_id ' \
-	f'FROM {temp_data_file} ' \
-    f'WHERE ' \
-            f'financial_period_id = {financial_period_id} and ' \
-            f'financial_year_id = {financial_year_id}  and '\
-            f' financial_code_id ' \
-	        f'not in (select financial_code_id ' \
-                    f'from {target} where ' \
-                    f'financial_period_id = {financial_period_id} and ' \
-                    f'financial_year_id = {financial_year_id});'
+    sql_insert = f'INSERT INTO {target}(created, ' \
+                 f'updated, amount, starting_amount, financial_code_id, ' \
+                 f'financial_period_id, financial_year_id) ' \
+                 f'SELECT now(), now(), amount, amount, financial_code_id, ' \
+                 f'financial_period_id, financial_year_id ' \
+                 f'FROM {temp_data_file} ' \
+                 f'WHERE ' \
+                 f'financial_period_id = {financial_period_id} and ' \
+                 f'financial_year_id = {financial_year_id}  and ' \
+                 f' financial_code_id ' \
+                 f'not in (select financial_code_id ' \
+                 f'from {target} where ' \
+                 f'financial_period_id = {financial_period_id} and ' \
+                 f'financial_year_id = {financial_year_id});'
 
     return sql_update, sql_insert
 
