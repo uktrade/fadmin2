@@ -23,48 +23,42 @@ ANALYSIS1_CODE_LENGTH = 5
 ANALYSIS2_CODE_LENGTH = 5
 PROJECT_CODE_LENGTH = 4
 
-def sql_for_data_copy(data_type):
+def sql_for_data_copy(data_type, financial_period_id, financial_year_id):
     if data_type == FileUpload.ACTUALS:
-        temp_data_file = 'forecast_ActualsTemporaryStore'
-        target = 'forecast_monthlyfigure'
+        temp_data_file = 'forecast_actualuploadmonthlyfigure'
+        target = 'forecast_forecastmonthlyfigure'
     else:
         if data_type == FileUpload.BUDGET:
-            temp_data_file = 'forecast_BudgetsTemporaryStore'
-            target = 'forecast_budget'
+            temp_data_file = 'forecast_budgetuploadmonthlyfigure'
+            target = 'forecast_budgetmonthlyfigure'
         else:
             raise UploadFileDataError(
                 'Unknown upload type.'
             )
 
-    return 'INSERT INTO {}(' \
-           'created, ' \
-           'updated, ' \
-           'active,  ' \
-           'analysis1_code_id, ' \
-           'analysis2_code_id, ' \
-           'cost_centre_id, ' \
-           'financial_period_id, ' \
-           'financial_year_id, ' \
-           'natural_account_code_id, ' \
-           'programme_id, ' \
-           'project_code_id, ' \
-           'amount, ' \
-           'forecast_expenditure_type_id)' \
-           ' SELECT  ' \
-           'now(), ' \
-           'now(), ' \
-           'active,  ' \
-           'analysis1_code_id, ' \
-           'analysis2_code_id, ' \
-           'cost_centre_id, ' \
-           'financial_period_id, ' \
-           'financial_year_id, ' \
-           'natural_account_code_id, ' \
-           'programme_id, ' \
-           'project_code_id, ' \
-           'amount, ' \
-           'forecast_expenditure_type_id ' \
-           ' FROM {};'.format(target, temp_data_file)
+    sql_update = f'UPDATE {target} t ' \
+	f'SET  updated=now(), amount=u.amount, starting_amount=u.amount	' \
+	f'FROM {temp_data_file} u ' \
+           f'WHERE  ' \
+           f't.financial_code_id = u.financial_code_id and ' \
+           f't.financial_period_id = u.financial_period_id and ' \
+           f't.financial_year_id = u.financial_year_id and ' \
+            f't.financial_period_id = {financial_period_id} and ' \
+            f't.financial_year_id = {financial_year_id};'
+
+    sql_insert  =   f'INSERT INTO {target}(created, ' \
+            f'updated, amount, starting_amount, financial_code_id, ' \
+            f'financial_period_id, financial_year_id) ' \
+	f'SELECT now(), now(), amount, amount, financial_code_id, ' \
+            f'financial_period_id, financial_year_id ' \
+	f'FROM {temp_data_file} where financial_code_id ' \
+	f'not in (select financial_code_id ' \
+            f'from {target} where ' \
+            f'financial_period_id = {financial_period_id} and ' \
+            f'financial_year_id = {financial_year_id});'
+
+    return sql_update, sql_insert
+
 
 class UploadFileFormatError(Exception):
     pass

@@ -62,17 +62,24 @@ GENERIC_PROGRAMME_CODE = 310940
 
 
 def copy_actuals_to_monthly_figure(period_obj, year):
-    pass
-    # Now copy the newly uploaded actuals to the monthly figure table
+     # Now copy the newly uploaded actuals to the monthly figure table
     ForecastMonthlyFigure.objects.filter(
         financial_year=year,
         financial_period=period_obj,
-    ).delete()
+    ).update(amount=0, starting_amount=0)
+    sql_update, sql_insert = sql_for_data_copy(FileUpload.ACTUALS, period_obj.pk, year)
     with connection.cursor() as cursor:
-        cursor.execute(sql_for_data_copy(FileUpload.ACTUALS))
-    ActualUploadMonthlyFigure.objects.filter(
+        cursor.execute(sql_insert)
+        cursor.execute(sql_update)
+    ForecastMonthlyFigure.objects.filter(
         financial_year=year,
         financial_period=period_obj,
+        amount=0,
+        starting_amount=0
+    ).delete()
+    ActualUploadMonthlyFigure.objects.filter(
+        financial_year=year,
+        financial_period=period_obj
     ).delete()
 
 
