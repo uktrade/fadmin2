@@ -384,7 +384,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
             financial_year=year_obj
         )
         may_figure.save
-         # Assign forecast view permission
+        # Assign forecast view permission
         can_view_forecasts = Permission.objects.get(
             codename='can_view_forecasts'
         )
@@ -744,7 +744,7 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
             ),
             financial_code=financial_code1_obj,
             financial_year=year_obj,
-            amount = self.amount1_apr,
+            amount=self.amount1_apr,
         )
         apr_figure.save
 
@@ -754,7 +754,7 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
             ),
             financial_code=financial_code2_obj,
             financial_year=year_obj,
-            amount = self.amount2_apr
+            amount=self.amount2_apr
         )
         apr_figure.save
 
@@ -765,7 +765,7 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
             ),
             financial_code=financial_code1_obj,
             financial_year=year_obj,
-            amount = self.amount_may
+            amount=self.amount_may
         )
         may_figure.save
 
