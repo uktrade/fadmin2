@@ -25,7 +25,6 @@ from forecast.import_utils import (
 )
 from forecast.models import (
     BudgetMonthlyFigure,
-    BudgetAmount,
     FinancialPeriod,
 )
 
@@ -165,18 +164,18 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
         )
         # Check that figures for same budgets are added together
         self.assertEqual(
-            BudgetAmount.objects.filter(
-                budget_figure__financial_year=self.test_year,
-                budget_figure__financial_code__cost_centre=self.cost_centre_code,
-                budget_figure__financial_period=1,
+            BudgetMonthlyFigure.objects.filter(
+                financial_year=self.test_year,
+                financial_code__cost_centre=self.cost_centre_code,
+                financial_period=1,
             ).first().amount,
             1100,
         )
         self.assertEqual(
-            BudgetAmount.objects.filter(
-                budget_figure__financial_year=self.test_year,
-                budget_figure__financial_code__cost_centre=self.cost_centre_code,
-                budget_figure__financial_period=12,
+            BudgetMonthlyFigure.objects.filter(
+                financial_year=self.test_year,
+                financial_code__cost_centre=self.cost_centre_code,
+                financial_period=12,
             ).first().amount,
             2200,
         )
@@ -232,10 +231,10 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
                 None,
             )
         self.assertEqual(
-            BudgetAmount.objects.filter(
-                budget_figure__financial_year=self.test_year,
-                budget_figure__financial_code__cost_centre=self.cost_centre_code,
-                budget_figure__financial_period=12,
+            BudgetMonthlyFigure.objects.filter(
+                financial_year=self.test_year,
+                financial_code__cost_centre=self.cost_centre_code,
+                financial_period=12,
             ).first().amount,
             2200,
         )
