@@ -1,3 +1,5 @@
+from django.db import connection
+
 from chartofaccountDIT.models import (
     NaturalCode,
     ProgrammeCode,
@@ -15,14 +17,17 @@ from forecast.import_utils import (
     get_analysys2_obj,
     get_error_from_list,
     get_project_obj,
+    sql_for_data_copy,
     validate_excel_file,
 )
 from forecast.models import (
+    ActualUploadMonthlyFigure,
     FinancialCode,
     FinancialPeriod,
-    ActualUploadMonthlyFigure,
+    ForecastMonthlyFigure,
 )
 
+from upload_file.models import FileUpload
 from upload_file.utils import set_file_upload_error
 
 CHART_OF_ACCOUNT_COL = "D"
@@ -56,19 +61,25 @@ GENERIC_PROGRAMME_CODE = 310940
 
 
 def copy_actuals_to_monthly_figure(period_obj, year):
-    pass
     # Now copy the newly uploaded actuals to the monthly figure table
-    # MonthlyFigureAmount.objects.filter(
-    #     monthly_figure__financial_year=year,
-    #     monthly_figure__financial_period=period_obj,
-    #     version__gte=MonthlyFigureAmount.CURRENT_VERSION
-    # ).delete()
-    # MonthlyFigureAmount.objects.filter(
-    #     monthly_figure__financial_year=year,
-    #     monthly_figure__financial_period=period_obj,
-    #     version=MonthlyFigureAmount.TEMPORARY_VERSION
-    # ).update(version=MonthlyFigureAmount.CURRENT_VERSION)
-#     TO DO Use stored procedure
+    ForecastMonthlyFigure.objects.filter(
+        financial_year=year,
+        financial_period=period_obj,
+    ).update(amount=0, starting_amount=0)
+    sql_update, sql_insert = sql_for_data_copy(FileUpload.ACTUALS, period_obj.pk, year)
+    with connection.cursor() as cursor:
+        cursor.execute(sql_insert)
+        cursor.execute(sql_update)
+    ForecastMonthlyFigure.objects.filter(
+        financial_year=year,
+        financial_period=period_obj,
+        amount=0,
+        starting_amount=0
+    ).delete()
+    ActualUploadMonthlyFigure.objects.filter(
+        financial_year=year,
+        financial_period=period_obj
+    ).delete()
 
 
 def save_trial_balance_row(chart_of_account, value, period_obj, year_obj):

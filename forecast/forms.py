@@ -238,3 +238,4 @@ class EditForecastFigureForm(forms.Form):
             return None
 
         return analysis2_code
+

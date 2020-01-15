@@ -1,5 +1,9 @@
 from django.db import models
-from django.db.models import Max
+from django.db.models import (
+    Max,
+    Q,
+    UniqueConstraint,
+)
 
 # https://github.com/martsberger/django-pivot/blob/master/django_pivot/pivot.py # noqa
 from django_pivot.pivot import pivot
@@ -17,7 +21,6 @@ from chartofaccountDIT.models import (
 
 from core.metamodels import (
     SimpleTimeStampedModel,
-    TimeStampedModel,
 )
 from core.models import FinancialYear
 from core.myutils import get_current_financial_year
@@ -126,14 +129,107 @@ class FinancialPeriod(models.Model):
 class FinancialCode(models.Model):
     """Contains the members of Chart of Account needed to create a unique key"""
     class Meta:
-        unique_together = (
-            "programme",
-            "cost_centre",
-            "natural_account_code",
-            "analysis1_code",
-            "analysis2_code",
-            "project_code",
-        )
+        # Several constraints required, to cover all the permutations of
+        # fields that can be Null
+        constraints = [
+            UniqueConstraint(
+                fields=["programme",
+                        "cost_centre",
+                        "natural_account_code",
+                        "analysis1_code",
+                        "analysis2_code",
+                        "project_code",
+                        ],
+                name="financial_row_unique_6",
+                condition=Q(analysis1_code__isnull=False)
+                & Q(analysis2_code__isnull=False)
+                & Q(project_code__isnull=False)
+            ),
+            UniqueConstraint(
+                fields=["programme",
+                        "cost_centre",
+                        "natural_account_code",
+                        "analysis2_code",
+                        "project_code",
+                        ],
+                name="financial_row_unique_5a",
+                condition=Q(analysis1_code__isnull=True)
+                & Q(analysis2_code__isnull=False)
+                & Q(project_code__isnull=False)
+            ),
+
+            UniqueConstraint(
+                fields=["programme",
+                        "cost_centre",
+                        "natural_account_code",
+                        "analysis1_code",
+                        "project_code",
+                        ],
+                name="financial_row_unique_5b",
+                condition=Q(analysis1_code__isnull=False)
+                & Q(analysis2_code__isnull=True)
+                & Q(project_code__isnull=False)
+            ),
+
+            UniqueConstraint(
+                fields=["programme",
+                        "cost_centre",
+                        "natural_account_code",
+                        "analysis1_code",
+                        "analysis2_code",
+                        ],
+                name="financial_row_unique_5c",
+                condition=Q(analysis1_code__isnull=False)
+                & Q(analysis2_code__isnull=False)
+                & Q(project_code__isnull=True)
+            ),
+
+            UniqueConstraint(
+                fields=["programme",
+                        "cost_centre",
+                        "natural_account_code",
+                        "project_code",
+                        ],
+                name="financial_row_unique_4a",
+                condition=Q(analysis1_code__isnull=True)
+                & Q(analysis2_code__isnull=True)
+                & Q(project_code__isnull=False)
+            ),
+
+            UniqueConstraint(
+                fields=["programme",
+                        "cost_centre",
+                        "natural_account_code",
+                        "analysis1_code",
+                        ],
+                name="financial_row_unique_4b",
+                condition=Q(analysis1_code__isnull=False)
+                & Q(analysis2_code__isnull=True)
+                & Q(project_code__isnull=True)
+            ),
+            UniqueConstraint(
+                fields=["programme",
+                        "cost_centre",
+                        "natural_account_code",
+                        "analysis2_code",
+                        ],
+                name="financial_row_unique_4c",
+                condition=Q(analysis1_code__isnull=True)
+                & Q(analysis2_code__isnull=False)
+                & Q(project_code__isnull=True)
+            ),
+
+            UniqueConstraint(
+                fields=["programme",
+                        "cost_centre",
+                        "natural_account_code",
+                        ],
+                name="financial_row_unique_3",
+                condition=Q(analysis1_code__isnull=True)
+                & Q(analysis2_code__isnull=True)
+                & Q(project_code__isnull=True)
+            ),
+        ]
         permissions = [
             ("can_view_forecasts", "Can view forecast"),
             ("can_upload_files", "Can upload files"),
@@ -471,7 +567,7 @@ class ForecastMonthlyFigure(MonthlyFigureAbstract):
 
 
 class ArchivedForecastMonthlyFigure(MonthlyFigureAbstract):
-    is_actual = models.BooleanField(default = False)
+    is_actual = models.BooleanField(default=False)
     forecast_month = models.ForeignKey(
         FinancialPeriod,
         on_delete=models.PROTECT,
@@ -499,56 +595,12 @@ class BudgetUploadMonthlyFigure(MonthlyFigureAbstract):
     pass
 
 
-# class Amount(TimeStampedModel):
-#     # The figures are stored ar pence, to avoid rounding problems.
-#     # Some formatting will take care of displaying the figures as pounds only
-#     amount = models.BigIntegerField(default=0)
-#     CURRENT_VERSION = 1
-#     TEMPORARY_VERSION = -1
-#     version = models.IntegerField(default=CURRENT_VERSION)
-#
-#
-#
-#     class Meta:
-#         abstract = True
-#
-#
-# class MonthlyFigureAmount(Amount):
-#     monthly_figure = models.ForeignKey(
-#         MonthlyFigure,
-#         on_delete=models.CASCADE,
-#         related_name="monthly_figure_amounts",
-#     )
-#     history = HistoricalRecords()
-#
-#
-#     class Meta:
-#         unique_together = (
-#             "monthly_figure",
-#             "version",
-#         )
-#
-
-# class BudgetAmount(Amount):
-#     budget_figure = models.ForeignKey(
-#         Budget,
-#         on_delete=models.CASCADE,
-#         related_name="budget_amounts",
-#     )
-#
-#     class Meta:
-#         unique_together = (
-#             "budget_figure",
-#             "version",
-#         )
-#
-
 class OSCARReturn(models.Model):
     """Used for downloading the Oscar return.
     Mapped to a view in the database, because
     the query is too complex"""
 
-    # The view is created by the migration 0038_auto_create_view_forecast_oscar_return.py
+    # The view is created by  migration 0038_auto_create_view_forecast_oscar_return.py
     row_number = models.BigIntegerField()
     # The Treasury Level 5 account returned by the query is the result of a coalesce.
     # It is easier to use it as a foreign key in django
@@ -580,6 +632,7 @@ class OSCARReturn(models.Model):
         managed = False
         db_table = "forecast_oscarreturn"
         ordering = ["sub_segment_code"]
+
 
 """
 Query created in the database to return the info for the OSCAR return
