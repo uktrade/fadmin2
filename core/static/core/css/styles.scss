@@ -3,7 +3,6 @@ $govuk-page-width: 1800px;
 
 .actual-month {
   background-color: rgba(177, 180, 182, 0.75);
-  //color: white;
 }
 
 .main-content {
@@ -175,11 +174,19 @@ td {
 
 @media (min-width: 1200px) {
   .wide-table {
-      display: inline-block!important;
+    display: inline-block!important;
+
+    .govuk-header__logo {
+      max-width: 508px;
+    }
 
     .govuk-width-container {
       max-width: none!important;
       margin: 0 20px 0 50px;
+    }
+
+    .govuk-grid-column-two-thirds {
+      width: 66vw;
     }
 
     .govuk-table {

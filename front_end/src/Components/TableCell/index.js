@@ -1,4 +1,4 @@
-import React, {Fragment, useState } from 'react'
+import React, {Fragment, useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { SET_EDITING_CELL } from '../../Reducers/Edit'
 import {
@@ -32,6 +32,12 @@ const TableCell = ({isHidden, rowIndex, cellKey, cellMonth, sheetUpdating}) => {
     }
 
     const [value, setValue] = useState(getValue())
+
+    useEffect(() => {
+        if (cell) {
+            setValue((cell.amount / 100).toFixed(2))
+        }
+    }, [cell]);
 
     const isSelected = () => {
         if (allSelected) {
@@ -95,7 +101,6 @@ const TableCell = ({isHidden, rowIndex, cellKey, cellMonth, sheetUpdating}) => {
         setIsUpdating(true)
 
         let payload = new FormData()
-
         payload.append("natural_account_code", cells[rowIndex]["natural_account_code"].value)
         payload.append("programme_code", cells[rowIndex]["programme"].value)
         payload.append("project_code", cells[rowIndex]["project_code"].value)

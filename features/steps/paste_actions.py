@@ -44,7 +44,7 @@ def step_impl(context):
     )
 
     april_value = context.browser.find_element_by_id(
-        "id_0_4"
+        "id_0_1"
     ).get_attribute(
         'innerHTML'
     )
@@ -69,7 +69,7 @@ def step_impl(context):
     )
 
     april_value = context.browser.find_element_by_id(
-        "id_0_4"
+        "id_0_1"
     ).get_attribute(
         'innerHTML'
     )
@@ -105,7 +105,7 @@ def step_impl(context):
 @then(u'the clipboard data is displayed in the forecast table')
 def step_impl(context):
     april_value = context.browser.find_element_by_id(
-        "id_0_4"
+        "id_0_1"
     ).get_attribute(
         'innerHTML'
     )
@@ -163,7 +163,7 @@ def step_impl(context):
 @then(u'the actuals data is unchanged')
 def step_impl(context):
     april_value = context.browser.find_element_by_id(
-        "id_0_4"
+        "id_0_1"
     ).get_attribute(
         'innerHTML'
     )
@@ -175,6 +175,9 @@ def step_impl(context):
     paste_text = "999999	123456	1111111	2222222	3000	1000.49999	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
     copy_text(context, paste_text)
     paste(context)
+
+    import time
+    time.sleep(50)
 
 
 @when(u'the user pastes too many column row data')
