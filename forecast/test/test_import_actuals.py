@@ -48,7 +48,7 @@ from forecast.import_actuals import (
 from forecast.models import (
     FinancialCode,
     FinancialPeriod,
-    MonthlyFigure,
+    ForecastMonthlyFigure,
     MonthlyFigureAmount,
 )
 from forecast.views.upload_file import (
@@ -130,7 +130,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             0,
         )
         self.assertEqual(
-            MonthlyFigure.objects.filter(
+            ForecastMonthlyFigure.objects.filter(
                 financial_code__cost_centre=self.cost_centre_code
             ).count(),
             0,
@@ -190,7 +190,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
 
     def test_save_row_no_programme(self):
         self.assertEqual(
-            MonthlyFigure.objects.filter(
+            ForecastMonthlyFigure.objects.filter(
                 financial_code__cost_centre=self.cost_centre_code).count(),
             0,
         )
@@ -208,7 +208,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
         )
         # Lines with 0 programme and 0 amount are not saved
         self.assertEqual(
-            MonthlyFigure.objects.filter(
+            ForecastMonthlyFigure.objects.filter(
                 financial_code__cost_centre=self.cost_centre_code).count(),
             0,
         )
@@ -228,7 +228,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             GENERIC_PROGRAMME_CODE
         )
         self.assertEqual(
-            MonthlyFigure.objects.filter(
+            ForecastMonthlyFigure.objects.filter(
                 financial_code__cost_centre=self.cost_centre_code).count(),
             1,
         )
@@ -383,7 +383,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
         )
 
         self.assertEqual(
-            MonthlyFigure.objects.filter(
+            ForecastMonthlyFigure.objects.filter(
                 financial_code__cost_centre=cost_centre_code_1
             ).count(),
             1,
@@ -412,7 +412,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
         )
         # Check for existence of monthly figures
         self.assertEqual(
-            MonthlyFigure.objects.filter(
+            ForecastMonthlyFigure.objects.filter(
                 financial_code__cost_centre=self.cost_centre_code
             ).count(),
             4,

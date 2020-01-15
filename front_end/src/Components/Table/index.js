@@ -57,7 +57,7 @@ function Table({rowData, sheetUpdating}) {
                                 }
                             }>select all</button>
                         </td>
-                        <TableHeader isHidden={isHidden} id="natural_account_code_header" headerType="natural_account_code">Natural Account Code</TableHeader>
+                        <TableHeader isHidden={isHidden} id="natural_account_code_header" headerType="natural_account_code">NAC</TableHeader>
                         <TableHeader isHidden={isHidden} headerType="programme">Programme</TableHeader>
                         <TableHeader isHidden={isHidden} headerType="analysis1_code">Analysis Code Sector</TableHeader>
                         <TableHeader isHidden={isHidden} headerType="analysis2_code">Analysis Code Market</TableHeader>
@@ -97,6 +97,9 @@ function Table({rowData, sheetUpdating}) {
                             <TableCell sheetUpdating={false} rowIndex={rowIndex} isHidden={isHidden} cellKey={"analysis1_code"} />
                             <TableCell sheetUpdating={false} rowIndex={rowIndex} isHidden={isHidden} cellKey={"analysis2_code"} />
                             <TableCell sheetUpdating={false} rowIndex={rowIndex} isHidden={isHidden} cellKey={"project_code"} />
+                            <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={1} />
+                            <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={2} />
+                            <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={3} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={4} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={5} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={6} />
@@ -106,9 +109,6 @@ function Table({rowData, sheetUpdating}) {
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={10} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={11} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={12} />
-                            <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={1} />
-                            <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={2} />
-                            <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={3} />
                         </tr>
                     })}
                 </tbody>

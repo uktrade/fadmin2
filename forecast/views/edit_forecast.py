@@ -26,8 +26,7 @@ from forecast.forms import (
 from forecast.models import (
     FinancialCode,
     FinancialPeriod,
-    MonthlyFigure,
-    MonthlyFigureAmount,
+    ForecastMonthlyFigure,
 )
 from forecast.permission_shortcuts import (
     NoForecastViewPermission,
@@ -142,25 +141,13 @@ class AddRowView(CostCentrePermissionTest, FormView):
         ).first()
 
         if not financial_code:
-            financial_code = FinancialCode.objects.create(
+            FinancialCode.objects.create(
                 cost_centre_id=self.cost_centre_code,
                 programme=data["programme"],
                 natural_account_code=data["natural_account_code"],
                 analysis1_code=data["analysis1_code"],
                 analysis2_code=data["analysis2_code"],
                 project_code=data["project_code"],
-            )
-
-        for financial_period in range(1, 13):
-            monthly_figure = MonthlyFigure.objects.create(
-                financial_year_id=get_current_financial_year(),
-                financial_period_id=financial_period,
-                financial_code=financial_code,
-            )
-
-            MonthlyFigureAmount.objects.create(
-                amount=0,
-                monthly_figure=monthly_figure,
             )
 
         return super().form_valid(form)
@@ -191,7 +178,7 @@ def pasted_forecast_content(request, cost_centre_code):
         pasted_at_row = form.cleaned_data.get('pasted_at_row', None)
         all_selected = form.cleaned_data.get('all_selected', False)
 
-        figure_count = MonthlyFigure.objects.filter(
+        figure_count = ForecastMonthlyFigure.objects.filter(
             financial_code__cost_centre_id=cost_centre_code,
         ).count()
 
@@ -231,8 +218,6 @@ def pasted_forecast_content(request, cost_centre_code):
         if rows[0] == "Natural Account Code":
             start_row = 1
 
-        monthly_figures = []
-
         try:
             for index, row in enumerate(rows, start=start_row):
                 cell_data = re.split(r'\t', row.rstrip('\t'))
@@ -247,12 +232,10 @@ def pasted_forecast_content(request, cost_centre_code):
                 # Check cell data length against expected number of cols
                 check_cols_match(cell_data)
 
-                row_monthly_figures = get_monthly_figures(
+                get_monthly_figures(
                     cost_centre_code,
                     cell_data,
                 )
-
-                monthly_figures.extend(row_monthly_figures)
         except (
                 BadFormatException,
                 TooManyMatchException,
@@ -266,22 +249,15 @@ def pasted_forecast_content(request, cost_centre_code):
                 status=400,
             )
 
-        # Update monthly figures
-        for monthly_figure in monthly_figures:
-            monthly_figure_amount = MonthlyFigureAmount.objects.filter(
-                monthly_figure=monthly_figure,
-            ).order_by(
-                "-version"
-            ).first()
-            monthly_figure_amount.version = monthly_figure_amount.version + 1
-            monthly_figure_amount.save()
-
-        financial_code = FinancialCode.objects.filter(
+        financial_codes = FinancialCode.objects.filter(
             cost_centre_id=cost_centre_code,
-        ).prefetch_related('monthly_figures')
+        ).prefetch_related(
+            'forecast_forecastmonthlyfigures',
+            'forecast_forecastmonthlyfigures__financial_period'
+        )
 
         financial_code_serialiser = FinancialCodeSerializer(
-            financial_code,
+            financial_codes,
             many=True,
         )
 
@@ -339,48 +315,36 @@ def update_forecast_figure(request, cost_centre_code):
         if not financial_code.first():
             raise NoFinancialCodeForEditedValue()
 
-        monthly_figure = MonthlyFigure.objects.filter(
+        monthly_figure = ForecastMonthlyFigure.objects.filter(
             financial_code=financial_code.first(),
             financial_period__period_calendar_code=month,
         ).first()
 
-        if not monthly_figure:
+        if monthly_figure:
+            monthly_figure.amount = form.cleaned_data['amount']
+        else:
             financial_year = FinancialYear.objects.filter(current=True).first()
             financial_period = FinancialPeriod.objects.filter(
                 period_calendar_code=month
             ).first()
-            monthly_figure = MonthlyFigure(
+            monthly_figure = ForecastMonthlyFigure(
                 financial_year=financial_year,
                 financial_code=financial_code.first(),
                 financial_period=financial_period,
+                amount=form.cleaned_data['amount'],
             )
-            monthly_figure.save()
 
-        current_amount = MonthlyFigureAmount.objects.filter(
-            monthly_figure__financial_code=financial_code.first(),
-            monthly_figure__financial_period__period_calendar_code=month,
-        ).order_by(
-            "-version"
-        ).first()
+        monthly_figure.save()
 
-        new_version = 1
-
-        if current_amount:
-            new_version = current_amount.version + 1
-
-        monthly_figure_amount = MonthlyFigureAmount(
-            monthly_figure=monthly_figure,
-            version=new_version,
-            amount=form.cleaned_data['amount'],
-        )
-        monthly_figure_amount.save()
-
-        financial_code = FinancialCode.objects.filter(
+        financial_codes = FinancialCode.objects.filter(
             cost_centre_id=cost_centre_code,
-        ).prefetch_related('monthly_figures')
+        ).prefetch_related(
+            'forecast_forecastmonthlyfigures',
+            'forecast_forecastmonthlyfigures__financial_period'
+        )
 
         financial_code_serialiser = FinancialCodeSerializer(
-            financial_code,
+            financial_codes,
             many=True,
         )
 
@@ -419,22 +383,18 @@ class EditForecastView(
 
         financial_code = FinancialCode.objects.filter(
             cost_centre_id=self.cost_centre_code,
-        )#.prefetch_related('monthly_figures')
+        ).prefetch_related(
+            'forecast_forecastmonthlyfigures',
+            'forecast_forecastmonthlyfigures__financial_period'
+        )
 
         financial_code_serialiser = FinancialCodeSerializer(
             financial_code,
-            #many=True,
+            many=True,
         )
 
         forecast_dump = json.dumps(financial_code_serialiser.data)
         paste_form = PasteForecastForm()
-
-        from forecast.serialisers import MonthlyFigureSerializer
-
-        monthly_figure = MonthlyFigure.objects.get(pk=51865)
-        test = MonthlyFigureSerializer(
-            monthly_figure,
-        )
 
         context["form"] = form
         context["paste_form"] = paste_form

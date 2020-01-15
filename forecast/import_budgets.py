@@ -19,8 +19,7 @@ from forecast.import_utils import (
     validate_excel_file,
 )
 from forecast.models import (
-    Budget,
-    BudgetAmount,
+    BudgetMonthlyFigure,
     FinancialCode,
 )
 
@@ -143,7 +142,7 @@ def upload_budget(worksheet, year, header_dict):
                 )
                 financialcode_obj.save()
 
-                budget_obj, created = Budget.objects.get_or_create(
+                budget_obj, created = BudgetMonthlyFigure.objects.get_or_create(
                     financial_year=year_obj,
                     financial_code=financialcode_obj,
                     financial_period=period_obj,

@@ -28,7 +28,7 @@ from costcentre.test.factories import (
 from forecast.models import (
     FinancialCode,
     FinancialPeriod,
-    MonthlyFigure,
+    ForecastMonthlyFigure,
     MonthlyFigureAmount,
 )
 from forecast.permission_shortcuts import assign_perm
@@ -194,7 +194,7 @@ class AddForecastRowTest(TestCase, RequestFactoryBase):
         assign_perm("change_costcentre", self.test_user, self.cost_centre)
         assign_perm("view_costcentre", self.test_user, self.cost_centre)
 
-        monthly_figures = MonthlyFigure.objects.all()
+        monthly_figures = ForecastMonthlyFigure.objects.all()
 
         assert monthly_figures.count() == 0
 
@@ -249,7 +249,7 @@ class AddForecastRowTest(TestCase, RequestFactoryBase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(MonthlyFigure.objects.count(), 12)
+        self.assertEqual(ForecastMonthlyFigure.objects.count(), 12)
 
         response_2 = self.add_row_post_response(
             reverse(
@@ -272,7 +272,7 @@ class AddForecastRowTest(TestCase, RequestFactoryBase):
         assert "govuk-list govuk-error-summary__list" in str(
             response_2.rendered_content,
         )
-        self.assertEqual(MonthlyFigure.objects.count(), 12)
+        self.assertEqual(ForecastMonthlyFigure.objects.count(), 12)
 
 
 class ChooseCostCentreTest(TestCase, RequestFactoryBase):
@@ -366,7 +366,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
             project_code=self.project_obj
         )
         financial_code_obj.save
-        apr_figure = MonthlyFigure.objects.create(
+        apr_figure = ForecastMonthlyFigure.objects.create(
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=1
             ),
@@ -381,7 +381,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         )
         apr_amount.save()
         self.amount_may = 1234567
-        may_figure = MonthlyFigure.objects.create(
+        may_figure = ForecastMonthlyFigure.objects.create(
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=4
             ),
@@ -749,7 +749,7 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
             natural_account_code=self.nac2_obj,
         )
         financial_code2_obj.save
-        apr_figure = MonthlyFigure.objects.create(
+        apr_figure = ForecastMonthlyFigure.objects.create(
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=1
             ),
@@ -764,7 +764,7 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
         )
         apr_amount.save()
 
-        apr_figure = MonthlyFigure.objects.create(
+        apr_figure = ForecastMonthlyFigure.objects.create(
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=1
             ),
@@ -780,7 +780,7 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
         apr_amount.save()
 
         self.amount_may = 1234567
-        may_figure = MonthlyFigure.objects.create(
+        may_figure = ForecastMonthlyFigure.objects.create(
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=4
             ),
@@ -970,7 +970,7 @@ class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
         financial_code_obj.save
         self.forecast_expenditure_type_id = \
             financial_code_obj.forecast_expenditure_type_id
-        apr_figure = MonthlyFigure.objects.create(
+        apr_figure = ForecastMonthlyFigure.objects.create(
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=1
             ),
@@ -987,7 +987,7 @@ class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
         apr_amount.save()
 
         self.amount_may = 1234567
-        may_figure = MonthlyFigure.objects.create(
+        may_figure = ForecastMonthlyFigure.objects.create(
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=4
             ),

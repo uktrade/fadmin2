@@ -9,7 +9,7 @@ import {
 import { SET_ERROR } from '../../Reducers/Error'
 import { SET_CELLS } from '../../Reducers/Cells'
 
-const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
+const TableCell = ({isHidden, rowIndex, cellKey, cellMonth, sheetUpdating}) => {
     const dispatch = useDispatch();
 
     const cells = useSelector(state => state.allCells.cells);
@@ -21,23 +21,22 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
     const selectedRow = useSelector(state => state.selected.selectedRow);
     const allSelected = useSelector(state => state.selected.all);
 
+    const cellId = getCellId(rowIndex, cellKey)
+
     let initialValue = 0
 
-    if (cell && cell.versions && cell.versions.length > 0) {
-        initialValue = cell.versions[0].amount
+    if (cell && cell.amount) {
+        initialValue = cell.amount
     }
 
-    const [editValue, setEditValue] = useState((initialValue/100).toFixed(2))
+    const [editValue, setEditValue] = useState(initialValue)
 
     const isSelected = () => {
-        if (!cell)
-            return
-
         if (allSelected) {
             return true
         }
 
-        return selectedRow === cell.rowIndex
+        return selectedRow === rowIndex
     }
 
     const wasEdited = () => {
@@ -47,7 +46,7 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
 
     const getClasses = () => {
         if (!cell)
-            return "govuk-table__cell forecast-month-cell"
+            return "govuk-table__cell forecast-month-cell " + (isSelected() ? 'selected' : '')
 
         let hiddenResult = ''
         let editable = ''
@@ -61,7 +60,7 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
             editable = ' not-editable';
         }
 
-        if (cell && cell.versions && cell.versions[0].amount < 0) {
+        if (cell.amount < 0) {
             negative = " negative"
         }
 
@@ -87,7 +86,7 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
     const updateValue = () => {
         let newAmount = parseInt(editValue * 100)
 
-        if (cell && newAmount === cell.versions[0].amount) {
+        if (cell && newAmount === cell.amount) {
             return
         }
 
@@ -153,10 +152,10 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
             return
 
         if (isUpdating) {
-            return cell.id + "_updating"
+            return cellId + "_updating"
         }
 
-        return cell.id
+        return cellId
     }
 
     const isCellUpdating = () => {
@@ -169,8 +168,6 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
 
         return false
     }
-
-    const cellId = getCellId(rowIndex, cellKey)
 
     return (
         <Fragment>
@@ -208,8 +205,8 @@ const TableCell = ({isHidden, rowIndex, cellKey, sheetUpdating}) => {
                             <Fragment>
                                 {cell ? (
                                     <Fragment>
-                                        {cell.versions && cell.versions.length > 0 ? (
-                                            <Fragment>{formatValue(cell.versions[0].amount)}</Fragment>
+                                        {cell.amount || cell.amount === 0 ? (
+                                            <Fragment>{formatValue(cell.amount)}</Fragment>
                                         ) : (
                                             <Fragment>{cell.value}</Fragment>
                                         )}

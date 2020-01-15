@@ -16,6 +16,7 @@ from chartofaccountDIT.models import (
 )
 
 from core.metamodels import (
+    SimpleTimeStampedModel,
     TimeStampedModel,
 )
 from core.models import FinancialYear
@@ -177,41 +178,6 @@ class FinancialCode(models.Model):
             self.forecast_expenditure_type = forecast_type.first()
 
         super(FinancialCode, self).save(*args, **kwargs)
-
-
-class Budget(TimeStampedModel):
-    """Used to store the budgets
-    for the financial year."""
-
-    id = models.AutoField("Budget ID", primary_key=True)
-    financial_year = models.ForeignKey(FinancialYear, on_delete=models.PROTECT)
-    financial_period = models.ForeignKey(
-        FinancialPeriod,
-        on_delete=models.PROTECT,
-    )
-    amount = models.BigIntegerField(default=0)
-    financial_code = models.ForeignKey(
-        FinancialCode,
-        on_delete=models.PROTECT,
-        related_name="budgets",
-    )
-
-    class Meta:
-        unique_together = (
-            "financial_code",
-            "financial_year",
-            "financial_period",
-        )
-
-    def __str__(self):
-        return f"{self.financial_code.cost_centre}" \
-               f"--{self.financial_code.programme}" \
-               f"--{self.financial_code.natural_account_code}" \
-               f"--{self.financial_code.analysis1_code}" \
-               f"--{self.financial_code.analysis2_code}" \
-               f"--{self.financial_code.project_code}:" \
-               f"{self.financial_year} " \
-               f"{self.financial_period}"
 
 
 class SubTotalForecast:
@@ -443,20 +409,24 @@ class PivotManager(models.Manager):
 
         q1 = (
             self.get_queryset()
-                .filter(monthly_figure__financial_year=year, version=1, **filter_dict)
+                .filter(financial_year=year, **filter_dict)
                 .order_by(*order_list)
         )
-        pivot_data = pivot(q1, columns,
-                           "monthly_figure__financial_period__period_short_name",
-                           "amount")
+        pivot_data = pivot(
+            q1,
+            columns,
+            "financial_period__period_short_name",
+            "amount",
+        )
         # print(pivot_data.query)
         return pivot_data
 
 
-class MonthlyFigure(TimeStampedModel):
+class MonthlyFigureAbstract(SimpleTimeStampedModel):
     """It contains the forecast and the actuals.
     The current month defines what is Actual and what is Forecast"""
-    id = models.AutoField("Monthly ID", primary_key=True)
+    amount = models.BigIntegerField(default=0)
+    id = models.AutoField(primary_key=True)
     financial_year = models.ForeignKey(
         FinancialYear,
         on_delete=models.PROTECT,
@@ -464,17 +434,19 @@ class MonthlyFigure(TimeStampedModel):
     financial_period = models.ForeignKey(
         FinancialPeriod,
         on_delete=models.PROTECT,
-        related_name="financial_periods"
+        related_name="%(app_label)s_%(class)ss",
     )
-
     financial_code = models.ForeignKey(
         FinancialCode,
         on_delete=models.PROTECT,
-        related_name="monthly_figures",
+        related_name="%(app_label)s_%(class)ss",
     )
-    history = HistoricalRecords()
+    objects = models.Manager()  # The default manager.
+    pivot = PivotManager()
 
+    # TODO don't save to month that have actuals
     class Meta:
+        abstract = True
         unique_together = (
             "financial_code",
             "financial_year",
@@ -489,65 +461,99 @@ class MonthlyFigure(TimeStampedModel):
                f"--{self.financial_code.analysis2_code}" \
                f"--{self.financial_code.project_code}:" \
                f"{self.financial_year} " \
-               f"{self.financial_period}"
+               f"{self.financial_period} " \
+               f"{self.amount}"
 
 
-class Amount(TimeStampedModel):
-    # The figures are stored ar pence, to avoid rounding problems.
-    # Some formatting will take care of displaying the figures as pounds only
-    amount = models.BigIntegerField(default=0)
-    CURRENT_VERSION = 1
-    TEMPORARY_VERSION = -1
-    version = models.IntegerField(default=CURRENT_VERSION)
-
-    # TODO don't save to month that have actuals
-
-    class Meta:
-        abstract = True
-
-
-class MonthlyFigureAmount(Amount):
-    monthly_figure = models.ForeignKey(
-        MonthlyFigure,
-        on_delete=models.CASCADE,
-        related_name="monthly_figure_amounts",
-    )
+class ForecastMonthlyFigure(MonthlyFigureAbstract):
     history = HistoricalRecords()
-
-    objects = models.Manager()  # The default manager.
-    pivot = PivotManager()
-
-    class Meta:
-        unique_together = (
-            "monthly_figure",
-            "version",
-        )
+    starting_amount = models.BigIntegerField(default=0)
 
 
-class BudgetAmount(Amount):
-    budget_figure = models.ForeignKey(
-        Budget,
-        on_delete=models.CASCADE,
-        related_name="budget_amounts",
+class ArchivedForecastMonthlyFigure(MonthlyFigureAbstract):
+    is_actual = models.BooleanField(default = False)
+    forecast_month = models.ForeignKey(
+        FinancialPeriod,
+        on_delete=models.PROTECT,
+        related_name='historical_forecast_monthly_figures'
+    )
+    forecast_year = models.ForeignKey(
+        FinancialYear,
+        on_delete=models.PROTECT,
+        related_name='historical_forecast_monthly_figures'
     )
 
-    class Meta:
-        unique_together = (
-            "budget_figure",
-            "version",
-        )
 
+class ActualUploadMonthlyFigure(MonthlyFigureAbstract):
+    pass
+
+
+class BudgetMonthlyFigure(MonthlyFigureAbstract):
+    """Used to store the budgets
+    for the financial year."""
+    history = HistoricalRecords()
+    starting_amount = models.BigIntegerField(default=0)
+
+
+class BudgetUploadMonthlyFigure(MonthlyFigureAbstract):
+    pass
+
+
+# class Amount(TimeStampedModel):
+#     # The figures are stored ar pence, to avoid rounding problems.
+#     # Some formatting will take care of displaying the figures as pounds only
+#     amount = models.BigIntegerField(default=0)
+#     CURRENT_VERSION = 1
+#     TEMPORARY_VERSION = -1
+#     version = models.IntegerField(default=CURRENT_VERSION)
+#
+#
+#
+#     class Meta:
+#         abstract = True
+#
+#
+# class MonthlyFigureAmount(Amount):
+#     monthly_figure = models.ForeignKey(
+#         MonthlyFigure,
+#         on_delete=models.CASCADE,
+#         related_name="monthly_figure_amounts",
+#     )
+#     history = HistoricalRecords()
+#
+#
+#     class Meta:
+#         unique_together = (
+#             "monthly_figure",
+#             "version",
+#         )
+#
+
+# class BudgetAmount(Amount):
+#     budget_figure = models.ForeignKey(
+#         Budget,
+#         on_delete=models.CASCADE,
+#         related_name="budget_amounts",
+#     )
+#
+#     class Meta:
+#         unique_together = (
+#             "budget_figure",
+#             "version",
+#         )
+#
 
 class OSCARReturn(models.Model):
     """Used for downloading the Oscar return.
     Mapped to a view in the database, because
     the query is too complex"""
 
-    # The view is created by the migration 0016_recreate_oscar_view.py
-    # TODO Change the database view to return
-    #  figures in thousands. At the moment the
-    #  figures are in pence.
+    # The view is created by the migration 0038_auto_create_view_forecast_oscar_return.py
     row_number = models.BigIntegerField()
+    # The Treasury Level 5 account returned by the query is the result of a coalesce.
+    # It is easier to use it as a foreign key in django
+    # for getting the account description
+    # than doing another join in the query.
     account_l5_code = models.ForeignKey(
         "treasuryCOA.L5Account",
         on_delete=models.PROTECT,
@@ -555,6 +561,8 @@ class OSCARReturn(models.Model):
     )
     sub_segment_code = models.CharField(max_length=8, primary_key=True)
     sub_segment_long_name = models.CharField(max_length=255)
+    # Treasury requires the returns in 1000. The query perform the required
+    #  division and rounding.
     apr = models.BigIntegerField(default=0)
     may = models.BigIntegerField(default=0)
     jun = models.BigIntegerField(default=0)
@@ -573,25 +581,44 @@ class OSCARReturn(models.Model):
         db_table = "forecast_oscarreturn"
         ordering = ["sub_segment_code"]
 
-
 """
-TODO fix it to use new structure in Monthly period
 Query created in the database to return the info for the OSCAR return
-DROP VIEW "forecast_oscarreturn";
-CREATE VIEW "forecast_oscarreturn" as
-
-SELECT ROW_NUMBER () OVER (ORDER BY "treasurySS_subsegment"."sub_segment_code"),
-coalesce("chartofaccountDIT_naturalcode"."account_L5_code_upload_id", "chartofaccountDIT_naturalcode"."account_L5_code_id") account_l5_code
-,
-"treasurySS_subsegment"."sub_segment_code" , "treasurySS_subsegment"."sub_segment_long_name" ,
-
-SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Apr' THEN "forecast_monthlyfigure"."amount" ELSE NULL END) AS "apr", SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Aug' THEN "forecast_monthlyfigure"."amount" ELSE NULL END) AS "aug", SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Dec' THEN "forecast_monthlyfigure"."amount" ELSE NULL END) AS "dec", SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Feb' THEN "forecast_monthlyfigure"."amount" ELSE NULL END) AS "feb", SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jan' THEN "forecast_monthlyfigure"."amount" ELSE NULL END) AS "jan", SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jul' THEN "forecast_monthlyfigure"."amount" ELSE NULL END) AS "jul", SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jun' THEN "forecast_monthlyfigure"."amount" ELSE NULL END) AS "jun", SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Mar' THEN "forecast_monthlyfigure"."amount" ELSE NULL END) AS "mar", SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'May' THEN "forecast_monthlyfigure"."amount" ELSE NULL END) AS "may", SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Nov' THEN "forecast_monthlyfigure"."amount" ELSE NULL END) AS "nov", SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Oct' THEN "forecast_monthlyfigure"."amount" ELSE NULL END) AS "oct", SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Sep' THEN "forecast_monthlyfigure"."amount" ELSE NULL END) AS "sep"
-
-FROM "forecast_monthlyfigure" LEFT OUTER JOIN "chartofaccountDIT_naturalcode" ON ("forecast_monthlyfigure"."natural_account_code_id" = "chartofaccountDIT_naturalcode"."natural_account_code") INNER JOIN "costcentre_costcentre" ON ("forecast_monthlyfigure"."cost_centre_id" = "costcentre_costcentre"."cost_centre_code") INNER JOIN "costcentre_directorate" ON ("costcentre_costcentre"."directorate_id" = "costcentre_directorate"."directorate_code") INNER JOIN "costcentre_departmentalgroup" ON ("costcentre_directorate"."group_id" = "costcentre_departmentalgroup"."group_code") INNER JOIN "chartofaccountDIT_programmecode" ON ("forecast_monthlyfigure"."programme_id" = "chartofaccountDIT_programmecode"."programme_code") INNER JOIN "forecast_financialperiod" ON ("forecast_monthlyfigure"."financial_period_id" = "forecast_financialperiod"."financial_period_code")
-LEFT OUTER JOIN "treasurySS_subsegment" ON ("costcentre_departmentalgroup"."treasury_segment_fk_id" = "treasurySS_subsegment"."Segment_code_id"
-AND "chartofaccountDIT_programmecode"."budget_type_fk_id" = "treasurySS_subsegment"."dit_budget_type_id")
-INNER JOIN "core_financialyear" ON ("forecast_monthlyfigure"."financial_year_id" = "core_financialyear"."financial_year")
-WHERE "core_financialyear"."current" = TRUE
-GROUP BY coalesce("chartofaccountDIT_naturalcode"."account_L5_code_upload_id", "chartofaccountDIT_naturalcode"."account_L5_code_id"),
-"treasurySS_subsegment"."sub_segment_code" ;
-"""  # noqa
+DROP VIEW  if exists "forecast_oscarreturn";
+CREATE VIEW "forecast_oscarreturn" as 
+        SELECT ROW_NUMBER () OVER (ORDER BY "treasurySS_subsegment"."sub_segment_code"),
+            coalesce("chartofaccountDIT_naturalcode"."account_L5_code_upload_id", "chartofaccountDIT_naturalcode"."account_L5_code_id")
+            account_l5_code,
+            "treasurySS_subsegment"."sub_segment_code" ,
+            "treasurySS_subsegment"."sub_segment_long_name" ,                    
+            coalesce(round(SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Apr' THEN "forecast_monthlyfigureamount"."amount" ELSE NULL END)/100000), 0)  AS "apr",
+            coalesce(round(SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Aug' THEN "forecast_monthlyfigureamount"."amount" ELSE NULL END)/100000), 0)  AS "aug",
+            coalesce(round(SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Dec' THEN "forecast_monthlyfigureamount"."amount" ELSE NULL END)/100000), 0)  AS "dec",
+            coalesce(round(SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Feb' THEN "forecast_monthlyfigureamount"."amount" ELSE NULL END)/100000), 0)  AS "feb",
+            coalesce(round(SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jan' THEN "forecast_monthlyfigureamount"."amount" ELSE NULL END)/100000), 0)  AS "jan",
+            coalesce(round(SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jul' THEN "forecast_monthlyfigureamount"."amount" ELSE NULL END)/100000), 0)  AS "jul",
+            coalesce(round(SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jun' THEN "forecast_monthlyfigureamount"."amount" ELSE NULL END)/100000), 0)  AS "jun",
+            coalesce(round(SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Mar' THEN "forecast_monthlyfigureamount"."amount" ELSE NULL END)/100000), 0)  AS "mar",
+            coalesce(round(SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'May' THEN "forecast_monthlyfigureamount"."amount" ELSE NULL END)/100000), 0)  AS "may",
+            coalesce(round(SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Nov' THEN "forecast_monthlyfigureamount"."amount" ELSE NULL END)/100000), 0)  AS "nov",
+            coalesce(round(SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Oct' THEN "forecast_monthlyfigureamount"."amount" ELSE NULL END)/100000), 0)  AS "oct",
+            coalesce(round(SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Sep' THEN "forecast_monthlyfigureamount"."amount" ELSE NULL END)/100000), 0)  AS "sep"
+        FROM "forecast_monthlyfigureamount"
+                INNER JOIN
+                 "forecast_monthlyfigure" on (forecast_monthlyfigureamount.monthly_figure_id = forecast_monthlyfigure.id)
+                INNER JOIN "forecast_financialcode" on (forecast_monthlyfigure.financial_code_id = forecast_financialcode.id)
+                    LEFT OUTER JOIN "chartofaccountDIT_naturalcode"
+                    ON ("forecast_financialcode"."natural_account_code_id" = "chartofaccountDIT_naturalcode"."natural_account_code")
+                    INNER JOIN "costcentre_costcentre"
+                    ON ("forecast_financialcode"."cost_centre_id" = "costcentre_costcentre"."cost_centre_code")
+                    INNER JOIN "costcentre_directorate"
+                    ON ("costcentre_costcentre"."directorate_id" = "costcentre_directorate"."directorate_code")
+                    INNER JOIN "costcentre_departmentalgroup"
+                    ON ("costcentre_directorate"."group_id" = "costcentre_departmentalgroup"."group_code")
+                    INNER JOIN "chartofaccountDIT_programmecode" ON ("forecast_financialcode"."programme_id" = "chartofaccountDIT_programmecode"."programme_code")
+                        INNER JOIN "forecast_financialperiod" ON ("forecast_monthlyfigure"."financial_period_id" = "forecast_financialperiod"."financial_period_code")
+                    LEFT OUTER JOIN "treasurySS_subsegment" ON ("costcentre_departmentalgroup"."treasury_segment_fk_id" = "treasurySS_subsegment"."Segment_code_id"
+                    AND "chartofaccountDIT_programmecode"."budget_type_fk_id" = "treasurySS_subsegment"."dit_budget_type_id")
+                    INNER JOIN "core_financialyear" ON ("forecast_monthlyfigure"."financial_year_id" = "core_financialyear"."financial_year")
+                    WHERE "core_financialyear"."current" = TRUE and forecast_monthlyfigureamount.version = 1
+                    GROUP BY coalesce("chartofaccountDIT_naturalcode"."account_L5_code_upload_id", "chartofaccountDIT_naturalcode"."account_L5_code_id"),
+                    "treasurySS_subsegment"."sub_segment_code" ;        """  # noqa
