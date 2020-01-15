@@ -176,9 +176,6 @@ def step_impl(context):
     copy_text(context, paste_text)
     paste(context)
 
-    import time
-    time.sleep(50)
-
 
 @when(u'the user pastes too many column row data')
 def step_impl(context):
