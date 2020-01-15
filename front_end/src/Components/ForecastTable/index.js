@@ -94,12 +94,14 @@ function ForecastTable() {
                 if (response.status === 200) {
                     setSheetUpdating(false)
                     let rows = processForecastData(response.data)
+                    console.log("UPDATED")
                       dispatch({
                         type: SET_CELLS,
                         cells: rows
                       })
                 } else {
                     setSheetUpdating(false)
+                    console.log("UPDATED ERROR")
                     dispatch(
                         SET_ERROR({
                             errorMessage: response.data.error

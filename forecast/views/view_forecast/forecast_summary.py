@@ -61,6 +61,9 @@ from forecast.views.base import ForecastViewPermissionMixin
 class ForecastMultiTableMixin(MultiTableMixin):
     hierarchy_type = -1
 
+    def class_name(self):
+        return "wide-table"
+
     def get_tables(self):
         """
          Return an array of table instances containing data.

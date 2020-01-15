@@ -74,6 +74,16 @@ class FinancialPeriodManager(models.Manager):
                 .values_list("period_short_name", flat=True)
         )
 
+    def actual_period_code_list(self):
+        return list(
+            self.get_queryset().filter(
+                actual_loaded=True
+            ).values_list(
+                "financial_period_code",
+                flat=True,
+            )
+        )
+
     def actual_month(self):
         m = (
             self.get_queryset()
@@ -521,7 +531,7 @@ class PivotManager(models.Manager):
 class MonthlyFigureAbstract(SimpleTimeStampedModel):
     """It contains the forecast and the actuals.
     The current month defines what is Actual and what is Forecast"""
-    amount = models.BigIntegerField(default=0)
+    amount = models.BigIntegerField(default=0)  # stored in pence
     id = models.AutoField(primary_key=True)
     financial_year = models.ForeignKey(
         FinancialYear,

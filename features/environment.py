@@ -40,7 +40,6 @@ from forecast.models import (
     FinancialCode,
     FinancialPeriod,
     ForecastMonthlyFigure,
-    MonthlyFigureAmount,
 )
 from forecast.test.factories import FinancialPeriodFactory
 
@@ -134,10 +133,6 @@ def set_up_test_objects(context):
                 financial_year_id=get_current_financial_year(),
                 financial_period_id=financial_period,
                 financial_code=financial_code,
-            )
-
-            MonthlyFigureAmount.objects.create(
-                monthly_figure=monthly_figure,
                 amount=0,
             )
 

@@ -11,14 +11,10 @@ from chartofaccountDIT.models import (
 )
 
 from core.models import FinancialYear
-from core.myutils import (
-    get_current_financial_year,
-)
 
 from forecast.models import (
     FinancialCode,
     FinancialPeriod,
-    ForecastMonthlyFigure,
 )
 
 
@@ -44,16 +40,10 @@ class AddForecastRowForm(forms.Form):
         ).first()
 
         if financial_code:
-            existing_row_count = ForecastMonthlyFigure.objects.filter(
-                financial_year_id=get_current_financial_year(),
-                financial_code=financial_code,
-            ).count()
-
-            if existing_row_count > 0:
-                raise forms.ValidationError(
-                    "A row already exists with these details, "
-                    "please amend the values you are supplying"
-                )
+            raise forms.ValidationError(
+                "A row already exists with these details, "
+                "please amend the values you are supplying"
+            )
 
     programme = forms.ModelChoiceField(
         queryset=ProgrammeCode.objects.filter(
@@ -238,4 +228,3 @@ class EditForecastFigureForm(forms.Form):
             return None
 
         return analysis2_code
-

@@ -129,8 +129,6 @@ class AddRowView(CostCentrePermissionTest, FormView):
         self.get_cost_centre()
         data = form.cleaned_data
 
-        # TODO - investigate the following statement -
-        # "Don't add months that are actuals"
         financial_code = FinancialCode.objects.filter(
             cost_centre_id=self.cost_centre_code,
             programme=data["programme"],
@@ -141,7 +139,7 @@ class AddRowView(CostCentrePermissionTest, FormView):
         ).first()
 
         if not financial_code:
-            FinancialCode.objects.create(
+            financial_code = FinancialCode.objects.create(
                 cost_centre_id=self.cost_centre_code,
                 programme=data["programme"],
                 natural_account_code=data["natural_account_code"],
@@ -149,6 +147,19 @@ class AddRowView(CostCentrePermissionTest, FormView):
                 analysis2_code=data["analysis2_code"],
                 project_code=data["project_code"],
             )
+
+        # Create "actual" monthly figures for past months
+        actual_months = FinancialPeriod.financial_period_info.actual_period_code_list()
+
+        if len(actual_months) > 0:
+            financial_year = get_current_financial_year()
+
+            for actual_month in actual_months:
+                ForecastMonthlyFigure.objects.create(
+                    financial_code=financial_code,
+                    financial_year_id=financial_year,
+                    financial_period_id=actual_month,
+                )
 
         return super().form_valid(form)
 
@@ -293,6 +304,8 @@ def update_forecast_figure(request, cost_centre_code):
     )
 
     if form.is_valid():
+        financial_year = FinancialYear.objects.filter(current=True).first()
+
         financial_code = FinancialCode.objects.filter(
             natural_account_code=form.cleaned_data['natural_account_code'],
             programme__programme_code=form.cleaned_data['programme_code'],
@@ -316,16 +329,16 @@ def update_forecast_figure(request, cost_centre_code):
             raise NoFinancialCodeForEditedValue()
 
         monthly_figure = ForecastMonthlyFigure.objects.filter(
+            financial_year=financial_year,
             financial_code=financial_code.first(),
-            financial_period__period_calendar_code=month,
+            financial_period__financial_period_code=month,
         ).first()
 
         if monthly_figure:
             monthly_figure.amount = form.cleaned_data['amount']
         else:
-            financial_year = FinancialYear.objects.filter(current=True).first()
             financial_period = FinancialPeriod.objects.filter(
-                period_calendar_code=month
+                financial_period_code=month
             ).first()
             monthly_figure = ForecastMonthlyFigure(
                 financial_year=financial_year,
@@ -364,6 +377,9 @@ class EditForecastView(
 ):
     template_name = "forecast/edit/edit.html"
 
+    def class_name(self):
+        return "wide-table"
+
     def cost_centre_details(self):
         return {
             "group": "Test group",
@@ -399,4 +415,5 @@ class EditForecastView(
         context["form"] = form
         context["paste_form"] = paste_form
         context["forecast_dump"] = forecast_dump
+
         return context

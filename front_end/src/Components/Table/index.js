@@ -1,6 +1,7 @@
 import React, {Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TableCell from '../../Components/TableCell/index'
+import InfoCell from '../../Components/InfoCell/index'
 import TableHeader from '../../Components/TableHeader/index'
 import { SET_SELECTED_ROW, SELECT_ALL } from '../../Reducers/Selected'
 
@@ -92,11 +93,11 @@ function Table({rowData, sheetUpdating}) {
                                     }
                                 }>select</button>
                             </td>
-                            <TableCell sheetUpdating={false} rowIndex={rowIndex} isHidden={isHidden} cellKey={"natural_account_code"} />
-                            <TableCell sheetUpdating={false} rowIndex={rowIndex} isHidden={isHidden} cellKey={"programme"} />
-                            <TableCell sheetUpdating={false} rowIndex={rowIndex} isHidden={isHidden} cellKey={"analysis1_code"} />
-                            <TableCell sheetUpdating={false} rowIndex={rowIndex} isHidden={isHidden} cellKey={"analysis2_code"} />
-                            <TableCell sheetUpdating={false} rowIndex={rowIndex} isHidden={isHidden} cellKey={"project_code"} />
+                            <InfoCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"natural_account_code"} />
+                            <InfoCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"programme"} />
+                            <InfoCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"analysis1_code"} />
+                            <InfoCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"analysis2_code"} />
+                            <InfoCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"project_code"} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={1} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={2} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={3} />

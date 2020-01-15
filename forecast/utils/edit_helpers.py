@@ -116,4 +116,4 @@ def check_row_match(index, pasted_at_row, cell_data):  # noqa C901
 
 
 def convert_forecast_amount(amount):
-    return round(Decimal(amount.replace(",", ""))) * 100
+    return round(Decimal(amount.replace(",", "")) * 100)

@@ -23,13 +23,15 @@ const TableCell = ({isHidden, rowIndex, cellKey, cellMonth, sheetUpdating}) => {
 
     const cellId = getCellId(rowIndex, cellKey)
 
-    let initialValue = 0
-
-    if (cell && cell.amount) {
-        initialValue = cell.amount
+    const getValue = () => {
+        if (cell && cell.amount) {
+            return (cell.amount / 100).toFixed(2)
+        } else {
+            return "0.00"
+        }
     }
 
-    const [editValue, setEditValue] = useState(initialValue)
+    const [value, setValue] = useState(getValue())
 
     const isSelected = () => {
         if (allSelected) {
@@ -74,17 +76,17 @@ const TableCell = ({isHidden, rowIndex, cellKey, cellMonth, sheetUpdating}) => {
         if (!isValid) {
             return
         }
-        setEditValue(value)
+        setValue(value)
     }
 
     const formatValue = (value) => {
         let nfObject = new Intl.NumberFormat('en-GB'); 
-        let pounds = Math.round(value / 100)
+        let pounds = Math.round(value)
         return nfObject.format(pounds); 
     }
 
     const updateValue = () => {
-        let newAmount = parseInt(editValue * 100)
+        let newAmount = parseInt(value * 100)
 
         if (cell && newAmount === cell.amount) {
             return
@@ -159,6 +161,9 @@ const TableCell = ({isHidden, rowIndex, cellKey, cellMonth, sheetUpdating}) => {
     }
 
     const isCellUpdating = () => {
+        if (cell && !cell.isEditable)
+            return false
+
         if (isUpdating)
             return true
 
@@ -192,29 +197,17 @@ const TableCell = ({isHidden, rowIndex, cellKey, cellMonth, sheetUpdating}) => {
                     <Fragment>
                         {editCellId === cellId ? (
                             <input
-                                id={cellId}
+                                id={cellId + "_input"}
                                 className="cell-input"
                                 type="text"
-                                value={editValue}
+                                value={value}
                                 onChange={e => setContentState(e.target.value)}
                                 onKeyPress={handleKeyPress}
                                 onKeyDown={handleKeyDown}
                                 onBlur={handleBlur}
                             />
                         ) : (
-                            <Fragment>
-                                {cell ? (
-                                    <Fragment>
-                                        {cell.amount || cell.amount === 0 ? (
-                                            <Fragment>{formatValue(cell.amount)}</Fragment>
-                                        ) : (
-                                            <Fragment>{cell.value}</Fragment>
-                                        )}
-                                    </Fragment>
-                                ) : (
-                                    <Fragment>{editValue}</Fragment>
-                                )}
-                            </Fragment>
+                            <Fragment>{formatValue(getValue())}</Fragment>
                         )}
                     </Fragment>
                 )}

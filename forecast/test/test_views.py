@@ -193,9 +193,7 @@ class AddForecastRowTest(TestCase, RequestFactoryBase):
         assign_perm("change_costcentre", self.test_user, self.cost_centre)
         assign_perm("view_costcentre", self.test_user, self.cost_centre)
 
-        monthly_figures = ForecastMonthlyFigure.objects.all()
-
-        assert monthly_figures.count() == 0
+        assert FinancialCode.objects.count() == 0
 
         add_resp = self.add_row_get_response(
             reverse(
@@ -224,7 +222,42 @@ class AddForecastRowTest(TestCase, RequestFactoryBase):
 
         self.assertEqual(add_row_resp.status_code, 302)
 
-        assert monthly_figures.count() == 12
+        assert FinancialCode.objects.count() == 1
+
+    def test_view_add_row_with_period_actual(self):
+        assign_perm("change_costcentre", self.test_user, self.cost_centre)
+        assign_perm("view_costcentre", self.test_user, self.cost_centre)
+
+        # financial period with actual
+        financial_period = FinancialPeriod.objects.get(
+            financial_period_code=1,
+        )
+        financial_period.actual_loaded = True
+        financial_period.save()
+
+        assert ForecastMonthlyFigure.objects.count() == 0
+
+        # add_forecast_row
+        add_row_resp = self.add_row_post_response(
+            reverse(
+                "add_forecast_row",
+                kwargs={
+                    'cost_centre_code': self.cost_centre_code
+                },
+            ),
+            {
+                "programme": self.programme.programme_code,
+                "natural_account_code": self.nac.natural_account_code,
+            }
+        )
+
+        self.assertEqual(add_row_resp.status_code, 302)
+
+        assert ForecastMonthlyFigure.objects.count() == 1
+
+        monthly_figure = ForecastMonthlyFigure.objects.first()
+
+        assert monthly_figure.financial_period.financial_period_code == financial_period.financial_period_code  # noqa
 
     def test_duplicate_values_invalid(self):
         assign_perm("change_costcentre", self.test_user, self.cost_centre)
@@ -248,7 +281,7 @@ class AddForecastRowTest(TestCase, RequestFactoryBase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(ForecastMonthlyFigure.objects.count(), 12)
+        self.assertEqual(FinancialCode.objects.count(), 1)
 
         response_2 = self.add_row_post_response(
             reverse(
@@ -271,7 +304,7 @@ class AddForecastRowTest(TestCase, RequestFactoryBase):
         assert "govuk-list govuk-error-summary__list" in str(
             response_2.rendered_content,
         )
-        self.assertEqual(ForecastMonthlyFigure.objects.count(), 12)
+        self.assertEqual(FinancialCode.objects.count(), 1)
 
 
 class ChooseCostCentreTest(TestCase, RequestFactoryBase):
