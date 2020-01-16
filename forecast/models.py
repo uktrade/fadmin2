@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import (
     Max,
     Q,
+    Sum,
     UniqueConstraint,
 )
 
@@ -528,6 +529,12 @@ class PivotManager(models.Manager):
         return pivot_data
 
 
+class YearTotalManager(models.Manager):
+    def get_queryset(self):
+        year_total = self.model.objects.values('financial_code').annotate(
+            yearly_amount=Sum('amount'))
+        return year_total
+
 class MonthlyFigureAbstract(SimpleTimeStampedModel):
     """It contains the forecast and the actuals.
     The current month defines what is Actual and what is Forecast"""
@@ -599,10 +606,40 @@ class BudgetMonthlyFigure(MonthlyFigureAbstract):
     for the financial year."""
     history = HistoricalRecords()
     starting_amount = models.BigIntegerField(default=0)
-
+    year_budget = YearTotalManager()
+# tot = BudgetMonthlyFigure.year_budget.all()
 
 class BudgetUploadMonthlyFigure(MonthlyFigureAbstract):
     pass
+
+class ForecastBudgetDataView(models.Model):
+    """Used for joining budgets and forecast.
+    Mapped to a view in the database, because
+    the query is too complex"""
+
+    # The view is created by  a migration
+    financial_code = models.ForeignKey(
+        FinancialCode,
+        on_delete=models.PROTECT,
+    )
+    financial_year = models.IntegerField()
+    Budget = models.BigIntegerField(default=0)
+    Apr = models.BigIntegerField(default=0)
+    May = models.BigIntegerField(default=0)
+    Jun = models.BigIntegerField(default=0)
+    Jul = models.BigIntegerField(default=0)
+    Aug = models.BigIntegerField(default=0)
+    Sep = models.BigIntegerField(default=0)
+    Oct = models.BigIntegerField(default=0)
+    Nov = models.BigIntegerField(default=0)
+    Dec = models.BigIntegerField(default=0)
+    Jan = models.BigIntegerField(default=0)
+    Feb = models.BigIntegerField(default=0)
+    Mar = models.BigIntegerField(default=0)
+
+    class Meta:
+        managed = False
+        db_table = "forecast_forecast_budget_view"
 
 
 class OSCARReturn(models.Model):
@@ -642,6 +679,89 @@ class OSCARReturn(models.Model):
         managed = False
         db_table = "forecast_oscarreturn"
         ordering = ["sub_segment_code"]
+
+
+
+
+"""
+DROP VIEW
+forecast_forecast_budget_view ;
+
+CREATE VIEW
+forecast_forecast_budget_view 
+as
+SELECT forecast_forecastmonthlyfigure.financial_code_id, "forecast_forecastmonthlyfigure"."financial_year_id" as financial_year,
+SUM("forecast_budgetmonthlyfigure"."amount") AS "Budget",
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Apr' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Apr", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Aug' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Aug", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Dec' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Dec", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Feb' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Feb", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jan' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Jan", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jul' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Jul", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jun' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Jun", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Mar' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Mar", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'May' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "May", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Nov' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Nov", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Oct' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Oct", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Sep' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Sep" 
+FROM "forecast_forecastmonthlyfigure"
+    INNER JOIN "forecast_financialperiod" ON ("forecast_forecastmonthlyfigure"."financial_period_id" = "forecast_financialperiod"."financial_period_code")
+	LEFT OUTER  JOIN forecast_budgetmonthlyfigure ON 
+	forecast_forecastmonthlyfigure.financial_code_id = "forecast_budgetmonthlyfigure"."financial_code_id"
+	AND forecast_forecastmonthlyfigure.financial_year_id = "forecast_budgetmonthlyfigure"."financial_year_id"
+WHERE "forecast_forecastmonthlyfigure"."financial_year_id" = 2019 
+GROUP BY forecast_forecastmonthlyfigure.financial_code_id, "forecast_forecastmonthlyfigure"."financial_year_id"
+
+
+"""
+
+
+
+
+
+
+"""SELECT financial_code_id,        
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Apr' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Apr", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Aug' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Aug", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Dec' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Dec", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Feb' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Feb", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jan' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Jan", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jul' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Jul", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jun' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Jun", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Mar' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Mar", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'May' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "May", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Nov' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Nov", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Oct' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Oct", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Sep' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Sep" 
+FROM "forecast_forecastmonthlyfigure"
+    INNER JOIN "forecast_financialperiod" ON ("forecast_forecastmonthlyfigure"."financial_period_id" = "forecast_financialperiod"."financial_period_code")
+WHERE "forecast_forecastmonthlyfigure"."financial_year_id" = 2019 
+GROUP BY financial_code_id
+"""
+
+
+"""
+SELECT forecast_forecastmonthlyfigure.financial_code_id, 
+SUM("forecast_budgetmonthlyfigure"."amount") AS "budget",
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Apr' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Apr", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Aug' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Aug", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Dec' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Dec", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Feb' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Feb", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jan' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Jan", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jul' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Jul", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Jun' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Jun", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Mar' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Mar", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'May' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "May", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Nov' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Nov", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Oct' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Oct", 
+       SUM(CASE WHEN "forecast_financialperiod"."period_short_name" = 'Sep' THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END) AS "Sep" 
+FROM "forecast_forecastmonthlyfigure"
+    INNER JOIN "forecast_financialperiod" ON ("forecast_forecastmonthlyfigure"."financial_period_id" = "forecast_financialperiod"."financial_period_code")
+	LEFT OUTER  JOIN forecast_budgetmonthlyfigure ON forecast_forecastmonthlyfigure.financial_code_id = "forecast_budgetmonthlyfigure"."financial_code_id"
+WHERE "forecast_forecastmonthlyfigure"."financial_year_id" = 2019 
+GROUP BY forecast_forecastmonthlyfigure.financial_code_id
+
+"""
 
 
 """
