@@ -2,44 +2,15 @@ import React, {Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TableCell from '../../Components/TableCell/index'
 import InfoCell from '../../Components/InfoCell/index'
+import CellValue from '../../Components/CellValue/index'
+import AggregateValue from '../../Components/AggregateValue/index'
 import TableHeader from '../../Components/TableHeader/index'
 import { SET_SELECTED_ROW, SELECT_ALL } from '../../Reducers/Selected'
 
 
 function Table({rowData, sheetUpdating}) {
     const dispatch = useDispatch();
-
-    const nac = useSelector(state => state.showHideCols.nac);
-    const programme = useSelector(state => state.showHideCols.programme);
-    const analysis1 = useSelector(state => state.showHideCols.analysis1);
-    const analysis2 = useSelector(state => state.showHideCols.analysis2);
-    const projectCode = useSelector(state => state.showHideCols.projectCode);
-
     const rows = useSelector(state => state.allCells.cells);
-
-    const isHidden = (key) => {
-        if (!nac && key === "natural_account_code") {
-            return true
-        }
-
-        if (!programme && key === "programme") {
-            return true
-        }
-
-        if (!analysis1 && key === "analysis1_code") {
-            return true
-        }
-
-        if (!analysis2 && key === "analysis2_code") {
-            return true
-        }
-
-        if (!projectCode && key === "project_code") {
-            return true
-        }
-
-        return false
-    }
 
     return (
         <Fragment>
@@ -58,11 +29,11 @@ function Table({rowData, sheetUpdating}) {
                                 }
                             }>select all</button>
                         </td>
-                        <TableHeader isHidden={isHidden} id="natural_account_code_header" headerType="natural_account_code">NAC</TableHeader>
-                        <TableHeader isHidden={isHidden} headerType="programme">Programme</TableHeader>
-                        <TableHeader isHidden={isHidden} headerType="analysis1_code">Analysis Code Sector</TableHeader>
-                        <TableHeader isHidden={isHidden} headerType="analysis2_code">Analysis Code Market</TableHeader>
-                        <TableHeader isHidden={isHidden} headerType="project_code">Project Code</TableHeader>
+                        <TableHeader id="natural_account_code_header" headerType="natural_account_code">NAC</TableHeader>
+                        <TableHeader headerType="programme">Programme</TableHeader>
+                        <TableHeader headerType="analysis1_code">Analysis Code Sector</TableHeader>
+                        <TableHeader headerType="analysis2_code">Analysis Code Market</TableHeader>
+                        <TableHeader headerType="project_code">Project Code</TableHeader>
                         <th className="govuk-table__header">Apr</th>
                         <th className="govuk-table__header">May</th>
                         <th className="govuk-table__header">Jun</th>
@@ -75,6 +46,8 @@ function Table({rowData, sheetUpdating}) {
                         <th className="govuk-table__header">Jan</th>
                         <th className="govuk-table__header">Feb</th>
                         <th className="govuk-table__header">Mar</th>
+                        <th className="govuk-table__header">Year to date</th>
+                        <th className="govuk-table__header">Year total</th>
                     </tr>
                 </thead>
                 <tbody className="govuk-table__body">
@@ -93,11 +66,21 @@ function Table({rowData, sheetUpdating}) {
                                     }
                                 }>select</button>
                             </td>
-                            <InfoCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"natural_account_code"} />
-                            <InfoCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"programme"} />
-                            <InfoCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"analysis1_code"} />
-                            <InfoCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"analysis2_code"} />
-                            <InfoCell rowIndex={rowIndex} isHidden={isHidden} cellKey={"project_code"} />
+                            <InfoCell cellKey={"natural_account_code"} rowIndex={rowIndex}>
+                                <CellValue rowIndex={rowIndex} cellKey={"natural_account_code"} />
+                            </InfoCell>
+                            <InfoCell cellKey={"programme"} rowIndex={rowIndex}>
+                                <CellValue rowIndex={rowIndex} cellKey={"programme"} />
+                            </InfoCell>
+                            <InfoCell cellKey={"analysis1_code"} rowIndex={rowIndex}>
+                                <CellValue rowIndex={rowIndex} cellKey={"analysis1_code"} />
+                            </InfoCell>
+                            <InfoCell cellKey={"analysis2_code"} rowIndex={rowIndex}>
+                                <CellValue rowIndex={rowIndex} cellKey={"analysis2_code"} />
+                            </InfoCell>
+                            <InfoCell cellKey={"project_code"} rowIndex={rowIndex}>
+                                <CellValue rowIndex={rowIndex} cellKey={"project_code"} />
+                            </InfoCell>
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={1} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={2} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={3} />
@@ -110,6 +93,12 @@ function Table({rowData, sheetUpdating}) {
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={10} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={11} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={12} />
+                            <InfoCell rowIndex={rowIndex}>
+                                <AggregateValue rowIndex={rowIndex} actualsOnly={true}  />
+                            </InfoCell>
+                            <InfoCell rowIndex={rowIndex}>
+                                <AggregateValue rowIndex={rowIndex} actualsOnly={false}  />
+                            </InfoCell>
                         </tr>
                     })}
                 </tbody>

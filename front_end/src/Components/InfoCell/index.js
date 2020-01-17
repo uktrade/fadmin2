@@ -1,10 +1,16 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-const InfoCell = ({isHidden, rowIndex, cellKey, cellMonth}) => {
-    const cell = useSelector(state => state.allCells.cells[rowIndex][cellKey]);
-    const selectedRow = useSelector(state => state.selected.selectedRow);
-    const allSelected = useSelector(state => state.selected.all);
+const InfoCell = ({rowIndex, cellKey, children}) => {
+    const selectedRow = useSelector(state => state.selected.selectedRow)
+    const allSelected = useSelector(state => state.selected.all)
+    const hiddenCols = useSelector(state => state.hiddenCols.hiddenCols)
+
+    let isHidden = false
+
+    if (cellKey) {
+        isHidden = hiddenCols.indexOf(cellKey) > -1
+    }
 
     const isSelected = () => {
         if (allSelected) {
@@ -15,18 +21,18 @@ const InfoCell = ({isHidden, rowIndex, cellKey, cellMonth}) => {
     }
 
     const getClasses = () => {
-        let hiddenResult = ''
+        let hidden = ''
 
         if (isHidden) {
-            hiddenResult = isHidden(cellKey) ? ' hidden' : ''
+            hidden = ' hidden'
         }
 
-        return "govuk-table__cell forecast-month-cell not-editable " + (isSelected() ? 'selected' : '') + hiddenResult 
+        return "govuk-table__cell forecast-month-cell not-editable " + (isSelected() ? 'selected' : '') + hidden 
     }
 
     return (
         <td className={getClasses()}>
-            {cell.value}
+            {children}
         </td>
     );
 }

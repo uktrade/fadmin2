@@ -9,7 +9,7 @@ import {
 import { SET_ERROR } from '../../Reducers/Error'
 import { SET_CELLS } from '../../Reducers/Cells'
 
-const TableCell = ({isHidden, rowIndex, cellKey, cellMonth, sheetUpdating}) => {
+const TableCell = ({rowIndex, cellKey, cellMonth, sheetUpdating}) => {
     const dispatch = useDispatch();
 
     const cells = useSelector(state => state.allCells.cells);
@@ -56,23 +56,18 @@ const TableCell = ({isHidden, rowIndex, cellKey, cellMonth, sheetUpdating}) => {
         if (!cell)
             return "govuk-table__cell forecast-month-cell " + (isSelected() ? 'selected' : '')
 
-        let hiddenResult = ''
         let editable = ''
         let negative = ''
 
-        if (isHidden) {
-            hiddenResult = isHidden(cellKey) ? ' hidden' : ''
-        }
-
         if (!cell.isEditable) {
-            editable = ' not-editable';
+            editable = ' not-editable'
         }
 
         if (cell.amount < 0) {
             negative = " negative"
         }
 
-        return "govuk-table__cell forecast-month-cell " + (wasEdited() ? 'edited ' : '') + (isSelected() ? 'selected' : '') + hiddenResult + editable + negative
+        return "govuk-table__cell forecast-month-cell " + (wasEdited() ? 'edited ' : '') + (isSelected() ? 'selected' : '')  + editable + negative
     }
 
     const setContentState = (value) => {
