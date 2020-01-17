@@ -286,6 +286,35 @@ class FinancialCode(models.Model):
 
         super(FinancialCode, self).save(*args, **kwargs)
 
+class ForecastBudgetDataView(models.Model):
+    """Used for joining budgets and forecast.
+    Mapped to a view in the database, because
+    the query is too complex"""
+    id = models.IntegerField(primary_key=True, )
+
+    # The view is created by  a migration
+    financial_code = models.ForeignKey(
+        FinancialCode,
+        on_delete=models.PROTECT,
+    )
+    financial_year = models.IntegerField()
+    budget = models.BigIntegerField(default=0)
+    apr = models.BigIntegerField(default=0)
+    may = models.BigIntegerField(default=0)
+    jun = models.BigIntegerField(default=0)
+    jul = models.BigIntegerField(default=0)
+    aug = models.BigIntegerField(default=0)
+    sep = models.BigIntegerField(default=0)
+    oct = models.BigIntegerField(default=0)
+    nov = models.BigIntegerField(default=0)
+    dec = models.BigIntegerField(default=0)
+    jan = models.BigIntegerField(default=0)
+    feb = models.BigIntegerField(default=0)
+    mar = models.BigIntegerField(default=0)
+
+    class Meta:
+        managed = False
+        db_table = "forecast_forecast_budget_view"
 
 class SubTotalForecast:
     result_table = []
@@ -392,12 +421,14 @@ class SubTotalForecast:
         self.full_list = list(
             FinancialPeriod.objects.values_list("period_short_name", flat=True)
         )
+
         # remove missing periods (like Adj1,
         # etc from the list used to add the
         # periods together.
         self.period_list = [
             value for value in self.full_list if value in self.display_data[0].keys()
         ]
+        self.period_list.append('Budget')
         self.remove_empty_rows()
         first_row = self.display_data.pop(0)
         self.output_row_to_table(first_row, "")
@@ -513,21 +544,48 @@ class PivotManager(models.Manager):
             year = get_current_financial_year()
         if columns == {}:
             columns = self.default_columns
-
-        q1 = (
-            self.get_queryset()
+        values = list(columns)
+        annotations = {'Budget': Sum('budget'),
+                       'Apr': Sum('apr'),
+                       'May': Sum('may'),
+                       'Jun': Sum('jun'),
+                       'Jul': Sum('jul'),
+                       'Aug': Sum('aug'),
+                       'Sep': Sum('sep'),
+                       'Oct': Sum('oct'),
+                       'Nov': Sum('nov'),
+                       'Dec': Sum('dec'),
+                       'Jan': Sum('jan'),
+                       'Feb': Sum('feb'),
+                       'Mar': Sum('mar'),
+                       }
+        q1 = (ForecastBudgetDataView.objects.values(*columns)
                 .filter(financial_year=year, **filter_dict)
+                .annotate(**annotations)
                 .order_by(*order_list)
         )
-        pivot_data = pivot(
-            q1,
-            columns,
-            "financial_period__period_short_name",
-            "amount",
-        )
-        # print(pivot_data.query)
-        return pivot_data
+        return q1
 
+    # def old_pivot_data(self, columns={}, filter_dict={}, year=0, order_list=[]):
+    #     if year == 0:
+    #         year = get_current_financial_year()
+    #     if columns == {}:
+    #         columns = self.default_columns
+    #
+    #     q1 = (
+    #         self.get_queryset()
+    #             .filter(financial_year=year, **filter_dict)
+    #             .order_by(*order_list)
+    #     )
+    #     pivot_data = pivot(
+    #         q1,
+    #         columns,
+    #         "financial_period__period_short_name",
+    #         "amount",
+    #     )
+    #     # print(pivot_data.query)
+    #     return pivot_data
+    #
 
 class YearTotalManager(models.Manager):
     def get_queryset(self):
@@ -612,35 +670,6 @@ class BudgetMonthlyFigure(MonthlyFigureAbstract):
 class BudgetUploadMonthlyFigure(MonthlyFigureAbstract):
     pass
 
-class ForecastBudgetDataView(models.Model):
-    """Used for joining budgets and forecast.
-    Mapped to a view in the database, because
-    the query is too complex"""
-    id = models.IntegerField(primary_key=True, )
-
-    # The view is created by  a migration
-    financial_code = models.ForeignKey(
-        FinancialCode,
-        on_delete=models.PROTECT,
-    )
-    financial_year = models.IntegerField()
-    budget = models.BigIntegerField(default=0)
-    apr = models.BigIntegerField(default=0)
-    may = models.BigIntegerField(default=0)
-    jun = models.BigIntegerField(default=0)
-    jul = models.BigIntegerField(default=0)
-    aug = models.BigIntegerField(default=0)
-    sep = models.BigIntegerField(default=0)
-    oct = models.BigIntegerField(default=0)
-    nov = models.BigIntegerField(default=0)
-    dec = models.BigIntegerField(default=0)
-    jan = models.BigIntegerField(default=0)
-    feb = models.BigIntegerField(default=0)
-    mar = models.BigIntegerField(default=0)
-
-    class Meta:
-        managed = False
-        db_table = "forecast_forecast_budget_view"
 
 
 class OSCARReturn(models.Model):
