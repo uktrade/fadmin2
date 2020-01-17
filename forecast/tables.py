@@ -117,7 +117,8 @@ class ForecastTable(tables.Table):
 
     def __init__(self, column_dict={}, *args, **kwargs):
         cols = [
-            ("Budget", ForecastFigureCol(self.display_footer, "Budget", empty_values=()))
+            ("Budget",
+             ForecastFigureCol(self.display_footer, "Budget", empty_values=()))
         ]
         # TO DO Adjustments columns are still visible after they
         # have been hidden in the Admin interface. fix it...
