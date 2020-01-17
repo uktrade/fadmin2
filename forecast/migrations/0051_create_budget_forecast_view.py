@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                     CREATE VIEW
                     forecast_forecast_budget_view 
                     as
-                    SELECT SELECT row_number() OVER () as id, forecast_forecastmonthlyfigure.financial_code_id, "forecast_forecastmonthlyfigure"."financial_year_id" as financial_year,
+                    SELECT row_number() OVER () as id, forecast_forecastmonthlyfigure.financial_code_id, "forecast_forecastmonthlyfigure"."financial_year_id" as financial_year,
                     COALESCE (SUM("forecast_budgetmonthlyfigure"."amount"),0) AS "budget",
                            COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 1 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "apr", 
                            COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 2 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "may", 
