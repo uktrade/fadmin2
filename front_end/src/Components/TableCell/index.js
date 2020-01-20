@@ -4,7 +4,8 @@ import { SET_EDITING_CELL } from '../../Reducers/Edit'
 import {
     getCellId,
     postData,
-    processForecastData
+    processForecastData,
+    formatValue
 } from '../../Util'
 import { SET_ERROR } from '../../Reducers/Error'
 import { SET_CELLS } from '../../Reducers/Cells'
@@ -80,11 +81,6 @@ const TableCell = ({rowIndex, cellKey, cellMonth, sheetUpdating}) => {
         setValue(value)
     }
 
-    const formatValue = (value) => {
-        let nfObject = new Intl.NumberFormat('en-GB'); 
-        let pounds = Math.round(value)
-        return nfObject.format(pounds); 
-    }
 
     const updateValue = () => {
         let newAmount = parseInt(value * 100)

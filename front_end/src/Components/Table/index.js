@@ -5,6 +5,8 @@ import InfoCell from '../../Components/InfoCell/index'
 import CellValue from '../../Components/CellValue/index'
 import AggregateValue from '../../Components/AggregateValue/index'
 import TableHeader from '../../Components/TableHeader/index'
+import TotalRow from '../../Components/TotalRow/index'
+import TotalAggregate from '../../Components/TotalAggregate/index'
 import { SET_SELECTED_ROW, SELECT_ALL } from '../../Reducers/Selected'
 
 
@@ -34,6 +36,7 @@ function Table({rowData, sheetUpdating}) {
                         <TableHeader headerType="analysis1_code">Analysis Code Sector</TableHeader>
                         <TableHeader headerType="analysis2_code">Analysis Code Market</TableHeader>
                         <TableHeader headerType="project_code">Project Code</TableHeader>
+                        <TableHeader headerType="budget">Budget</TableHeader>
                         <th className="govuk-table__header">Apr</th>
                         <th className="govuk-table__header">May</th>
                         <th className="govuk-table__header">Jun</th>
@@ -81,6 +84,9 @@ function Table({rowData, sheetUpdating}) {
                             <InfoCell cellKey={"project_code"} rowIndex={rowIndex}>
                                 <CellValue rowIndex={rowIndex} cellKey={"project_code"} />
                             </InfoCell>
+                            <InfoCell cellKey={"budget"} rowIndex={rowIndex}>
+                                <CellValue rowIndex={rowIndex} cellKey={"budget"} />
+                            </InfoCell>
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={1} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={2} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={3} />
@@ -94,13 +100,36 @@ function Table({rowData, sheetUpdating}) {
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={11} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={12} />
                             <InfoCell rowIndex={rowIndex}>
-                                <AggregateValue rowIndex={rowIndex} actualsOnly={true}  />
+                                <AggregateValue rowIndex={rowIndex} actualsOnly={true} />
                             </InfoCell>
                             <InfoCell rowIndex={rowIndex}>
-                                <AggregateValue rowIndex={rowIndex} actualsOnly={false}  />
+                                <AggregateValue rowIndex={rowIndex} actualsOnly={false} />
                             </InfoCell>
                         </tr>
                     })}
+                    <tr>
+                        <td className="govuk-table__cell total">Totals</td>
+                        <InfoCell cellKey={"natural_account_code"} />
+                        <InfoCell cellKey={"programme"} />
+                        <InfoCell cellKey={"analysis1_code"} />
+                        <InfoCell cellKey={"analysis2_code"} />
+                        <InfoCell cellKey={"project_code"} />
+                        <InfoCell cellKey={"budget"} />
+                        <TotalRow month={1} />
+                        <TotalRow month={2} />
+                        <TotalRow month={3} />
+                        <TotalRow month={4} />
+                        <TotalRow month={5} />
+                        <TotalRow month={6} />
+                        <TotalRow month={7} />
+                        <TotalRow month={8} />
+                        <TotalRow month={9} />
+                        <TotalRow month={10} />
+                        <TotalRow month={11} />
+                        <TotalRow month={12} />
+                        <TotalAggregate actualsOnly={true} id="year-to-date" />
+                        <TotalAggregate actualsOnly={false} id="year-total" />
+                    </tr>
                 </tbody>
             </table>
         </Fragment>

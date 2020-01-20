@@ -1,5 +1,8 @@
 import React, {Fragment} from 'react'
 import { useSelector } from 'react-redux'
+import {
+    formatValue
+} from '../../Util'
 
 const AggregateValue = ({rowIndex, actualsOnly}) => {
     const cells = useSelector(state => state.allCells.cells[rowIndex]);
@@ -14,7 +17,7 @@ const AggregateValue = ({rowIndex, actualsOnly}) => {
     }
 
     return (
-    	<Fragment>{total / 100}</Fragment>
+    	<Fragment>{formatValue(total / 100)}</Fragment>
     );
 }
 

@@ -27,6 +27,7 @@ class ForecastMonthlyFigureSerializer(serializers.ModelSerializer):
 
 
 class FinancialCodeSerializer(serializers.ModelSerializer):
+    budget = serializers.SerializerMethodField('get_budget')
     monthly_figures = ForecastMonthlyFigureSerializer(
         many=True,
         read_only=True,
@@ -43,5 +44,9 @@ class FinancialCodeSerializer(serializers.ModelSerializer):
             'analysis2_code',
             'project_code',
             'monthly_figures',
+            'budget',
         ]
         read_only_fields = fields
+
+    def get_budget(self, obj):
+        return "test..."

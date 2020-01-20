@@ -31,19 +31,19 @@ def step_impl(context):
         ec.presence_of_element_located((By.ID, "id_0_6"))
     )
 
-    june_cell = context.browser.find_element_by_id("id_0_6")
+    sept_cell = context.browser.find_element_by_id("id_0_6")
     action_chains = ActionChains(context.browser)
-    action_chains.double_click(june_cell).perform()
+    action_chains.double_click(sept_cell).perform()
 
 
 @when(u'the user tabs to a cell')
 def step_impl(context):
-    may_cell = WebDriverWait(context.browser, 5000).until(
+    aug_cell = WebDriverWait(context.browser, 5000).until(
         ec.presence_of_element_located((By.ID, "id_0_5"))
     )
 
     action_chains = ActionChains(context.browser)
-    action_chains.double_click(may_cell).perform()
+    action_chains.double_click(aug_cell).perform()
 
     action_chains = ActionChains(context.browser)
     action_chains.key_down(Keys.TAB).perform()
@@ -51,13 +51,13 @@ def step_impl(context):
 
 @then(u'the cell becomes editable')
 def step_impl(context):
-    june_cell_input_value = WebDriverWait(context.browser, 5000).until(
+    sept_cell_input_value = WebDriverWait(context.browser, 5000).until(
         ec.presence_of_element_located((By.ID, "id_0_6_input"))
     ).get_attribute(
         'value'
     )
 
-    assert june_cell_input_value == "0.00"
+    assert sept_cell_input_value == "0.00"
 
 
 @given(u'the user edits a cell value')
@@ -69,22 +69,22 @@ def step_impl(context):
         ec.presence_of_element_located((By.ID, "id_0_6"))
     )
 
-    june_cell = context.browser.find_element_by_id("id_0_6")
+    sept_cell = context.browser.find_element_by_id("id_0_6")
     action_chains = ActionChains(context.browser)
-    action_chains.double_click(june_cell).perform()
+    action_chains.double_click(sept_cell).perform()
 
-    june_input = WebDriverWait(context.browser, 5000).until(
+    sept_input = WebDriverWait(context.browser, 5000).until(
         ec.presence_of_element_located((By.ID, "id_0_6_input"))
     )
 
     action_chains = ActionChains(context.browser)
-    action_chains.double_click(june_input).perform()
+    action_chains.double_click(sept_input).perform()
 
-    june_input.send_keys("1")
-    june_input.send_keys("0")
-    june_input.send_keys("0")
-    june_input.send_keys("0")
-    june_input.send_keys("0")
+    sept_input.send_keys("1")
+    sept_input.send_keys("0")
+    sept_input.send_keys("0")
+    sept_input.send_keys("0")
+    sept_input.send_keys("0")
 
 
 @when(u'the user tabs to a new cell')
@@ -95,11 +95,11 @@ def step_impl(context):
 
 @then(u'the value is changed and has the correct format')
 def step_impl(context):
-    june_cell = WebDriverWait(context.browser, 5000).until(
+    sept_cell = WebDriverWait(context.browser, 5000).until(
         ec.presence_of_element_located((By.ID, "id_0_6"))
     )
 
-    cell_value = june_cell.get_attribute(
+    cell_value = sept_cell.get_attribute(
         'innerHTML'
     )
 
