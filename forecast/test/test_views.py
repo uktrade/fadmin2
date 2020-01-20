@@ -356,7 +356,6 @@ class ChooseCostCentreTest(TestCase, RequestFactoryBase):
         assert "/forecast/edit/" in response.url
 
 
-
 def create_budget(financial_code_obj, year_obj):
     budget_apr = 1000000
     budget_may = -1234567
@@ -863,7 +862,8 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
 
         self.budget = create_budget(financial_code2_obj, year_obj)
         self.year_total = self.amount1_apr + self.amount2_apr + self.amount_may
-        self.underspend_total = self.budget - self.amount1_apr - self.amount_may - self.amount2_apr
+        self.underspend_total = \
+            self.budget - self.amount1_apr - self.amount_may - self.amount2_apr
         self.spend_to_date_total = self.amount1_apr + self.amount2_apr
 
     def check_nac_table(self, table):
@@ -1152,4 +1152,3 @@ class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
             forecast_expenditure_type=self.forecast_expenditure_type_id
         )
         self.check_response(resp)
-
