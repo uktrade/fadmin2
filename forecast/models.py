@@ -728,32 +728,58 @@ class OSCARReturn(models.Model):
 
 
 """
-DROP VIEW if exists
-forecast_forecast_budget_view ;
-
-CREATE VIEW
-forecast_forecast_budget_view 
-as
-SELECT SELECT row_number() OVER () as id, forecast_forecastmonthlyfigure.financial_code_id, "forecast_forecastmonthlyfigure"."financial_year_id" as financial_year,
-COALESCE (SUM("forecast_budgetmonthlyfigure"."amount"),0) AS "budget",
-        COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 1 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "apr", 
-        COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 2 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "may", 
-        COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 3 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "jun", 
-        COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 4 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "jul", 
-        COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 5 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "aug", 
-        COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 6 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "sep", 
-        COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 7 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "oct", 
-        COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 8 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "nov", 
-        COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 9 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "dec", 
-        COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 10 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "jan", 
-        COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 11 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "feb", 
-        COALESCE(SUM(CASE WHEN "forecast_financialperiod"."financial_period_code" = 12 THEN "forecast_forecastmonthlyfigure"."amount" ELSE NULL END), 0) AS "mar" 
-FROM "forecast_forecastmonthlyfigure"
-    INNER JOIN "forecast_financialperiod" ON ("forecast_forecastmonthlyfigure"."financial_period_id" = "forecast_financialperiod"."financial_period_code")
-	LEFT OUTER  JOIN forecast_budgetmonthlyfigure ON 
-	forecast_forecastmonthlyfigure.financial_code_id = "forecast_budgetmonthlyfigure"."financial_code_id"
-	AND forecast_forecastmonthlyfigure.financial_year_id = "forecast_budgetmonthlyfigure"."financial_year_id"
-GROUP BY forecast_forecastmonthlyfigure.financial_code_id, "forecast_forecastmonthlyfigure"."financial_year_id"
+            DROP VIEW if exists forecast_forecast_budget_view ;
+            DROP VIEW if exists yearly_budget;
+            DROP VIEW if exists annual_forecast;
+            
+            CREATE VIEW annual_forecast as
+                SELECT financial_code_id, financial_year_id,
+                       SUM(CASE WHEN financial_period_id = 1 THEN amount ELSE NULL END) AS apr,
+                       SUM(CASE WHEN financial_period_id = 2 THEN amount ELSE NULL END) AS may,
+                       SUM(CASE WHEN financial_period_id = 3 THEN amount ELSE NULL END) AS jun,
+                       SUM(CASE WHEN financial_period_id = 4 THEN amount ELSE NULL END) AS jul,
+                       SUM(CASE WHEN financial_period_id = 5 THEN amount ELSE NULL END) AS aug,
+                       SUM(CASE WHEN financial_period_id = 6 THEN amount ELSE NULL END) AS sep,
+                       SUM(CASE WHEN financial_period_id = 7 THEN amount ELSE NULL END) AS oct,
+                       SUM(CASE WHEN financial_period_id = 8 THEN amount ELSE NULL END) AS nov,
+                       SUM(CASE WHEN financial_period_id = 9 THEN amount ELSE NULL END) AS "dec",
+                       SUM(CASE WHEN financial_period_id = 10 THEN amount ELSE NULL END) AS jan,
+                       SUM(CASE WHEN financial_period_id = 11 THEN amount ELSE NULL END) AS feb,
+                       SUM(CASE WHEN financial_period_id = 12 THEN amount ELSE NULL END) AS mar,
+                       SUM(CASE WHEN financial_period_id = 13 THEN amount ELSE NULL END) AS adj1 ,
+                       SUM(CASE WHEN financial_period_id = 14 THEN amount ELSE NULL END) AS adj2 ,
+                       SUM(CASE WHEN financial_period_id = 15 THEN amount ELSE NULL END) AS adj3
+                FROM forecast_forecastmonthlyfigure
+                GROUP BY financial_code_id,  financial_year_id;
+                       
+            CREATE VIEW yearly_budget as
+                SELECT financial_code_id, financial_year_id, SUM(amount) AS budget
+                FROM forecast_budgetmonthlyfigure
+                GROUP BY financial_code_id, financial_year_id;
+                      
+            CREATE VIEW public.forecast_forecast_budget_view
+            as
+            SELECT coalesce(b.financial_code_id, f.financial_code_id) as financial_code_id,
+                    coalesce(b.financial_year_id, f.financial_year_id) as financial_year,
+                    coalesce(budget, 0) as budget,
+                    coalesce(apr, 0) as apr,
+                    coalesce(may, 0) as may,
+                    coalesce(jun, 0) as jun,
+                    coalesce(jul, 0) as jul,
+                    coalesce(aug, 0) as aug,
+                    coalesce(sep, 0) as sep,
+                    coalesce(oct, 0) as oct,
+                    coalesce(nov, 0) as nov,
+                    coalesce("dec", 0) as "dec",
+                    coalesce(jan, 0) as jan,
+                    coalesce(feb, 0) as feb,
+                    coalesce(mar, 0) as mar,
+                    coalesce(adj1, 0) as adj1,
+                    coalesce(adj2, 0) as adj2,
+                    coalesce(adj3, 0) as adj3
+            FROM annual_forecast f 
+                FULL OUTER JOIN yearly_budget b
+                    on b.financial_code_id = f.financial_code_id and b.financial_year_id = f.financial_year_id;                    
 
 
 """ # noqa
