@@ -382,10 +382,13 @@ class EditForecastView(
         return "wide-table"
 
     def cost_centre_details(self):
+        cost_centre = CostCentre.objects.get(
+            cost_centre_code=self.cost_centre_code,
+        )
         return {
-            "group": "Test group",
-            "directorate": "Test directorate",
-            "cost_centre_name": "Test cost centre name",
+            "group": cost_centre.directorate.group.group_name,
+            "directorate":  cost_centre.directorate.directorate_name,
+            "cost_centre_name": cost_centre.cost_centre_name,
             "cost_centre_code": self.cost_centre_code,
         }
 

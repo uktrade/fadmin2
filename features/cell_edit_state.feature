@@ -19,3 +19,8 @@ Feature: Edit cell value
     Given the user edits a cell value
      When the user shift tabs to the previous cell
      Then the previous cell is in edit mode
+
+  Scenario: Year to date, year total and underspend overspend
+    Given the user edits a cell value
+     When the user tabs to a new cell
+     Then the year to date, year total and underspend/overspend cols are updated

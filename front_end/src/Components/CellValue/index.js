@@ -1,12 +1,24 @@
 import React, {Fragment} from 'react'
 import { useSelector } from 'react-redux'
 
-const CellValue = ({rowIndex, cellKey}) => {
+import {
+    formatValue
+} from '../../Util'
+
+const CellValue = ({rowIndex, cellKey, format}) => {
     const cell = useSelector(state => state.allCells.cells[rowIndex][cellKey]);
+
+    const getValue = (value) => {
+    	if (format) {
+    		return formatValue(parseInt(value)/100)
+    	}
+
+    	return value
+    }
 
     return (
     	<Fragment>
-    		{cell.value}
+    		{getValue(cell.value)}
     	</Fragment>
     );
 }

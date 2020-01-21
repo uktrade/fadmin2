@@ -8,6 +8,7 @@ const TotalAggregate = ({rowIndex, actualsOnly, id}) => {
     const cells = useSelector(state => state.allCells.cells);
 
     let total = 0
+    let negative = ''
 
     // eslint-disable-next-line
     for (const cell of cells) {
@@ -19,8 +20,12 @@ const TotalAggregate = ({rowIndex, actualsOnly, id}) => {
         }
     }
 
+    if (total < 0) {
+        negative='negative'
+    }
+
     return (
-        <td id={id} className="govuk-table__cell forecast-month-cell not-editable">{formatValue(total / 100)}</td>
+        <td id={id} className={"govuk-table__cell forecast-month-cell not-editable " + negative}>{formatValue(total / 100)}</td>
     );
 }
 

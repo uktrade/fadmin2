@@ -7,6 +7,10 @@ import AggregateValue from '../../Components/AggregateValue/index'
 import TableHeader from '../../Components/TableHeader/index'
 import TotalRow from '../../Components/TotalRow/index'
 import TotalAggregate from '../../Components/TotalAggregate/index'
+import TotalBudget from '../../Components/TotalBudget/index'
+import OverspendUnderspend from '../../Components/OverspendUnderspend/index'
+import TotalOverspendUnderspend from '../../Components/TotalOverspendUnderspend/index'
+
 import { SET_SELECTED_ROW, SELECT_ALL } from '../../Reducers/Selected'
 
 
@@ -51,6 +55,7 @@ function Table({rowData, sheetUpdating}) {
                         <th className="govuk-table__header">Mar</th>
                         <th className="govuk-table__header">Year to date</th>
                         <th className="govuk-table__header">Year total</th>
+                        <th className="govuk-table__header">Underspend (Overspend)</th>
                     </tr>
                 </thead>
                 <tbody className="govuk-table__body">
@@ -85,7 +90,7 @@ function Table({rowData, sheetUpdating}) {
                                 <CellValue rowIndex={rowIndex} cellKey={"project_code"} />
                             </InfoCell>
                             <InfoCell cellKey={"budget"} rowIndex={rowIndex}>
-                                <CellValue rowIndex={rowIndex} cellKey={"budget"} />
+                                <CellValue rowIndex={rowIndex} cellKey={"budget"} format={true} />
                             </InfoCell>
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={1} />
                             <TableCell sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={2} />
@@ -105,16 +110,19 @@ function Table({rowData, sheetUpdating}) {
                             <InfoCell rowIndex={rowIndex}>
                                 <AggregateValue rowIndex={rowIndex} actualsOnly={false} />
                             </InfoCell>
+                            <InfoCell rowIndex={rowIndex}>
+                                <OverspendUnderspend rowIndex={rowIndex} />
+                            </InfoCell>
                         </tr>
                     })}
                     <tr>
                         <td className="govuk-table__cell total">Totals</td>
-                        <InfoCell cellKey={"natural_account_code"} />
-                        <InfoCell cellKey={"programme"} />
-                        <InfoCell cellKey={"analysis1_code"} />
-                        <InfoCell cellKey={"analysis2_code"} />
-                        <InfoCell cellKey={"project_code"} />
-                        <InfoCell cellKey={"budget"} />
+                        <InfoCell cellKey={"natural_account_code"} ignoreSelection={true} />
+                        <InfoCell cellKey={"programme"} ignoreSelection={true} />
+                        <InfoCell cellKey={"analysis1_code"} ignoreSelection={true} />
+                        <InfoCell cellKey={"analysis2_code"} ignoreSelection={true} />
+                        <InfoCell cellKey={"project_code"} ignoreSelection={true} />
+                        <TotalBudget id="total-budget" cellKey={"budget"} />
                         <TotalRow month={1} />
                         <TotalRow month={2} />
                         <TotalRow month={3} />
@@ -129,6 +137,7 @@ function Table({rowData, sheetUpdating}) {
                         <TotalRow month={12} />
                         <TotalAggregate actualsOnly={true} id="year-to-date" />
                         <TotalAggregate actualsOnly={false} id="year-total" />
+                        <TotalOverspendUnderspend id="overspend-underspend-total" />
                     </tr>
                 </tbody>
             </table>

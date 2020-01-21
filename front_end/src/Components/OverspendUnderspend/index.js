@@ -4,18 +4,22 @@ import {
     formatValue
 } from '../../Util'
 
-const AggregateValue = ({rowIndex, actualsOnly}) => {
-    const cells = useSelector(state => state.allCells.cells[rowIndex]);
+const OverspendUnderspend = ({rowIndex}) => {
+    const row = useSelector(state => state.allCells.cells[rowIndex]);
+    let budget = row["budget"].value
+
     let className = ''
 
     let total = 0
 
     for (let i = 1; i < 13; i++) {
-        if (!cells[i] || (actualsOnly && cells[i].isEditable))
+        if (!row[i])
             continue
 
-        total += cells[i].amount
+        total += row[i].amount
     }
+
+    total =  budget - total
 
     if (total < 0) {
         className='negative'
@@ -26,4 +30,4 @@ const AggregateValue = ({rowIndex, actualsOnly}) => {
     );
 }
 
-export default AggregateValue
+export default OverspendUnderspend

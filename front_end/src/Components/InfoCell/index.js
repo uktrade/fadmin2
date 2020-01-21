@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-const InfoCell = ({rowIndex, cellKey, children}) => {
+const InfoCell = ({rowIndex, cellKey, children, ignoreSelection}) => {
     const selectedRow = useSelector(state => state.selected.selectedRow)
     const allSelected = useSelector(state => state.selected.all)
     const hiddenCols = useSelector(state => state.hiddenCols.hiddenCols)
@@ -13,6 +13,9 @@ const InfoCell = ({rowIndex, cellKey, children}) => {
     }
 
     const isSelected = () => {
+        if (ignoreSelection)
+            return false
+
         if (allSelected) {
             return true
         }

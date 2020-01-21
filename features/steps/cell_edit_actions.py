@@ -117,3 +117,10 @@ def step_impl(context):
     WebDriverWait(context.browser, 5000).until(
         ec.presence_of_element_located((By.ID, "id_0_5_input"))
     )
+
+
+@then(u'the year to date, year total and underspend/overspend cols are updated')
+def step_impl(context):
+    WebDriverWait(context.browser, 5000).until(
+        ec.presence_of_element_located((By.ID, "id_0_5_input"))
+    )
