@@ -11,10 +11,13 @@ const TotalRow = ({month}) => {
     let isEditable = false
 
     // eslint-disable-next-line
-	for (const cell of cells) {
-		total += cell[month].amount
+    for (const cell of cells) {
+        if (!cell[month])
+            continue
+
+        total += cell[month].amount
         isEditable = cell[month].isEditable
-	}
+    }
 
     const getClasses = () => {
         return "govuk-table__cell forecast-month-cell " + (isEditable ? '' : 'not-editable ') + (total < 0 ? 'negative' : '')

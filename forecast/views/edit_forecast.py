@@ -307,6 +307,7 @@ def update_forecast_figure(request, cost_centre_code):
         financial_year = FinancialYear.objects.filter(current=True).first()
 
         financial_code = FinancialCode.objects.filter(
+            cost_centre=cost_centre,
             natural_account_code=form.cleaned_data['natural_account_code'],
             programme__programme_code=form.cleaned_data['programme_code'],
             analysis1_code__analysis1_code=form.cleaned_data.get(

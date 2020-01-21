@@ -195,6 +195,7 @@ const TableCell = ({rowIndex, cellKey, cellMonth, sheetUpdating}) => {
                     <Fragment>
                         {editCellId === cellId ? (
                             <input
+                                ref={input => input && input.focus() }
                                 id={cellId + "_input"}
                                 className="cell-input"
                                 type="text"

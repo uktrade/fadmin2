@@ -12,7 +12,7 @@ const TotalAggregate = ({rowIndex, actualsOnly, id}) => {
     // eslint-disable-next-line
     for (const cell of cells) {
         for (let i = 1; i < 13; i++) {
-            if (actualsOnly && cell[i].isEditable)
+            if (!cell[i] || (actualsOnly && cell[i].isEditable))
                 continue
 
             total += cell[i].amount

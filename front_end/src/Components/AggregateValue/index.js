@@ -10,14 +10,14 @@ const AggregateValue = ({rowIndex, actualsOnly}) => {
     let total = 0
 
     for (let i = 1; i < 13; i++) {
-    	if (actualsOnly && cells[i].isEditable)
-    		continue
+        if (!cells[i] || (actualsOnly && cells[i].isEditable))
+            continue
 
-    	total += cells[i].amount
+        total += cells[i].amount
     }
 
     return (
-    	<Fragment>{formatValue(total / 100)}</Fragment>
+        <Fragment>{formatValue(total / 100)}</Fragment>
     );
 }
 
