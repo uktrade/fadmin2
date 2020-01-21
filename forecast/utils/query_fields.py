@@ -234,3 +234,22 @@ DEFAULT_PIVOT_COLUMNS = {
     PROJECT_CODE: "Project Code",
     PROJECT_NAME: "Project Description",
 }
+
+DOWNLOAD_COLUMNS = {
+    GROUP_NAME: "Group name",
+    GROUP_CODE: "Group code",
+    DIRECTORATE_NAME : "directorate_name" ,
+    DIRECTORATE_CODE : "directorate_code" ,
+    COST_CENTRE_NAME: "Cost Centre Description",
+    COST_CENTRE_CODE: "Cost Centre Code",
+    NAC_CODE: "Natural Account Code",
+    NAC_NAME: "Natural Account Code Description",
+    PROGRAMME_CODE: "Programme Code",
+    PROGRAMME_NAME: "Programme Description",
+    ANALYSIS1_CODE: "Contract Code",
+    ANALYSIS1_NAME: "Contract Description",
+    ANALYSIS2_CODE: "Market Code",
+    ANALYSIS2_NAME: "Market Description",
+    PROJECT_CODE: "Project Code",
+    PROJECT_NAME: "Project Description",
+}

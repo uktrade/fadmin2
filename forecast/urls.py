@@ -23,11 +23,19 @@ from forecast.views.view_forecast.forecast_summary import (
     DirectorateView,
     GroupView,
 )
+from forecast.views.view_forecast.export_forecast_data import  (
+    export_forecast_data_dit,
+    export_forecast_data_cost_centre,
+    export_forecast_data_directorate,
+    export_forecast_data_group,
+)
+
 from forecast.views.view_forecast.programme_details import (
     DITProgrammeDetailsView,
     DirectorateProgrammeDetailsView,
     GroupProgrammeDetailsView,
 )
+
 
 urlpatterns = [
     path(
@@ -126,4 +134,25 @@ urlpatterns = [
         update_forecast_figure,
         name="update_forecast_figure"
     ),
+    path(
+        "export-forecast-data/dit/",
+        export_forecast_data_dit,
+        name="export_forecast_data_dit"
+    ),
+    path(
+        "export-forecast-data/group/<group_code>",
+        export_forecast_data_group,
+        name="export_forecast_data_group"
+    ),
+    path(
+        "export-forecast-data/directorate/<directorate_code>",
+        export_forecast_data_directorate,
+        name="export_forecast_data_directorate"
+    ),
+    path(
+        "export-forecast-data/cost-centre/<cost_centre>",
+        export_forecast_data_cost_centre,
+        name="export_forecast_data_cost_centre"
+    ),
+
 ]
