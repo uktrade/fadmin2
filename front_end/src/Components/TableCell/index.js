@@ -49,8 +49,10 @@ const TableCell = ({rowIndex, cellKey, cellMonth, sheetUpdating}) => {
     }
 
     const wasEdited = () => {
-        // TODO - add function after "previous months" story
-        return false
+        if (!cell.isEditable)
+            return false
+
+        return cell.amount !== cell.startingAmount
     }
 
     const getClasses = () => {

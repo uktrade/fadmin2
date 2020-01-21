@@ -23,6 +23,7 @@ class ForecastMonthlyFigureSerializer(serializers.ModelSerializer):
             'actual',
             'month',
             'amount',
+            'starting_amount',
         ]
         read_only_fields = fields
 

@@ -117,6 +117,7 @@ export const processForecastData = (forecastData) => {
                 colIndex: colIndex,
                 key: monthlyFigure.month,
                 amount: monthlyFigure.amount,
+                startingAmount: monthlyFigure.starting_amount,
                 isEditable: !monthlyFigure.actual
             }
 

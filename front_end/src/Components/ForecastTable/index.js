@@ -21,9 +21,6 @@ function ForecastTable() {
 
     const hiddenCols = useSelector(state => state.hiddenCols.hiddenCols)
 
-
-    console.log("hiddenCols", hiddenCols)
-
     const errorMessage = useSelector(state => state.error.errorMessage)
     const selectedRow = useSelector(state => state.selected.selectedRow)
     const allSelected = useSelector(state => state.selected.all)
