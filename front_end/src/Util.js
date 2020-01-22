@@ -133,7 +133,5 @@ export const processForecastData = (forecastData) => {
         rows.push(cells)
     });
 
-    console.log(rows)
-
     return rows;
 }
