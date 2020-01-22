@@ -4,7 +4,7 @@ import {
     formatValue
 } from '../../Util'
 
-const TotalRow = ({month}) => {
+const TotalCol = ({month}) => {
     const cells = useSelector(state => state.allCells.cells);
 
     let total = 0
@@ -26,11 +26,11 @@ const TotalRow = ({month}) => {
     return (
         <td
             className={getClasses()}
-            id={"total_" + month}
+            id={"col_total_" + month}
         >
             {formatValue(total / 100)}
         </td>
     );
 }
 
-export default TotalRow
+export default TotalCol

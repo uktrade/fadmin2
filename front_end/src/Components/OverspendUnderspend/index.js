@@ -26,7 +26,7 @@ const OverspendUnderspend = ({rowIndex}) => {
     }
 
     return (
-        <Fragment><span className={className}>{formatValue(total / 100)}</span></Fragment>
+        <Fragment><span id={"ou_spend_" + rowIndex} className={className}>{formatValue(total / 100)}</span></Fragment>
     );
 }
 

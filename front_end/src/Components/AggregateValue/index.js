@@ -22,7 +22,7 @@ const AggregateValue = ({rowIndex, actualsOnly}) => {
     }
 
     return (
-        <Fragment><span className={className}>{formatValue(total / 100)}</span></Fragment>
+        <Fragment><span id={(actualsOnly ? 'to_date_total_' : 'year_total_') + rowIndex} className={className}>{formatValue(total / 100)}</span></Fragment>
     );
 }
 

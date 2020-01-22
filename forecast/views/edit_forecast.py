@@ -387,7 +387,7 @@ class EditForecastView(
         )
         return {
             "group": cost_centre.directorate.group.group_name,
-            "directorate":  cost_centre.directorate.directorate_name,
+            "directorate": cost_centre.directorate.directorate_name,
             "cost_centre_name": cost_centre.cost_centre_name,
             "cost_centre_code": self.cost_centre_code,
         }
