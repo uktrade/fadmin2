@@ -1,10 +1,5 @@
 Feature: Edit cell value
 
-  Scenario: Year to date, year total and underspend overspend are updated
-    Given the user edits a cell value
-     When the user tabs to a new cell
-     Then the year to date, year total and underspend/overspend cols are updated
-
   Scenario: Double click puts cell into editing mode
     Given the user wants to edit a cell value
      When the user double clicks an editable cell in the edit forecast table
