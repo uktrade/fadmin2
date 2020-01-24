@@ -223,5 +223,3 @@ NUM_META_COLS = 5
 CLAM_AV_USERNAME = env("CLAM_AV_USERNAME", default=None)
 CLAM_AV_PASSWORD = env("CLAM_AV_PASSWORD", default=None)
 CLAM_AV_URL = env("CLAM_AV_URL", default=None)
-
-#DJANGO_TABLES2_TEMPLATE = "django_tables_2_bootstrap.html"
