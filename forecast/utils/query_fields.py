@@ -38,6 +38,7 @@ ANALYSIS2_NAME = "financial_code__analysis2_code__analysis2_description"
 # PAY, NON-PAY, CAPITAL, NON-CASH
 BUDGET_GROUPING = "financial_code__natural_account_code__expenditure_category__NAC_category__NAC_category_description"   # noqa
 
+BUDGET_NAC_CODE = "financial_code__forecast_expenditure_type__forecast_expenditure_type_description"
 SHOW_DIT = 0
 SHOW_GROUP = 1
 SHOW_DIRECTORATE = 2
@@ -238,11 +239,17 @@ DEFAULT_PIVOT_COLUMNS = {
 DOWNLOAD_COLUMNS = {
     GROUP_NAME: "Group name",
     GROUP_CODE: "Group code",
-    DIRECTORATE_NAME : "directorate_name" ,
-    DIRECTORATE_CODE : "directorate_code" ,
+    DIRECTORATE_NAME : "Directorate Name" ,
+    DIRECTORATE_CODE : "Directorate Code" ,
     COST_CENTRE_NAME: "Cost Centre Description",
     COST_CENTRE_CODE: "Cost Centre Code",
-    NAC_CODE: "Natural Account Code",
+    BUDGET_GROUPING: "Budget Grouping",
+    FORECAST_EXPENDITURE_TYPE_NAME: "FORECAST_EXPENDITURE_TYPE_NAME",
+    FORECAST_EXPENDITURE_TYPE_DESCRIPTION: "FORECAST_EXPENDITURE_TYPE_DESCRIPTION",
+    BUDGET_TYPE: "Budget Type",
+    BUDGET_CATEGORY_NAME: "Budget Category",
+    BUDGET_NAC_CODE:"Budget/Forecast NAC",
+    NAC_CODE: "PO/Actual NAC",
     NAC_NAME: "Natural Account Code Description",
     PROGRAMME_CODE: "Programme Code",
     PROGRAMME_NAME: "Programme Description",
