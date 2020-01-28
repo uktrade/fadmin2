@@ -7,6 +7,7 @@ from openpyxl.utils import (
     get_column_letter, 
     column_index_from_string
 )
+from openpyxl.styles import Protection
 
 from core.utils import today_string
 from core.exportutils import (
@@ -80,6 +81,11 @@ def format_numbers(ws, row, start):
         ws[f'{get_column_letter(c)}{row}'].number_format = '#,##0.00'
 
 
+def unlock_forecast_cells(ws, row, start, end):
+    for c in range(start, end):
+        ws[f'{get_column_letter(c)}{row}'].protection = Protection(locked=False)
+
+
 def export_query_to_excel(queryset, columns_dict, title):
     resp = HttpResponse(content_type=EXCEL_TYPE)
     filename = f'{title}  {today_string()} .xlsx'
@@ -89,24 +95,25 @@ def export_query_to_excel(queryset, columns_dict, title):
     # Truncate the tab name to the maximum lenght permitted by Excel
     ws.title = f'{title} {today_string()}'[:EXC_TAB_NAME_LEN]
     ws.append(create_headers(columns_dict, {}))
-
+    ws.protection.sheet = True
     row_count = 1
-    first_actual = VIEW_FIRST_MONTH_COL
-    last_actual = last_actual_cell(first_actual)
+    first_actual_col = VIEW_FIRST_MONTH_COL
+    last_actual_col = last_actual_cell(first_actual_col)
+    first_forecast_index = column_index_from_string(last_actual_col) + 1
+    last_forecast_index = column_index_from_string(VIEW_LAST_MONTH_COL)
+    budget_index = column_index_from_string(VIEW_BUDGET_COL)
     for row in forecast_query_iterator(queryset, columns_dict):
         ws.append(row)
         row_count += 1
-        ws[f'{VIEW_FIRST_MONTH_COL}{row_count}'].number_format = '#,##0.00'
-        ws[f'{VIEW_BUDGET_COL}{row_count}'].number_format = '#,##0.00'
-        if last_actual:
+        if last_actual_col:
             ws[f'{VIEW_YEAR_TO_DATE_COL}{row_count}'].value = \
-                f'=SUM({first_actual}{row_count}:{last_actual}{row_count})'
+                f'=SUM({first_actual_col}{row_count}:{last_actual_col}{row_count})'
         ws[f'{VIEW_YEAR_TOTAL_COL}{row_count}'].value = \
             f'=SUM({VIEW_FIRST_MONTH_COL}{row_count}:{VIEW_LAST_MONTH_COL}{row_count})'
         ws[f'{VIEW_OVERSPEND_COL}{row_count}'].value = \
             f'=({VIEW_BUDGET_COL}{row_count}-{VIEW_YEAR_TOTAL_COL}{row_count})'
-        format_numbers (ws, row_count, column_index_from_string(VIEW_BUDGET_COL))
-
+        format_numbers (ws, row_count, budget_index)
+        unlock_forecast_cells(ws, row_count, first_forecast_index, last_forecast_index)
     wb.save(resp)
     return resp
 
@@ -152,7 +159,7 @@ def create_headers(keys_dict, columns_dict):
 
 
 def last_actual_cell(col):
-    actual_month = FinancialPeriod.financial_period_info.actual_month()
+    actual_month = FinancialPeriod.financial_period_info.actual_month() - 1
     if actual_month:
          return(get_column_letter(column_index_from_string(col) + actual_month))
     return 0
@@ -169,7 +176,6 @@ def export_edit_to_excel(queryset, key_dict, columns_dict, title):
     row_count = 1
     first_actual = EDIT_FIRST_MONTH_COL
     last_actual = last_actual_cell(first_actual)
-
     ws.append(create_headers(key_dict, columns_dict))
     for data_row in edit_forecast_query_iterator(queryset, key_dict, columns_dict):
         ws.append(data_row)
