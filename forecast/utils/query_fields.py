@@ -239,6 +239,7 @@ DEFAULT_PIVOT_COLUMNS = {
     PROJECT_NAME: "Project Description",
 }
 
+
 VIEW_FORECAST_DOWNLOAD_COLUMNS = {
     GROUP_NAME: "Group name",
     GROUP_CODE: "Group code",
@@ -262,5 +263,36 @@ VIEW_FORECAST_DOWNLOAD_COLUMNS = {
     ANALYSIS2_CODE: "Market Code",
     ANALYSIS2_NAME: "Market Description",
     PROJECT_CODE: "Project Code",
+    PROJECT_NAME: "Project Description",
+}
+
+
+EDIT_KEYS_DOWNLOAD = {
+    NAC_CODE: 'Natural Account code',
+    PROGRAMME_CODE: 'Programme code',
+    ANALYSIS1_CODE: 'Contract Code',
+    ANALYSIS2_CODE: 'Market Code',
+    PROJECT_CODE: 'Project Code',
+}
+
+
+EDIT_FORECAST_DOWNLOAD_COLUMNS = {
+    GROUP_NAME: "Group name",
+    GROUP_CODE: "Group code",
+    DIRECTORATE_NAME : "Directorate Name" ,
+    DIRECTORATE_CODE : "Directorate Code" ,
+    COST_CENTRE_NAME: "Cost Centre Description",
+    COST_CENTRE_CODE: "Cost Centre Code",
+    BUDGET_GROUPING: "Budget Grouping",
+    FORECAST_EXPENDITURE_TYPE_NAME: "Forecast Expenditure Type",
+    BUDGET_TYPE: "Budget Type",
+    BUDGET_CATEGORY_NAME: "Budget Category",
+    BUDGET_NAC_CODE:"Budget/Forecast NAC",
+    BUDGET_NAC_CODE_DESCRIPTION: "Budget/Forecast NAC Description",
+    NAC_NAME: "Natural Account Code Description",
+    NAC_EXPENDITURE_TYPE: "NAC Expenditure Type",
+    PROGRAMME_NAME: "Programme Description",
+    ANALYSIS1_NAME: "Contract Description",
+    ANALYSIS2_NAME: "Market Description",
     PROJECT_NAME: "Project Description",
 }
