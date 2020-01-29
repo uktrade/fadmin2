@@ -119,7 +119,10 @@ def export_to_excel(queryset,
     budget_index = column_index_from_string(budget_col)
     first_actual_col = get_column_letter(budget_index + 1)
     last_actual_col = last_actual_cell(first_actual_col)
-    first_forecast_index = column_index_from_string(last_actual_col) + 1
+    if last_actual_col:
+        first_forecast_index = column_index_from_string(last_actual_col) + 1
+    else:
+        first_forecast_index = budget_index + 1
     last_month_index = budget_index + 12
     last_month_col = get_column_letter(last_month_index)
     year_to_date_col = get_column_letter(last_month_index + 1)

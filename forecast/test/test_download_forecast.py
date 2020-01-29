@@ -29,6 +29,9 @@ from forecast.models import (
 )
 from forecast.test.test_utils import create_budget
 from forecast.views.view_forecast.export_forecast_data import (
+    export_forecast_data_cost_centre,
+    export_forecast_data_directorate,
+    export_forecast_data_group,
     export_forecast_data_dit,
 )
 
@@ -118,6 +121,68 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         file = io.BytesIO(response.content)
         wb = load_workbook(filename=file)
         ws = wb.active
-        # Check group is shown
-        assert ws["A1"] == "Group name"
-        assert ws["B2"] == self.group_code
+        # Check group
+        assert ws["A1"].value == "Group Name"
+        assert ws["B2"].value == self.group_code
+
+    def test_group_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_forecast_data_group",
+                kwargs={
+                    'group_code': self.group.group_code
+                },
+            ),
+            export_forecast_data_group,
+            group_code=self.group.group_code,
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        file = io.BytesIO(response.content)
+        wb = load_workbook(filename=file)
+        ws = wb.active
+        # Check group
+        assert ws["A1"].value == "Group Name"
+        assert ws["B2"].value == self.group_code
+
+    def test_directorate_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_forecast_data_directorate",
+                kwargs={
+                        'directorate_code': self.directorate.directorate_code
+                },
+            ),
+            export_forecast_data_directorate,
+            directorate_code=self.directorate.directorate_code,        )
+
+        self.assertEqual(response.status_code, 200)
+
+        file = io.BytesIO(response.content)
+        wb = load_workbook(filename=file)
+        ws = wb.active
+        # Check group
+        assert ws["A1"].value == "Group Name"
+        assert ws["B2"].value == self.group_code
+
+    def test_cost_centre_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_forecast_data_cost_centre",
+                kwargs={
+                    'cost_centre': self.cost_centre_code
+                },
+            ),
+            export_forecast_data_cost_centre,
+            cost_centre=self.cost_centre.cost_centre_code,
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        file = io.BytesIO(response.content)
+        wb = load_workbook(filename=file)
+        ws = wb.active
+        # Check group
+        assert ws["A1"].value == "Group Name"
+        assert ws["B2"].value == self.group_code
