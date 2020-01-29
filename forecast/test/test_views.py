@@ -25,7 +25,6 @@ from costcentre.test.factories import (
 )
 
 from forecast.models import (
-    BudgetMonthlyFigure,
     FinancialCode,
     FinancialPeriod,
     ForecastEditLock,
@@ -356,8 +355,6 @@ class ChooseCostCentreTest(TestCase, RequestFactoryBase):
 
         # Check we've been forwarded to edit page
         assert "/forecast/edit/" in response.url
-
-
 
 
 class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):

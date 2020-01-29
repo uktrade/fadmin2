@@ -25,6 +25,7 @@ from forecast.views.view_forecast.forecast_summary import (
     GroupView,
 )
 from forecast.views.view_forecast.export_forecast_data import  (
+    export_edit_forecast_data,
     export_forecast_data_dit,
     export_forecast_data_cost_centre,
     export_forecast_data_directorate,
@@ -158,6 +159,11 @@ urlpatterns = [
         "export-forecast-data/cost-centre/<cost_centre>",
         export_forecast_data_cost_centre,
         name="export_forecast_data_cost_centre"
+    ),
+    path(
+        "export-edit-forecast-data/<cost_centre>",
+        export_edit_forecast_data,
+        name="export_edit_forecast_data_cost_centre"
     ),
 
 ]
