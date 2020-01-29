@@ -1,58 +1,6 @@
-from bs4 import BeautifulSoup
-
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Permission
-from django.core.exceptions import PermissionDenied
-from django.test import TestCase
-from django.urls import reverse
-
-from chartofaccountDIT.test.factories import (
-    Analysis1Factory,
-    Analysis2Factory,
-    ExpenditureCategoryFactory,
-    NaturalCodeFactory,
-    ProgrammeCodeFactory,
-    ProjectCodeFactory,
-)
-
-from core.models import FinancialYear
-from core.myutils import get_current_financial_year
-from core.test.test_base import RequestFactoryBase
-
-from costcentre.test.factories import (
-    CostCentreFactory,
-    DepartmentalGroupFactory,
-    DirectorateFactory,
-)
-
 from forecast.models import (
     BudgetMonthlyFigure,
-    FinancialCode,
     FinancialPeriod,
-    ForecastMonthlyFigure,
-)
-from forecast.permission_shortcuts import assign_perm
-from forecast.views.edit_forecast import (
-    AddRowView,
-    ChooseCostCentreView,
-    EditForecastView,
-)
-from forecast.views.view_forecast.expenditure_details import (
-    CostCentreExpenditureDetailsView,
-    DITExpenditureDetailsView,
-    DirectorateExpenditureDetailsView,
-    GroupExpenditureDetailsView,
-)
-from forecast.views.view_forecast.forecast_summary import (
-    CostCentreView,
-    DITView,
-    DirectorateView,
-    GroupView,
-)
-from forecast.views.view_forecast.programme_details import (
-    DITProgrammeDetailsView,
-    DirectorateProgrammeDetailsView,
-    GroupProgrammeDetailsView,
 )
 
 
