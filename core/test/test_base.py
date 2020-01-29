@@ -33,7 +33,6 @@ class RequestFactoryBase:
         else:
             return view_obj(request, **kwargs)
 
-
     def factory_post(self, url, post_content, view_class, *args, **kwargs):
         # Bust permissions cache (refresh_from_db does not work)
         self.test_user, _ = get_user_model().objects.get_or_create(

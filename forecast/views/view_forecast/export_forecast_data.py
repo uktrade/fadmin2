@@ -1,15 +1,15 @@
 from forecast.models import ForecastBudgetDataView
 from forecast.utils.export_helpers import (
+    export_edit_to_excel,
     export_query_to_excel,
-export_edit_to_excel,
 )
 from forecast.utils.query_fields import (
     COST_CENTRE_CODE,
     DIRECTORATE_CODE,
     EDIT_FORECAST_DOWNLOAD_COLUMNS,
     EDIT_KEYS_DOWNLOAD,
-    VIEW_FORECAST_DOWNLOAD_COLUMNS,
     GROUP_CODE,
+    VIEW_FORECAST_DOWNLOAD_COLUMNS,
 )
 
 
@@ -35,7 +35,6 @@ def export_forecast_data_directorate(request, directorate_code):
 
 
 def export_forecast_data_cost_centre(request, cost_centre):
-    return export_edit_forecast_data (request, cost_centre)
     filter = {COST_CENTRE_CODE: cost_centre}
     q = ForecastBudgetDataView.view_data.raw_data(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
