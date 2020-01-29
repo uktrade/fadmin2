@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="HistoricalProgrammeCode",
+            name="HistoricProgrammeCode",
             fields=[
                 (
                     "id",
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AlterModelOptions(
-            name="historicalprojectcode",
+            name="historicprojectcode",
             options={
                 "ordering": ["financial_year", "project_code"],
                 "verbose_name": "Historic Project",

@@ -1,7 +1,9 @@
 from django.db import models
 
+from core.metamodels import LogChangeModel
 
-class AsyncImportLog(models.Model):
+
+class AsyncImportLog(LogChangeModel):
     """Used to log and follow the asyncronous import of data"""
 
     IMPORT_ADI = 1

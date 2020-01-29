@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="HistoricalAnalysis2",
+            name="HistoricAnalysis2",
             fields=[
                 (
                     "id",

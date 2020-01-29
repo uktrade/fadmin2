@@ -7,15 +7,15 @@ from chartofaccountDIT.models import (
     CommercialCategory,
     ExpenditureCategory,
     FCOMapping,
-    HistoricalAnalysis1,
-    HistoricalAnalysis2,
-    HistoricalCommercialCategory,
-    HistoricalExpenditureCategory,
-    HistoricalFCOMapping,
-    HistoricalInterEntity,
-    HistoricalNaturalCode,
-    HistoricalProgrammeCode,
-    HistoricalProjectCode,
+    HistoricAnalysis1,
+    HistoricAnalysis2,
+    HistoricCommercialCategory,
+    HistoricExpenditureCategory,
+    HistoricFCOMapping,
+    HistoricInterEntity,
+    HistoricNaturalCode,
+    HistoricProgrammeCode,
+    HistoricProjectCode,
     InterEntity,
     InterEntityL1,
     NACCategory,
@@ -43,7 +43,7 @@ class HistoricalAnalysis1Factory(factory.DjangoModelFactory):
     """
 
     class Meta:
-        model = HistoricalAnalysis1
+        model = HistoricAnalysis1
 
 
 class Analysis2Factory(factory.DjangoModelFactory):
@@ -63,7 +63,7 @@ class HistoricalAnalysis2Factory(factory.DjangoModelFactory):
     """
 
     class Meta:
-        model = HistoricalAnalysis2
+        model = HistoricAnalysis2
 
 
 class NACCategoryFactory(factory.DjangoModelFactory):
@@ -103,7 +103,7 @@ class HistoricalExpenditureCategoryFactory(factory.DjangoModelFactory):
     """
 
     class Meta:
-        model = HistoricalExpenditureCategory
+        model = HistoricExpenditureCategory
 
 
 class CommercialCategoryFactory(factory.DjangoModelFactory):
@@ -121,7 +121,7 @@ class HistoricalCommercialCategoryFactory(factory.DjangoModelFactory):
     """
 
     class Meta:
-        model = HistoricalCommercialCategory
+        model = HistoricCommercialCategory
 
 
 class NaturalCodeFactory(factory.DjangoModelFactory):
@@ -144,7 +144,7 @@ class HistoricalNaturalCodeFactory(factory.DjangoModelFactory):
     """
 
     class Meta:
-        model = HistoricalNaturalCode
+        model = HistoricNaturalCode
 
 
 class ProgrammeCodeFactory(factory.django.DjangoModelFactory):
@@ -161,13 +161,9 @@ class ProgrammeCodeFactory(factory.django.DjangoModelFactory):
     budget_type_fk = factory.Iterator(BudgetType.objects.all())
 
 
-class HistoricalProgrammeCodeFactory(factory.DjangoModelFactory):
-    """
-    Define HistoricalProgrammeCode Factory
-    """
-
+class HistoricProgrammeCodeFactory(factory.DjangoModelFactory):
     class Meta:
-        model = HistoricalProgrammeCode
+        model = HistoricProgrammeCode
 
 
 class InterEntityL1Factory(factory.DjangoModelFactory):
@@ -194,7 +190,7 @@ class HistoricalInterEntityFactory(factory.DjangoModelFactory):
     """
 
     class Meta:
-        model = HistoricalInterEntity
+        model = HistoricInterEntity
 
 
 class ProjectCodeFactory(factory.DjangoModelFactory):
@@ -216,7 +212,7 @@ class HistoricalProjectCodeFactory(factory.DjangoModelFactory):
     """
 
     class Meta:
-        model = HistoricalProjectCode
+        model = HistoricProjectCode
 
 
 class FCOMappingFactory(factory.DjangoModelFactory):
@@ -228,10 +224,6 @@ class FCOMappingFactory(factory.DjangoModelFactory):
         model = FCOMapping
 
 
-class HistoricalFCOMappingFactory(factory.DjangoModelFactory):
-    """
-    Define HistoricalFCOMapping Factory
-    """
-
+class HistoricFCOMappingFactory(factory.DjangoModelFactory):
     class Meta:
-        model = HistoricalFCOMapping
+        model = HistoricFCOMapping

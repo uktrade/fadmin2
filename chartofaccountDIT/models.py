@@ -10,7 +10,7 @@ from treasuryCOA.models import L5Account
 
 
 # Other members of Account Codes
-class Analysis1Abstract(models.Model):
+class Analysis1Abstract(LogChangeModel):
     analysis1_code = models.CharField(
         "Contract Code",
         primary_key=True,
@@ -44,11 +44,11 @@ class Analysis1Abstract(models.Model):
         ordering = ["analysis1_code"]
 
 
-class Analysis1(Analysis1Abstract, TimeStampedModel, LogChangeModel):
+class Analysis1(Analysis1Abstract, TimeStampedModel):
     pass
 
 
-class HistoricalAnalysis1(Analysis1Abstract, ArchivedModel):
+class HistoricAnalysis1(Analysis1Abstract, ArchivedModel):
     analysis1_code = models.CharField("Contract Code", max_length=50)
     active = models.BooleanField(default=False)
 
@@ -71,12 +71,12 @@ class HistoricalAnalysis1(Analysis1Abstract, ArchivedModel):
         return obj_hist
 
     class Meta:
-        verbose_name_plural = "Historical Contract Reconciliations (Analysis 1)"
-        verbose_name = "Historical Contract Reconciliation (Analysis 1)"
+        verbose_name_plural = "Historic Contract Reconciliations (Analysis 1)"
+        verbose_name = "Historic Contract Reconciliation (Analysis 1)"
         ordering = ["financial_year", "analysis1_code"]
 
 
-class Analysis2Abstract(models.Model):
+class Analysis2Abstract(LogChangeModel):
     analysis2_code = models.CharField("Market Code", primary_key=True, max_length=50)
     analysis2_description = models.CharField(max_length=300, verbose_name="Market")
 
@@ -94,7 +94,7 @@ class Analysis2(Analysis2Abstract, TimeStampedModel):
     pass
 
 
-class HistoricalAnalysis2(Analysis2Abstract, ArchivedModel):
+class HistoricAnalysis2(Analysis2Abstract, ArchivedModel):
     analysis2_code = models.CharField("Contract Code", max_length=50)
     active = models.BooleanField(default=False)
 
@@ -116,8 +116,8 @@ class HistoricalAnalysis2(Analysis2Abstract, ArchivedModel):
         return obj_hist
 
     class Meta:
-        verbose_name = "Historical Market (Analysis 2)"
-        verbose_name_plural = "Historical Markets (Analysis 2)"
+        verbose_name = "Historic Market (Analysis 2)"
+        verbose_name_plural = "Historic Markets (Analysis 2)"
         ordering = ["financial_year", "analysis2_code"]
 
 
@@ -154,7 +154,7 @@ class OperatingDeliveryCategory(TimeStampedModel, LogChangeModel):
         ordering = ["operating_delivery_description"]
 
 
-class ExpenditureCategoryAbstract(models.Model):
+class ExpenditureCategoryAbstract(LogChangeModel):
     grouping_description = models.CharField(
         max_length=255, verbose_name="Budget Category", unique=True
     )
@@ -201,7 +201,7 @@ class ExpenditureCategory(
     )
 
 
-class HistoricalExpenditureCategory(
+class HistoricExpenditureCategory(
     ExpenditureCategoryAbstract,
     ArchivedModel,
 ):
@@ -242,7 +242,7 @@ class HistoricalExpenditureCategory(
         ordering = ["financial_year", "grouping_description"]
 
 
-class CommercialCategoryAbstract(models.Model):
+class CommercialCategoryAbstract(LogChangeModel):
     commercial_category = models.CharField(
         max_length=255,
         verbose_name="Commercial Category",
@@ -277,7 +277,7 @@ class CommercialCategory(
     pass
 
 
-class HistoricalCommercialCategory(
+class HistoricCommercialCategory(
     CommercialCategoryAbstract,
     ArchivedModel,
 ):
@@ -307,7 +307,7 @@ class HistoricalCommercialCategory(
 
 
 # define level1 values: Capital, staff, etc is Level 1 in UKTI nac hierarchy
-class NaturalCodeAbstract(models.Model):
+class NaturalCodeAbstract(LogChangeModel):
     natural_account_code = models.IntegerField(
         primary_key=True,
         verbose_name="NAC",
@@ -336,7 +336,7 @@ class NaturalCodeAbstract(models.Model):
         ordering = ["natural_account_code"]
 
 
-class NaturalCode(NaturalCodeAbstract, TimeStampedModel, LogChangeModel):
+class NaturalCode(NaturalCodeAbstract, TimeStampedModel):
     expenditure_category = models.ForeignKey(
         ExpenditureCategory,
         verbose_name="Budget Category",
@@ -376,7 +376,7 @@ class NaturalCode(NaturalCodeAbstract, TimeStampedModel, LogChangeModel):
         super(NaturalCode, self).save(*args, **kwargs)
 
 
-class HistoricalNaturalCode(NaturalCodeAbstract, ArchivedModel):
+class HistoricNaturalCode(NaturalCodeAbstract, ArchivedModel):
     """It includes the fields displayed on the FIDO interface,
     and it has no foreign keys in it, to avoid dependencies
     from other tables. The tables is not normalised by design."""
@@ -460,7 +460,7 @@ class HistoricalNaturalCode(NaturalCodeAbstract, ArchivedModel):
         ordering = ["financial_year", "natural_account_code"]
 
 
-class BudgetType(models.Model):
+class BudgetType(LogChangeModel):
     budget_type_key = models.CharField("Key", primary_key=True, max_length=50)
     budget_type = models.CharField("Budget Type", max_length=100)
     budget_type_display = models.CharField(max_length=100, blank=True, null=True)
@@ -470,7 +470,7 @@ class BudgetType(models.Model):
         return self.budget_type
 
 
-class ProgrammeCodeAbstract(models.Model):
+class ProgrammeCodeAbstract(LogChangeModel):
     programme_code = models.CharField(
         "Programme Code",
         primary_key=True,
@@ -491,7 +491,7 @@ class ProgrammeCodeAbstract(models.Model):
         ordering = ["programme_code"]
 
 
-class ProgrammeCode(ProgrammeCodeAbstract, TimeStampedModel, LogChangeModel):
+class ProgrammeCode(ProgrammeCodeAbstract, TimeStampedModel):
     # TODO - remove "fk" add related name
     budget_type_fk = models.ForeignKey(
         BudgetType,
@@ -502,7 +502,7 @@ class ProgrammeCode(ProgrammeCodeAbstract, TimeStampedModel, LogChangeModel):
     )
 
 
-class HistoricalProgrammeCode(ProgrammeCodeAbstract, ArchivedModel):
+class HistoricProgrammeCode(ProgrammeCodeAbstract, ArchivedModel):
     programme_code = models.CharField("Programme Code", max_length=50)
     active = models.BooleanField(default=False)
     budget_type = models.CharField("Budget Type", max_length=100)
@@ -552,7 +552,7 @@ class InterEntityL1(TimeStampedModel, LogChangeModel):
         ordering = ["l1_value"]
 
 
-class InterEntityAbstract(models.Model):
+class InterEntityAbstract(LogChangeModel):
     l2_value = models.CharField(
         "ORACLE - Inter Entity Code",
         primary_key=True,
@@ -577,11 +577,11 @@ class InterEntityAbstract(models.Model):
         ordering = ["l2_value"]
 
 
-class InterEntity(InterEntityAbstract, TimeStampedModel, LogChangeModel):
+class InterEntity(InterEntityAbstract, TimeStampedModel):
     l1_value = models.ForeignKey(InterEntityL1, on_delete=models.PROTECT)
 
 
-class HistoricalInterEntity(InterEntityAbstract, ArchivedModel):
+class HistoricInterEntity(InterEntityAbstract, ArchivedModel):
     l2_value = models.CharField(
         "ORACLE - Inter Entity Code",
         max_length=10,
@@ -620,7 +620,7 @@ class HistoricalInterEntity(InterEntityAbstract, ArchivedModel):
         ordering = ["financial_year", "l2_value"]
 
 
-class ProjectCodeAbstract(models.Model):
+class ProjectCodeAbstract(LogChangeModel):
     project_code = models.CharField(
         "Project Code",
         primary_key=True,
@@ -640,11 +640,11 @@ class ProjectCodeAbstract(models.Model):
         ordering = ["project_code"]
 
 
-class ProjectCode(ProjectCodeAbstract, TimeStampedModel, LogChangeModel):
+class ProjectCode(ProjectCodeAbstract, TimeStampedModel):
     pass
 
 
-class HistoricalProjectCode(ProjectCodeAbstract, ArchivedModel):
+class HistoricProjectCode(ProjectCodeAbstract, ArchivedModel):
     project_code = models.CharField("Project Code", max_length=50)
     active = models.BooleanField(default=False)
 
@@ -671,7 +671,7 @@ class HistoricalProjectCode(ProjectCodeAbstract, ArchivedModel):
         ordering = ["financial_year", "project_code"]
 
 
-class FCOMappingAbstract(models.Model):
+class FCOMappingAbstract(LogChangeModel):
     fco_code = models.IntegerField(
         primary_key=True,
         verbose_name="FCO (Prism) Code",
@@ -690,13 +690,13 @@ class FCOMappingAbstract(models.Model):
         ordering = ["fco_code"]
 
 
-class FCOMapping(FCOMappingAbstract, TimeStampedModel, LogChangeModel):
+class FCOMapping(FCOMappingAbstract, TimeStampedModel):
     account_L6_code_fk = models.ForeignKey(
         NaturalCode, on_delete=models.PROTECT, blank=True, null=True
     )
 
 
-class HistoricalFCOMapping(FCOMappingAbstract, ArchivedModel):
+class HistoricFCOMapping(FCOMappingAbstract, ArchivedModel):
     fco_code = models.IntegerField(verbose_name="FCO (Prism) Code")
     account_L6_code = models.IntegerField(
         verbose_name="Oracle (DIT) Code",

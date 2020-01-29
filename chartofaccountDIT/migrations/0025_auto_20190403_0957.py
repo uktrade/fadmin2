@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RemoveField(
-            model_name="historicalfcomapping", name="financial_year"
+            model_name="historicfcomapping", name="financial_year"
         ),
-        migrations.DeleteModel(name="HistoricalFCOMapping"),
+        migrations.DeleteModel(name="HistoricFCOMapping"),
     ]

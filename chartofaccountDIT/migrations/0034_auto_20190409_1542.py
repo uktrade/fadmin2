@@ -9,22 +9,22 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RemoveField(
-            model_name="historicalfcomapping", name="financial_year"
+            model_name="historicfcomapping", name="financial_year"
         ),
         migrations.AlterModelOptions(
-            name="historicalanalysis1",
+            name="historicanalysis1",
             options={
                 "ordering": ["financial_year", "analysis1_code"],
-                "verbose_name": "Historical Contract Reconciliation (Analysis 1)",
-                "verbose_name_plural": "Historical Contract Reconciliations (Analysis 1)",
+                "verbose_name": "Historic Contract Reconciliation (Analysis 1)",
+                "verbose_name_plural": "Historic Contract Reconciliations (Analysis 1)",
             },
         ),
         migrations.AlterModelOptions(
-            name="historicalanalysis2",
+            name="historicanalysis2",
             options={
                 "ordering": ["financial_year", "analysis2_code"],
-                "verbose_name": "Historical Market (Analysis 2)",
-                "verbose_name_plural": "Historical Markets (Analysis 2)",
+                "verbose_name": "Historic Market (Analysis 2)",
+                "verbose_name_plural": "Historic Markets (Analysis 2)",
             },
         ),
         migrations.AlterField(
@@ -41,5 +41,5 @@ class Migration(migrations.Migration):
                 max_length=300, verbose_name="FCO (Prism) Description"
             ),
         ),
-        migrations.DeleteModel(name="HistoricalFCOMapping"),
+        migrations.DeleteModel(name="HistoricFCOMapping"),
     ]

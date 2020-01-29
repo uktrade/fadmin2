@@ -7,7 +7,7 @@ from costcentre.models import CostCentre, DepartmentalGroup
 
 # salaries data
 # define a choice field for this
-class Grade(models.Model):
+class Grade(LogChangeModel):
     grade = models.CharField(primary_key=True, max_length=10)
     gradedescription = models.CharField("Grade Description", max_length=50)
     order = models.IntegerField
@@ -39,7 +39,7 @@ class DITPeople(TimeStampedModel, LogChangeModel):
 
 
 # Pre-calculated salary averages, used for the forecast
-class SalaryMonthlyAverage(models.Model):
+class SalaryMonthlyAverage(LogChangeModel):
     AVERAGETYPE_CHOICES = (
         ("CC", "CostCentre"),
         ("DIR", "Directorate"),
@@ -118,7 +118,7 @@ class PayModel(TimeStampedModel):
 #
 
 
-class AdminPayModel(TimeStampedModel):
+class AdminPayModel(TimeStampedModel, LogChangeModel):
     group_code = models.ForeignKey(DepartmentalGroup, on_delete=models.PROTECT)
     year = models.IntegerField()
     pay_rise = models.DecimalField(max_digits=18, decimal_places=2)

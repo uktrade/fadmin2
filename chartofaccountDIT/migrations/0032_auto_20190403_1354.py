@@ -9,34 +9,34 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name="historicalnaturalcode",
+            name="historicnaturalcode",
             options={
                 "ordering": ["financial_year", "natural_account_code"],
-                "verbose_name": "Historical Natural Account Code (NAC)",
+                "verbose_name": "Historic Natural Account Code (NAC)",
                 "verbose_name_plural": "Historical Natural Account Codes (NAC)",
             },
         ),
         migrations.AddField(
-            model_name="historicalnaturalcode",
+            model_name="historicnaturalcode",
             name="active",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name="historicalnaturalcode",
+            model_name="historicnaturalcode",
             name="NAC_category",
             field=models.CharField(
                 blank=True, max_length=255, null=True, verbose_name="Budget Grouping"
             ),
         ),
         migrations.AlterField(
-            model_name="historicalnaturalcode",
+            model_name="historicnaturalcode",
             name="economic_budget_code",
             field=models.CharField(
                 blank=True, max_length=255, null=True, verbose_name="Expenditure Type"
             ),
         ),
         migrations.AlterField(
-            model_name="historicalnaturalcode",
+            model_name="historicnaturalcode",
             name="expenditure_category",
             field=models.CharField(
                 blank=True, max_length=255, null=True, verbose_name="Budget Category"

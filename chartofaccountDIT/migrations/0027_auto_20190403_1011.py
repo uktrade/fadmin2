@@ -8,6 +8,6 @@ class Migration(migrations.Migration):
     dependencies = [("chartofaccountDIT", "0026_historicalfcomapping")]
 
     operations = [
-        migrations.RemoveField(model_name="historicalanalysis2", name="financial_year"),
-        migrations.DeleteModel(name="HistoricalAnalysis2"),
+        migrations.RemoveField(model_name="historicanalysis2", name="financial_year"),
+        migrations.DeleteModel(name="HistoricAnalysis2"),
     ]

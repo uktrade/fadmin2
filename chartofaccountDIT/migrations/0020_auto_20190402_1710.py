@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name="historicalexpenditurecategory",
+            model_name="historicexpenditurecategory",
             name="NAC_category",
             field=models.CharField(max_length=255, verbose_name="Budget Grouping"),
         )

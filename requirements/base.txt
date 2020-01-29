@@ -90,3 +90,4 @@ django-guardian
 redis
 djangorestframework
 django-simple-history
+django-x-robots-tag-middleware

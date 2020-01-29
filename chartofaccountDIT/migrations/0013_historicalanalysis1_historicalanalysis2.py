@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="HistoricalAnalysis1",
+            name="HistoricAnalysis1",
             fields=[
                 (
                     "id",
@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name="HistoricalAnalysis2",
+            name="HistoricAnalysis2",
             fields=[
                 ("archived", models.DateTimeField(auto_now_add=True)),
                 (

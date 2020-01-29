@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RemoveField(
-            model_name="historicalexpenditurecategory", name="financial_year"
+            model_name="historicexpenditurecategory", name="financial_year"
         ),
-        migrations.DeleteModel(name="HistoricalExpenditureCategory"),
+        migrations.DeleteModel(name="HistoricExpenditureCategory"),
     ]

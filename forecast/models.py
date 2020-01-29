@@ -9,8 +9,6 @@ from django.db.models import (
 # https://github.com/martsberger/django-pivot/blob/master/django_pivot/pivot.py # noqa
 from django_pivot.pivot import pivot
 
-from simple_history.models import HistoricalRecords
-
 from chartofaccountDIT.models import (
     Analysis1,
     Analysis2,
@@ -21,6 +19,7 @@ from chartofaccountDIT.models import (
 )
 
 from core.metamodels import (
+    LogChangeModel,
     SimpleTimeStampedModel,
 )
 from core.models import FinancialYear
@@ -42,9 +41,8 @@ class SubTotalFieldNotSpecifiedError(Exception):
     pass
 
 
-class ForecastEditLock(models.Model):
+class ForecastEditLock(LogChangeModel):
     locked = models.BooleanField(default=False)
-    history = HistoricalRecords()
 
     def __str__(self):
         return 'Forecast edit lock'
@@ -56,7 +54,7 @@ class ForecastEditLock(models.Model):
         ]
 
 
-class ForecastExpenditureType(models.Model):
+class ForecastExpenditureType(LogChangeModel):
     """The expenditure type is a combination of
     the economic budget (NAC) and the budget type (Programme).
     As such, it can only be defined for a forecast
@@ -125,7 +123,7 @@ class FinancialPeriodManager(models.Manager):
         )
 
 
-class FinancialPeriod(models.Model):
+class FinancialPeriod(LogChangeModel):
     """Financial periods: correspond
     to month, but there are 3 extra
     periods at the end"""
@@ -151,7 +149,7 @@ class FinancialPeriod(models.Model):
         return self.period_long_name
 
 
-class FinancialCode(models.Model):
+class FinancialCode(LogChangeModel):
     """Contains the members of Chart of Account needed to create a unique key"""
 
     class Meta:
@@ -281,7 +279,6 @@ class FinancialCode(models.Model):
         blank=True,
         null=True
     )
-    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         # Override save to calculate the forecast_expenditure_type.
@@ -614,7 +611,7 @@ class ForecastBudgetDataView(models.Model):
         db_table = "forecast_forecast_budget_view"
 
 
-class MonthlyFigureAbstract(SimpleTimeStampedModel):
+class MonthlyFigureAbstract(SimpleTimeStampedModel, LogChangeModel):
     """It contains the forecast and the actuals.
     The current month defines what is Actual and what is Forecast"""
     amount = models.BigIntegerField(default=0)  # stored in pence
@@ -658,7 +655,6 @@ class MonthlyFigureAbstract(SimpleTimeStampedModel):
 
 
 class ForecastMonthlyFigure(MonthlyFigureAbstract):
-    history = HistoricalRecords()
     starting_amount = models.BigIntegerField(default=0)
 
 
@@ -683,7 +679,6 @@ class ActualUploadMonthlyFigure(MonthlyFigureAbstract):
 class BudgetMonthlyFigure(MonthlyFigureAbstract):
     """Used to store the budgets
     for the financial year."""
-    history = HistoricalRecords()
     starting_amount = models.BigIntegerField(default=0)
 
 
@@ -691,7 +686,7 @@ class BudgetUploadMonthlyFigure(MonthlyFigureAbstract):
     pass
 
 
-class OSCARReturn(models.Model):
+class OSCARReturn(LogChangeModel):
     """Used for downloading the Oscar return.
     Mapped to a view in the database, because
     the query is too complex"""

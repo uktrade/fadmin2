@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name="historicalfcomapping",
+            name="historicfcomapping",
             options={
                 "ordering": ["financial_year", "fco_code"],
                 "verbose_name": "Historic FCO Mapping",
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AlterModelOptions(
-            name="historicalnaturalcode",
+            name="historicnaturalcode",
             options={
                 "ordering": ["financial_year", "natural_account_code"],
                 "verbose_name": "Historic Natural Account Code (NAC)",
@@ -25,42 +25,42 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
-            model_name="historicalanalysis1",
+            model_name="historicanalysis1",
             name="active",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="historicalanalysis2",
+            model_name="historicanalysis2",
             name="active",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="historicalcommercialcategory",
+            model_name="historiccommercialcategory",
             name="active",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="historicalexpenditurecategory",
+            model_name="historicexpenditurecategory",
             name="active",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="historicalfcomapping",
+            model_name="historicfcomapping",
             name="active",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="historicalinterentity",
+            model_name="historicinterentity",
             name="active",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="historicalprogrammecode",
+            model_name="historicprogrammecode",
             name="active",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="historicalprojectcode",
+            model_name="historicprojectcode",
             name="active",
             field=models.BooleanField(default=False),
         ),

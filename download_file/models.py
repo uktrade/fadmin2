@@ -2,11 +2,12 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from core.metamodels import (
+    LogChangeModel,
     SimpleTimeStampedModel,
 )
 
 
-class FileDownload(SimpleTimeStampedModel):
+class FileDownload(SimpleTimeStampedModel, LogChangeModel):
     UNPROCESSED = 'unprocessed'
     DOWNLOADED = 'downloaded'
     ERROR = 'error'

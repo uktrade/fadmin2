@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="HistoricalNaturalCode",
+            name="HistoricNaturalCode",
             fields=[
                 (
                     "id",

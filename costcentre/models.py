@@ -155,8 +155,8 @@ class CostCentre(TimeStampedModel, LogChangeModel):
         ordering = ["cost_centre_code"]
 
 
-class HistoricCostCentre(ArchivedModel):
-    """Repository for historical cost centres hierarchies.
+class HistoricCostCentre(ArchivedModel, LogChangeModel):
+    """Repository for historic cost centres hierarchies.
     The table is not normalised, to make life easier when retrieving data"""
 
     group_code = models.CharField("Group Code", max_length=50)

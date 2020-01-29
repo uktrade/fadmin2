@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="HistoricalFCOMapping",
+            name="HistoricFCOMapping",
             fields=[
                 (
                     "id",
@@ -44,8 +44,8 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                "verbose_name": "Historical FCO Mapping",
-                "verbose_name_plural": "Historical FCO Mappings",
+                "verbose_name": "Historic FCO Mapping",
+                "verbose_name_plural": "Historic FCO Mappings",
                 "ordering": ["financial_year", "fco_code"],
             },
         )

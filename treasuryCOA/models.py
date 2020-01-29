@@ -2,13 +2,14 @@ from django.db import models
 
 from core.metamodels import (
     ArchivedModel,
+    LogChangeModel,
     TimeStampedModel,
 )
 
 
 # Account codes from Treasury
 # the following table could be normalised more, but I don't think it matters
-class L1Account(TimeStampedModel):
+class L1Account(TimeStampedModel, LogChangeModel):
     account_l1_code = models.BigIntegerField(
         primary_key=True,
         verbose_name="account l1 code"
@@ -34,7 +35,7 @@ class L1Account(TimeStampedModel):
         return str(self.account_l1_code) + " - " + str(self.account_l1_long_name)
 
 
-class L2Account(TimeStampedModel):
+class L2Account(TimeStampedModel, LogChangeModel):
     account_l2_code = models.BigIntegerField(
         primary_key=True,
         verbose_name="account l2 code",
@@ -57,7 +58,7 @@ class L2Account(TimeStampedModel):
         return str(self.account_l2_code) + " - " + str(self.account_l2_long_name)
 
 
-class L3Account(TimeStampedModel):
+class L3Account(TimeStampedModel, LogChangeModel):
     account_l3_code = models.BigIntegerField(
         verbose_name="account l3 code", primary_key=True
     )
@@ -75,7 +76,7 @@ class L3Account(TimeStampedModel):
         return str(self.account_l3_code) + " - " + str(self.account_l3_long_name)
 
 
-class L4Account(TimeStampedModel):
+class L4Account(TimeStampedModel, LogChangeModel):
     account_l4_code = models.BigIntegerField(
         verbose_name="account l4 code", primary_key=True
     )
@@ -93,7 +94,7 @@ class L4Account(TimeStampedModel):
         return "{} - {}".format(self.account_l4_code, self.account_l4_long_name)
 
 
-class L5AccountAbstract(models.Model):
+class L5AccountAbstract(LogChangeModel):
     BOTH = "BOTH"
     OUTTURN = "OUTTURN"
     PLANS = "PLANS"
