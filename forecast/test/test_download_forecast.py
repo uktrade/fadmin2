@@ -31,8 +31,8 @@ from forecast.test.test_utils import create_budget
 from forecast.views.view_forecast.export_forecast_data import (
     export_forecast_data_cost_centre,
     export_forecast_data_directorate,
-    export_forecast_data_group,
     export_forecast_data_dit,
+    export_forecast_data_group,
 )
 
 
@@ -151,11 +151,11 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
             reverse(
                 "export_forecast_data_directorate",
                 kwargs={
-                        'directorate_code': self.directorate.directorate_code
+                    'directorate_code': self.directorate.directorate_code
                 },
             ),
             export_forecast_data_directorate,
-            directorate_code=self.directorate.directorate_code,        )
+            directorate_code=self.directorate.directorate_code, )
 
         self.assertEqual(response.status_code, 200)
 
