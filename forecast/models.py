@@ -42,6 +42,20 @@ class SubTotalFieldNotSpecifiedError(Exception):
     pass
 
 
+class ForecastEditLock(models.Model):
+    locked = models.BooleanField(default=False)
+    history = HistoricalRecords()
+
+    def __str__(self):
+        return 'Forecast edit lock'
+
+    class Meta:
+        permissions = [
+            ("can_set_edit_lock", "Can set edit lock"),
+            ("can_edit_whilst_locked", "Can edit forecasts whilst locked"),
+        ]
+
+
 class ForecastExpenditureType(models.Model):
     """The expenditure type is a combination of
     the economic budget (NAC) and the budget type (Programme).
@@ -600,13 +614,6 @@ class ForecastBudgetDataView(models.Model):
         db_table = "forecast_forecast_budget_view"
 
 
-class YearTotalManager(models.Manager):
-    def get_queryset(self):
-        year_total = self.model.objects.values('financial_code').annotate(
-            yearly_amount=Sum('amount'))
-        return year_total
-
-
 class MonthlyFigureAbstract(SimpleTimeStampedModel):
     """It contains the forecast and the actuals.
     The current month defines what is Actual and what is Forecast"""
@@ -678,7 +685,6 @@ class BudgetMonthlyFigure(MonthlyFigureAbstract):
     for the financial year."""
     history = HistoricalRecords()
     starting_amount = models.BigIntegerField(default=0)
-    year_budget = YearTotalManager()
 
 
 class BudgetUploadMonthlyFigure(MonthlyFigureAbstract):

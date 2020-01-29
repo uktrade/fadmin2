@@ -4,13 +4,8 @@ import Table from '../../Components/Table/index'
 import { SET_EDITING_CELL } from '../../Reducers/Edit'
 import { store } from '../../Store';
 import { 
-    TOGGLE_NAC,
-    TOGGLE_PROG, 
-    TOGGLE_AN1,
-    TOGGLE_AN2,
-    TOGGLE_PROJ_CODE,
-
-} from '../../Reducers/ShowHideCols'
+    TOGGLE_ITEM,
+} from '../../Reducers/HiddenCols'
 import { SET_ERROR } from '../../Reducers/Error'
 import { SET_CELLS } from '../../Reducers/Cells'
 
@@ -24,11 +19,7 @@ import {
 function ForecastTable() {
     const dispatch = useDispatch();
 
-    const nac = useSelector(state => state.showHideCols.nac);
-    const programme = useSelector(state => state.showHideCols.programme);
-    const analysis1 = useSelector(state => state.showHideCols.analysis1);
-    const analysis2 = useSelector(state => state.showHideCols.analysis2);
-    const projectCode = useSelector(state => state.showHideCols.projectCode);
+    const hiddenCols = useSelector(state => state.hiddenCols.hiddenCols)
 
     const errorMessage = useSelector(state => state.error.errorMessage)
     const selectedRow = useSelector(state => state.selected.selectedRow)
@@ -124,10 +115,14 @@ function ForecastTable() {
             // This function puts editing cells into the tab order of the page
             let footerLink = document.getElementsByClassName("govuk-footer__link")[0]
 
-            let lowestMonth = 1
-            let highestActual = Math.max(...window.actuals)
-            if (highestActual) {
-                lowestMonth = highestActual
+            let lowestMonth = 0
+
+            if (window.actuals && window.actuals.length > 0) {
+                let highestActual = Math.max(...window.actuals)
+
+                if (highestActual) {
+                    lowestMonth = highestActual
+                }
             }
 
             const state = store.getState();
@@ -142,14 +137,35 @@ function ForecastTable() {
                     let parts = state.edit.cellId.split("_")
                     targetRow = parseInt(parts[1])
                     targetMonth = parseInt(parts[2])
-                } else if (document.activeElement.className === "select_row_btn link-button") {
+                } else if (document.activeElement.className === "select_row_btn govuk-link link-button") {
                     let parts = document.activeElement.id.split("_")
                     targetRow = parseInt(parts[2])
                 }
 
+                if (event.shiftKey && document.activeElement === footerLink) {
+                    targetRow = cells.length - 1
+                    targetMonth = 12
+
+                    nextId = getCellId(targetRow, targetMonth)
+                    event.preventDefault()
+                    document.activeElement.blur();
+
+                    dispatch(
+                        SET_EDITING_CELL({
+                            "cellId": nextId
+                        })
+                    );
+
+                    return
+                }
+
                 if (targetRow > -1) {
                     if (event.shiftKey) { // We're going backwards
-                        if (!targetMonth) { // See if we're on a select button
+                        if (document.activeElement === footerLink) {
+                            targetRow = cells.length
+                            targetMonth = 12
+                        }
+                        else if (!targetMonth) { // See if we're on a select button
                             if (targetRow === 0) { // See if we're at the start of the table
                                 dispatch(
                                     SET_EDITING_CELL({
@@ -186,7 +202,17 @@ function ForecastTable() {
                         // Jump to next row if we've reached the end of the current one
                         if (targetMonth > 12) {
                             targetRow++
-                            targetMonth = lowestMonth + 1
+                            // targetMonth = lowestMonth + 1
+
+                            let selectRowBtn = document.getElementById("select_row_" + targetRow)
+                            selectRowBtn.focus()
+                            event.preventDefault()
+                            dispatch(
+                                SET_EDITING_CELL({
+                                    "cellId": null
+                                })
+                            )
+                            return
                         }
 
                         if (targetMonth <= lowestMonth) {
@@ -259,66 +285,66 @@ function ForecastTable() {
             }
             <div className="toggle-links">
                 <button id="show_hide_nac"
-                    className="link-button"
+                    className="link-button govuk-link"
                     onClick={(e) => {
                         dispatch(
-                            TOGGLE_NAC()
+                            TOGGLE_ITEM("natural_account_code")
                         );
                         e.preventDefault()
                     }}
-                >{nac ? (
+                >{hiddenCols.indexOf("natural_account_code") === -1 ? (
                         <Fragment>Hide</Fragment>
                     ) : (
                         <Fragment>Show</Fragment>
                     )} NAC</button>
                 <button id="show_hide_prog"
-                    className="link-button"
+                    className="link-button govuk-link"
                     onClick={(e) => {
                         dispatch(
-                            TOGGLE_PROG()
+                            TOGGLE_ITEM("programme")
                         );
                         e.preventDefault()
                     }}
-                >{programme ? (
+                >{hiddenCols.indexOf("programme") === -1 ? (
                         <Fragment>Hide</Fragment>
                     ) : (
                         <Fragment>Show</Fragment>
                     )} programme</button>
                 <button id="show_hide_a1"
-                    className="link-button"
+                    className="link-button govuk-link"
                     onClick={(e) => {
                         dispatch(
-                            TOGGLE_AN1()
+                            TOGGLE_ITEM("analysis1_code")
                         );
                         e.preventDefault()
                     }}
-                >{analysis1 ? (
+                >{hiddenCols.indexOf("analysis1_code") === -1 ? (
                         <Fragment>Hide</Fragment>
                     ) : (
                         <Fragment>Show</Fragment>
                     )} analysis code sector</button>
                 <button id="show_hide_a2"
-                    className="link-button"
+                    className="link-button govuk-link"
                     onClick={(e) => {
                         dispatch(
-                            TOGGLE_AN2()
+                            TOGGLE_ITEM("analysis2_code")
                         );
                         e.preventDefault()
                     }}
-                >{analysis2 ? (
+                >{hiddenCols.indexOf("analysis2_code") === -1 ? (
                         <Fragment>Hide</Fragment>
                     ) : (
                         <Fragment>Show</Fragment>
                     )} analysis code market</button>
                 <button id="show_hide_proj"
-                    className="link-button"
+                    className="link-button govuk-link"
                     onClick={(e) => {
                         dispatch(
-                            TOGGLE_PROJ_CODE()
+                            TOGGLE_ITEM("project_code")
                         );
                         e.preventDefault()
                     }}
-                >{projectCode ? (
+                >{hiddenCols.indexOf("project_code") === -1 ? (
                         <Fragment>Hide</Fragment>
                     ) : (
                         <Fragment>Show</Fragment>

@@ -4,8 +4,9 @@ import re
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
-from django.urls import reverse
-from django.views.decorators.http import require_http_methods
+from django.urls import (
+    reverse,
+)
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
@@ -50,7 +51,10 @@ from forecast.views.base import (
 )
 
 
-class ChooseCostCentreView(UserPassesTestMixin, FormView):
+class ChooseCostCentreView(
+    UserPassesTestMixin,
+    FormView,
+):
     template_name = "forecast/edit/choose_cost_centre.html"
     form_class = MyCostCentresForm
     cost_centre = None
@@ -86,7 +90,10 @@ class ChooseCostCentreView(UserPassesTestMixin, FormView):
         )
 
 
-class AddRowView(CostCentrePermissionTest, FormView):
+class AddRowView(
+    CostCentrePermissionTest,
+    FormView,
+):
     template_name = "forecast/edit/add.html"
     form_class = AddForecastRowForm
     cost_centre_code = None
@@ -164,27 +171,20 @@ class AddRowView(CostCentrePermissionTest, FormView):
         return super().form_valid(form)
 
 
-@require_http_methods(["POST", ])  # noqa: C901
-def pasted_forecast_content(request, cost_centre_code):
-    # Check user has permission to edit forecast
-    if not request.user.has_perm("forecast.can_view_forecasts"):
-        raise PermissionDenied()
+class PasteForecastRowsView(
+    CostCentrePermissionTest,
+    FormView,
+):
+    form_class = PasteForecastForm
 
-    # Check that user has permission to edit cost centre
-    cost_centre = CostCentre.objects.filter(
-        cost_centre_code=cost_centre_code,
-    ).first()
+    def form_valid(self, form):
+        if 'cost_centre_code' not in self.kwargs:
+            raise NoCostCentreCodeInURLError(
+                "No cost centre code provided in URL"
+            )
 
-    if not (
-        request.user.has_perm("view_costcentre", cost_centre) and
-        request.user.has_perm("change_costcentre", cost_centre)
-    ):
-        raise PermissionDenied()
+        cost_centre_code = self.kwargs["cost_centre_code"]
 
-    form = PasteForecastForm(
-        request.POST,
-    )
-    if form.is_valid():
         paste_content = form.cleaned_data['paste_content']
         pasted_at_row = form.cleaned_data.get('pasted_at_row', None)
         all_selected = form.cleaned_data.get('all_selected', False)
@@ -273,7 +273,8 @@ def pasted_forecast_content(request, cost_centre_code):
         )
 
         return JsonResponse(financial_code_serialiser.data, safe=False)
-    else:
+
+    def form_invalid(self, form):
         return JsonResponse({
             'error': 'There was a problem with your '
                      'submission, please contact support'
@@ -282,31 +283,28 @@ def pasted_forecast_content(request, cost_centre_code):
         )
 
 
-@require_http_methods(["POST", ])
-def update_forecast_figure(request, cost_centre_code):
-    # Check user has permission to edit forecast
-    if not request.user.has_perm("forecast.can_view_forecasts"):
-        raise PermissionDenied()
+class EditForecastFigureView(
+    CostCentrePermissionTest,
+    FormView,
+):
+    form_class = EditForecastFigureForm
 
-    # Check that user has permission to edit cost centre
-    cost_centre = CostCentre.objects.filter(
-        cost_centre_code=cost_centre_code,
-    ).first()
+    def form_valid(self, form):
+        if 'cost_centre_code' not in self.kwargs:
+            raise NoCostCentreCodeInURLError(
+                "No cost centre code provided in URL"
+            )
 
-    if not (
-        request.user.has_perm("view_costcentre", cost_centre) and
-        request.user.has_perm("change_costcentre", cost_centre)
-    ):
-        raise PermissionDenied()
+        cost_centre_code = self.kwargs["cost_centre_code"]
 
-    form = EditForecastFigureForm(
-        request.POST,
-    )
+        cost_centre = CostCentre.objects.filter(
+            cost_centre_code=cost_centre_code,
+        ).first()
 
-    if form.is_valid():
         financial_year = FinancialYear.objects.filter(current=True).first()
 
         financial_code = FinancialCode.objects.filter(
+            cost_centre=cost_centre,
             natural_account_code=form.cleaned_data['natural_account_code'],
             programme__programme_code=form.cleaned_data['programme_code'],
             analysis1_code__analysis1_code=form.cleaned_data.get(
@@ -362,7 +360,8 @@ def update_forecast_figure(request, cost_centre_code):
         )
 
         return JsonResponse(financial_code_serialiser.data, safe=False)
-    else:
+
+    def form_invalid(self, form):
         return JsonResponse({
             'error': 'There was a problem with your '
                      'submission, please contact support'
@@ -381,10 +380,13 @@ class EditForecastView(
         return "wide-table"
 
     def cost_centre_details(self):
+        cost_centre = CostCentre.objects.get(
+            cost_centre_code=self.cost_centre_code,
+        )
         return {
-            "group": "Test group",
-            "directorate": "Test directorate",
-            "cost_centre_name": "Test cost centre name",
+            "group": cost_centre.directorate.group.group_name,
+            "directorate": cost_centre.directorate.directorate_name,
+            "cost_centre_name": cost_centre.cost_centre_name,
             "cost_centre_code": self.cost_centre_code,
         }
 
@@ -409,11 +411,20 @@ class EditForecastView(
             many=True,
         )
 
+        actual_data = FinancialPeriod.financial_period_info.actual_period_code_list()
+
         forecast_dump = json.dumps(financial_code_serialiser.data)
         paste_form = PasteForecastForm()
 
         context["form"] = form
         context["paste_form"] = paste_form
         context["forecast_dump"] = forecast_dump
+        context["actuals"] = actual_data
 
         return context
+
+
+class EditLockedView(
+    TemplateView,
+):
+    template_name = "forecast/edit/edit_locked.html"
