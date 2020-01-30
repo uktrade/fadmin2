@@ -18,109 +18,109 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name='archiveanalysis1',
+            name='archivedanalysis1',
             options={'ordering': ['financial_year', 'analysis1_code'], 'verbose_name': 'Archive Contract Reconciliation (Analysis 1)', 'verbose_name_plural': 'Archive Contract Reconciliations (Analysis 1)'},
         ),
         migrations.AlterModelOptions(
-            name='archiveanalysis2',
+            name='archivedanalysis2',
             options={'ordering': ['financial_year', 'analysis2_code'], 'verbose_name': 'Archive Market (Analysis 2)', 'verbose_name_plural': 'Archive Markets (Analysis 2)'},
         ),
         migrations.AddField(
-            model_name='archiveanalysis1',
+            model_name='archivedanalysis1',
             name='created',
             field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='archiveanalysis1',
+            model_name='archivedanalysis1',
             name='updated',
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='archiveanalysis2',
+            model_name='archivedanalysis2',
             name='created',
             field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='archiveanalysis2',
+            model_name='archivedanalysis2',
             name='updated',
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='archivecommercialcategory',
+            model_name='archivedcommercialcategory',
             name='created',
             field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='archivecommercialcategory',
+            model_name='archivedcommercialcategory',
             name='updated',
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='archiveexpenditurecategory',
+            model_name='archivedexpenditurecategory',
             name='created',
             field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='archiveexpenditurecategory',
+            model_name='archivedexpenditurecategory',
             name='updated',
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='archivefcomapping',
+            model_name='archivedfcomapping',
             name='created',
             field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='archivefcomapping',
+            model_name='archivedfcomapping',
             name='updated',
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='archiveinterentity',
+            model_name='archivedinterentity',
             name='created',
             field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='archiveinterentity',
+            model_name='archivedinterentity',
             name='updated',
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='archivenaturalcode',
+            model_name='archivednaturalcode',
             name='created',
             field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='archivenaturalcode',
+            model_name='archivednaturalcode',
             name='updated',
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='archiveprogrammecode',
+            model_name='archivedprogrammecode',
             name='created',
             field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='archiveprogrammecode',
+            model_name='archivedprogrammecode',
             name='updated',
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='archiveprojectcode',
+            model_name='archivedprojectcode',
             name='created',
             field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='archiveprojectcode',
+            model_name='archivedprojectcode',
             name='updated',
             field=models.DateTimeField(auto_now=True),
         ),
@@ -434,7 +434,7 @@ class Migration(migrations.Migration):
             bases=(simple_history.models.HistoricalChanges, models.Model),
         ),
         migrations.CreateModel(
-            name='HistoricalArchiveNaturalCode',
+            name='HistoricalArchivedNaturalCode',
             fields=[
                 ('id', models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name='ID')),
                 ('created', models.DateTimeField(blank=True, editable=False)),
@@ -494,7 +494,7 @@ class Migration(migrations.Migration):
             bases=(simple_history.models.HistoricalChanges, models.Model),
         ),
         migrations.CreateModel(
-            name='HistoricalArchiveFCOMapping',
+            name='HistoricalArchivedFCOMapping',
             fields=[
                 ('id', models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name='ID')),
                 ('created', models.DateTimeField(blank=True, editable=False)),
@@ -551,7 +551,7 @@ class Migration(migrations.Migration):
             bases=(simple_history.models.HistoricalChanges, models.Model),
         ),
         migrations.CreateModel(
-            name='HistoricalArchiveCommercialCategory',
+            name='HistoricalArchivedCommercialCategory',
             fields=[
                 ('id', models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name='ID')),
                 ('created', models.DateTimeField(blank=True, editable=False)),
@@ -600,7 +600,7 @@ class Migration(migrations.Migration):
             bases=(simple_history.models.HistoricalChanges, models.Model),
         ),
         migrations.CreateModel(
-            name='HistoricalArchiveAnalysis1',
+            name='HistoricalArchivedAnalysis1',
             fields=[
                 ('id', models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name='ID')),
                 ('created', models.DateTimeField(blank=True, editable=False)),

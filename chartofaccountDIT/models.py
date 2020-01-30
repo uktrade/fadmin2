@@ -376,7 +376,7 @@ class NaturalCode(NaturalCodeAbstract, IsActiveModel):
         super(NaturalCode, self).save(*args, **kwargs)
 
 
-class ArchiveNaturalCode(NaturalCodeAbstract, ArchivedModel):
+class ArchivedNaturalCode(NaturalCodeAbstract, ArchivedModel):
     """It includes the fields displayed on the FIDO interface,
     and it has no foreign keys in it, to avoid dependencies
     from other tables. The tables is not normalised by design."""

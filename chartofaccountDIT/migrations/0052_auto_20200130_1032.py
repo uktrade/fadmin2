@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
         ),
         migrations.RenameModel(
             old_name='HistoricalNaturalCode',
-            new_name='ArchiveNaturalCode',
+            new_name='ArchivedNaturalCode',
         ),
         migrations.RenameModel(
             old_name='HistoricalProgrammeCode',

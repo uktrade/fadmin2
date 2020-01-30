@@ -46,7 +46,7 @@ from chartofaccountDIT.models import (
     ArchivedExpenditureCategory,
     ArchivedFCOMapping,
     ArchivedInterEntity,
-    ArchiveNaturalCode,
+    ArchivedNaturalCode,
     ArchivedProgrammeCode,
     ArchivedProjectCode,
     BudgetType,
@@ -657,7 +657,7 @@ admin.site.register(ArchivedAnalysis1, HistoricalAnalysis1Admin)
 admin.site.register(ArchivedAnalysis2, HistoricalAnalysis2Admin)
 admin.site.register(ArchivedExpenditureCategory, HistoricalExpenditureCategoryAdmin)
 admin.site.register(ArchivedCommercialCategory, HistoricalCommercialCategoryAdmin)
-admin.site.register(ArchiveNaturalCode, HistoricalNaturalCodeAdmin)
+admin.site.register(ArchivedNaturalCode, HistoricalNaturalCodeAdmin)
 admin.site.register(ArchivedProgrammeCode, HistoricalProgrammeAdmin)
 admin.site.register(ArchivedInterEntity, HistoricalInterEntityAdmin)
 admin.site.register(ArchivedProjectCode, HistoricalProjectCodeAdmin)

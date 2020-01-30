@@ -9,7 +9,7 @@ from chartofaccountDIT.models import (
     ArchivedExpenditureCategory,
     ArchivedFCOMapping,
     ArchivedInterEntity,
-    ArchiveNaturalCode,
+    ArchivedNaturalCode,
     ArchivedProgrammeCode,
     ArchivedProjectCode,
     BudgetType,
@@ -139,12 +139,9 @@ class NaturalCodeFactory(factory.DjangoModelFactory):
 
 
 class HistoricalNaturalCodeFactory(factory.DjangoModelFactory):
-    """
-    Define ArchiveNaturalCode Factory
-    """
 
     class Meta:
-        model = ArchiveNaturalCode
+        model = ArchivedNaturalCode
 
 
 class ProgrammeCodeFactory(factory.django.DjangoModelFactory):

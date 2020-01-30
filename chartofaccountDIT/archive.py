@@ -9,7 +9,7 @@ from .models import (
     ArchivedExpenditureCategory,
     ArchivedFCOMapping,
     ArchivedInterEntity,
-    ArchiveNaturalCode,
+    ArchivedNaturalCode,
     ArchivedProgrammeCode,
     ArchivedProjectCode,
     CommercialCategory,
@@ -55,7 +55,7 @@ def archive_analysis_2(year):
 
 
 def archive_natural_code(year):
-    return archive_generic(year, ArchiveNaturalCode, NaturalCode)
+    return archive_generic(year, ArchivedNaturalCode, NaturalCode)
 
 
 def archive_all(year):

@@ -9,7 +9,7 @@ from chartofaccountDIT.models import (
     ArchivedExpenditureCategory,
     ArchivedFCOMapping,
     ArchivedInterEntity,
-    ArchiveNaturalCode,
+    ArchivedNaturalCode,
     ArchivedProgrammeCode,
     ArchivedProjectCode,
     CommercialCategory,
@@ -84,7 +84,7 @@ class NaturalCodeTable(FadminTable):
 
 class HistoricalNaturalCodeTable(FadminTable):
     class Meta(FadminTable.Meta):
-        model = ArchiveNaturalCode
+        model = ArchivedNaturalCode
         fields = (
             "economic_budget_code",
             "NAC_category",

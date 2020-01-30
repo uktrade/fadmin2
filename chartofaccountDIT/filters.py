@@ -11,7 +11,7 @@ from chartofaccountDIT.models import (
     ArchivedExpenditureCategory,
     ArchivedFCOMapping,
     ArchivedInterEntity,
-    ArchiveNaturalCode,
+    ArchivedNaturalCode,
     ArchivedProgrammeCode,
     ArchivedProjectCode,
     CommercialCategory,
@@ -99,7 +99,7 @@ class HistoricalNACFilter(MyFilterSet):
         )
 
     class Meta(MyFilterSet.Meta):
-        model = ArchiveNaturalCode
+        model = ArchivedNaturalCode
         fields = ["search_all"]
 
     @property
