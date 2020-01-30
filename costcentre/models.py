@@ -2,7 +2,6 @@ from django.db import models
 
 from core.metamodels import (
     ArchivedModel,
-    BaseModel,
     IsActiveModel,
 )
 

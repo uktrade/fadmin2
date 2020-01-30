@@ -132,5 +132,3 @@ class GiftAndHospitality(BaseModel):
 
     def __str__(self):
         return str(self.date_offered)
-
-
