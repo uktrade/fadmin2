@@ -13,27 +13,27 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RenameModel(
             old_name='HistoricalAnalysis1',
-            new_name='ArchiveAnalysis1',
+            new_name='ArchivedAnalysis1',
         ),
         migrations.RenameModel(
             old_name='HistoricalAnalysis2',
-            new_name='ArchiveAnalysis2',
+            new_name='ArchivedAnalysis2',
         ),
         migrations.RenameModel(
             old_name='HistoricalCommercialCategory',
-            new_name='ArchiveCommercialCategory',
+            new_name='ArchivedCommercialCategory',
         ),
         migrations.RenameModel(
             old_name='HistoricalExpenditureCategory',
-            new_name='ArchiveExpenditureCategory',
+            new_name='ArchivedExpenditureCategory',
         ),
         migrations.RenameModel(
             old_name='HistoricalFCOMapping',
-            new_name='ArchiveFCOMapping',
+            new_name='ArchivedFCOMapping',
         ),
         migrations.RenameModel(
             old_name='HistoricalInterEntity',
-            new_name='ArchiveInterEntity',
+            new_name='ArchivedInterEntity',
         ),
         migrations.RenameModel(
             old_name='HistoricalNaturalCode',
@@ -41,10 +41,10 @@ class Migration(migrations.Migration):
         ),
         migrations.RenameModel(
             old_name='HistoricalProgrammeCode',
-            new_name='ArchiveProgrammeCode',
+            new_name='ArchivedProgrammeCode',
         ),
         migrations.RenameModel(
             old_name='HistoricalProjectCode',
-            new_name='ArchiveProjectCode',
+            new_name='ArchivedProjectCode',
         ),
     ]

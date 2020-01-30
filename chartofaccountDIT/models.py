@@ -48,7 +48,7 @@ class Analysis1(Analysis1Abstract, IsActiveModel):
     pass
 
 
-class ArchiveAnalysis1(Analysis1Abstract, ArchivedModel):
+class ArchivedAnalysis1(Analysis1Abstract, ArchivedModel):
     analysis1_code = models.CharField("Contract Code", max_length=50)
     active = models.BooleanField(default=False)
 
@@ -71,8 +71,8 @@ class ArchiveAnalysis1(Analysis1Abstract, ArchivedModel):
         return obj_hist
 
     class Meta:
-        verbose_name_plural = "Archive Contract Reconciliations (Analysis 1)"
-        verbose_name = "Archive Contract Reconciliation (Analysis 1)"
+        verbose_name_plural = "Archived Contract Reconciliations (Analysis 1)"
+        verbose_name = "Archived Contract Reconciliation (Analysis 1)"
         ordering = ["financial_year", "analysis1_code"]
 
 
@@ -94,7 +94,7 @@ class Analysis2(Analysis2Abstract, IsActiveModel):
     pass
 
 
-class ArchiveAnalysis2(Analysis2Abstract, ArchivedModel):
+class ArchivedAnalysis2(Analysis2Abstract, ArchivedModel):
     analysis2_code = models.CharField("Contract Code", max_length=50)
     active = models.BooleanField(default=False)
 
@@ -116,8 +116,8 @@ class ArchiveAnalysis2(Analysis2Abstract, ArchivedModel):
         return obj_hist
 
     class Meta:
-        verbose_name = "Archive Market (Analysis 2)"
-        verbose_name_plural = "Archive Markets (Analysis 2)"
+        verbose_name = "Archived Market (Analysis 2)"
+        verbose_name_plural = "Archived Markets (Analysis 2)"
         ordering = ["financial_year", "analysis2_code"]
 
 
@@ -202,7 +202,7 @@ class ExpenditureCategory(
     )
 
 
-class ArchiveExpenditureCategory(
+class ArchivedExpenditureCategory(
     ExpenditureCategoryAbstract,
     ArchivedModel,
 ):
@@ -277,7 +277,7 @@ class CommercialCategory(
     pass
 
 
-class ArchiveCommercialCategory(
+class ArchivedCommercialCategory(
     CommercialCategoryAbstract,
     ArchivedModel,
 ):
@@ -502,7 +502,7 @@ class ProgrammeCode(ProgrammeCodeAbstract, IsActiveModel):
     )
 
 
-class ArchiveProgrammeCode(ProgrammeCodeAbstract, ArchivedModel):
+class ArchivedProgrammeCode(ProgrammeCodeAbstract, ArchivedModel):
     programme_code = models.CharField("Programme Code", max_length=50)
     active = models.BooleanField(default=False)
     budget_type = models.CharField("Budget Type", max_length=100)
@@ -581,7 +581,7 @@ class InterEntity(InterEntityAbstract, IsActiveModel):
     l1_value = models.ForeignKey(InterEntityL1, on_delete=models.PROTECT)
 
 
-class ArchiveInterEntity(InterEntityAbstract, ArchivedModel):
+class ArchivedInterEntity(InterEntityAbstract, ArchivedModel):
     l2_value = models.CharField(
         "ORACLE - Inter Entity Code",
         max_length=10,
@@ -644,7 +644,7 @@ class ProjectCode(ProjectCodeAbstract, IsActiveModel):
     pass
 
 
-class ArchiveProjectCode(ProjectCodeAbstract, ArchivedModel):
+class ArchivedProjectCode(ProjectCodeAbstract, ArchivedModel):
     project_code = models.CharField("Project Code", max_length=50)
     active = models.BooleanField(default=False)
 
@@ -696,7 +696,7 @@ class FCOMapping(FCOMappingAbstract, IsActiveModel):
     )
 
 
-class ArchiveFCOMapping(FCOMappingAbstract, ArchivedModel):
+class ArchivedFCOMapping(FCOMappingAbstract, ArchivedModel):
     fco_code = models.IntegerField(verbose_name="FCO (Prism) Code")
     account_L6_code = models.IntegerField(
         verbose_name="Oracle (DIT) Code",

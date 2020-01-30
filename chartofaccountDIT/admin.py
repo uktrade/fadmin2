@@ -40,15 +40,15 @@ from chartofaccountDIT.import_csv import (
 from chartofaccountDIT.models import (
     Analysis1,
     Analysis2,
-    ArchiveAnalysis1,
-    ArchiveAnalysis2,
-    ArchiveCommercialCategory,
-    ArchiveExpenditureCategory,
-    ArchiveFCOMapping,
-    ArchiveInterEntity,
+    ArchivedAnalysis1,
+    ArchivedAnalysis2,
+    ArchivedCommercialCategory,
+    ArchivedExpenditureCategory,
+    ArchivedFCOMapping,
+    ArchivedInterEntity,
     ArchiveNaturalCode,
-    ArchiveProgrammeCode,
-    ArchiveProjectCode,
+    ArchivedProgrammeCode,
+    ArchivedProjectCode,
     BudgetType,
     CommercialCategory,
     ExpenditureCategory,
@@ -653,14 +653,14 @@ admin.site.register(ProjectCode, ProjectCodeAdmin)
 admin.site.register(FCOMapping, FCOMappingAdmin)
 admin.site.register(OperatingDeliveryCategory, OpDelCategoryAdmin)
 
-admin.site.register(ArchiveAnalysis1, HistoricalAnalysis1Admin)
-admin.site.register(ArchiveAnalysis2, HistoricalAnalysis2Admin)
-admin.site.register(ArchiveExpenditureCategory, HistoricalExpenditureCategoryAdmin)
-admin.site.register(ArchiveCommercialCategory, HistoricalCommercialCategoryAdmin)
+admin.site.register(ArchivedAnalysis1, HistoricalAnalysis1Admin)
+admin.site.register(ArchivedAnalysis2, HistoricalAnalysis2Admin)
+admin.site.register(ArchivedExpenditureCategory, HistoricalExpenditureCategoryAdmin)
+admin.site.register(ArchivedCommercialCategory, HistoricalCommercialCategoryAdmin)
 admin.site.register(ArchiveNaturalCode, HistoricalNaturalCodeAdmin)
-admin.site.register(ArchiveProgrammeCode, HistoricalProgrammeAdmin)
-admin.site.register(ArchiveInterEntity, HistoricalInterEntityAdmin)
-admin.site.register(ArchiveProjectCode, HistoricalProjectCodeAdmin)
-admin.site.register(ArchiveFCOMapping, HistoricalFCOMappingAdmin)
+admin.site.register(ArchivedProgrammeCode, HistoricalProgrammeAdmin)
+admin.site.register(ArchivedInterEntity, HistoricalInterEntityAdmin)
+admin.site.register(ArchivedProjectCode, HistoricalProjectCodeAdmin)
+admin.site.register(ArchivedFCOMapping, HistoricalFCOMappingAdmin)
 
 admin.site.register(BudgetType)
