@@ -7,15 +7,15 @@ from chartofaccountDIT.models import (
     CommercialCategory,
     ExpenditureCategory,
     FCOMapping,
-    HistoricalAnalysis1,
-    HistoricalAnalysis2,
-    HistoricalCommercialCategory,
-    HistoricalExpenditureCategory,
-    HistoricalFCOMapping,
-    HistoricalInterEntity,
-    HistoricalNaturalCode,
-    HistoricalProgrammeCode,
-    HistoricalProjectCode,
+    ArchiveAnalysis1,
+    ArchiveAnalysis2,
+    ArchiveCommercialCategory,
+    ArchiveExpenditureCategory,
+    ArchiveFCOMapping,
+    ArchiveInterEntity,
+    ArchiveNaturalCode,
+    ArchiveProgrammeCode,
+    ArchiveProjectCode,
     InterEntity,
     InterEntityL1,
     NACCategory,
@@ -39,11 +39,11 @@ class Analysis1Factory(factory.DjangoModelFactory):
 
 class HistoricalAnalysis1Factory(factory.DjangoModelFactory):
     """
-    Define HistoricalAnalysis1 Factory
+    Define ArchiveAnalysis1 Factory
     """
 
     class Meta:
-        model = HistoricalAnalysis1
+        model = ArchiveAnalysis1
 
 
 class Analysis2Factory(factory.DjangoModelFactory):
@@ -59,11 +59,11 @@ class Analysis2Factory(factory.DjangoModelFactory):
 
 class HistoricalAnalysis2Factory(factory.DjangoModelFactory):
     """
-    Define HistoricalAnalysis2 Factory
+    Define ArchiveAnalysis2 Factory
     """
 
     class Meta:
-        model = HistoricalAnalysis2
+        model = ArchiveAnalysis2
 
 
 class NACCategoryFactory(factory.DjangoModelFactory):
@@ -99,11 +99,11 @@ class ExpenditureCategoryFactory(factory.DjangoModelFactory):
 
 class HistoricalExpenditureCategoryFactory(factory.DjangoModelFactory):
     """
-    Define HistoricalExpenditureCategory Factory
+    Define ArchiveExpenditureCategory Factory
     """
 
     class Meta:
-        model = HistoricalExpenditureCategory
+        model = ArchiveExpenditureCategory
 
 
 class CommercialCategoryFactory(factory.DjangoModelFactory):
@@ -117,11 +117,11 @@ class CommercialCategoryFactory(factory.DjangoModelFactory):
 
 class HistoricalCommercialCategoryFactory(factory.DjangoModelFactory):
     """
-    Define HistoricalCommercialCategory Factory
+    Define ArchiveCommercialCategory Factory
     """
 
     class Meta:
-        model = HistoricalCommercialCategory
+        model = ArchiveCommercialCategory
 
 
 class NaturalCodeFactory(factory.DjangoModelFactory):
@@ -140,11 +140,11 @@ class NaturalCodeFactory(factory.DjangoModelFactory):
 
 class HistoricalNaturalCodeFactory(factory.DjangoModelFactory):
     """
-    Define HistoricalNaturalCode Factory
+    Define ArchiveNaturalCode Factory
     """
 
     class Meta:
-        model = HistoricalNaturalCode
+        model = ArchiveNaturalCode
 
 
 class ProgrammeCodeFactory(factory.django.DjangoModelFactory):
@@ -163,11 +163,11 @@ class ProgrammeCodeFactory(factory.django.DjangoModelFactory):
 
 class HistoricalProgrammeCodeFactory(factory.DjangoModelFactory):
     """
-    Define HistoricalProgrammeCode Factory
+    Define ArchiveProgrammeCode Factory
     """
 
     class Meta:
-        model = HistoricalProgrammeCode
+        model = ArchiveProgrammeCode
 
 
 class InterEntityL1Factory(factory.DjangoModelFactory):
@@ -190,11 +190,11 @@ class InterEntityFactory(factory.DjangoModelFactory):
 
 class HistoricalInterEntityFactory(factory.DjangoModelFactory):
     """
-    Define HistoricalInterEntity Factory
+    Define ArchiveInterEntity Factory
     """
 
     class Meta:
-        model = HistoricalInterEntity
+        model = ArchiveInterEntity
 
 
 class ProjectCodeFactory(factory.DjangoModelFactory):
@@ -212,11 +212,11 @@ class ProjectCodeFactory(factory.DjangoModelFactory):
 
 class HistoricalProjectCodeFactory(factory.DjangoModelFactory):
     """
-    Define HistoricalProjectCode Factory
+    Define ArchiveProjectCode Factory
     """
 
     class Meta:
-        model = HistoricalProjectCode
+        model = ArchiveProjectCode
 
 
 class FCOMappingFactory(factory.DjangoModelFactory):
@@ -230,8 +230,8 @@ class FCOMappingFactory(factory.DjangoModelFactory):
 
 class HistoricalFCOMappingFactory(factory.DjangoModelFactory):
     """
-    Define HistoricalFCOMapping Factory
+    Define ArchiveFCOMapping Factory
     """
 
     class Meta:
-        model = HistoricalFCOMapping
+        model = ArchiveFCOMapping

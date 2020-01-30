@@ -14,6 +14,7 @@ MIDDLEWARE = [
     "core.middleware.ThreadLocalMiddleware",
     "authbroker_client.middleware.ProtectAllViewsMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
+    "x_robots_middleware.XRobotsMiddleware",
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -33,6 +34,12 @@ IGNORE_ANTI_VIRUS = False
 # HSTS (https://man.uktrade.io/docs/procedures/1st-go-live.html)
 SECURE_HSTS_SECONDS = 3600
 SECURE_HSTS_PRELOAD = True
+
+# X_ROBOTS_TAG (https://man.uktrade.io/docs/procedures/1st-go-live.html)
+X_ROBOTS_TAG = [
+    'noindex',
+    'nofollow',
+]
 
 CACHES = {
     'default': {

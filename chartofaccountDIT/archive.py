@@ -6,15 +6,15 @@ from .models import (
     CommercialCategory,
     ExpenditureCategory,
     FCOMapping,
-    HistoricalAnalysis1,
-    HistoricalAnalysis2,
-    HistoricalCommercialCategory,
-    HistoricalExpenditureCategory,
-    HistoricalFCOMapping,
-    HistoricalInterEntity,
-    HistoricalNaturalCode,
-    HistoricalProgrammeCode,
-    HistoricalProjectCode,
+    ArchiveAnalysis1,
+    ArchiveAnalysis2,
+    ArchiveCommercialCategory,
+    ArchiveExpenditureCategory,
+    ArchiveFCOMapping,
+    ArchiveInterEntity,
+    ArchiveNaturalCode,
+    ArchiveProgrammeCode,
+    ArchiveProjectCode,
     InterEntity,
     NaturalCode,
     ProgrammeCode,
@@ -23,39 +23,39 @@ from .models import (
 
 
 def archive_project_code(year):
-    return archive_generic(year, HistoricalProjectCode, ProjectCode)
+    return archive_generic(year, ArchiveProjectCode, ProjectCode)
 
 
 def archive_programme_code(year):
-    return archive_generic(year, HistoricalProgrammeCode, ProgrammeCode)
+    return archive_generic(year, ArchiveProgrammeCode, ProgrammeCode)
 
 
 def archive_expenditure_category(year):
-    return archive_generic(year, HistoricalExpenditureCategory, ExpenditureCategory)
+    return archive_generic(year, ArchiveExpenditureCategory, ExpenditureCategory)
 
 
 def archive_inter_entity(year):
-    return archive_generic(year, HistoricalInterEntity, InterEntity)
+    return archive_generic(year, ArchiveInterEntity, InterEntity)
 
 
 def archive_fco_mapping(year):
-    return archive_generic(year, HistoricalFCOMapping, FCOMapping)
+    return archive_generic(year, ArchiveFCOMapping, FCOMapping)
 
 
 def archive_commercial_category(year):
-    return archive_generic(year, HistoricalCommercialCategory, CommercialCategory)
+    return archive_generic(year, ArchiveCommercialCategory, CommercialCategory)
 
 
 def archive_analysis_1(year):
-    return archive_generic(year, HistoricalAnalysis1, Analysis1)
+    return archive_generic(year, ArchiveAnalysis1, Analysis1)
 
 
 def archive_analysis_2(year):
-    return archive_generic(year, HistoricalAnalysis2, Analysis2)
+    return archive_generic(year, ArchiveAnalysis2, Analysis2)
 
 
 def archive_natural_code(year):
-    return archive_generic(year, HistoricalNaturalCode, NaturalCode)
+    return archive_generic(year, ArchiveNaturalCode, NaturalCode)
 
 
 def archive_all(year):
