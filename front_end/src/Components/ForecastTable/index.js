@@ -112,7 +112,6 @@ function ForecastTable() {
         const handleKeyDown = (event) => {
             // This function puts editing cells into the tab order of the page
             let footerLink = document.getElementsByClassName("national-archives")[0]
-
             let lowestMonth = 0
 
             if (window.actuals && window.actuals.length > 0) {
@@ -279,7 +278,9 @@ function ForecastTable() {
         }
 
         const handleMouseDown = (event) => {
-            if (document.activeElement.tagName === "BODY") {
+            let active = document.activeElement
+
+            if (active.tagName !== "INPUT") {
                 dispatch(
                     SET_EDITING_CELL({
                         "cellId": null
@@ -386,3 +387,5 @@ function ForecastTable() {
         </Fragment>
     );
 }
+
+export default ForecastTable
