@@ -120,9 +120,7 @@ class ForecastTable(tables.Table):
             ("Budget",
              ForecastFigureCol(self.display_footer, "Budget", empty_values=()))
         ]
-        # TO DO Adjustments columns are still visible after they
-        # have been hidden in the Admin interface. fix it...
-        for month in FinancialPeriod.financial_period_info.periods():
+        for month in FinancialPeriod.financial_period_info.month_periods():
             cols.append(
                 (
                     month[0],
@@ -153,6 +151,17 @@ class ForecastTable(tables.Table):
             column_list.insert(0, "Link")
 
         actual_month_list = FinancialPeriod.financial_period_info.actual_month_list()
+        # See if Adjustment periods should be displayed.
+        adj_list = FinancialPeriod.financial_period_info.adj_periods()
+        if adj_list:
+            for adj in adj_list:
+                extra_column_to_display.extend(
+                    [(
+                        adj[0],
+                        ForecastFigureCol(self.display_footer, adj[1], empty_values=()),
+                    )]
+                )
+
 
         extra_column_to_display.extend(
             [
