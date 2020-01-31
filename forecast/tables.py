@@ -44,7 +44,6 @@ class ForecastFigureCol(tables.Column):
 class SummingMonthFooterCol(ForecastFigureCol):
     """It expects a list of month as first argument.
     Used to calculate and display year to date, full year, etc"""
-
     def calc_value(self, record):
         val = sum(
             record[m] for m in self.month_list if m in record and record[m] is not None
@@ -88,6 +87,8 @@ class SubtractCol(ForecastFigureCol):
 
 class PercentageCol(ForecastFigureCol):
     """Used to display the percentage of values in two columns"""
+    def display_value(self, value):
+        return f"{value:.0%}"
 
     def calc_value(self, table):
         a = table.columns.columns[self.col1].current_value
@@ -161,7 +162,6 @@ class ForecastTable(tables.Table):
                         ForecastFigureCol(self.display_footer, adj[1], empty_values=()),
                     )]
                 )
-
 
         extra_column_to_display.extend(
             [

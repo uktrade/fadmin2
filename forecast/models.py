@@ -120,14 +120,14 @@ class FinancialPeriodManager(models.Manager):
     def month_periods(self):
         return (
             self.get_queryset()
-                .filter(financial_period_code__lte = 12)
+                .filter(financial_period_code__lte=12)
                 .values_list("period_short_name", "period_long_name")
         )
 
     def adj_periods(self):
         return (
             self.get_queryset()
-                .filter(financial_period_code__gt = 12, display_figure=True)
+                .filter(financial_period_code__gt=12, display_figure=True)
                 .values_list("period_short_name", "period_long_name")
         )
 
