@@ -7,7 +7,10 @@ class BaseModel(models.Model):
     """Base model for all models"""
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords(inherit=True)
+    history = HistoricalRecords(
+        custom_model_name=lambda x: f'SimpleHistory{x}',
+        inherit=True,
+    )
 
     class Meta:
         abstract = True
