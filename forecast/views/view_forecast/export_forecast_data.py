@@ -83,9 +83,9 @@ def export_forecast_data_expenditure_detail_directorate(request,
 
 
 def export_forecast_data_expenditure_detail_group(request,
-                                                    group_code,
-                                                    expenditure_category_id,
-                                                    budget_type_id):
+                                                  group_code,
+                                                  expenditure_category_id,
+                                                  budget_type_id):
     filter = {
         GROUP_CODE: group_code,
         BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
@@ -98,10 +98,10 @@ def export_forecast_data_expenditure_detail_group(request,
 
 
 def export_forecast_data_expenditure_dit(request,
-                                        expenditure_category_id,
-                                        budget_type_id):
+                                         expenditure_category_id,
+                                         budget_type_id):
     filter = {
-         BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
+        BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
         BUDGET_TYPE: f"{budget_type_id}",
     }
     q = ForecastBudgetDataView.view_data.raw_data(

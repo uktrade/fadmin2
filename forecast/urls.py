@@ -25,10 +25,9 @@ from forecast.views.view_forecast.export_forecast_data import (
     export_forecast_data_dit,
     export_forecast_data_expenditure_detail_cost_centre,
     export_forecast_data_expenditure_detail_directorate,
-    export_forecast_data_expenditure_dit,
     export_forecast_data_expenditure_detail_group,
+    export_forecast_data_expenditure_dit,
     export_forecast_data_group,
-
 )
 from forecast.views.view_forecast.forecast_summary import (
     CostCentreView,
@@ -175,17 +174,17 @@ urlpatterns = [
         name="export_expenditure_details_dit",
     ),
     path(
-        "export-expenditure-details/group/<group_code>/<expenditure_category_id>/<budget_type_id>/",
+        "export-expenditure-details/group/<group_code>/<expenditure_category_id>/<budget_type_id>/",  # noqa
         export_forecast_data_expenditure_detail_group,
         name="export_expenditure_details_group",
     ),
     path(
-        "export-expenditure-details/directorate/<directorate_code>/<expenditure_category_id>/<budget_type_id>/",
+        "export-expenditure-details/directorate/<directorate_code>/<expenditure_category_id>/<budget_type_id>/",  # noqa
         export_forecast_data_expenditure_detail_directorate,
         name="export_expenditure_details_directorate",
     ),
     path(
-        "export-expenditure-details/cost-centre/<cost_centre>/<expenditure_category_id>/<budget_type_id>/",
+        "export-expenditure-details/cost-centre/<cost_centre>/<expenditure_category_id>/<budget_type_id>/",  # noqa
         export_forecast_data_expenditure_detail_cost_centre,
         name="export_expenditure_details_cost_centre",
     ),
