@@ -2,6 +2,7 @@ import json
 import re
 
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from django.urls import (
@@ -272,6 +273,12 @@ class PasteForecastRowsView(
             many=True,
         )
 
+        cache.set(
+            f"{cost_centre_code}_cost_centre_cache",
+            financial_code_serialiser.data,
+            90000,
+        )
+
         return JsonResponse(financial_code_serialiser.data, safe=False)
 
     def form_invalid(self, form):
@@ -359,6 +366,12 @@ class EditForecastFigureView(
             many=True,
         )
 
+        cache.set(
+            f"{cost_centre_code}_cost_centre_cache",
+            financial_code_serialiser.data,
+            90000,
+        )
+
         return JsonResponse(financial_code_serialiser.data, safe=False)
 
     def form_invalid(self, form):
@@ -399,27 +412,41 @@ class EditForecastView(
             }
         )
 
-        financial_code = FinancialCode.objects.filter(
-            cost_centre_id=self.cost_centre_code,
-        ).prefetch_related(
-            'forecast_forecastmonthlyfigures',
-            'forecast_forecastmonthlyfigures__financial_period'
-        )
+        if cache.get(f"{self.cost_centre_code}_cost_centre_cache"):
+            forecast_dump = json.dumps(
+                cache.get(
+                    f"{self.cost_centre_code}_cost_centre_cache"
+                )
+            )
+        else:
+            financial_code = FinancialCode.objects.filter(
+                cost_centre_id=self.cost_centre_code,
+            ).prefetch_related(
+                'forecast_forecastmonthlyfigures',
+                'forecast_forecastmonthlyfigures__financial_period'
+            )
 
-        financial_code_serialiser = FinancialCodeSerializer(
-            financial_code,
-            many=True,
-        )
+            financial_code_serialiser = FinancialCodeSerializer(
+                financial_code,
+                many=True,
+            )
+            serialiser_data = financial_code_serialiser.data
+            forecast_dump = json.dumps(serialiser_data)
+            cache.set(
+                f"{self.cost_centre_code}_cost_centre_cache",
+                serialiser_data,
+                90000,
+            )
 
         actual_data = FinancialPeriod.financial_period_info.actual_period_code_list()
-
-        forecast_dump = json.dumps(financial_code_serialiser.data)
+        period_display = FinancialPeriod.financial_period_info.period_display_code_list()
         paste_form = PasteForecastForm()
 
         context["form"] = form
         context["paste_form"] = paste_form
         context["forecast_dump"] = forecast_dump
         context["actuals"] = actual_data
+        context["period_display"] = period_display
 
         return context
 

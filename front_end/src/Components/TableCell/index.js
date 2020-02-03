@@ -78,7 +78,7 @@ const TableCell = ({rowIndex, cellKey, sheetUpdating}) => {
             negative = " negative"
         }
 
-        return "govuk-table__cell forecast-month-cell " + (wasEdited() ? 'edited ' : '') + (isSelected() ? 'selected' : '')  + editable + negative
+        return "govuk-table__cell forecast-month-cell figure-cell " + (wasEdited() ? 'edited ' : '') + (isSelected() ? 'selected' : '')  + editable + negative
     }
 
     const setContentState = (value) => {
