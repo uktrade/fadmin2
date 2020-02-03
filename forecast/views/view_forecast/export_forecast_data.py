@@ -4,6 +4,8 @@ from forecast.utils.export_helpers import (
     export_query_to_excel,
 )
 from forecast.utils.query_fields import (
+    BUDGET_CATEGORY_ID,
+    BUDGET_TYPE,
     COST_CENTRE_CODE,
     DIRECTORATE_CODE,
     EDIT_FORECAST_DOWNLOAD_COLUMNS,
@@ -40,6 +42,72 @@ def export_forecast_data_cost_centre(request, cost_centre):
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
     return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, cost_centre)
+
+
+def export_forecast_data_programme_details(request, cost_centre):
+    filter = {COST_CENTRE_CODE: cost_centre}
+    q = ForecastBudgetDataView.view_data.raw_data(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, cost_centre)
+
+
+def export_forecast_data_expenditure_detail_cost_centre(request,
+                                                        cost_centre,
+                                                        expenditure_category_id,
+                                                        budget_type_id):
+    filter = {
+        COST_CENTRE_CODE: cost_centre,
+        BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
+        BUDGET_TYPE: f"{budget_type_id}",
+    }
+    q = ForecastBudgetDataView.view_data.raw_data(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, cost_centre)
+
+
+def export_forecast_data_expenditure_detail_directorate(request,
+                                                        directorate_code,
+                                                        expenditure_category_id,
+                                                        budget_type_id):
+    filter = {
+        DIRECTORATE_CODE: directorate_code,
+        BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
+        BUDGET_TYPE: f"{budget_type_id}",
+    }
+    q = ForecastBudgetDataView.view_data.raw_data(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, directorate_code)
+
+
+def export_forecast_data_expenditure_detail_group(request,
+                                                    group_code,
+                                                    expenditure_category_id,
+                                                    budget_type_id):
+    filter = {
+        GROUP_CODE: group_code,
+        BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
+        BUDGET_TYPE: f"{budget_type_id}",
+    }
+    q = ForecastBudgetDataView.view_data.raw_data(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, group_code)
+
+
+def export_forecast_data_expenditure_dit(request,
+                                        expenditure_category_id,
+                                        budget_type_id):
+    filter = {
+         BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
+        BUDGET_TYPE: f"{budget_type_id}",
+    }
+    q = ForecastBudgetDataView.view_data.raw_data(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, "DIT")
 
 
 def export_edit_forecast_data(request, cost_centre):
