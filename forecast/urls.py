@@ -28,6 +28,9 @@ from forecast.views.view_forecast.export_forecast_data import (
     export_forecast_data_expenditure_detail_group,
     export_forecast_data_expenditure_dit,
     export_forecast_data_group,
+    export_forecast_data_programme_detail_directorate,
+    export_forecast_data_programme_detail_group,
+    export_forecast_data_programme_detail_dit,
 )
 from forecast.views.view_forecast.forecast_summary import (
     CostCentreView,
@@ -187,6 +190,24 @@ urlpatterns = [
         "export-expenditure-details/cost-centre/<cost_centre>/<expenditure_category_id>/<budget_type_id>/",  # noqa
         export_forecast_data_expenditure_detail_cost_centre,
         name="export_expenditure_details_cost_centre",
+    ),
+
+    path(
+        "export-dit-programme/<programme_code_id>/<forecast_expenditure_type_name>/",
+        export_forecast_data_programme_detail_dit,
+        name="export_programme_details_dit",
+    ),
+
+    path(
+        "export-group-programme/<group_code>/<programme_code_id>/<forecast_expenditure_type_name>/", # noqa
+        export_forecast_data_programme_detail_directorate,
+        name="export_programme_details_group",
+    ),
+
+    path(
+        "export-directorate-programme/<directorate_code>/<programme_code_id>/<forecast_expenditure_type_name>/", # noqa
+        export_forecast_data_programme_detail_directorate,
+        name="export_programme_details_directorate",
     ),
 
 ]
