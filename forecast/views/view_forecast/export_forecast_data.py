@@ -66,7 +66,8 @@ def export_forecast_data_expenditure_detail_cost_centre(request,
     q = ForecastBudgetDataView.view_data.raw_data(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
-    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, cost_centre)
+    title = f'{cost_centre}  Expenditure'
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
 def export_forecast_data_expenditure_detail_directorate(request,
@@ -81,7 +82,8 @@ def export_forecast_data_expenditure_detail_directorate(request,
     q = ForecastBudgetDataView.view_data.raw_data(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
-    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, directorate_code)
+    title = f'{directorate_code}  Expenditure'
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
 def export_forecast_data_expenditure_detail_group(request,
@@ -96,7 +98,8 @@ def export_forecast_data_expenditure_detail_group(request,
     q = ForecastBudgetDataView.view_data.raw_data(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
-    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, group_code)
+    title = f'{group_code}  Expenditure'
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
 def export_forecast_data_expenditure_dit(request,
@@ -109,14 +112,14 @@ def export_forecast_data_expenditure_dit(request,
     q = ForecastBudgetDataView.view_data.raw_data(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
-    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, "DIT")
-
+    title = f'DIT  Expenditure'
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
 def export_forecast_data_programme_detail_directorate(request,
-                                                        directorate_code,
-                                                        programme_code_id,
-                                                        forecast_expenditure_type_name):
+                                                      directorate_code,
+                                                      programme_code_id,
+                                                      forecast_expenditure_type_name):
     filter = {
         DIRECTORATE_CODE: directorate_code,
         PROGRAMME_CODE: f"{programme_code_id}",
@@ -125,13 +128,14 @@ def export_forecast_data_programme_detail_directorate(request,
     q = ForecastBudgetDataView.view_data.raw_data(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
-    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, directorate_code)
+    title = f'{directorate_code} {programme_code_id}'
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
 def export_forecast_data_programme_detail_group(request,
-                                                        group_code,
-                                                        programme_code_id,
-                                                        forecast_expenditure_type_name):
+                                                group_code,
+                                                programme_code_id,
+                                                forecast_expenditure_type_name):
     filter = {
         GROUP_CODE: group_code,
         PROGRAMME_CODE: f"{programme_code_id}",
@@ -140,20 +144,22 @@ def export_forecast_data_programme_detail_group(request,
     q = ForecastBudgetDataView.view_data.raw_data(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
-    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, group_code)
+    title = f'{group_code} {programme_code_id}'
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
 def export_forecast_data_programme_detail_dit(request,
-                                            programme_code_id,
-                                            forecast_expenditure_type_name):
+                                              programme_code_id,
+                                              forecast_expenditure_type_name):
     filter = {
-         PROGRAMME_CODE: f"{programme_code_id}",
+        PROGRAMME_CODE: f"{programme_code_id}",
         FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
     }
     q = ForecastBudgetDataView.view_data.raw_data(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
-    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, "DIT")
+    title = f'DIT {programme_code_id}'
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
 def export_edit_forecast_data(request, cost_centre):
@@ -164,5 +170,3 @@ def export_edit_forecast_data(request, cost_centre):
                                 EDIT_KEYS_DOWNLOAD,
                                 EDIT_FORECAST_DOWNLOAD_COLUMNS,
                                 cost_centre)
-
-
