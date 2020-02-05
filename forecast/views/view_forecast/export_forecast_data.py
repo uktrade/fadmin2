@@ -153,7 +153,7 @@ def export_forecast_data_programme_detail_dit(request,
     q = ForecastBudgetDataView.view_data.raw_data(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
-    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, directorate_code)
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, "DIT")
 
 
 def export_edit_forecast_data(request, cost_centre):

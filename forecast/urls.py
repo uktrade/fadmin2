@@ -200,7 +200,7 @@ urlpatterns = [
 
     path(
         "export-group-programme/<group_code>/<programme_code_id>/<forecast_expenditure_type_name>/", # noqa
-        export_forecast_data_programme_detail_directorate,
+        export_forecast_data_programme_detail_group,
         name="export_programme_details_group",
     ),
 
