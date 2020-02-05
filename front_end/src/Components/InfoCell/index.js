@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { useSelector } from 'react-redux'
 
 const InfoCell = ({rowIndex, cellKey, children, className, ignoreSelection}) => {
@@ -27,4 +27,13 @@ const InfoCell = ({rowIndex, cellKey, children, className, ignoreSelection}) => 
     );
 }
 
-export default InfoCell
+
+const comparisonFn = function(prevProps, nextProps) {
+    return (
+        prevProps.selectedRow === nextProps.selectedRow &&
+        prevProps.allSelected === nextProps.allSelected
+    )
+};
+
+export default memo(InfoCell, comparisonFn);
+

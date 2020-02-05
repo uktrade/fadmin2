@@ -1,22 +1,28 @@
-import React, {Fragment } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, {Fragment, memo } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import shortid from  "shortid"
 import TableCell from '../../Components/TableCell/index'
 import InfoCell from '../../Components/InfoCell/index'
 import CellValue from '../../Components/CellValue/index'
 import AggregateValue from '../../Components/AggregateValue/index'
 import TableHeader from '../../Components/TableHeader/index'
 import TotalCol from '../../Components/TotalCol/index'
-import ToggleColumn from '../../Components/ToggleColumn/index'
+import ToggleCell from '../../Components/ToggleCell/index'
 import TotalAggregate from '../../Components/TotalAggregate/index'
 import TotalBudget from '../../Components/TotalBudget/index'
 import OverspendUnderspend from '../../Components/OverspendUnderspend/index'
 import TotalOverspendUnderspend from '../../Components/TotalOverspendUnderspend/index'
+import {
+    getCellId
+} from '../../Util'
 
 import { SET_EDITING_CELL } from '../../Reducers/Edit'
 import { SET_SELECTED_ROW, SELECT_ALL, UNSELECT_ALL } from '../../Reducers/Selected'
 
 
 function Table({rowData, sheetUpdating}) {
+    let selectChanged = false
+
     const dispatch = useDispatch();
     const rows = useSelector(state => state.allCells.cells);
 
@@ -28,15 +34,6 @@ function Table({rowData, sheetUpdating}) {
             <table
                 className="govuk-table finance-table" id="forecast-table">
                 <caption className="govuk-table__caption govuk-!-font-size-27">Edit forecast</caption>
-                <colgroup>
-                    <ToggleColumn columnName="natural_account_code" />
-                    <ToggleColumn columnName="natural_account_code" />
-                    <ToggleColumn columnName="programme" />
-                    <ToggleColumn columnName="programme" />
-                    <ToggleColumn columnName="analysis1_code" />
-                    <ToggleColumn columnName="analysis2_code" />
-                    <ToggleColumn columnName="budget" />
-                </colgroup>
                 <thead className="govuk-table__head">
                     <tr index="0">
                         <th className="handle govuk-table__cell indicate-action select-all">
@@ -66,14 +63,14 @@ function Table({rowData, sheetUpdating}) {
                                 )}
                             </button>
                         </th>
-                        <TableHeader id="natural_account_code_header" headerType="natural_account_code">NAC code</TableHeader>
-                        <TableHeader headerType="natural_account_code">NAC description</TableHeader>
-                        <TableHeader headerType="programme">Programme code</TableHeader>
-                        <TableHeader headerType="programme">Programme description</TableHeader>
-                        <TableHeader headerType="analysis1_code">Analysis Code Sector</TableHeader>
-                        <TableHeader headerType="analysis2_code">Analysis Code Market</TableHeader>
-                        <TableHeader headerType="project_code">Project Code</TableHeader>
-                        <TableHeader headerType="budget">Budget</TableHeader>
+                        <TableHeader id="natural_account_code_header" colName="natural_account_code">NAC code</TableHeader>
+                        <TableHeader colName="natural_account_code">NAC description</TableHeader>
+                        <TableHeader colName="programme">Programme code</TableHeader>
+                        <TableHeader colName="programme">Programme description</TableHeader>
+                        <TableHeader colName="analysis1_code">Analysis Code Sector</TableHeader>
+                        <TableHeader colName="analysis2_code">Analysis Code Market</TableHeader>
+                        <TableHeader colName="project_code">Project Code</TableHeader>
+                        <TableHeader colName="budget">Budget</TableHeader>
                         <th className="govuk-table__header">Apr</th>
                         <th className="govuk-table__header">May</th>
                         <th className="govuk-table__header">Jun</th>
@@ -102,7 +99,7 @@ function Table({rowData, sheetUpdating}) {
                 </thead>
                 <tbody className="govuk-table__body">
                     {rows.map((cells, rowIndex) => {
-                        return <tr key={rowIndex} index={(rowIndex + 1)}>
+                        return <tr key={rowIndex} index={shortid.generate()}>
                             <td id={"select_" + rowIndex} className="handle govuk-table__cell indicate-action">
                                 <button
                                     className="select_row_btn govuk-link link-button"
@@ -135,36 +132,39 @@ function Table({rowData, sheetUpdating}) {
                                     )}
                                 </button>
                             </td>
-                            <InfoCell cellKey={"natural_account_code"} rowIndex={rowIndex}>
+                            <ToggleCell colName={"natural_account_code"} rowIndex={rowIndex}>
                                 <CellValue rowIndex={rowIndex} cellKey={"natural_account_code"} />
-                            </InfoCell>
+                            </ToggleCell>
 
-                            <InfoCell cellKey={"nac_description"} rowIndex={rowIndex}>
+                            <ToggleCell colName={"natural_account_code"} rowIndex={rowIndex}>
                                 <CellValue rowIndex={rowIndex} cellKey={"nac_description"} />
-                            </InfoCell>
+                            </ToggleCell>
 
-                            <InfoCell cellKey={"programme"} rowIndex={rowIndex}>
+                            <ToggleCell colName={"programme"} rowIndex={rowIndex}>
                                 <CellValue rowIndex={rowIndex} cellKey={"programme"} />
-                            </InfoCell>
+                            </ToggleCell>
 
-                            <InfoCell cellKey={"programme_description"} rowIndex={rowIndex}>
+                            <ToggleCell colName={"programme"} rowIndex={rowIndex}>
                                 <CellValue rowIndex={rowIndex} cellKey={"programme_description"} />
-                            </InfoCell>
+                            </ToggleCell>
 
-                            <InfoCell cellKey={"analysis1_code"} rowIndex={rowIndex}>
+                            <ToggleCell colName={"analysis1_code"} rowIndex={rowIndex}>
                                 <CellValue rowIndex={rowIndex} cellKey={"analysis1_code"} />
-                            </InfoCell>
-                            <InfoCell cellKey={"analysis2_code"} rowIndex={rowIndex}>
+                            </ToggleCell>
+
+                            <InfoCell colName={"analysis2_code"} rowIndex={rowIndex}>
                                 <CellValue rowIndex={rowIndex} cellKey={"analysis2_code"} />
                             </InfoCell>
-                            <InfoCell cellKey={"project_code"} rowIndex={rowIndex}>
+
+                            <ToggleCell colName={"project_code"} rowIndex={rowIndex}>
                                 <CellValue rowIndex={rowIndex} cellKey={"project_code"} />
-                            </InfoCell>
+                            </ToggleCell>
+
                             <InfoCell className="figure-cell" cellKey={"budget"} rowIndex={rowIndex}>
                                 <CellValue rowIndex={rowIndex} cellKey={"budget"} format={true} />
                             </InfoCell>
                             {window.period_display.map((value, index) => {
-                                return <TableCell key={index} sheetUpdating={sheetUpdating} rowIndex={rowIndex} cellKey={value} />
+                                return <TableCell key={shortid.generate()} sheetUpdating={sheetUpdating} cellId={getCellId(rowIndex, value)} rowIndex={rowIndex} cellKey={value} />
                             })}
                             <InfoCell className="figure-cell" rowIndex={rowIndex}>
                                 <AggregateValue rowIndex={rowIndex} actualsOnly={true} />
@@ -188,7 +188,7 @@ function Table({rowData, sheetUpdating}) {
                         <InfoCell cellKey={"project_code"} ignoreSelection={true} />
                         <TotalBudget id="total-budget" cellKey={"budget"} />
                         {window.period_display && window.period_display.map((value, index) => {
-                            return <TotalCol key={index} month={value} />
+                            return <TotalCol key={shortid.generate()} month={value} />
                         })}
                         <TotalAggregate actualsOnly={true} id="year-to-date" />
                         <TotalAggregate actualsOnly={false} id="year-total" />
@@ -200,4 +200,11 @@ function Table({rowData, sheetUpdating}) {
     );
 }
 
-export default Table
+const comparisonFn = function(prevProps, nextProps) {
+    return (
+        prevProps.sheetUpdating === nextProps.sheetUpdating
+    )
+};
+
+
+export default memo(Table, comparisonFn);

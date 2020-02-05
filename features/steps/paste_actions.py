@@ -62,7 +62,9 @@ def step_impl(context):
 def step_impl(context):
     create_test_user(context)
 
-    context.browser.get(f'{context.base_url}/forecast/edit/{TEST_COST_CENTRE_CODE}/')
+    context.browser.get(
+        f'{context.base_url}/forecast/edit/{TEST_COST_CENTRE_CODE}/'
+    )
 
     WebDriverWait(context.browser, 5000).until(
         ec.presence_of_element_located((By.ID, "select_0"))

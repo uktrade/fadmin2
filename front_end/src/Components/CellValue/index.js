@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react'
+import React, {Fragment, memo} from 'react'
 import { useSelector } from 'react-redux'
 
 import {
@@ -23,4 +23,11 @@ const CellValue = ({rowIndex, cellKey, format}) => {
     );
 }
 
-export default CellValue
+
+const comparisonFn = function(prevProps, nextProps) {
+    return (
+        prevProps.cell === nextProps.cell
+    )
+};
+
+export default memo(CellValue, comparisonFn);

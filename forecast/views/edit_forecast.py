@@ -439,7 +439,7 @@ class EditForecastView(
             )
 
         actual_data = FinancialPeriod.financial_period_info.actual_period_code_list()
-        period_display = FinancialPeriod.financial_period_info.period_display_code_list()
+        period_display = FinancialPeriod.financial_period_info.period_display_code_list()  # noqa
         paste_form = PasteForecastForm()
 
         context["form"] = form

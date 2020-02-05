@@ -41,8 +41,12 @@ class FinancialCodeSerializer(serializers.ModelSerializer):
         read_only=True,
         source='forecast_forecastmonthlyfigures',
     )
-    programme_description = serializers.SerializerMethodField('get_programme_description')
-    nac_description = serializers.SerializerMethodField('get_nac_description')
+    programme_description = serializers.SerializerMethodField(
+        'get_programme_description',
+    )
+    nac_description = serializers.SerializerMethodField(
+        'get_nac_description',
+    )
 
     class Meta:
         model = FinancialCode
