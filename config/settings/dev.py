@@ -15,7 +15,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "core.middleware.ThreadLocalMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
