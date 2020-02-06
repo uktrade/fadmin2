@@ -7,6 +7,7 @@ from forecast.utils.query_fields import (
     COST_CENTRE_CODE,
     DIRECTORATE_CODE,
     EDIT_FORECAST_DOWNLOAD_COLUMNS,
+    EDIT_FORECAST_DOWNLOAD_ORDER,
     EDIT_KEYS_DOWNLOAD,
     GROUP_CODE,
     VIEW_FORECAST_DOWNLOAD_COLUMNS,
@@ -45,7 +46,9 @@ def export_forecast_data_cost_centre(request, cost_centre):
 def export_edit_forecast_data(request, cost_centre):
     filter = {COST_CENTRE_CODE: cost_centre}
     q = ForecastBudgetDataView.view_data.raw_data(
-        {**EDIT_KEYS_DOWNLOAD, **EDIT_FORECAST_DOWNLOAD_COLUMNS}, filter)
+        {**EDIT_KEYS_DOWNLOAD, **EDIT_FORECAST_DOWNLOAD_COLUMNS},
+        filter,
+    )
     return export_edit_to_excel(q,
                                 EDIT_KEYS_DOWNLOAD,
                                 EDIT_FORECAST_DOWNLOAD_COLUMNS,
