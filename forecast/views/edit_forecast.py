@@ -262,10 +262,13 @@ class PasteForecastRowsView(
             )
 
         financial_codes = FinancialCode.objects.filter(
-            cost_centre_id=cost_centre_code,
+            cost_centre_id=self.cost_centre_code,
         ).prefetch_related(
             'forecast_forecastmonthlyfigures',
             'forecast_forecastmonthlyfigures__financial_period'
+        ).order_by(
+            "programme__budget_type_fk__budget_type_edit_display_order",
+            "natural_account_code__natural_account_code",
         )
 
         financial_code_serialiser = FinancialCodeSerializer(
@@ -355,10 +358,13 @@ class EditForecastFigureView(
         monthly_figure.save()
 
         financial_codes = FinancialCode.objects.filter(
-            cost_centre_id=cost_centre_code,
+            cost_centre_id=self.cost_centre_code,
         ).prefetch_related(
             'forecast_forecastmonthlyfigures',
             'forecast_forecastmonthlyfigures__financial_period'
+        ).order_by(
+            "programme__budget_type_fk__budget_type_edit_display_order",
+            "natural_account_code__natural_account_code",
         )
 
         financial_code_serialiser = FinancialCodeSerializer(
@@ -419,15 +425,18 @@ class EditForecastView(
                 )
             )
         else:
-            financial_code = FinancialCode.objects.filter(
+            financial_codes = FinancialCode.objects.filter(
                 cost_centre_id=self.cost_centre_code,
             ).prefetch_related(
                 'forecast_forecastmonthlyfigures',
                 'forecast_forecastmonthlyfigures__financial_period'
+            ).order_by(
+                "programme__budget_type_fk__budget_type_edit_display_order",
+                "natural_account_code__natural_account_code",
             )
 
             financial_code_serialiser = FinancialCodeSerializer(
-                financial_code,
+                financial_codes,
                 many=True,
             )
             serialiser_data = financial_code_serialiser.data
