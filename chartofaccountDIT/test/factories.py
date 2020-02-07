@@ -1,4 +1,5 @@
 import factory
+from faker import Faker
 
 from chartofaccountDIT.models import (
     Analysis1,
@@ -24,6 +25,8 @@ from chartofaccountDIT.models import (
     ProgrammeCode,
     ProjectCode,
 )
+
+fake = Faker()
 
 
 class Analysis1Factory(factory.DjangoModelFactory):
@@ -131,6 +134,7 @@ class NaturalCodeFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = NaturalCode
+        django_get_or_create = ('natural_account_code',)
 
     active = True
     natural_account_code = 999999
@@ -147,13 +151,14 @@ class HistoricalNaturalCodeFactory(factory.DjangoModelFactory):
         model = HistoricalNaturalCode
 
 
-class ProgrammeCodeFactory(factory.django.DjangoModelFactory):
+class ProgrammeCodeFactory(factory.DjangoModelFactory):
     """
     Define ProgrammeCode Factory
     """
 
     class Meta:
         model = ProgrammeCode
+        django_get_or_create = ('programme_code',)
 
     active = True
     programme_code = "123456"

@@ -258,11 +258,8 @@ const TableCell = ({rowIndex, cellId, cellKey, sheetUpdating}) => {
 
 const comparisonFn = function(prevProps, nextProps) {
     return (
-        //prevProps.selectedRow === nextProps.selectedRow &&
-        //prevProps.allSelected === nextProps.allSelected && 
         prevProps.sheetUpdating === nextProps.sheetUpdating
     )
 };
 
 export default memo(TableCell, comparisonFn);
-

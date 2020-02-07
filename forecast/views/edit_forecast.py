@@ -194,7 +194,12 @@ class PasteForecastRowsView(
             financial_code__cost_centre_id=cost_centre_code,
         ).count()
 
-        row_count = figure_count / 12
+        # Get number of active financial periods
+        active_periods = FinancialPeriod.objects.filter(
+            display_figure=True
+        ).count()
+
+        row_count = round(figure_count / active_periods)
 
         rows = paste_content.splitlines()
 
