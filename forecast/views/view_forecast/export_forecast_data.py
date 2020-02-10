@@ -15,13 +15,13 @@ from forecast.utils.query_fields import (
 
 
 def export_forecast_data_dit(request):
-    q = ForecastBudgetDataView.view_data.raw_data(VIEW_FORECAST_DOWNLOAD_COLUMNS)
+    q = ForecastBudgetDataView.view_data.raw_data_annotated(VIEW_FORECAST_DOWNLOAD_COLUMNS)
     return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, "DIT")
 
 
 def export_forecast_data_group(request, group_code):
     filter = {GROUP_CODE: group_code}
-    q = ForecastBudgetDataView.view_data.raw_data(
+    q = ForecastBudgetDataView.view_data.raw_data_annotated(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
     return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, group_code)
@@ -29,7 +29,7 @@ def export_forecast_data_group(request, group_code):
 
 def export_forecast_data_directorate(request, directorate_code):
     filter = {DIRECTORATE_CODE: directorate_code}
-    q = ForecastBudgetDataView.view_data.raw_data(
+    q = ForecastBudgetDataView.view_data.raw_data_annotated(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
     return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, directorate_code)
@@ -37,7 +37,7 @@ def export_forecast_data_directorate(request, directorate_code):
 
 def export_forecast_data_cost_centre(request, cost_centre):
     filter = {COST_CENTRE_CODE: cost_centre}
-    q = ForecastBudgetDataView.view_data.raw_data(
+    q = ForecastBudgetDataView.view_data.raw_data_annotated(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
     return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, cost_centre)
@@ -45,7 +45,7 @@ def export_forecast_data_cost_centre(request, cost_centre):
 
 def export_edit_forecast_data(request, cost_centre):
     filter = {COST_CENTRE_CODE: cost_centre}
-    q = ForecastBudgetDataView.view_data.raw_data(
+    q = ForecastBudgetDataView.view_data.raw_data_annotated(
         {**EDIT_KEYS_DOWNLOAD, **EDIT_FORECAST_DOWNLOAD_COLUMNS},
         filter,
         order_list = EDIT_FORECAST_DOWNLOAD_ORDER,

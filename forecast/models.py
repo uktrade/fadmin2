@@ -547,7 +547,7 @@ class DisplaySubTotalManager(models.Manager):
                 f"does not exist in provided columns: '{[*data_columns]}'."
             )
 
-        data_returned = self.raw_data(data_columns, filter_dict, year, order_list)
+        data_returned = self.raw_data_annotated(data_columns, filter_dict, year, order_list)
         raw_data = list(data_returned)
         if not raw_data:
             return []
@@ -558,7 +558,7 @@ class DisplaySubTotalManager(models.Manager):
             show_grand_total,
         )
 
-    def raw_data(self, columns={}, filter_dict={}, year=0, order_list=[]):
+    def raw_data_annotated(self, columns={}, filter_dict={}, year=0, order_list=[]):
         if year == 0:
             year = get_current_financial_year()
         if columns == {}:
