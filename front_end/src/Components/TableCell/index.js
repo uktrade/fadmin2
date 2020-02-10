@@ -2,7 +2,6 @@ import React, {Fragment, useState, useEffect, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { SET_EDITING_CELL } from '../../Reducers/Edit'
 import {
-    getCellId,
     postData,
     processForecastData,
     formatValue

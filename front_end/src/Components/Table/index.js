@@ -21,8 +21,6 @@ import { SET_SELECTED_ROW, SELECT_ALL, UNSELECT_ALL } from '../../Reducers/Selec
 
 
 function Table({rowData, sheetUpdating}) {
-    let selectChanged = false
-
     const dispatch = useDispatch();
     const rows = useSelector(state => state.allCells.cells);
 
