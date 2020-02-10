@@ -547,7 +547,8 @@ class DisplaySubTotalManager(models.Manager):
                 f"does not exist in provided columns: '{[*data_columns]}'."
             )
 
-        data_returned = self.raw_data_annotated(data_columns, filter_dict, year, order_list)
+        data_returned = self.raw_data_annotated(data_columns, filter_dict, year,
+                                                order_list)
         raw_data = list(data_returned)
         if not raw_data:
             return []
@@ -558,7 +559,14 @@ class DisplaySubTotalManager(models.Manager):
             show_grand_total,
         )
 
-    def raw_data_annotated(self, columns={}, filter_dict={}, year=0, order_list=[]):
+    def raw_data_annotated(
+            self,
+            columns={},
+            filter_dict={},
+            year=0,
+            order_list=[],
+            include_zeros=False
+    ):
         if year == 0:
             year = get_current_financial_year()
         if columns == {}:
@@ -579,14 +587,17 @@ class DisplaySubTotalManager(models.Manager):
                        'Mar': Sum('mar'),
                        }
         raw_data = (self.get_queryset().values(*columns)
-                    .filter(financial_year=year, **filter_dict)
+                    .filter(
+                    Q(financial_year=year) |
+                    Q(financial_year__isnull=include_zeros),
+                    **filter_dict)
                     .annotate(**annotations)
                     .order_by(*order_list)
                     )
         return raw_data
 
 
-class ForecastBudgetDataView(models.Model):
+class ForecastingDataView(models.Model):
     """Used for joining budgets and forecast.
     Mapped to a view in the database, because
     the query is too complex"""
@@ -618,7 +629,7 @@ class ForecastBudgetDataView(models.Model):
 
     class Meta:
         managed = False
-        db_table = "forecast_forecast_budget_view"
+        db_table = "forecast_forecast_download_view"
 
 
 class MonthlyFigureAbstract(SimpleTimeStampedModel):
@@ -792,7 +803,7 @@ class OSCARReturn(models.Model):
                     on b.financial_code_id = f.financial_code_id and b.financial_year_id = f.financial_year_id;                    
 
 
-""" # noqa
+"""  # noqa
 
 """
 Query created in the database to return the info for the OSCAR return
