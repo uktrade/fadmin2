@@ -586,6 +586,8 @@ class DisplaySubTotalManager(models.Manager):
                        'Feb': Sum('feb'),
                        'Mar': Sum('mar'),
                        }
+        # Lines with 0 values across the year have no year specified.
+        # So use financial_year = NULL to filter them in or out.
         raw_data = (self.get_queryset().values(*columns)
                     .filter(
                     Q(financial_year=year) |
@@ -599,6 +601,10 @@ class DisplaySubTotalManager(models.Manager):
 
 class ForecastingDataView(models.Model):
     """Used for joining budgets and forecast.
+    The view adds rows with 0 values across the year (zero-values rows),
+    to be consistent with the Edit Forecast logic.
+    The zero-values rows have a null value for the year,
+    because the year is linked to the figures, and they have none!
     Mapped to a view in the database, because
     the query is too complex"""
     id = models.IntegerField(primary_key=True, )
