@@ -55,7 +55,6 @@ def set_up_test_objects(context):
     # Clear forecast data cache
     cache.clear()
 
-
     nac_codes = [111111, 999999]
     analysis_1_code = "1111111"
     analysis_2_code = "2222222"
