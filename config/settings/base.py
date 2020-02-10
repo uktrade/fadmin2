@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     "reversion",
     "rest_framework",
     "simple_history",
+    "defender",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -230,3 +231,20 @@ SETTINGS_EXPORT = [
     'DEBUG',
     'GTM_CODE',
 ]
+
+DEFENDER_REDIS_URL = env('DEFENDER_REDIS_URL', default='')
+
+# Only use cookies with https
+CSRF_COOKIE_SECURE = True
+
+# Make browser end session when user closes browser
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Set cookie expiry to 4 hours
+SESSION_COOKIE_AGE = 4 * 60 * 60  # 4 hours
+
+# Prevent client side JS from accessing CRSF token
+CSRF_COOKIE_HTTPONLY = True
+
+# Set content to no sniff
+SECURE_CONTENT_TYPE_NOSNIFF = True

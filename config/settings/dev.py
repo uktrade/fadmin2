@@ -17,6 +17,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "core.middleware.ThreadLocalMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
+    "defender.middleware.FailedLoginMiddleware",
 ]
 
 AUTHENTICATION_BACKENDS = [

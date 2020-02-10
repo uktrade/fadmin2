@@ -22,6 +22,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "core.middleware.ThreadLocalMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
+    "defender.middleware.FailedLoginMiddleware",
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -38,3 +39,22 @@ IGNORE_ANTI_VIRUS = False
 
 USE_SELENIUM_HUB = env("USE_SELENIUM_HUB", default=True)
 
+
+# Only use cookies with https
+CSRF_COOKIE_SECURE = True
+
+# Make browser end session when user closes browser
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Set cookie expiry to 4 hours
+SESSION_COOKIE_AGE = 4 * 60 * 60  # 4 hours
+
+# Prevent client side JS from accessing CRSF token
+CSRF_COOKIE_HTTPONLY = True
+
+# Set content to no sniff
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Set HSTS (only allow access over https)
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
