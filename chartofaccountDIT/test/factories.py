@@ -1,7 +1,5 @@
 import factory
 
-from faker import Faker
-
 from chartofaccountDIT.models import (
     Analysis1,
     Analysis2,
@@ -26,8 +24,6 @@ from chartofaccountDIT.models import (
     ProgrammeCode,
     ProjectCode,
 )
-
-fake = Faker()
 
 
 class Analysis1Factory(factory.DjangoModelFactory):
