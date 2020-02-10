@@ -1,4 +1,5 @@
 import factory
+
 from faker import Faker
 
 from costcentre.models import (
