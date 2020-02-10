@@ -55,7 +55,8 @@ def set_up_test_objects(context):
     # Clear forecast data cache
     cache.clear()
 
-    nac_codes = [111111, 999999, ]
+
+    nac_codes = [111111, 999999]
     analysis_1_code = "1111111"
     analysis_2_code = "2222222"
     project_code_value = "3000"
@@ -92,7 +93,7 @@ def set_up_test_objects(context):
         nac_code = NaturalCodeFactory.create(
             natural_account_code=nac_code,
         )
-        for financial_period in range(1, 13):
+        for financial_period in range(1, 14):
             financial_month = financial_period + 3
 
             if financial_month > 12:

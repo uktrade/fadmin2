@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 
 const ToggleCell = ({rowIndex, colName, children, className, ignoreSelection}) => {

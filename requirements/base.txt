@@ -90,3 +90,5 @@ django-guardian
 redis
 djangorestframework
 django-simple-history
+django-settings-export
+django-redis

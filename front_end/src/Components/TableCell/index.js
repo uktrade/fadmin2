@@ -2,7 +2,6 @@ import React, {Fragment, useState, useEffect, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { SET_EDITING_CELL } from '../../Reducers/Edit'
 import {
-    getCellId,
     postData,
     processForecastData,
     formatValue
@@ -258,11 +257,8 @@ const TableCell = ({rowIndex, cellId, cellKey, sheetUpdating}) => {
 
 const comparisonFn = function(prevProps, nextProps) {
     return (
-        //prevProps.selectedRow === nextProps.selectedRow &&
-        //prevProps.allSelected === nextProps.allSelected && 
         prevProps.sheetUpdating === nextProps.sheetUpdating
     )
 };
 
 export default memo(TableCell, comparisonFn);
-
