@@ -234,17 +234,22 @@ SETTINGS_EXPORT = [
 
 DEFENDER_REDIS_URL = env('DEFENDER_REDIS_URL', default='')
 
-# Only use cookies with https
-CSRF_COOKIE_SECURE = True
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "core.middleware.ThreadLocalMiddleware",
+    "core.no_cache_middleware.NoCacheMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
+    "defender.middleware.FailedLoginMiddleware",
+]
 
-# Make browser end session when user closes browser
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
-# Set cookie expiry to 4 hours
-SESSION_COOKIE_AGE = 4 * 60 * 60  # 4 hours
-
-# Prevent client side JS from accessing CRSF token
-CSRF_COOKIE_HTTPONLY = True
-
-# Set content to no sniff
-SECURE_CONTENT_TYPE_NOSNIFF = True
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "guardian.backends.ObjectPermissionBackend",
+]

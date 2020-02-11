@@ -11,25 +11,6 @@ STATICFILES_DIRS = (
 
 SASS_PROCESSOR_INCLUDE_DIRS = [os.path.join("/node_modules")]
 
-MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "core.middleware.ThreadLocalMiddleware",
-    "simple_history.middleware.HistoryRequestMiddleware",
-    "defender.middleware.FailedLoginMiddleware",
-]
-
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-    "guardian.backends.ObjectPermissionBackend",
-]
-
 SELENIUM_HOST = env("SELENIUM_HOST", default="fido")
 SELENIUM_ADDRESS = env("SELENIUM_ADDRESS", default="selenium-hub")
 
