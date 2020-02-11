@@ -51,7 +51,8 @@ def export_edit_forecast_data(request, cost_centre):
         order_list=EDIT_FORECAST_DOWNLOAD_ORDER,
         include_zeros=True,
     )
+    title = f'Edit forecast {cost_centre}'
     return export_edit_to_excel(q,
                                 EDIT_KEYS_DOWNLOAD,
                                 EDIT_FORECAST_DOWNLOAD_COLUMNS,
-                                cost_centre)
+                                title)
