@@ -293,4 +293,5 @@ class DownloadEditForecastTest(TestCase, RequestFactoryBase):
         ws = wb.active
         assert ws["A1"].value == "Natural Account code"
         assert ws["A2"].value == self.nac_obj.natural_account_code
+        assert ws["I1"].value == 'Apr'
         assert ws.max_row == 3
