@@ -60,17 +60,17 @@ SECURE_HSTS_PRELOAD = True
 
 # ## IHTC compliance
 
-# Only use cookies with https
+# Set crsf cookie to be secure
 CSRF_COOKIE_SECURE = True
+
+# Set session cookie to be secure
+SESSION_COOKIE_SECURE = True
 
 # Make browser end session when user closes browser
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Set cookie expiry to 4 hours
 SESSION_COOKIE_AGE = 4 * 60 * 60  # 4 hours in seconds
-
-# Set session cookie to be secure
-SESSION_COOKIE_SECURE = True
 
 # Prevent client side JS from accessing CRSF token
 CSRF_COOKIE_HTTPONLY = True
