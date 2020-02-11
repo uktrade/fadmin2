@@ -126,7 +126,7 @@ class ForecastTable(tables.Table):
             cols.append(
                 (
                     month[0],
-                    ForecastFigureCol(self.display_footer, month[1], empty_values=()),
+                    ForecastFigureCol(self.display_footer, month[0], empty_values=()),
                 )
             )
 
