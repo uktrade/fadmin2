@@ -100,7 +100,7 @@ function ForecastTable() {
             })
         }
 
-        capturePaste();
+        capturePaste()
         document.addEventListener("paste", capturePaste)
 
         return () => {
