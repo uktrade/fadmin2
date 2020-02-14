@@ -50,7 +50,6 @@ class BudgetFactory(factory.DjangoModelFactory):
         model = BudgetMonthlyFigure
 
 
-
 class FinancialCodeFactory(factory.DjangoModelFactory):
     programme = factory.SubFactory(ProgrammeCodeFactory)
     cost_centre = factory.SubFactory(CostCentreFactory)
