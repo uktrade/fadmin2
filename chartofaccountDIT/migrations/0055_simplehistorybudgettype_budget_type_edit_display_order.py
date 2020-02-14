@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('chartofaccountDIT', '0054_merge_20200214_1519'),
+        ('chartofaccountDIT', '0050_update_budget_types_and_natural_codes'),
     ]
 
     operations = [

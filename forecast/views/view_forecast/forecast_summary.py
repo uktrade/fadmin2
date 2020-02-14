@@ -45,6 +45,8 @@ from forecast.utils.query_fields import (
     hierarchy_order_list,
     hierarchy_sub_total,
     hierarchy_sub_total_column,
+    hierarchy_view,
+    hierarchy_view_code,
     programme_columns,
     programme_detail_view,
     programme_display_sub_total_column,
@@ -125,10 +127,20 @@ class ForecastMultiTableMixin(MultiTableMixin):
         project_table = ForecastSubTotalTable(project_columns, project_data)
         project_table.attrs['caption'] = "Project Report"
 
-        self.tables = [
-            ForecastSubTotalTable(
+        if self.hierarchy_type == SHOW_COSTCENTRE:
+            hierarchy_table = ForecastSubTotalTable(
                 hierarchy_columns[self.hierarchy_type],
-                hierarchy_data),
+                hierarchy_data)
+        else:
+            hierarchy_table = ForecastWithLinkTable(
+                hierarchy_view[self.hierarchy_type],
+                hierarchy_view_code[self.hierarchy_type],
+                '',
+                hierarchy_columns[self.hierarchy_type],
+                hierarchy_data)
+
+        self.tables = [
+            hierarchy_table,
             programme_table,
             expenditure_table,
             project_table,
@@ -145,10 +157,10 @@ class DITView(
     table_pagination = False
     hierarchy_type = SHOW_DIT
 
-    def groups(self):
-        return DepartmentalGroup.objects.filter(
-            active=True,
-        )
+    # def groups(self):
+    #     return DepartmentalGroup.objects.filter(
+    #         active=True,
+    #     )
 
 
 class GroupView(
@@ -166,11 +178,11 @@ class GroupView(
             active=True,
         )
 
-    def directorates(self):
-        return Directorate.objects.filter(
-            group__group_code=self.kwargs['group_code'],
-            active=True,
-        )
+    # def directorates(self):
+    #     return Directorate.objects.filter(
+    #         group__group_code=self.kwargs['group_code'],
+    #         active=True,
+    #     )
 
 
 class DirectorateView(
@@ -193,20 +205,20 @@ class DirectorateView(
             directorate_code=self.kwargs['directorate_code']
         )
 
-    def post(self, request, *args, **kwargs):
-        cost_centre_code = request.POST.get(
-            'cost_centre',
-            None,
-        )
-        if cost_centre_code:
-            return HttpResponseRedirect(
-                reverse(
-                    "forecast_cost_centre",
-                    kwargs={'cost_centre_code': cost_centre_code}
-                )
-            )
-        else:
-            raise Http404("Cost Centre not found")
+    # def post(self, request, *args, **kwargs):
+    #     cost_centre_code = request.POST.get(
+    #         'cost_centre',
+    #         None,
+    #     )
+    #     if cost_centre_code:
+    #         return HttpResponseRedirect(
+    #             reverse(
+    #                 "forecast_cost_centre",
+    #                 kwargs={'cost_centre_code': cost_centre_code}
+    #             )
+    #         )
+    #     else:
+    #         raise Http404("Cost Centre not found")
 
 
 class CostCentreView(

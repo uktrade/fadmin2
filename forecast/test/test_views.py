@@ -643,7 +643,8 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.check_negative_value_formatted(soup)
 
         self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
-                                   self.cost_centre.cost_centre_name, -1)
+                                   self.cost_centre.cost_centre_name, 0)
+
         # Check that the second table displays the programme and the correct totals
         self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
 
@@ -682,7 +683,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.check_negative_value_formatted(soup)
 
         self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
-                                   self.directorate.directorate_name, -1)
+                                   self.directorate.directorate_name, 0)
         # Check that the second table displays the programme and the correct totals
         self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
 
@@ -715,7 +716,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.check_negative_value_formatted(soup)
 
         self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
-                                   self.group_name, -1)
+                                   self.group_name, 0)
         # Check that the second table displays the programme and the correct totals
         self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
 
