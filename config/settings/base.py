@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     "reversion",
     "rest_framework",
     "simple_history",
+    "defender",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -95,6 +96,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django_settings_export.settings_export",
             ]
         },
     }
@@ -196,10 +198,10 @@ AWS_DEFAULT_ACL = None  # Need to check this with GDS bucket
 if 'VCAP_SERVICES' in os.environ:
     services = json.loads(os.getenv('VCAP_SERVICES'))
     credentials = services['redis'][0]['credentials']
-    REDIS_URL = "rediss://:{}@{}:{}/0?ssl_cert_reqs=CERT_REQUIRED".format(
+    REDIS_URL = "rediss://:{}@{}:{}/0?ssl_cert_reqs=required".format(
         credentials['password'],
         credentials['host'],
-        credentials['port']
+        credentials['port'],
     )
 else:
     REDIS_URL = env("CELERY_BROKER_URL", default=None)
@@ -223,3 +225,31 @@ NUM_META_COLS = 5
 CLAM_AV_USERNAME = env("CLAM_AV_USERNAME", default=None)
 CLAM_AV_PASSWORD = env("CLAM_AV_PASSWORD", default=None)
 CLAM_AV_URL = env("CLAM_AV_URL", default=None)
+GTM_CODE = env("GTM_CODE", default=None)
+
+SETTINGS_EXPORT = [
+    'DEBUG',
+    'GTM_CODE',
+]
+
+DEFENDER_REDIS_URL = env('DEFENDER_REDIS_URL', default='')
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "core.middleware.ThreadLocalMiddleware",
+    "core.no_cache_middleware.NoCacheMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
+    "defender.middleware.FailedLoginMiddleware",
+]
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "guardian.backends.ObjectPermissionBackend",
+]
