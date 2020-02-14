@@ -6,7 +6,6 @@ STATICFILES_DIRS = ("/app/front_end/build/static", "/app/node_modules/govuk-fron
 
 SASS_PROCESSOR_INCLUDE_DIRS = [os.path.join("/node_modules")]
 
-
 AUTHENTICATION_BACKENDS += [
     "authbroker_client.backends.AuthbrokerBackend",
 ]

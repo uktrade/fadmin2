@@ -2,7 +2,6 @@ from .base import *  # noqa
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-
 MIDDLEWARE += [
     "authbroker_client.middleware.ProtectAllViewsMiddleware",
 ]
@@ -18,12 +17,6 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 IGNORE_ANTI_VIRUS = False
-
-# X_ROBOTS_TAG (https://man.uktrade.io/docs/procedures/1st-go-live.html)
-X_ROBOTS_TAG = [
-    'noindex',
-    'nofollow',
-]
 
 # X_ROBOTS_TAG (https://man.uktrade.io/docs/procedures/1st-go-live.html)
 X_ROBOTS_TAG = [
