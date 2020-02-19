@@ -9,8 +9,6 @@ from django.db.models import (
 # https://github.com/martsberger/django-pivot/blob/master/django_pivot/pivot.py # noqa
 from django_pivot.pivot import pivot
 
-from simple_history.models import HistoricalRecords
-
 from chartofaccountDIT.models import (
     Analysis1,
     Analysis2,
@@ -21,7 +19,7 @@ from chartofaccountDIT.models import (
 )
 
 from core.metamodels import (
-    SimpleTimeStampedModel,
+    BaseModel,
 )
 from core.models import FinancialYear
 from core.myutils import get_current_financial_year
@@ -42,9 +40,8 @@ class SubTotalFieldNotSpecifiedError(Exception):
     pass
 
 
-class ForecastEditLock(models.Model):
+class ForecastEditLock(BaseModel):
     locked = models.BooleanField(default=False)
-    history = HistoricalRecords()
 
     def __str__(self):
         return 'Forecast edit lock'
@@ -56,7 +53,7 @@ class ForecastEditLock(models.Model):
         ]
 
 
-class ForecastExpenditureType(models.Model):
+class ForecastExpenditureType(BaseModel):
     """The expenditure type is a combination of
     the economic budget (NAC) and the budget type (Programme).
     As such, it can only be defined for a forecast
@@ -132,7 +129,7 @@ class FinancialPeriodManager(models.Manager):
         )
 
 
-class FinancialPeriod(models.Model):
+class FinancialPeriod(BaseModel):
     """Financial periods: correspond
     to month, but there are 3 extra
     periods at the end"""
@@ -158,7 +155,7 @@ class FinancialPeriod(models.Model):
         return self.period_long_name
 
 
-class FinancialCode(models.Model):
+class FinancialCode(BaseModel):
     """Contains the members of Chart of Account needed to create a unique key"""
 
     class Meta:
@@ -288,7 +285,6 @@ class FinancialCode(models.Model):
         blank=True,
         null=True
     )
-    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         # Override save to calculate the forecast_expenditure_type.
@@ -547,7 +543,8 @@ class DisplaySubTotalManager(models.Manager):
                 f"does not exist in provided columns: '{[*data_columns]}'."
             )
 
-        data_returned = self.raw_data(data_columns, filter_dict, year, order_list)
+        data_returned = self.raw_data_annotated(data_columns, filter_dict, year,
+                                                order_list)
         raw_data = list(data_returned)
         if not raw_data:
             return []
@@ -558,7 +555,14 @@ class DisplaySubTotalManager(models.Manager):
             show_grand_total,
         )
 
-    def raw_data(self, columns={}, filter_dict={}, year=0, order_list=[]):
+    def raw_data_annotated(
+            self,
+            columns={},
+            filter_dict={},
+            year=0,
+            order_list=[],
+            include_zeros=False
+    ):
         if year == 0:
             year = get_current_financial_year()
         if columns == {}:
@@ -578,16 +582,26 @@ class DisplaySubTotalManager(models.Manager):
                        'Feb': Sum('feb'),
                        'Mar': Sum('mar'),
                        }
+        # Lines with 0 values across the year have no year specified.
+        # So use financial_year = NULL to filter them in or out.
         raw_data = (self.get_queryset().values(*columns)
-                    .filter(financial_year=year, **filter_dict)
+                    .filter(
+                    Q(financial_year=year) |
+                    Q(financial_year__isnull=include_zeros),
+                    **filter_dict)
                     .annotate(**annotations)
                     .order_by(*order_list)
                     )
         return raw_data
 
 
-class ForecastBudgetDataView(models.Model):
+# Does not inherit from BaseModel as it maps to view
+class ForecastingDataView(models.Model):
     """Used for joining budgets and forecast.
+    The view adds rows with 0 values across the year (zero-values rows),
+    to be consistent with the Edit Forecast logic.
+    he zero-values rows have a null value for the year,
+    because the year is linked to the figures, and they have none!
     Mapped to a view in the database, because
     the query is too complex"""
     id = models.IntegerField(primary_key=True, )
@@ -618,10 +632,10 @@ class ForecastBudgetDataView(models.Model):
 
     class Meta:
         managed = False
-        db_table = "forecast_forecast_budget_view"
+        db_table = "forecast_forecast_download_view"
 
 
-class MonthlyFigureAbstract(SimpleTimeStampedModel):
+class MonthlyFigureAbstract(BaseModel):
     """It contains the forecast and the actuals.
     The current month defines what is Actual and what is Forecast"""
     amount = models.BigIntegerField(default=0)  # stored in pence
@@ -665,7 +679,6 @@ class MonthlyFigureAbstract(SimpleTimeStampedModel):
 
 
 class ForecastMonthlyFigure(MonthlyFigureAbstract):
-    history = HistoricalRecords()
     starting_amount = models.BigIntegerField(default=0)
 
 
@@ -690,7 +703,6 @@ class ActualUploadMonthlyFigure(MonthlyFigureAbstract):
 class BudgetMonthlyFigure(MonthlyFigureAbstract):
     """Used to store the budgets
     for the financial year."""
-    history = HistoricalRecords()
     starting_amount = models.BigIntegerField(default=0)
 
 
@@ -698,6 +710,7 @@ class BudgetUploadMonthlyFigure(MonthlyFigureAbstract):
     pass
 
 
+# Does not inherit from BaseModel as it maps to view
 class OSCARReturn(models.Model):
     """Used for downloading the Oscar return.
     Mapped to a view in the database, because
@@ -792,7 +805,7 @@ class OSCARReturn(models.Model):
                     on b.financial_code_id = f.financial_code_id and b.financial_year_id = f.financial_year_id;                    
 
 
-""" # noqa
+"""  # noqa
 
 """
 Query created in the database to return the info for the OSCAR return
