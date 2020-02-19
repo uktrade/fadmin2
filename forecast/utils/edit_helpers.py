@@ -36,22 +36,22 @@ class NoFinancialCodeForEditedValue(Exception):
     pass
 
 
-def check_cols_match(cell_data):
-    if len(cell_data) > 12 + settings.NUM_META_COLS:
-        raise TooManyMatchException(
-            'Your pasted data does not '
-            'match the expected format. '
-            'There are too many columns.'
-        )
-    if len(cell_data) < 12 + settings.NUM_META_COLS:
-        raise NotEnoughMatchException(
-            'Your pasted data does not '
-            'match the expected format. '
-            'There are not enough columns.'
-        )
+# def check_cols_match(cell_data):
+#     if len(cell_data) > 12 + settings.NUM_META_COLS:
+#         raise TooManyMatchException(
+#             'Your pasted data does not '
+#             'match the expected format. '
+#             'There are too many columns.'
+#         )
+#     if len(cell_data) < 12 + settings.NUM_META_COLS:
+#         raise NotEnoughMatchException(
+#             'Your pasted data does not '
+#             'match the expected format. '
+#             'There are not enough columns.'
+#         )
 
 
-def get_monthly_figures(cost_centre_code, cell_data):
+def set_monthly_figure_amount(cost_centre_code, cell_data):
     start_period = FinancialPeriod.financial_period_info.actual_month() + 1
 
     for financial_period_month in range(start_period, 13):
@@ -59,11 +59,11 @@ def get_monthly_figures(cost_centre_code, cell_data):
             financial_code__cost_centre__cost_centre_code=cost_centre_code,
             financial_year__financial_year=get_current_financial_year(),
             financial_period__financial_period_code=financial_period_month,
-            financial_code__programme__programme_code=check_empty(cell_data[1]),
+            financial_code__programme__programme_code=check_empty(cell_data[2]),
             financial_code__natural_account_code__natural_account_code=cell_data[0],
-            financial_code__analysis1_code=check_empty(cell_data[2]),
-            financial_code__analysis2_code=check_empty(cell_data[3]),
-            financial_code__project_code=check_empty(cell_data[4]),
+            financial_code__analysis1_code=check_empty(cell_data[4]),
+            financial_code__analysis2_code=check_empty(cell_data[5]),
+            financial_code__project_code=check_empty(cell_data[6]),
         ).first()
 
         col = (settings.NUM_META_COLS + financial_period_month) - 1
@@ -72,11 +72,11 @@ def get_monthly_figures(cost_centre_code, cell_data):
         if new_value != 0 and not monthly_figure:
             financial_code = FinancialCode.objects.get(
                 cost_centre__cost_centre_code=cost_centre_code,
-                programme__programme_code=check_empty(cell_data[1]),
+                programme__programme_code=check_empty(cell_data[2]),
                 natural_account_code__natural_account_code=cell_data[0],
-                analysis1_code=check_empty(cell_data[2]),
-                analysis2_code=check_empty(cell_data[3]),
-                project_code=check_empty(cell_data[4]),
+                analysis1_code=check_empty(cell_data[4]),
+                analysis2_code=check_empty(cell_data[5]),
+                project_code=check_empty(cell_data[6]),
             )
             financial_period = FinancialPeriod.objects.get(
                 financial_period_code=financial_period_month,
@@ -109,16 +109,16 @@ def check_row_match(index, pasted_at_row, cell_data):  # noqa C901
             "Your pasted data is not in the correct format"
         )
 
-    if pasted_at_row["programme"]["value"] != cell_data[1]:
+    if pasted_at_row["programme"]["value"] != cell_data[2]:
         mismatched_cols.append('"Programme"')
 
-    if pasted_at_row["analysis1_code"]["value"] != check_empty(cell_data[2]):
+    if pasted_at_row["analysis1_code"]["value"] != check_empty(cell_data[4]):
         mismatched_cols.append('"Analysis 1"')
 
-    if pasted_at_row["analysis2_code"]["value"] != check_empty(cell_data[3]):
+    if pasted_at_row["analysis2_code"]["value"] != check_empty(cell_data[5]):
         mismatched_cols.append('"Analysis 2"')
 
-    if pasted_at_row["project_code"]["value"] != check_empty(cell_data[4]):
+    if pasted_at_row["project_code"]["value"] != check_empty(cell_data[6]):
         mismatched_cols.append('"Project code"')
 
     if len(mismatched_cols) > 0:

@@ -162,6 +162,7 @@ function ForecastTable() {
                 let targetRow = -1
                 let targetMonth = null
                 let nextId = null
+                let maxMonth = Math.max(...window.period_display)
 
                 // Check for select button
                 if (editCellId) {
@@ -175,7 +176,7 @@ function ForecastTable() {
 
                 if (event.shiftKey && document.activeElement === footerLink) {
                     targetRow = cells.length - 1
-                    targetMonth = 12
+                    targetMonth = window.period_display
 
                     nextId = getCellId(targetRow, targetMonth)
                     event.preventDefault()
@@ -194,7 +195,7 @@ function ForecastTable() {
                     if (event.shiftKey) { // We're going backwards
                         if (document.activeElement === footerLink) {
                             targetRow = cells.length
-                            targetMonth = 12
+                            targetMonth = maxMonth
                         }
                         else if (!targetMonth) { // See if we're on a select button
                             if (targetRow === 0) { // See if we're at the start of the table
@@ -206,7 +207,7 @@ function ForecastTable() {
                                 return
                             } else {
                                 targetRow--
-                                targetMonth = 12
+                                targetMonth = maxMonth
                             }
                         } else { // We're coming from a cell
                             if (targetMonth === (lowestMonth + 1)) { // See if we need to jump to select link
@@ -231,7 +232,7 @@ function ForecastTable() {
                         targetMonth++
 
                         // Jump to next row if we've reached the end of the current one
-                        if (targetMonth > 12) {
+                        if (targetMonth > maxMonth) {
                             targetRow++
                             // targetMonth = lowestMonth + 1
 

@@ -4,6 +4,7 @@ import re
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.http import JsonResponse
 from django.urls import (
     reverse,
@@ -42,9 +43,8 @@ from forecast.utils.edit_helpers import (
     NotEnoughMatchException,
     RowMatchException,
     TooManyMatchException,
-    check_cols_match,
     check_row_match,
-    get_monthly_figures,
+    set_monthly_figure_amount,
 )
 from forecast.views.base import (
     CostCentrePermissionTest,
@@ -172,6 +172,7 @@ class AddRowView(
         return super().form_valid(form)
 
 
+@transaction.atomic
 class PasteForecastRowsView(
     CostCentrePermissionTest,
     FormView,
@@ -190,18 +191,21 @@ class PasteForecastRowsView(
         pasted_at_row = form.cleaned_data.get('pasted_at_row', None)
         all_selected = form.cleaned_data.get('all_selected', False)
 
-        figure_count = ForecastMonthlyFigure.objects.filter(
-            financial_code__cost_centre_id=cost_centre_code,
-        ).count()
+        financial_codes = FinancialCode.objects.filter(
+            cost_centre_id=self.cost_centre_code,
+        )
 
         # Get number of active financial periods
-        active_periods = FinancialPeriod.objects.filter(
-            display_figure=True
-        ).count()
+        # active_periods = FinancialPeriod.objects.filter(
+        #     display_figure=True
+        # ).count()
 
-        row_count = round(figure_count / active_periods)
-
+        # TODO - introduce a way of checking for
+        # active financial periods (see above)
+        row_count = financial_codes.count()
         rows = paste_content.splitlines()
+
+        pasted_row_count = len(rows)
 
         if len(rows) == 0:
             return JsonResponse({
@@ -210,7 +214,16 @@ class PasteForecastRowsView(
                 status=400,
             )
 
-        if all_selected and row_count < len(rows):
+        # Check for header row
+        has_start_row = False
+        if rows[0].lower().startswith("natural account code"):
+            has_start_row = True
+
+        # Account for header row in paste
+        if has_start_row:
+            pasted_row_count -= 1
+
+        if all_selected and row_count < pasted_row_count:
             return JsonResponse({
                 'error': (
                     'You have selected all forecast rows '
@@ -220,7 +233,7 @@ class PasteForecastRowsView(
                 status=400,
             )
 
-        if all_selected and row_count > len(rows):
+        if all_selected and row_count > pasted_row_count:
             return JsonResponse({
                 'error': (
                     'You have selected all forecast rows '
@@ -230,13 +243,11 @@ class PasteForecastRowsView(
                 status=400,
             )
 
-        # Check for header row
-        start_row = 0
-        if rows[0] == "Natural Account Code":
-            start_row = 1
-
         try:
-            for index, row in enumerate(rows, start=start_row):
+            for index, row in enumerate(rows):
+                if index == 0 and has_start_row:
+                    continue
+
                 cell_data = re.split(r'\t', row.rstrip('\t'))
 
                 # Check that pasted at content and desired first row match
@@ -246,10 +257,7 @@ class PasteForecastRowsView(
                     cell_data,
                 )
 
-                # Check cell data length against expected number of cols
-                check_cols_match(cell_data)
-
-                get_monthly_figures(
+                set_monthly_figure_amount(
                     cost_centre_code,
                     cell_data,
                 )
