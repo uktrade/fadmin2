@@ -54,7 +54,11 @@ class NoFinancialCodeForEditedValue(Exception):
 def set_monthly_figure_amount(cost_centre_code, cell_data):
     start_period = FinancialPeriod.financial_period_info.actual_month() + 1
 
-    for financial_period_month in range(start_period, 13):
+    period_max = FinancialPeriod.objects.filter(
+        display_figure=True,
+    ).count() + 1
+
+    for financial_period_month in range(start_period, period_max):
         monthly_figure = ForecastMonthlyFigure.objects.filter(
             financial_code__cost_centre__cost_centre_code=cost_centre_code,
             financial_year__financial_year=get_current_financial_year(),
