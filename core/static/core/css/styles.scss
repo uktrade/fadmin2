@@ -1,6 +1,10 @@
 $govuk-page-width: 1800px;
 @import "./node_modules/govuk-frontend/govuk/all";
 
+body {
+  font-size: 12px;
+}
+
 .actual-month {
   background-color: rgba(177, 180, 182, 0.5);
 }
@@ -54,6 +58,7 @@ input.cell-input {
 .govuk-error-summary {
   margin-bottom: 20px;
 }
+
 .directorate-cc-form {
   label {
     display: none;
@@ -213,6 +218,7 @@ table, td, th {
 }
 
 .govuk-table__caption {
+  display: none;
   margin: 20px 0;
 }
 
@@ -284,5 +290,221 @@ table, td, th {
 .select-all {
   width:80px;
   display: block;
-  text-align: right;
+  //text-align: right;
+}
+
+.datahub-header {
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  line-height: 1.5;
+  background-color: black;
+  position: relative;
+
+  .datahub-header__navigation__item__link--active {
+    padding-bottom: 3px;
+    border-bottom: 5px solid #005ea5;
+}
+
+  .datahub-header--max-width .datahub-header__logo-container, .datahub-header--max-width .datahub-header__navigation {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  //@media (min-width: 40.0625em) {
+    .datahub-header__logo-container, .datahub-header__navigation {
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+  //}
+
+  .datahub-header__logo-container {
+    color: white;
+    overflow: hidden;
+    font-weight: 700;
+    padding: 2px 15px;
+    box-sizing: content-box;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .datahub-header__logo {
+    font-size: 30px;
+    font-weight: bold;
+    display: inline-block;
+    padding-right: 2em;
+  }
+
+  .datahub-header__logo__site-name {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    -webkit-clip-path: inset(50%) !important;
+    clip-path: inset(50%) !important;
+    border: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .datahub-header__logo-container a, .datahub-header__logo-container a:visited, .datahub-header__logo-container a:link {
+    color: white;
+    text-decoration: none;
+  }
+
+  .datahub-header__logo__text {
+    -webkit-font-smoothing: initial;
+  }
+
+  .datahub-header__logo__tag {
+    -webkit-font-smoothing: initial;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.25;
+    display: inline-block;
+    padding: 4px 8px 2px 8px;
+    outline: 2px solid transparent;
+    outline-offset: -2px;
+    color: white;
+    background-color: #005ea5;
+    letter-spacing: 1px;
+    text-decoration: none;
+    text-transform: uppercase;
+    position: relative;
+    top: -5px;
+  }
+
+  //@media (min-width: 40.0625em) {
+
+    .js-datahub-header-enabled .datahub-header__navigation, .js-datahub-header-enabled .datahub-header__links {
+      display: block;
+    }
+
+    .js-datahub-header-enabled .datahub-header__navigation, .js-datahub-header-enabled .datahub-header__links {
+      display: none;
+    }
+  //}
+
+  //@media (min-width: 40.0625em) {
+
+    .datahub-header__links {
+      float: right;
+    }
+  //}
+  .datahub-header__links {
+    display: block;
+    font-size: 16px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    outline: 3px solid transparent;
+    font-weight: 700;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ul, ol {
+    list-style-type: none;
+  }
+
+  .datahub-header__navigation-wrapper {
+    background-color: #dee0e2;
+    font-weight: 700;
+  }
+
+  //@media (min-width: 40.0625em) {
+
+    .js-datahub-header-enabled .datahub-header__navigation, .js-datahub-header-enabled .datahub-header__links {
+      display: block;
+    }
+
+    .js-datahub-header-enabled .datahub-header__navigation, .js-datahub-header-enabled .datahub-header__links {
+      display: none;
+    }
+  //}
+
+  .datahub-header--max-width .datahub-header__logo-container, .datahub-header--max-width .datahub-header__navigation {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  //@media (min-width: 40.0625em) {
+
+    .datahub-header__logo-container, .datahub-header__navigation {
+      padding-left: 40px;
+      padding-right: 40px;
+    }
+  //}
+
+  .datahub-header__navigation {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    padding: 0 40px;
+    box-sizing: content-box;
+  }
+
+  ul, ol {
+    list-style-type: none;
+  }
+
+  //@media (min-width: 40.0625em) {
+
+    .datahub-header__navigation__item {
+      display: inline-block;
+      padding-right: 20px;
+    }
+
+    //.datahub-header__navigation__item {
+    //  display: block;
+    //  padding-right: 20px;
+    //}
+  //}
+
+  .datahub-header__links__item {
+      display: inline-block;
+      padding: 5px 10px;
+      border-bottom: 0;
+  }
+
+  .datahub-header__navigation__item__link:visited, .datahub-header__navigation__item__link:link {
+    color: #0b0c0c;
+  }
+
+  a:visited {
+    color: #4c2c92;
+  }
+
+  .datahub-header__navigation__item__link {
+    display: block;
+    padding: 5px 0;
+    margin: 0;
+    font-size: 16px;
+    line-height: 23px;
+    text-decoration: none;
+    color: #0b0c0c;
+  }
+
+  @media (min-width: 1200px) {
+    .datahub-header__navigation__item__link {
+      display: inline-block;
+      padding: 8px 0;
+    }
+  }
+
+  a, input, textarea {
+    outline: 3px solid transparent;
+  }
+
+  a {
+    color: #005ea5;
+    -webkit-text-decoration-skip: ink;
+    text-decoration-skip: ink;
+    outline-color: transparent;
+  }
+}
+
+.datahub-header__logo-container {
+  max-width:1200px;
 }

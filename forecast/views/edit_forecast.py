@@ -178,6 +178,7 @@ class PasteForecastRowsView(
 ):
     form_class = PasteForecastForm
 
+    @transaction.atomic
     def form_valid(self, form):
         if 'cost_centre_code' not in self.kwargs:
             raise NoCostCentreCodeInURLError(
