@@ -80,7 +80,7 @@ INSTALLED_APPS = [
     "reversion",
     "rest_framework",
     "simple_history",
-    "defender",
+    "axes",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -232,8 +232,6 @@ SETTINGS_EXPORT = [
     'GTM_CODE',
 ]
 
-DEFENDER_REDIS_URL = env('DEFENDER_REDIS_URL', default='')
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -245,10 +243,12 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "core.no_cache_middleware.NoCacheMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
-    "defender.middleware.FailedLoginMiddleware",
+    "axes.middleware.FailedLoginMiddleware",
 ]
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "guardian.backends.ObjectPermissionBackend",
 ]
+
+AXES_LOGIN_FAILURE_LIMIT = 5
