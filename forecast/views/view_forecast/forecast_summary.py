@@ -115,7 +115,8 @@ class ForecastMultiTableMixin(MultiTableMixin):
                 [PROGRAMME_CODE, FORECAST_EXPENDITURE_TYPE_NAME],
                 filter_code,
                 programme_columns,
-                programme_data)
+                programme_data
+            )
 
         programme_table.attrs['caption'] = "Programme Report"
         expenditure_table = ForecastWithLinkTable(expenditure_view[self.hierarchy_type],
@@ -130,7 +131,8 @@ class ForecastMultiTableMixin(MultiTableMixin):
         if self.hierarchy_type == SHOW_COSTCENTRE:
             hierarchy_table = ForecastSubTotalTable(
                 hierarchy_columns[self.hierarchy_type],
-                hierarchy_data)
+                hierarchy_data
+            )
         else:
             hierarchy_table = ForecastWithLinkTable(
                 hierarchy_view[self.hierarchy_type],
@@ -172,12 +174,6 @@ class GroupView(
             group_code=self.kwargs['group_code'],
             active=True,
         )
-
-    # def directorates(self):
-    #     return Directorate.objects.filter(
-    #         group__group_code=self.kwargs['group_code'],
-    #         active=True,
-    #     )
 
 
 class DirectorateView(
