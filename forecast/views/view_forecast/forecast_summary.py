@@ -157,11 +157,6 @@ class DITView(
     table_pagination = False
     hierarchy_type = SHOW_DIT
 
-    # def groups(self):
-    #     return DepartmentalGroup.objects.filter(
-    #         active=True,
-    #     )
-
 
 class GroupView(
     ForecastViewPermissionMixin,
@@ -204,21 +199,6 @@ class DirectorateView(
         return DirectorateCostCentresForm(
             directorate_code=self.kwargs['directorate_code']
         )
-
-    # def post(self, request, *args, **kwargs):
-    #     cost_centre_code = request.POST.get(
-    #         'cost_centre',
-    #         None,
-    #     )
-    #     if cost_centre_code:
-    #         return HttpResponseRedirect(
-    #             reverse(
-    #                 "forecast_cost_centre",
-    #                 kwargs={'cost_centre_code': cost_centre_code}
-    #             )
-    #         )
-    #     else:
-    #         raise Http404("Cost Centre not found")
 
 
 class CostCentreView(
