@@ -195,13 +195,13 @@ class PasteForecastRowsView(
             cost_centre_id=self.cost_centre_code,
         )
 
+        # TODO - introduce a way of checking for
+        # active financial periods (see previous logic below)
         # Get number of active financial periods
         # active_periods = FinancialPeriod.objects.filter(
         #     display_figure=True
         # ).count()
 
-        # TODO - introduce a way of checking for
-        # active financial periods (see above)
         row_count = financial_codes.count()
         rows = paste_content.splitlines()
 
