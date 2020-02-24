@@ -43,6 +43,7 @@ from forecast.utils.edit_helpers import (
     NotEnoughMatchException,
     RowMatchException,
     TooManyMatchException,
+    check_cols_match,
     check_row_match,
     set_monthly_figure_amount,
 )
@@ -256,6 +257,9 @@ class PasteForecastRowsView(
                     pasted_at_row,
                     cell_data,
                 )
+
+                # Check cell data length against expected number of cols
+                check_cols_match(cell_data)
 
                 set_monthly_figure_amount(
                     cost_centre_code,

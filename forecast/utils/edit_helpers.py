@@ -119,3 +119,22 @@ def check_row_match(index, pasted_at_row, cell_data):  # noqa C901
 
 def convert_forecast_amount(amount):
     return Decimal(amount.replace(",", "")) * 100
+
+
+def check_cols_match(cell_data):
+    return
+
+    # TODO - reinstate the below when Luis has
+    # added adjustment periods to edit spreadsheet downloads
+    if len(cell_data) > 12 + settings.NUM_META_COLS:
+        raise TooManyMatchException(
+            'Your pasted data does not '
+            'match the expected format. '
+            'There are too many columns.'
+        )
+    if len(cell_data) < 12 + settings.NUM_META_COLS:
+        raise NotEnoughMatchException(
+            'Your pasted data does not '
+            'match the expected format. '
+            'There are not enough columns.'
+        )
