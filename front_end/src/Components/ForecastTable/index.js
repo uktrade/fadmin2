@@ -112,6 +112,8 @@ function ForecastTable() {
         const handleKeyDown = (event) => {
             // This function puts editing cells into the tab order of the page
             let lowestMonth = 0
+            let body = document.getElementsByTagName("BODY")[0]
+            let skipLink = document.getElementsByClassName("govuk-skip-link")[0]
 
             if (window.actuals && window.actuals.length > 0) {
                 let highestActual = Math.max(...window.actuals)
@@ -156,7 +158,6 @@ function ForecastTable() {
                 }
             }
 
-
             if (event.key === "Tab") {
                 let targetRow = -1
                 let targetMonth = null
@@ -173,29 +174,28 @@ function ForecastTable() {
                     targetRow = parseInt(parts[2])
                 }
 
-                // if (event.shiftKey && document.activeElement === footerLink) {
-                //     targetRow = cells.length - 1
-                //     targetMonth = window.period_display
+                if (event.shiftKey && (
+                    document.activeElement === body ||
+                    document.activeElement === skipLink
+                )) {
+                    targetRow = cells.length - 1
 
-                //     nextId = getCellId(targetRow, targetMonth)
-                //     event.preventDefault()
-                //     document.activeElement.blur();
+                    nextId = getCellId(targetRow, maxMonth)
 
-                //     dispatch(
-                //         SET_EDITING_CELL({
-                //             "cellId": nextId
-                //         })
-                //     );
+                    event.preventDefault()
+                    document.activeElement.blur();
 
-                //     return
-                // }
+                    dispatch(
+                        SET_EDITING_CELL({
+                            "cellId": nextId
+                        })
+                    );
+
+                    return
+                }
 
                 if (targetRow > -1) {
                     if (event.shiftKey) { // We're going backwards
-                        // if (document.activeElement === footerLink) {
-                        //     targetRow = cells.length
-                        //     targetMonth = maxMonth
-                        // }
                         if (!targetMonth) { // See if we're on a select button
                             if (targetRow === 0) { // See if we're at the start of the table
                                 dispatch(
