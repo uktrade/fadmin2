@@ -36,21 +36,6 @@ class NoFinancialCodeForEditedValue(Exception):
     pass
 
 
-# def check_cols_match(cell_data):
-#     if len(cell_data) > 12 + settings.NUM_META_COLS:
-#         raise TooManyMatchException(
-#             'Your pasted data does not '
-#             'match the expected format. '
-#             'There are too many columns.'
-#         )
-#     if len(cell_data) < 12 + settings.NUM_META_COLS:
-#         raise NotEnoughMatchException(
-#             'Your pasted data does not '
-#             'match the expected format. '
-#             'There are not enough columns.'
-#         )
-
-
 def set_monthly_figure_amount(cost_centre_code, cell_data):
     start_period = FinancialPeriod.financial_period_info.actual_month() + 1
 
