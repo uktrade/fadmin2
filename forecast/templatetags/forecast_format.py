@@ -1,14 +1,11 @@
-import calendar
-
 from django import template
+
+from forecast.models import FinancialPeriod
 
 register = template.Library()
 
 forecast_figure_cols = [
     "Budget",
-    "Adj 1",
-    "Adj 2",
-    "Adj 3",
     "Year to Date",
     "Year Total",
     "Underspend (Overspend)",
@@ -17,7 +14,7 @@ forecast_figure_cols = [
 
 @register.filter()
 def is_forecast_figure(_, column):
-    if str(column) in calendar.month_abbr or str(column) in calendar.month_name \
+    if str(column) in FinancialPeriod.financial_period_info.period_display_list() \
             or str(column) in forecast_figure_cols:
         return True
 
