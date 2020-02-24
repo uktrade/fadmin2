@@ -6,9 +6,9 @@ register = template.Library()
 
 forecast_figure_cols = [
     "Budget",
-    "Adjustment 1",
-    "Adjustment 2",
-    "Adjustment 3",
+    "Adj 1",
+    "Adj 2",
+    "Adj 3",
     "Year to Date",
     "Year Total",
     "Underspend (Overspend)",
@@ -17,7 +17,8 @@ forecast_figure_cols = [
 
 @register.filter()
 def is_forecast_figure(_, column):
-    if str(column) in calendar.month_name or str(column) in forecast_figure_cols:
+    if str(column) in calendar.month_abbr or str(column) in calendar.month_name \
+            or str(column) in forecast_figure_cols:
         return True
 
     return False
@@ -25,7 +26,7 @@ def is_forecast_figure(_, column):
 
 @register.filter()
 def format_figure(value, column):
-    if str(column) in calendar.month_name or str(column) in forecast_figure_cols:
+    if is_forecast_figure(value, column):
         try:
             figure_value = int(value) / 100
             return f'{round(figure_value):,d}'

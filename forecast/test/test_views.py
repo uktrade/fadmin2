@@ -556,6 +556,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
             hierarchy_element
         assert first_hierarchy_cols[4 + offset].get_text().strip() == \
             format_forecast_figure(self.budget / 100)
+        print(first_hierarchy_cols[5 + offset].get_text().strip())
         assert first_hierarchy_cols[5 + offset].get_text().strip() == \
             format_forecast_figure(self.amount_apr / 100)
 
