@@ -111,7 +111,6 @@ function ForecastTable() {
     useEffect(() => {
         const handleKeyDown = (event) => {
             // This function puts editing cells into the tab order of the page
-            let footerLink = document.getElementsByClassName("national-archives")[0]
             let lowestMonth = 0
 
             if (window.actuals && window.actuals.length > 0) {
@@ -174,30 +173,30 @@ function ForecastTable() {
                     targetRow = parseInt(parts[2])
                 }
 
-                if (event.shiftKey && document.activeElement === footerLink) {
-                    targetRow = cells.length - 1
-                    targetMonth = window.period_display
+                // if (event.shiftKey && document.activeElement === footerLink) {
+                //     targetRow = cells.length - 1
+                //     targetMonth = window.period_display
 
-                    nextId = getCellId(targetRow, targetMonth)
-                    event.preventDefault()
-                    document.activeElement.blur();
+                //     nextId = getCellId(targetRow, targetMonth)
+                //     event.preventDefault()
+                //     document.activeElement.blur();
 
-                    dispatch(
-                        SET_EDITING_CELL({
-                            "cellId": nextId
-                        })
-                    );
+                //     dispatch(
+                //         SET_EDITING_CELL({
+                //             "cellId": nextId
+                //         })
+                //     );
 
-                    return
-                }
+                //     return
+                // }
 
                 if (targetRow > -1) {
                     if (event.shiftKey) { // We're going backwards
-                        if (document.activeElement === footerLink) {
-                            targetRow = cells.length
-                            targetMonth = maxMonth
-                        }
-                        else if (!targetMonth) { // See if we're on a select button
+                        // if (document.activeElement === footerLink) {
+                        //     targetRow = cells.length
+                        //     targetMonth = maxMonth
+                        // }
+                        if (!targetMonth) { // See if we're on a select button
                             if (targetRow === 0) { // See if we're at the start of the table
                                 dispatch(
                                     SET_EDITING_CELL({
@@ -243,7 +242,7 @@ function ForecastTable() {
                                         "cellId": null
                                     })
                                 );
-                                footerLink.focus()
+                                //footerLink.focus()
                                 event.preventDefault()
                                 return
                             }
