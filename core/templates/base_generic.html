@@ -76,11 +76,11 @@
                     </a>
                 </li>
 
-{#                    <li class="govuk-header__navigation-item {% if request.path == '/forecast/edit/' %}govuk-header__navigation-item--active{% endif %}">#}
-{#                        <a class="govuk-header__link" href="{% url 'gifts_hospitality:quick_links' %}">#}
-{#                            Gifts & Hospitality Register#}
-{#                        </a>#}
-{#                    </li>#}
+                    <li class="govuk-header__navigation-item {% if request.path == '/forecast/edit/' %}govuk-header__navigation-item--active{% endif %}">
+                        <a class="govuk-header__link" href="{% url 'gifts_hospitality:quick_links' %}">
+                            Gifts &amp; Hospitality Register
+                        </a>
+                    </li>
 
                 {% is_forecast_user user as is_forecast_user %}
                 {% if is_forecast_user == True %}
