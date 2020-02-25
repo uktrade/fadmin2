@@ -56,9 +56,17 @@ def set_monthly_figure_amount(cost_centre_code, cell_data):
         ).first()
 
         col = (settings.NUM_META_COLS + financial_period_month) - 1
+
+        print(col)
+        print(cell_data)
+
         new_value = convert_forecast_amount(cell_data[col])
 
-        if new_value != 0 and not monthly_figure:
+        if not monthly_figure:
+            # Return if not required to make record
+            if new_value == 0:
+                return
+
             financial_code = FinancialCode.objects.get(
                 cost_centre__cost_centre_code=cost_centre_code,
                 programme__programme_code=check_empty(cell_data[2]),

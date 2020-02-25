@@ -174,7 +174,8 @@ function ForecastTable() {
                     targetRow = parseInt(parts[2])
                 }
 
-                if (event.shiftKey && (
+                if (event.shiftKey && 
+                    editCellId === null && (
                     document.activeElement === body ||
                     document.activeElement === skipLink
                 )) {
