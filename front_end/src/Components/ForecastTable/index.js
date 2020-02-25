@@ -234,7 +234,6 @@ function ForecastTable() {
                         // Jump to next row if we've reached the end of the current one
                         if (targetMonth > maxMonth) {
                             targetRow++
-                            // targetMonth = lowestMonth + 1
 
                             // Check for end of table
                             if (targetRow > (cells.length - 1)) {
@@ -243,7 +242,6 @@ function ForecastTable() {
                                         "cellId": null
                                     })
                                 );
-                                //footerLink.focus()
                                 event.preventDefault()
                                 return
                             }

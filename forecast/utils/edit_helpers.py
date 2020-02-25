@@ -57,9 +57,6 @@ def set_monthly_figure_amount(cost_centre_code, cell_data):
 
         col = (settings.NUM_META_COLS + financial_period_month) - 1
 
-        print(col)
-        print(cell_data)
-
         new_value = convert_forecast_amount(cell_data[col])
 
         if not monthly_figure:
