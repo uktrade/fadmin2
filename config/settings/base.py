@@ -80,7 +80,7 @@ INSTALLED_APPS = [
     "reversion",
     "rest_framework",
     "simple_history",
-    "defender",
+    "axes",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -220,7 +220,7 @@ STATICFILES_FINDERS = [
     "sass_processor.finders.CssFinder",
 ]
 
-NUM_META_COLS = 5
+NUM_META_COLS = 8
 
 CLAM_AV_USERNAME = env("CLAM_AV_USERNAME", default=None)
 CLAM_AV_PASSWORD = env("CLAM_AV_PASSWORD", default=None)
@@ -231,8 +231,6 @@ SETTINGS_EXPORT = [
     'DEBUG',
     'GTM_CODE',
 ]
-
-DEFENDER_REDIS_URL = env('DEFENDER_REDIS_URL', default='')
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -245,10 +243,15 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "core.no_cache_middleware.NoCacheMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
-    "defender.middleware.FailedLoginMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "guardian.backends.ObjectPermissionBackend",
+    "axes.backends.AxesBackend",
 ]
+
+AXES_LOGIN_FAILURE_LIMIT = 5
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
