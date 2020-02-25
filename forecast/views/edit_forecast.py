@@ -197,7 +197,8 @@ class PasteForecastRowsView(
         )
 
         # TODO - introduce a way of checking for
-        # active financial periods (see previous logic below)
+        # active financial periods (see previously used logic below)
+
         # Get number of active financial periods
         # active_periods = FinancialPeriod.objects.filter(
         #     display_figure=True
