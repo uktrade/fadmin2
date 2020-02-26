@@ -17,6 +17,7 @@ from forecast.models import FinancialPeriod
 
 BUDGET_HEADER = 'Budget'
 
+
 def format_numbers(ws, row, start):
     for c in range(start, start + 16):
         ws[f'{get_column_letter(c)}{row}'].number_format = '#,##0.00'
