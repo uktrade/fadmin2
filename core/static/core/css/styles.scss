@@ -2,10 +2,6 @@ $govuk-page-width: 1800px;
 @import "./node_modules/govuk-frontend/govuk/all";
 @import "./header";
 
-body {
-  font-size: 12px;
-}
-
 .actual-month {
   background-color: rgba(177, 180, 182, 0.5);
 }
@@ -210,17 +206,11 @@ table, td, th {
     .govuk-grid-column-two-thirds {
       max-width: 66vw;
     }
-
-    .govuk-table {
-      //width:1%;
-      //min-width: 100%;
-    }
   }
 }
 
 .govuk-table__caption {
   display: none;
-  margin: 20px 0;
 }
 
 .total {
