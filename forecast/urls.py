@@ -114,7 +114,7 @@ urlpatterns = [
 
     #  group-programme/1090HT/310530/6/
     path(
-        "view/group-programme/<group_code>/<programme_code>/<forecast_expenditure_type>/",
+        "view/group-programme/<group_code>/<programme_code>/<forecast_expenditure_type>/",  # noqa
         GroupProgrammeDetailsView.as_view(),
         name="programme_details_group",
     ),

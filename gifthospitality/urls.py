@@ -1,13 +1,13 @@
-from django.urls import path
+# from django.urls import path
 
-from .views import (
-    FilteredGiftHospitalityView,
-    GiftHospitalityOfferedDoneView,
-    GiftHospitalityOfferedView,
-    GiftHospitalityReceivedDoneView,
-    GiftHospitalityReceivedView,
-    quick_links,
-)
+# from .views import (
+#     FilteredGiftHospitalityView,
+#     GiftHospitalityOfferedDoneView,
+#     GiftHospitalityOfferedView,
+#     GiftHospitalityReceivedDoneView,
+#     GiftHospitalityReceivedView,
+#     quick_links,
+# )
 
 app_name = "gifts_hospitality"
 urlpatterns = [

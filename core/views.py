@@ -1,10 +1,11 @@
 from django import get_version
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
+
 from django_filters.views import FilterView
 
 from django_tables2.export.views import ExportMixin, TableExport
