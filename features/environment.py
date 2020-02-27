@@ -4,6 +4,7 @@ import time
 import pyperclip
 
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.common.keys import Keys
@@ -231,11 +232,15 @@ def before_scenario(context, scenario):
 
 def before_feature(context, feature):
     if settings.USE_SELENIUM_HUB:
+        options = Options()
+        options.add_argument('--single-process')
+
         context.browser = webdriver.Remote(
             command_executor="http://{}:4444/wd/hub".format(
                 settings.SELENIUM_ADDRESS
             ),
             desired_capabilities=DesiredCapabilities.CHROME,
+            options=options,
         )
         context.browser.implicitly_wait(5)
     else:
