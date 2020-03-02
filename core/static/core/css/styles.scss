@@ -2,6 +2,10 @@ $govuk-page-width: 1800px;
 @import "./node_modules/govuk-frontend/govuk/all";
 @import "./header";
 
+body {
+  font-size: 16px;
+}
+
 .actual-month {
   background-color: rgba(177, 180, 182, 0.5);
 }
