@@ -258,5 +258,5 @@ def before_all(context):
         )
 
 
-def after_feature(context, feature):
-    context.browser.quit()
+#def after_feature(context, feature):
+#    context.browser.quit()
