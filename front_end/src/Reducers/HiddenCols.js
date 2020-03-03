@@ -4,7 +4,8 @@ import { createSlice } from 'redux-starter-kit';
 const hiddenCols = createSlice({
     slice: 'hidden',
     initialState: {
-        hiddenCols: []
+        hiddenCols: [],
+        showAll: true
     },
     reducers: {
         TOGGLE_ITEM: (state, action) => {
@@ -15,11 +16,19 @@ const hiddenCols = createSlice({
                 state.hiddenCols.push(action.payload)
             }
         },
+        TOGGLE_SHOW_ALL: (state, action) => {
+            if (state.showAll) {
+                state.showAll = false
+            } else {
+                state.showAll = true
+            }
+        },
     }
 });
 
 export const {
     TOGGLE_ITEM,
+    TOGGLE_SHOW_ALL
 } = hiddenCols.actions;
 
 export default hiddenCols.reducer;

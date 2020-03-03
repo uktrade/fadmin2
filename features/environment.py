@@ -240,18 +240,6 @@ def before_all(context):
         )
         context.browser.implicitly_wait(5)
     else:
-        # options = Options()
-        # options.add_argument('--single-process')
-
-        # chrome_options = Options()
-        # chrome_options.add_argument("--disable-extensions")
-        # chrome_options.add_argument("--disable-gpu")
-        # chrome_options.add_argument("--no-sandbox")
-        # #driver = webdriver.Chrome(options=chrome_options)
-        #
-        #
-        # "--disable-dev-shm-usage"
-
         from webdriver_manager.chrome import ChromeDriverManager
         context.browser = webdriver.Chrome(
             ChromeDriverManager().install()

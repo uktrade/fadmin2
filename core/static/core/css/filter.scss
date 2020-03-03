@@ -1,0 +1,54 @@
+
+.filter {
+  background-color: govuk-colour("mid-grey");
+  //padding: 16px;
+  max-width: 1200px;
+  margin-bottom: 24px;
+
+  .govuk-button {
+    margin: 16px;
+  }
+
+
+
+  .filter-by {
+    float: right;
+    background-color: white; // govuk-colour("light-grey");
+    border:16px solid govuk-colour("mid-grey");
+    padding:8px;
+    font-weight: bold;
+    overflow: hidden;
+
+    //button:not(:hover) {
+    //  background-color: transparent;
+    //}
+  }
+
+  .filter-link {
+    float: right;
+  }
+
+  .filter-content {
+    border:16px solid govuk-colour("mid-grey");
+    border-top-width: 0;
+    background-color: govuk-colour("light-grey");
+    padding: 16px;
+  }
+
+  .filter-content-wrapper {
+    max-height: 0;
+    transition: max-height 0.4s linear;
+    overflow-y: hidden;
+    box-sizing: border-box;
+  }
+
+  .filter-open {
+    max-height: 1000px;
+  }
+
+  .filter-cols {
+    background-color: white;
+    padding: 16px;
+    margin-top: 16px;
+  }
+}
