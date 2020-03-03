@@ -12,6 +12,7 @@ import {
 const EditActionBar = () => {
     const dispatch = useDispatch()
     const hiddenCols = useSelector(state => state.hiddenCols.hiddenCols)
+    const showAll = useSelector(state => state.hiddenCols.showAll)
     const filterOpen = useSelector(state => state.filter.open)
     const containerRef = useRef()
 
@@ -64,7 +65,7 @@ const EditActionBar = () => {
                             <input
                                 type="checkbox"
                                 className="govuk-checkboxes__input"
-                                checked={hiddenCols.indexOf("natural_account_code") === -1}
+                                checked={showAll}
                                 onChange={(e) => {
                                     dispatch(
                                         TOGGLE_SHOW_ALL()

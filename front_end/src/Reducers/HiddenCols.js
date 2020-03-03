@@ -11,8 +11,9 @@ const hiddenCols = createSlice({
         TOGGLE_ITEM: (state, action) => {
             let index = state.hiddenCols.indexOf(action.payload)
             if (index > -1) {
-               state.hiddenCols.splice(index, 1);
+                state.hiddenCols.splice(index, 1)
             } else {
+                state.showAll = false
                 state.hiddenCols.push(action.payload)
             }
         },
@@ -21,6 +22,8 @@ const hiddenCols = createSlice({
                 state.showAll = false
             } else {
                 state.showAll = true
+                // Turn on all cols
+                state.hiddenCols = []
             }
         },
     }

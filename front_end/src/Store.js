@@ -26,7 +26,10 @@ const appReducer = combineReducers({
 // const persistedReducer = persistReducer(persistConfig, appReducer)
 
 //export const store = createStore(persistedReducer);
-export const store = createStore(appReducer);
+export const store = createStore(
+	appReducer,
+	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 //export const persistor = persistStore(store);
 export const purge = () => {
     //persistor.purge();
