@@ -1,7 +1,6 @@
 
 .filter {
   background-color: govuk-colour("mid-grey");
-  //padding: 16px;
   max-width: 1200px;
   margin-bottom: 24px;
 
@@ -9,19 +8,13 @@
     margin: 16px;
   }
 
-
-
   .filter-by {
     float: right;
-    background-color: white; // govuk-colour("light-grey");
+    background-color: white;
     border:16px solid govuk-colour("mid-grey");
     padding:8px;
     font-weight: bold;
     overflow: hidden;
-
-    //button:not(:hover) {
-    //  background-color: transparent;
-    //}
   }
 
   .filter-link {
@@ -50,5 +43,23 @@
     background-color: white;
     padding: 16px;
     margin-top: 16px;
+  }
+
+  .arrow-down {
+    &:after {
+      content: '\25bc';
+      padding-left: 0.2em;
+      text-decoration: none!important;
+      color: #069;
+    }
+  }
+
+  .arrow-up {
+    &:after {
+      content: '\25b2';
+      padding-left: 0.2em;
+      text-decoration: none!important;
+      color: #069;
+    }
   }
 }

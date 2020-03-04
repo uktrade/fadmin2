@@ -7,7 +7,7 @@ import EditActionBar from '../../Components/EditActionBar/index'
 
 import { SET_ERROR } from '../../Reducers/Error'
 import { SET_CELLS } from '../../Reducers/Cells'
-import { TOGGLE_FILTER } from '../../Reducers/Filter'
+import { TOGGLE_FILTER, OPEN_FILTER_IF_CLOSED } from '../../Reducers/Filter'
 import { SET_SELECTED_ROW, SELECT_ALL, UNSELECT_ALL } from '../../Reducers/Selected'
 import {
     getCellId,
@@ -114,6 +114,7 @@ function EditForecast() {
             let body = document.getElementsByTagName("BODY")[0]
             let skipLink = document.getElementsByClassName("govuk-skip-link")[0]
             let filterOpenLink = document.getElementById("filter-switch")
+            let selectAll = document.getElementById("select_all")
 
             if (window.actuals && window.actuals.length > 0) {
                 let highestActual = Math.max(...window.actuals)
@@ -159,11 +160,17 @@ function EditForecast() {
             }
 
             if (event.key === "Tab") {
-
-                // See if we need to open filter
+                // See if users has hit open filter link
                 if (document.activeElement === filterOpenLink) {
                     dispatch(
-                        TOGGLE_FILTER()
+                        OPEN_FILTER_IF_CLOSED()
+                    );
+                    return
+                }
+                // See if we need to open filter because of a backwards tab from select all
+                if (event.shiftKey && document.activeElement === selectAll) {
+                    dispatch(
+                        OPEN_FILTER_IF_CLOSED()
                     );
                     return
                 }

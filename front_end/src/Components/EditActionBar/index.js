@@ -39,6 +39,13 @@ const EditActionBar = () => {
         return classes
     }
 
+    const getArrowClass = () => {
+        if (filterOpen)
+            return "arrow-down"
+
+        return "arrow-up"
+    }
+
     return (
         <div className="filter" ref={containerRef}>
             <div className="filter-by">
@@ -55,14 +62,15 @@ const EditActionBar = () => {
                 >
                     Table filters
                 </button>
+                <span className={getArrowClass()}></span>
             </div>
  
             <div className={getClasses()}>
                 <div className="filter-content">
                     <h3 className="govuk-heading-m">Table filters</h3>
 
-                    <div class="govuk-checkboxes">
-                        <div class="govuk-checkboxes__item">
+                    <div className="govuk-checkboxes">
+                        <div className="govuk-checkboxes__item">
                             <input
                                 type="checkbox"
                                 className="govuk-checkboxes__input"
@@ -73,7 +81,7 @@ const EditActionBar = () => {
                                     );
                                 }}
                             />
-                            <label class="govuk-label govuk-checkboxes__label" for="waste">
+                            <label className="govuk-label govuk-checkboxes__label" for="waste">
                                 All columns
                             </label>
                         </div>
@@ -81,8 +89,8 @@ const EditActionBar = () => {
 
                     <div className="filter-cols">
                         <h4 className="govuk-heading-m">Table columns</h4>
-                        <div class="govuk-checkboxes">
-                            <div class="govuk-checkboxes__item">
+                        <div className="govuk-checkboxes">
+                            <div className="govuk-checkboxes__item">
                                 <input
                                     type="checkbox"
                                     name="natural_account_code"
@@ -94,11 +102,11 @@ const EditActionBar = () => {
                                         );
                                     }}
                                 />
-                                <label class="govuk-label govuk-checkboxes__label" for="natural_account_code">
+                                <label className="govuk-label govuk-checkboxes__label" for="natural_account_code">
                                     Natural account code
                                 </label>
                             </div>
-                            <div class="govuk-checkboxes__item">
+                            <div className="govuk-checkboxes__item">
                                 <input
                                     type="checkbox"
                                     name="programme"
@@ -110,11 +118,11 @@ const EditActionBar = () => {
                                         );
                                     }}
                                 />
-                                <label class="govuk-label govuk-checkboxes__label" for="programme">
+                                <label className="govuk-label govuk-checkboxes__label" for="programme">
                                     Programme
                                 </label>
                             </div>
-                            <div class="govuk-checkboxes__item">
+                            <div className="govuk-checkboxes__item">
                                 <input
                                     type="checkbox"
                                     name="analysis1_code"
@@ -126,11 +134,11 @@ const EditActionBar = () => {
                                         );
                                     }}
                                 />
-                                <label class="govuk-label govuk-checkboxes__label" for="analysis1_code">
+                                <label className="govuk-label govuk-checkboxes__label" for="analysis1_code">
                                     Analysis 1
                                 </label>
                             </div>
-                            <div class="govuk-checkboxes__item">
+                            <div className="govuk-checkboxes__item">
                                 <input
                                     type="checkbox"
                                     name="analysis2_code"
@@ -142,11 +150,11 @@ const EditActionBar = () => {
                                         );
                                     }}
                                 />
-                                <label class="govuk-label govuk-checkboxes__label" for="analysis2_code">
+                                <label className="govuk-label govuk-checkboxes__label" for="analysis2_code">
                                     Analysis 2
                                 </label>
                             </div>
-                            <div class="govuk-checkboxes__item">
+                            <div className="govuk-checkboxes__item">
                                 <input
                                     type="checkbox"
                                     name="project_code"
@@ -158,7 +166,7 @@ const EditActionBar = () => {
                                         );
                                     }}
                                 />
-                                <label class="govuk-label govuk-checkboxes__label" for="project_code">
+                                <label className="govuk-label govuk-checkboxes__label" for="project_code">
                                     Project Code
                                 </label>
                             </div>
