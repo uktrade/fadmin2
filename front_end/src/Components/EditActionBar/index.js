@@ -41,9 +41,9 @@ const EditActionBar = () => {
 
     const getArrowClass = () => {
         if (filterOpen)
-            return "arrow-down"
+            return "arrow-up"
 
-        return "arrow-up"
+        return "arrow-down"
     }
 
     return (
