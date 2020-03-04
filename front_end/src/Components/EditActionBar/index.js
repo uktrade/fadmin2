@@ -43,7 +43,8 @@ const EditActionBar = () => {
         <div className="filter" ref={containerRef}>
             <div className="filter-by">
                 <span className="govuk-body">Filter by </span>                
-                <button id="filter-switch"
+                <button 
+                    id="filter-switch"
                     className="link-button govuk-link"
                     onClick={(e) => {
                         dispatch(

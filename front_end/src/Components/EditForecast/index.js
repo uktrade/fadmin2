@@ -7,6 +7,7 @@ import EditActionBar from '../../Components/EditActionBar/index'
 
 import { SET_ERROR } from '../../Reducers/Error'
 import { SET_CELLS } from '../../Reducers/Cells'
+import { TOGGLE_FILTER } from '../../Reducers/Filter'
 import { SET_SELECTED_ROW, SELECT_ALL, UNSELECT_ALL } from '../../Reducers/Selected'
 import {
     getCellId,
@@ -112,6 +113,7 @@ function EditForecast() {
             let lowestMonth = 0
             let body = document.getElementsByTagName("BODY")[0]
             let skipLink = document.getElementsByClassName("govuk-skip-link")[0]
+            let filterOpenLink = document.getElementById("filter-switch")
 
             if (window.actuals && window.actuals.length > 0) {
                 let highestActual = Math.max(...window.actuals)
@@ -157,6 +159,15 @@ function EditForecast() {
             }
 
             if (event.key === "Tab") {
+
+                // See if we need to open filter
+                if (document.activeElement === filterOpenLink) {
+                    dispatch(
+                        TOGGLE_FILTER()
+                    );
+                    return
+                }
+
                 let targetRow = -1
                 let targetMonth = null
                 let nextId = null
