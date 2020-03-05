@@ -195,7 +195,7 @@ AWS_S3_REGION_NAME = 'eu-west-2'  # Need to check this with GDS bucket
 AWS_DEFAULT_ACL = None  # Need to check this with GDS bucket
 #
 
-#DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 # Redis
 if 'VCAP_SERVICES' in os.environ:

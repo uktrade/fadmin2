@@ -1,4 +1,8 @@
+import boto3
+
 from celery import shared_task
+
+from django.conf import settings
 
 from core.myutils import run_anti_virus
 
@@ -15,13 +19,20 @@ def process_uploaded_file(*args):
     ).order_by('-created').first()
 
     if latest_unprocessed is not None:
-        # Check for viruses
-        print("Unprocessed file: {}".format(latest_unprocessed))
         latest_unprocessed.status = FileUpload.ANTIVIRUS
         latest_unprocessed.save()
 
-        anti_virus_result = run_anti_virus(
+        s3 = boto3.resource('s3')
+
+        obj = s3.Object(
+            settings.AWS_STORAGE_BUCKET_NAME,
             latest_unprocessed.document_file.name,
+        )
+        file_body = obj.get()['Body'].read()
+
+        # Check for viruses
+        anti_virus_result = run_anti_virus(
+            file_body,
         )
 
         if anti_virus_result["malware"]:

@@ -33,19 +33,14 @@ class UploadActualsView(FormView):
         if form.is_valid():
             data = form.cleaned_data
 
-            import logging
-
-            import boto3
-            boto3.set_stream_logger('', logging.DEBUG)
-
             file_upload = FileUpload(
-                document_file=request.FILES['file'],
+                document_file=request.FILES['file'].name,
                 uploading_user=request.user,
                 document_type=FileUpload.ACTUALS,
             )
             file_upload.save()
-            # Process file async
 
+            # Process file async
             if settings.ASYNC_FILE_UPLOAD:
                 process_uploaded_file.delay(
                     data['period'].period_calendar_code,

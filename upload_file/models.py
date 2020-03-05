@@ -39,7 +39,8 @@ class FileUpload(BaseModel):
         default=ACTUALS,
     )
     document_file = S3FileField(
-        #upload_to='uploaded/actuals/'
+        upload_to='uploaded/actuals/',
+        max_length=1000,
     )
     status = models.CharField(
         max_length=11,
