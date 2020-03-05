@@ -92,4 +92,4 @@ django-simple-history
 django-settings-export
 django-axes
 django-redis
-git+https://github.com/uktrade/s3chunkuploader.git@feature/lst-616-Update-S3-Chunck-Uploader-to-use-prefixed-setting-keys
+s3chunkuploader
