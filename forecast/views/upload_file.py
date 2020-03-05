@@ -33,6 +33,11 @@ class UploadActualsView(FormView):
         if form.is_valid():
             data = form.cleaned_data
 
+            import logging
+
+            import boto3
+            boto3.set_stream_logger('', logging.DEBUG)
+
             file_upload = FileUpload(
                 document_file=request.FILES['file'],
                 uploading_user=request.user,

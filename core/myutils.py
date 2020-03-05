@@ -1,4 +1,5 @@
 # Collection of useful functions and classes
+import boto3
 import datetime
 
 from django.conf import settings
@@ -49,7 +50,15 @@ def run_anti_virus(file):
     if settings.IGNORE_ANTI_VIRUS:
         return {'malware': False}
 
-    files = {"file": file}
+    s3 = boto3.resource('s3')
+
+    obj = s3.Object(
+        settings.AWS_STORAGE_BUCKET_NAME,
+        file,
+    )
+    file_body = obj.get()['Body'].read()
+    files = {"file": file_body}
+
     auth = (
         settings.CLAM_AV_USERNAME,
         settings.CLAM_AV_PASSWORD,

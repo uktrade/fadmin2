@@ -21,8 +21,9 @@ def process_uploaded_file(*args):
         latest_unprocessed.save()
 
         anti_virus_result = run_anti_virus(
-            latest_unprocessed.document_file,
+            latest_unprocessed.document_file.name,
         )
+
         if anti_virus_result["malware"]:
             latest_unprocessed.status = FileUpload.ERROR
             latest_unprocessed.user_error_message = "A virus was found in the file"
