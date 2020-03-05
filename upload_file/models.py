@@ -61,14 +61,11 @@ class FileUpload(BaseModel):
 
     @property
     def file_name(self):
-        return "test"
-        # return Path(
-        #     self.document_file.name,
-        # ).name
-    #
-    # def __str__(self):
-    #     return "{} {} {}".format(
-    #         self.document_file,
-    #         self.document_type,
-    #         self.status,
-    #     )
+        return self.document_file.name
+
+    def __str__(self):
+        return "{} {} {}".format(
+            self.document_file.name,
+            self.document_type,
+            self.status,
+        )

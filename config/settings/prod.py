@@ -14,8 +14,6 @@ STATICFILES_DIRS = ("/app/front_end/build/static",)
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-IGNORE_ANTI_VIRUS = False
-
 # X_ROBOTS_TAG (https://man.uktrade.io/docs/procedures/1st-go-live.html)
 X_ROBOTS_TAG = [
     'noindex',
@@ -48,6 +46,9 @@ LOGGING = {
         },
     },
 }
+
+# Use anti virus check on uploaded files
+IGNORE_ANTI_VIRUS = False
 
 # Set async file uploading
 ASYNC_FILE_UPLOAD = True
