@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='fileupload',
             name='document_file',
-            field=s3chunkuploader.fields.S3FileField(max_length=1000, upload_to='uploaded/actuals/'),
+            field=s3chunkuploader.fields.S3FileField(max_length=1000),
         ),
         migrations.AlterField(
             model_name='simplehistoryfileupload',

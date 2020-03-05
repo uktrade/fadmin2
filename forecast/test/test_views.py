@@ -834,8 +834,9 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
     def check_nac_table(self, table):
         nac_rows = table.find_all("tr")
         first_nac_cols = nac_rows[1].find_all("td")
-        assert (first_nac_cols[0].get_text().strip() ==
-                self.nac2_obj.natural_account_code_description)
+        assert (
+            first_nac_cols[0].get_text().strip() == self.nac2_obj.natural_account_code_description  # noqa
+        )
 
         assert first_nac_cols[3].get_text().strip() == format_forecast_figure(
             self.budget / 100

@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -39,7 +37,6 @@ class FileUpload(BaseModel):
         default=ACTUALS,
     )
     document_file = S3FileField(
-        upload_to='uploaded/actuals/',
         max_length=1000,
     )
     status = models.CharField(
