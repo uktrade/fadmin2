@@ -7,7 +7,7 @@ import EditActionBar from '../../Components/EditActionBar/index'
 
 import { SET_ERROR } from '../../Reducers/Error'
 import { SET_CELLS } from '../../Reducers/Cells'
-import { TOGGLE_FILTER, OPEN_FILTER_IF_CLOSED } from '../../Reducers/Filter'
+import { OPEN_FILTER_IF_CLOSED } from '../../Reducers/Filter'
 import { SET_SELECTED_ROW, SELECT_ALL, UNSELECT_ALL } from '../../Reducers/Selected'
 import {
     getCellId,
