@@ -12,11 +12,8 @@
   // Logo
   .internal-header__logo-container {
     color: white;
-    overflow: hidden;
     font-weight: 700;
     padding: 2px 15px 0 15px;
-    box-sizing: content-box;
-    -moz-osx-font-smoothing: grayscale;
   }
 
   .internal-header__logo {
@@ -109,16 +106,6 @@
     color: #005ea5!important;
   }
 
-  @media (min-width: 40.0625em) {
-    .js-internal-header-enabled .internal-header__navigation, .js-internal-header-enabled .internal-header__links {
-      display: block!important;
-    }
-
-    .internal-header__links {
-      float: right;
-    }
-  }
-
   .internal-header__links {
     display: block;
     font-size: 16px;
@@ -129,6 +116,16 @@
     font-weight: 700;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (min-width: 40.0625em) {
+    .js-internal-header-enabled .internal-header__navigation, .js-internal-header-enabled .internal-header__links {
+      display: block!important;
+    }
+
+    .internal-header__links {
+      float: right;
+    }
   }
 
   ul, ol {
