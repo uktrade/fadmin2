@@ -64,6 +64,7 @@ function EditForecast() {
             );
 
             let clipBoardContent = event.clipboardData.getData('text/plain')
+
             let payload = new FormData()
             payload.append("paste_content", clipBoardContent)
 

@@ -230,7 +230,7 @@ def before_scenario(context, scenario):
     set_up_test_objects(context)
 
 
-def before_all(context):
+def before_feature(context, feature):
     if settings.USE_SELENIUM_HUB:
         context.browser = webdriver.Remote(
             command_executor="http://{}:4444/wd/hub".format(
@@ -244,7 +244,8 @@ def before_all(context):
         context.browser = webdriver.Chrome(
             ChromeDriverManager().install()
         )
+        context.browser.implicitly_wait(5)
 
 
-#def after_feature(context, feature):
-#    context.browser.quit()
+def after_feature(context, feature):
+    context.browser.quit()

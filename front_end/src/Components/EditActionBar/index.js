@@ -94,6 +94,7 @@ const EditActionBar = () => {
                                 <input
                                     type="checkbox"
                                     name="natural_account_code"
+                                    id="show_hide_nac"
                                     className="govuk-checkboxes__input"
                                     checked={hiddenCols.indexOf("natural_account_code") === -1}
                                     onChange={(e) => {

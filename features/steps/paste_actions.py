@@ -67,7 +67,7 @@ def step_impl(context):
     )
 
     WebDriverWait(context.browser, 5000).until(
-        ec.presence_of_element_located((By.ID, "select_0"))
+        ec.presence_of_element_located((By.ID, "select_row_0"))
     )
 
     april_value = context.browser.find_element_by_id(
@@ -78,7 +78,7 @@ def step_impl(context):
 
     assert april_value == "0"
 
-    first_select = context.browser.find_element_by_id("select_0")
+    first_select = context.browser.find_element_by_id("select_row_0")
     first_select.click()
 
 
