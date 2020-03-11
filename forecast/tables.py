@@ -224,7 +224,7 @@ class ForecastTable(tables.Table):
                         self.display_footer,
                         budget_spent_percentage_header,
                         empty_values=(),
-                     ),
+                    ),
                 ),
             ]
         )
