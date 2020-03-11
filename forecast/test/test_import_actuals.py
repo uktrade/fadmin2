@@ -82,7 +82,8 @@ class FakeCell:
     FILE_UPLOAD_HANDLERS=[
         "django.core.files.uploadhandler.MemoryFileUploadHandler",
         "django.core.files.uploadhandler.TemporaryFileUploadHandler",
-    ]
+    ],
+    DEFAULT_FILE_STORAGE="django.core.files.storage.FileSystemStorage",
 )
 class ImportActualsTest(TestCase, RequestFactoryBase):
     def setUp(self):

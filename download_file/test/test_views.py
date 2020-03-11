@@ -23,7 +23,8 @@ from upload_file.views import UploadedView
     FILE_UPLOAD_HANDLERS=[
         "django.core.files.uploadhandler.MemoryFileUploadHandler",
         "django.core.files.uploadhandler.TemporaryFileUploadHandler",
-    ]
+    ],
+    DEFAULT_FILE_STORAGE="django.core.files.storage.FileSystemStorage",
 )
 class UploadedViewTests(TestCase, RequestFactoryBase):
     def setUp(self):

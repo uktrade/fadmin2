@@ -1,4 +1,5 @@
 import os
+import re
 from unittest.mock import MagicMock
 
 from django.contrib.auth.models import Permission
@@ -24,7 +25,8 @@ from upload_file.views import UploadedView
     FILE_UPLOAD_HANDLERS=[
         "django.core.files.uploadhandler.MemoryFileUploadHandler",
         "django.core.files.uploadhandler.TemporaryFileUploadHandler",
-    ]
+    ],
+    DEFAULT_FILE_STORAGE="django.core.files.storage.FileSystemStorage",
 )
 class UploadedViewTests(TestCase, RequestFactoryBase):
     def setUp(self):
@@ -32,6 +34,7 @@ class UploadedViewTests(TestCase, RequestFactoryBase):
 
         self.file_mock = MagicMock(spec=File)
         self.file_mock.name = 'test.txt'
+        self.file_name_regex = 'test_(.*).txt'
 
         self.file_upload = FileUploadFactory.create(
             uploading_user=self.test_user,
@@ -67,7 +70,10 @@ class UploadedViewTests(TestCase, RequestFactoryBase):
         self.assertEqual(resp.status_code, 200)
 
         # File name should be in response
-        assert self.file_mock.name in resp.rendered_content
+        assert re.search(
+            self.file_name_regex,
+            resp.rendered_content,
+        ) is not None
 
         # Clean up file
         file_path = 'uploaded/actuals/{}'.format(

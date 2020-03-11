@@ -475,7 +475,6 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.assertEqual(response.status_code, 200)
 
         # Check cost centre is shown
-        print(str(response.rendered_content))
         assert str(self.cost_centre_code) in str(response.rendered_content)
 
     def test_cost_centre_view(self):
@@ -731,14 +730,6 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.check_project_table(tables[PROJECT_TABLE_INDEX])
 
 
-# Set file upload handlers back to default as
-# we need to remove S3 interactions for test purposes
-@override_settings(
-    FILE_UPLOAD_HANDLERS=[
-        "django.core.files.uploadhandler.MemoryFileUploadHandler",
-        "django.core.files.uploadhandler.TemporaryFileUploadHandler",
-    ]
-)
 class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
