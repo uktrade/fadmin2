@@ -1,10 +1,9 @@
-import boto3
-
 from celery import shared_task
 
-from django.conf import settings
-
-from core.myutils import run_anti_virus
+from core.myutils import (
+    get_s3_file_body,
+    run_anti_virus,
+)
 
 from forecast.import_actuals import upload_trial_balance_report
 from forecast.import_budgets import upload_budget_from_file
@@ -22,13 +21,10 @@ def process_uploaded_file(*args):
         latest_unprocessed.status = FileUpload.ANTIVIRUS
         latest_unprocessed.save()
 
-        s3 = boto3.resource('s3')
-
-        obj = s3.Object(
-            settings.AWS_STORAGE_BUCKET_NAME,
-            latest_unprocessed.document_file.name,
+        # Get file body from S3
+        file_body = get_s3_file_body(
+            latest_unprocessed.document_file.name
         )
-        file_body = obj.get()['Body'].read()
 
         # Check for viruses
         anti_virus_result = run_anti_virus(

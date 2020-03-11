@@ -1,4 +1,6 @@
 # Collection of useful functions and classes
+import boto3
+
 import datetime
 
 from django.conf import settings
@@ -42,6 +44,16 @@ class GetValidYear:
 
     def to_url(self, value):
         return '%04d' % value
+
+
+def get_s3_file_body(file_name):
+    s3 = boto3.resource('s3')
+
+    obj = s3.Object(
+        settings.AWS_STORAGE_BUCKET_NAME,
+        file_name,
+    )
+    return obj.get()['Body'].read()
 
 
 def run_anti_virus(file_body):
