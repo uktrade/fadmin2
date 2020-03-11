@@ -56,9 +56,9 @@ from forecast.views.view_forecast.programme_details import (
 )
 
 
-TOTAL_COLUMN = -3
-SPEND_TO_DATE_COLUMN = -4
-UNDERSPEND_COLUMN = -2
+TOTAL_COLUMN = -5
+SPEND_TO_DATE_COLUMN = -2
+UNDERSPEND_COLUMN = -4
 
 HIERARCHY_TABLE_INDEX = 0
 PROGRAMME_TABLE_INDEX = 1
@@ -1168,7 +1168,7 @@ class EditForecastLockTest(TestCase, RequestFactoryBase):
         )
 
         assert resp.status_code == 302
-        assert resp.url == "/forecast/editing-locked/"
+        assert resp.url == "/forecast/edit/editing-locked/"
 
         # Add edit whilst lock permission
         can_edit_whilst_locked = Permission.objects.get(
