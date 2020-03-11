@@ -1,7 +1,7 @@
 # Collection of useful functions and classes
-import boto3
-
 import datetime
+
+import boto3
 
 from django.conf import settings
 
