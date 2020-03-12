@@ -39,6 +39,7 @@ def process_uploaded_file(*args):
         else:
             latest_unprocessed.status = FileUpload.PROCESSING
             latest_unprocessed.save()
+
             # Process file here
             if latest_unprocessed.document_type == FileUpload.ACTUALS:
                 success = upload_trial_balance_report(
