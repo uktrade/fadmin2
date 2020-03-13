@@ -81,7 +81,7 @@ const EditActionBar = () => {
                                     );
                                 }}
                             />
-                            <label className="govuk-label govuk-checkboxes__label" for="waste">
+                            <label className="govuk-label govuk-checkboxes__label" htmlFor="waste">
                                 All columns
                             </label>
                         </div>

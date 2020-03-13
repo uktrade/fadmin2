@@ -120,13 +120,23 @@ const TableCell = ({rowIndex, cellId, cellKey, sheetUpdating}) => {
 
 
     const updateValue = () => {
-        let newAmount = parseInt(value * 100)
+        let newAmount = value * 100
 
-        if (cell && newAmount === cell.amount) {
+        if (newAmount > Number.MAX_SAFE_INTEGER) {
+            newAmount = Number.MAX_SAFE_INTEGER
+        }
+
+        if (newAmount < Number.MIN_SAFE_INTEGER) {
+            newAmount = Number.MIN_SAFE_INTEGER
+        }
+
+        let intAmount = parseInt(newAmount)
+
+        if (cell && intAmount === cell.amount) {
             return
         }
 
-        if (!cell && newAmount === 0) {
+        if (!cell && intAmount === 0) {
             return
         }
 
@@ -140,7 +150,7 @@ const TableCell = ({rowIndex, cellId, cellKey, sheetUpdating}) => {
         payload.append("analysis2_code", cells[rowIndex]["analysis2_code"].value)
 
         payload.append("month", cellKey)
-        payload.append("amount", newAmount)
+        payload.append("amount", intAmount)
 
         postData(
             `/forecast/update-forecast/${window.cost_centre}/`,
