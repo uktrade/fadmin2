@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.http import Http404
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import (
@@ -70,84 +71,102 @@ class ForecastMultiTableMixin(MultiTableMixin):
         """
          Return an array of table instances containing data.
         """
-        filter_code = ''
-        pivot_filter = {}
-        arg_name = filter_codes[self.hierarchy_type]
-        if arg_name:
-            filter_code = self.kwargs[arg_name]
-            pivot_filter = {filter_selectors[self.hierarchy_type]: f"{filter_code}"}
+        cached_tables = cache.get(f"{self.hierarchy_type}_get_tables")
 
-        hierarchy_data = ForecastingDataView.view_data.subtotal_data(
-            hierarchy_sub_total_column[self.hierarchy_type],
-            hierarchy_sub_total,
-            hierarchy_columns[self.hierarchy_type].keys(),
-            pivot_filter,
-            order_list=hierarchy_order_list,
-        )
-        programme_data = ForecastingDataView.view_data.subtotal_data(
-            programme_display_sub_total_column,
-            programme_sub_total,
-            programme_columns.keys(),
-            pivot_filter,
-            order_list=programme_order_list,
-        )
-
-        expenditure_data = ForecastingDataView.view_data.subtotal_data(
-            expenditure_display_sub_total_column,
-            expenditure_sub_total,
-            expenditure_columns.keys(),
-            pivot_filter,
-            order_list=expenditure_order_list,
-        )
-
-        project_data = ForecastingDataView.view_data.subtotal_data(
-            project_display_sub_total_column,
-            project_sub_total,
-            project_columns.keys(),
-            pivot_filter,
-            order_list=project_order_list,
-        )
-        if self.hierarchy_type == SHOW_COSTCENTRE:
-            programme_table = ForecastSubTotalTable(programme_columns, programme_data)
+        if cached_tables:
+            return cached_tables
         else:
-            programme_table = ForecastWithLinkTable(
-                programme_detail_view[self.hierarchy_type],
-                [PROGRAMME_CODE, FORECAST_EXPENDITURE_TYPE_NAME],
-                filter_code,
-                programme_columns,
-                programme_data
+            filter_code = ''
+            pivot_filter = {}
+            arg_name = filter_codes[self.hierarchy_type]
+            if arg_name:
+                filter_code = self.kwargs[arg_name]
+                pivot_filter = {filter_selectors[self.hierarchy_type]: f"{filter_code}"}
+
+            hierarchy_data = ForecastingDataView.view_data.subtotal_data(
+                hierarchy_sub_total_column[self.hierarchy_type],
+                hierarchy_sub_total,
+                hierarchy_columns[self.hierarchy_type].keys(),
+                pivot_filter,
+                order_list=hierarchy_order_list,
+            )
+            programme_data = ForecastingDataView.view_data.subtotal_data(
+                programme_display_sub_total_column,
+                programme_sub_total,
+                programme_columns.keys(),
+                pivot_filter,
+                order_list=programme_order_list,
             )
 
-        programme_table.attrs['caption'] = "Control total report"
-        expenditure_table = ForecastWithLinkTable(expenditure_view[self.hierarchy_type],
-                                                  [BUDGET_CATEGORY_ID, BUDGET_TYPE],
-                                                  filter_code,
-                                                  expenditure_columns,
-                                                  expenditure_data)
-        expenditure_table.attrs['caption'] = "Expenditure report"
-        project_table = ForecastSubTotalTable(project_columns, project_data)
-        project_table.attrs['caption'] = "Project report"
-
-        if self.hierarchy_type == SHOW_COSTCENTRE:
-            hierarchy_table = ForecastSubTotalTable(
-                hierarchy_columns[self.hierarchy_type],
-                hierarchy_data
+            expenditure_data = ForecastingDataView.view_data.subtotal_data(
+                expenditure_display_sub_total_column,
+                expenditure_sub_total,
+                expenditure_columns.keys(),
+                pivot_filter,
+                order_list=expenditure_order_list,
             )
-        else:
-            hierarchy_table = ForecastWithLinkTable(
-                hierarchy_view[self.hierarchy_type],
-                hierarchy_view_code[self.hierarchy_type],
-                '',
-                hierarchy_columns[self.hierarchy_type],
-                hierarchy_data)
 
-        self.tables = [
-            hierarchy_table,
-            programme_table,
-            expenditure_table,
-            project_table,
-        ]
-        return self.tables
+            project_data = ForecastingDataView.view_data.subtotal_data(
+                project_display_sub_total_column,
+                project_sub_total,
+                project_columns.keys(),
+                pivot_filter,
+                order_list=project_order_list,
+            )
+            if self.hierarchy_type == SHOW_COSTCENTRE:
+                programme_table = ForecastSubTotalTable(programme_columns, programme_data)
+            else:
+                programme_table = ForecastWithLinkTable(
+                    programme_detail_view[self.hierarchy_type],
+                    [PROGRAMME_CODE, FORECAST_EXPENDITURE_TYPE_NAME],
+                    filter_code,
+                    programme_columns,
+                    programme_data
+                )
+
+            programme_table.attrs['caption'] = "Control total report"
+            expenditure_table = ForecastWithLinkTable(expenditure_view[self.hierarchy_type],
+                                                      [BUDGET_CATEGORY_ID, BUDGET_TYPE],
+                                                      filter_code,
+                                                      expenditure_columns,
+                                                      expenditure_data)
+            expenditure_table.attrs['caption'] = "Expenditure report"
+            project_table = ForecastSubTotalTable(project_columns, project_data)
+            project_table.attrs['caption'] = "Project report"
+
+            if self.hierarchy_type == SHOW_COSTCENTRE:
+                hierarchy_table = ForecastSubTotalTable(
+                    hierarchy_columns[self.hierarchy_type],
+                    hierarchy_data
+                )
+            else:
+                hierarchy_table = ForecastWithLinkTable(
+                    hierarchy_view[self.hierarchy_type],
+                    hierarchy_view_code[self.hierarchy_type],
+                    '',
+                    hierarchy_columns[self.hierarchy_type],
+                    hierarchy_data)
+
+            self.tables = [
+                hierarchy_table,
+                programme_table,
+                expenditure_table,
+                project_table,
+            ]
+
+            from django_tables2.templatetags.django_tables2 import RenderTableNode
+
+            test = RenderTableNode(self.tables)
+
+            test1 = test.render(context=None)
+
+            cache.set(
+                f"{self.hierarchy_type}_get_tables",
+                test1,
+                None,
+            )
+
+            return self.tables
 
 
 class DITView(
