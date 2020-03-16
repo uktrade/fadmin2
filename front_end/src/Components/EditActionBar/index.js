@@ -31,10 +31,10 @@ const EditActionBar = () => {
     }, [])
 
     const getClasses = () => {
-        let classes = "filter-content-wrapper "
+        let classes = "action-bar-content-wrapper "
 
         if (filterOpen)
-            classes += "filter-open"
+            classes += "action-bar-open"
 
         return classes
     }
@@ -47,11 +47,11 @@ const EditActionBar = () => {
     }
 
     return (
-        <div className="filter-wrapper">
-            <div className="filter" ref={containerRef}>
-                <div className="filter-by">               
+        <div className="action-bar-wrapper">
+            <div className="action-bar" ref={containerRef}>
+                <div className="action-bar-by">               
                     <button 
-                        id="filter-switch"
+                        id="action-bar-switch"
                         className="link-button govuk-link"
                         onClick={(e) => {
                             dispatch(
@@ -66,7 +66,7 @@ const EditActionBar = () => {
                 </div>
      
                 <div className={getClasses()}>
-                    <div className="filter-content">
+                    <div className="action-bar-content">
                         <h3 className="govuk-heading-m">Show/hide columns</h3>
 
                         <div className="govuk-checkboxes">
@@ -87,7 +87,7 @@ const EditActionBar = () => {
                             </div>
                         </div>
 
-                        <div className="filter-cols">
+                        <div className="action-bar-cols">
                             <h4 className="govuk-heading-m">Individual columns</h4>
                             <div className="govuk-checkboxes">
                                 <div className="govuk-checkboxes__item">

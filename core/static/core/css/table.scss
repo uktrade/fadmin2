@@ -29,3 +29,29 @@
     min-width: 260px;
   }
 }
+
+.cc-forecast-table {
+  .govuk-table tr td:first-child {
+    min-width: 140px;
+  }
+
+  .govuk-table tr td:first-child + td {
+    min-width: 260px;
+  }
+
+  .govuk-table tr td:first-child + td + td {
+    min-width: 200px;
+  }
+
+  .govuk-table tr td:first-child {
+    min-width: 140px;
+  }
+
+  .govuk-table tr td:first-child + td {
+    min-width: 260px;
+  }
+
+  .govuk-table tr td:first-child + td + td {
+    min-width: 200px;
+  }
+}
