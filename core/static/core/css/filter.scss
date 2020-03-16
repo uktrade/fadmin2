@@ -1,7 +1,12 @@
 
+.filter-wrapper {
+  width: 100vw;
+}
+
 .filter {
   background-color: govuk-colour("mid-grey");
-  max-width: 1200px;
+  width: calc(100% - 60px);
+  box-sizing: border-box;
   margin-bottom: 24px;
 
   .govuk-button {

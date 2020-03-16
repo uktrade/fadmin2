@@ -14,7 +14,11 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">{{ view.directorate.directorate_name }} - {{ view.directorate.directorate_code }}</h1>
+
+
+          <div class="filter">
             <a class="govuk-button govuk-button--secondary" href="{% url 'export_forecast_data_directorate' view.directorate.directorate_code %}">Download</a>
+          </div>
       </div>
     </div>
 

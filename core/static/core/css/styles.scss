@@ -2,6 +2,7 @@ $govuk-page-width: 1800px;
 @import "./node_modules/govuk-frontend/govuk/all";
 @import "./header";
 @import "./filter";
+@import "./table";
 
 body {
   font-size: 16px;
@@ -218,6 +219,15 @@ table, td, th {
     .govuk-grid-column-two-thirds {
       max-width: 66vw;
     }
+  }
+}
+
+@media (min-width: 40.0625em) {
+  .govuk-summary-list__value:last-child {
+    width: auto;
+  }
+  .govuk-summary-list__value {
+    width: auto;
   }
 }
 
