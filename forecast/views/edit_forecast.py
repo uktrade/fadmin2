@@ -55,7 +55,7 @@ from forecast.views.base import (
 
 
 def delete_forecast_cache(cost_centre_code):
-    # Remove DIT, cache, figure out which group etc cost centre is in
+    # TODO - discuss whether we can more intelligently cache groups/directorates
     dit_key = make_template_fragment_key('dit_forecast_tables')
     group_key = make_template_fragment_key('group_forecast_tables')
     directorate_key = make_template_fragment_key('directorate_forecast_tables')
