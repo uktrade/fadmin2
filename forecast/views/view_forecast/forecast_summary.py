@@ -1,4 +1,3 @@
-from django.core.cache import cache
 from django.http import Http404
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import (
@@ -71,6 +70,10 @@ class ForecastMultiTableMixin(MultiTableMixin):
         """
          Return an array of table instances containing data.
         """
+        import datetime
+
+        print(datetime.datetime.now())
+
         filter_code = ''
         pivot_filter = {}
         arg_name = filter_codes[self.hierarchy_type]
@@ -148,6 +151,8 @@ class ForecastMultiTableMixin(MultiTableMixin):
             expenditure_table,
             project_table,
         ]
+
+        print(datetime.datetime.now())
 
         return self.tables
 

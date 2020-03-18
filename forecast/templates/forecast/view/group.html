@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    {% cache 0 group_forecast_tables %}
+    {% cache None group_forecast_tables %}
         {% for table in tables %}
             <div class="tables-container forecast-table-{{ forloop.counter }}">
                 {% render_table table %}

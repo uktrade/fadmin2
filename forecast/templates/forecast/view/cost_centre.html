@@ -36,7 +36,7 @@
             </form>
         </div>
     </div>
-    {% cache 0 view.cost_centre.cost_centre_code %}
+    {% cache None view.cost_centre.cost_centre_code %}
         {% for table in tables %}
             <div class="tables-container cc-forecast-table">
                 {% render_table table %}
