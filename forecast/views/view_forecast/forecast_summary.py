@@ -70,10 +70,6 @@ class ForecastMultiTableMixin(MultiTableMixin):
         """
          Return an array of table instances containing data.
         """
-        import datetime
-
-        print(datetime.datetime.now())
-
         filter_code = ''
         pivot_filter = {}
         arg_name = filter_codes[self.hierarchy_type]
@@ -151,8 +147,6 @@ class ForecastMultiTableMixin(MultiTableMixin):
             expenditure_table,
             project_table,
         ]
-
-        print(datetime.datetime.now())
 
         return self.tables
 
