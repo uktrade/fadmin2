@@ -127,6 +127,16 @@ class ForecastTable(tables.Table):
     display_view_details = False
 
     def __init__(self, column_dict={}, *args, **kwargs):
+
+        # header_cols = [
+        #     (
+        #         "Test",
+        #         ""
+        #     )
+        # ]
+
+        #self.base_columns.update(OrderedDict(header_cols))
+
         cols = [
             (
                 "Budget",
