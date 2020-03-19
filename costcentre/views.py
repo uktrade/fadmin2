@@ -17,6 +17,7 @@ class FilteredCostListView(LoginRequiredMixin, FAdminFilteredView):
     model = table_class.Meta.model
     filterset_class = CostCentreFilter
     name = "Cost Centre Hierarchy"
+    cache_name = "cost-centre-hierarchy"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

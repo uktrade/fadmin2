@@ -49,6 +49,7 @@ class FilteredNACListView(FAdminFilteredView):
     model = table_class.Meta.model
     filterset_class = NACFilter
     name = "Natural Account Codes (NAC)"
+    cache_name = "nac"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -75,6 +76,7 @@ class FilteredExpenditureCategoryListView(FAdminFilteredView):
     model = table_class.Meta.model
     filterset_class = ExpenditureCategoryFilter
     name = "Budget Categories"
+    cache_name = "budget_categories"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -101,6 +103,7 @@ class FilteredCommercialCategoryListView(FAdminFilteredView):
     model = table_class.Meta.model
     filterset_class = CommercialCategoryFilter
     name = "Commercial Categories"
+    cache_name = "commercial_categories"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -125,6 +128,7 @@ class FilteredAnalysis1ListView(FAdminFilteredView):
     model = table_class.Meta.model
     filterset_class = Analysis1Filter
     name = "Contract Reconciliation (Analysis 1)"
+    cache_name = "analysis_1"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -151,6 +155,7 @@ class FilteredAnalysis2ListView(FAdminFilteredView):
     model = table_class.Meta.model
     filterset_class = Analysis2Filter
     name = "Markets (Analysis 2)"
+    cache_name = "analysis_2"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -176,6 +181,7 @@ class FilteredProgrammeView(FAdminFilteredView):
     model = table_class.Meta.model
     filterset_class = ProgrammeFilter
     name = "Programme Codes"
+    cache_name = "programme_codes"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -204,6 +210,7 @@ class FilteredInterEntityView(FAdminFilteredView):
     model = table_class.Meta.model
     filterset_class = InterEntityFilter
     name = "Entity Inter Entity"
+    cache_name = "entity_inter_entity"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -230,6 +237,7 @@ class FilteredProjectView(FAdminFilteredView):
     model = table_class.Meta.model
     filterset_class = ProjectFilter
     name = "Project Codes (Spare 1)"
+    cache_name = "project_codes"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -257,6 +265,7 @@ class FilteredFCOMappingView(FAdminFilteredView):
     model = table_class.Meta.model
     filterset_class = FCOMappingtFilter
     name = "FCO Mappings"
+    cache_name = "fco_mappings"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
