@@ -68,6 +68,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
         """
          Return an array of table instances containing data.
         """
+        # Git test
         filter_code = ""
         pivot_filter = {}
         arg_name = filter_codes[self.hierarchy_type]
