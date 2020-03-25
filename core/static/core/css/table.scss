@@ -42,19 +42,22 @@
   .govuk-table tr td:first-child + td + td {
     min-width: 200px;
   }
+}
 
+.cc-forecast-table-3 {
   .govuk-table tr td:first-child {
     min-width: 140px;
   }
 
   .govuk-table tr td:first-child + td {
-    min-width: 260px;
+    min-width: 480px;
   }
 
   .govuk-table tr td:first-child + td + td {
-    min-width: 200px;
+    min-width: 120px;
   }
 }
+
 
 .meta-col {
   text-align: left!important;
