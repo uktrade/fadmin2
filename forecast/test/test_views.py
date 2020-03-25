@@ -1280,6 +1280,7 @@ class EditForecastFigureViewTest(TestCase, RequestFactoryBase):
 
         assert ForecastMonthlyFigure.objects.first().amount == settings.MIN_FORECAST_FIGURE  # noqa
 
+
 class ViewEditTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
