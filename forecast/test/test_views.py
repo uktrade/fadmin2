@@ -1279,3 +1279,14 @@ class EditForecastFigureViewTest(TestCase, RequestFactoryBase):
         self.assertEqual(resp.status_code, 200)
 
         assert ForecastMonthlyFigure.objects.first().amount == settings.MIN_FORECAST_FIGURE  # noqa
+
+
+class ViewEditLinkTest(TestCase, RequestFactoryBase):
+    def setUp(self):
+        RequestFactoryBase.__init__(self)
+
+        self.cost_centre_code = 888812
+        self.cost_centre = CostCentreFactory.create(
+            cost_centre_code=self.cost_centre_code
+        )
+
