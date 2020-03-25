@@ -1279,3 +1279,63 @@ class EditForecastFigureViewTest(TestCase, RequestFactoryBase):
         self.assertEqual(resp.status_code, 200)
 
         assert ForecastMonthlyFigure.objects.first().amount == settings.MIN_FORECAST_FIGURE  # noqa
+
+class ViewEditTest(TestCase, RequestFactoryBase):
+
+    def setUp(self):
+        RequestFactoryBase.__init__(self)
+
+        self.test_cost_centre = 888812
+        self.cost_centre_code = self.test_cost_centre
+        self.cost_centre = CostCentreFactory.create(
+            cost_centre_code=self.cost_centre_code
+        )
+
+    def test_view_to_edit_cost_centre_code(self):
+        view_forecast_url = reverse(
+            "forecast_cost_centre",
+            kwargs={
+                'cost_centre_code': self.cost_centre_code
+            }
+        )
+
+        resp = self.factory_get(
+            view_forecast_url,
+            CostCentreView,
+            cost_centre_code=self.cost_centre_code,
+        )
+
+        assert resp.status_code == 302
+
+    def test_view_to_edit_group_code(self):
+        view_forecast_url = reverse(
+            "forecast_group",
+            kwargs={
+                'group_code': self.cost_centre_code
+            }
+        )
+
+        resp = self.factory_get(
+            view_forecast_url,
+            CostCentreView,
+            group_code=self.cost_centre_code,
+        )
+
+        assert resp.status_code == 302
+
+    def test_edit_to_view_cost_centre_code(self):
+        edit_forecast_url = reverse(
+            "edit_forecast",
+            kwargs={
+                'cost_centre_code': self.cost_centre_code
+            }
+        )
+
+        resp = self.factory_get(
+            edit_forecast_url,
+            CostCentreView,
+            cost_centre_code=self.cost_centre_code,
+        )
+
+        assert resp.status_code == 302
+
