@@ -1,7 +1,5 @@
 from django.urls import path
 
-#THIS IS THE PATH FOR EDIT_FORECAST
-
 from forecast.views.edit_forecast import (
     AddRowView,
     ChooseCostCentreView,
