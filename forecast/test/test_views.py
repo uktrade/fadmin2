@@ -62,7 +62,6 @@ from forecast.views.view_forecast.programme_details import (
     GroupProgrammeDetailsView,
 )
 
-
 TOTAL_COLUMN = -5
 SPEND_TO_DATE_COLUMN = -2
 UNDERSPEND_COLUMN = -4
@@ -843,7 +842,7 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
         nac_rows = table.find_all("tr")
         first_nac_cols = nac_rows[1].find_all("td")
         assert (
-            first_nac_cols[0].get_text().strip() == self.nac2_obj.natural_account_code_description  # noqa
+                first_nac_cols[0].get_text().strip() == self.nac2_obj.natural_account_code_description  # noqa
         )
 
         assert first_nac_cols[3].get_text().strip() == format_forecast_figure(
@@ -1285,45 +1284,41 @@ class ViewEditTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
 
+        self.test_user_email = "test@test.com"
+        self.test_password = "test_password"
+        self.test_user, _ = get_user_model().objects.get_or_create(
+            email=self.test_user_email
+        )
+        self.test_user.set_password(self.test_password)
+        self.test_user.save()
+
+        # Add forecast view permission
+        can_view_forecasts = Permission.objects.get(
+            codename='can_view_forecasts'
+        )
+        self.test_user.user_permissions.add(can_view_forecasts)
+        self.test_user.save()
+        self.client.login(
+            username=self.test_user_email,
+            password=self.test_password,
+        )
+
+        self.group = DepartmentalGroupFactory(
+        )
+
+        self.directorate = DirectorateFactory(
+            group=self.group,
+        )
+
         self.test_cost_centre = 888812
         self.cost_centre_code = self.test_cost_centre
         self.cost_centre = CostCentreFactory.create(
             cost_centre_code=self.cost_centre_code
         )
-
-    def test_view_to_edit_cost_centre_code(self):
-        view_forecast_url = reverse(
-            "forecast_cost_centre",
-            kwargs={
-                'cost_centre_code': self.cost_centre_code
-            }
-        )
-
-        resp = self.factory_get(
-            view_forecast_url,
-            CostCentreView,
-            cost_centre_code=self.cost_centre_code,
-        )
-
-        assert resp.status_code == 302
-
-    def test_view_to_edit_group_code(self):
-        view_forecast_url = reverse(
-            "forecast_group",
-            kwargs={
-                'group_code': self.cost_centre_code
-            }
-        )
-
-        resp = self.factory_get(
-            view_forecast_url,
-            CostCentreView,
-            group_code=self.cost_centre_code,
-        )
-
-        assert resp.status_code == 302
+        assign_perm("change_costcentre", self.test_user, self.cost_centre)
 
     def test_edit_to_view_cost_centre_code(self):
+        # forecast/edit/CC page Test
         edit_forecast_url = reverse(
             "edit_forecast",
             kwargs={
@@ -1331,10 +1326,46 @@ class ViewEditTest(TestCase, RequestFactoryBase):
             }
         )
 
-        resp = self.factory_get(
-            edit_forecast_url,
-            CostCentreView,
-            cost_centre_code=self.cost_centre_code,
+        response = self.client.get(edit_forecast_url)
+        assert response.status_code == 200
+
+        soup = BeautifulSoup(response.content, features="html.parser")
+
+        # Cost Centre URL Test
+        view_forecast_url = reverse(
+            "forecast_cost_centre",
+            kwargs={
+                'cost_centre_code': self.cost_centre_code
+            }
         )
 
-        assert resp.status_code == 302
+        cost_centre_links = soup.find_all("a", class_="cost-centre-link")
+
+        assert len(cost_centre_links) == 1
+        assert cost_centre_links[0]['href'] == view_forecast_url
+
+        # Group Code URL Test
+        view_group_forecast_url = reverse(
+            "forecast_group",
+            kwargs={
+                'group_code': self.group.group_code
+            }
+        )
+
+        group_code_links = soup.find_all("a", class_="group-link")
+
+        assert len(group_code_links) == 1
+        assert group_code_links[0]['href'] == view_group_forecast_url
+
+        # Directorate Code URL Test
+        view_directorate_forecast_url = reverse(
+            "forecast_directorate",
+            kwargs={
+                'directorate_code': self.directorate.directorate_code
+            }
+        )
+
+        directorate_code_links = soup.find_all("a", class_="directorate-link")
+
+        assert len(directorate_code_links) == 1
+        assert directorate_code_links[0]['href'] == view_directorate_forecast_url
