@@ -515,7 +515,7 @@ class EditForecastView(
         return context
 
 
-class EditLockedView(
+class EditUnavailableView(
     TemplateView,
 ):
     template_name = "forecast/edit/edit_locked.html"

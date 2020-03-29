@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import (
     Max,
@@ -40,16 +41,36 @@ class SubTotalFieldNotSpecifiedError(Exception):
     pass
 
 
-class ForecastEditLock(BaseModel):
-    locked = models.BooleanField(default=False)
+class ForecastEditOpenState(BaseModel):
+    closed = models.BooleanField(default=False,)
+    lock_date = models.DateField(
+        null=True,
+        help_text="If the lock date is set, after this date "
+                  "the system will remain locked for the "
+                  "remainder of the date's month"
+    )
 
     def __str__(self):
-        return 'Forecast edit lock'
+        return 'Forecast edit open state'
 
     class Meta:
+        default_permissions = ('', )
         permissions = [
             ("can_set_edit_lock", "Can set edit lock"),
             ("can_edit_whilst_locked", "Can edit forecasts whilst locked"),
+        ]
+
+
+class UnlockedForecastEditors(BaseModel):
+    user = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        default_permissions = ('', )
+        permissions = [
+            ("can_unlock_user", "Can unlock a user"),
         ]
 
 

@@ -92,14 +92,17 @@ class CostCentreAdmin(GuardedModelAdmin, AdminActiveField, AdminImportExport):
 
     # different fields editable if updating or creating the object
     def get_readonly_fields(self, request, obj=None):
-        if obj:
-            return [
-                "cost_centre_code",
-                "created",
-                "updated",
-            ]  # don't allow to edit the code
+        if request.user.is_superuser:
+            if obj:
+                return [
+                    "cost_centre_code",
+                    "created",
+                    "updated",
+                ]  # don't allow to edit the code
+            else:
+                return ["created", "updated"]
         else:
-            return ["created", "updated"]
+            return self.get_fields(request, obj)
 
     # different fields visible if updating or creating the object
     def get_fields(self, request, obj=None):
@@ -185,6 +188,23 @@ class CostCentreAdmin(GuardedModelAdmin, AdminActiveField, AdminImportExport):
             form = CsvImportForm(header_list, form_title)
         payload = {"form": form}
         return render(request, "admin/csv_form.html", payload)
+
+    def has_change_permission(self, request, obj=None):
+        if request.user.is_superuser or request.user.groups.filter(
+            name='Finance Administrator',
+        ).exists():
+            return True
+
+        # Check to see if FBP user and has edit permission on this cost centre
+        if request.user.groups.filter(
+            name='Finance Business Partner/BSCE',
+        ).exists() and obj:
+            return request.user.has_perm(
+                "edit_forecast",
+                obj,
+            )
+
+        return False
 
 
 class DirectorateAdmin(AdminActiveField, AdminImportExport):

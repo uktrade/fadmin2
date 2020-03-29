@@ -91,8 +91,8 @@ def create_forecast_expenditure_types(apps, schema_editor):
 
 
 def create_forecast_lock(apps, schema_editor):
-    ForecastEditLock = apps.get_model('forecast', 'ForecastEditLock')
-    ForecastEditLock.objects.create()
+    ForecastEditOpenState = apps.get_model('forecast', 'ForecastEditOpenState')
+    ForecastEditOpenState.objects.create()
 
 
 class Migration(migrations.Migration):

@@ -1,13 +1,16 @@
+from datetime import datetime
+
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from costcentre.models import CostCentre
+from guardian.shortcuts import (
+    get_objects_for_user as guardian_get_objects_for_user,
+)
 
-from forecast.models import ForecastEditLock
-from forecast.permission_shortcuts import (
-    NoForecastViewPermission,
-    get_objects_for_user,
+from forecast.models import (
+    ForecastEditOpenState,
+    UnlockedForecastEditors,
 )
 
 
@@ -15,42 +18,72 @@ class NoCostCentreCodeInURLError(Exception):
     pass
 
 
-def can_edit_forecast(user):
-    # Check for edit being locked
-    forecast_edit_lock = ForecastEditLock.objects.get()
+def is_system_locked():
+    today = datetime.now()
+    forecast_edit_date = ForecastEditOpenState.objects.get()
 
     if (
-        forecast_edit_lock.locked and not
-        user.has_perm(
-            "forecast.can_edit_whilst_locked",
-        )
+        forecast_edit_date.lock_date and
+        forecast_edit_date.lock_date.month == today.month and
+        forecast_edit_date.lock_date.year == today.year
     ):
-        return False
+        return True
 
-    return True
+    return False
+
+
+def is_system_closed():
+    forecast_edit_date = ForecastEditOpenState.objects.get()
+
+    if forecast_edit_date.closed:
+        return True
+
+    return False
+
+
+def user_in_group(user, group):
+    return user.groups.filter(
+        name=group,
+    ).exists()
+
+
+def can_edit_forecast(user):
+    if user.is_superuser:
+        return True
+
+    closed = is_system_closed()
+    locked = is_system_locked()
+
+    if not closed and not locked:
+        return True
+
+    if user_in_group(
+        user,
+        "Finance Administrator",
+    ):
+        return True
+
+    # Finance Business Partners can edit when
+    # system is closed but not locked
+    if user_in_group(
+        user,
+        "Finance Business Partner/BSCE",
+    ) and not locked:
+        return True
+
+    if UnlockedForecastEditors.objects.filter(
+        user=user,
+    ).exists():
+        return True
+
+    return False
 
 
 def has_edit_permission(user, cost_centre_code):
-    if not user.has_perm("forecast.can_view_forecasts"):
-        return False
-
-    cost_centre = CostCentre.objects.get(
-        cost_centre_code=cost_centre_code,
+    cost_centres = guardian_get_objects_for_user(
+        user,
+        "costcentre.change_costcentre",
     )
-
-    if not user.has_perm(
-        "change_costcentre",
-        cost_centre
-    ):
-        return False
-
-    try:
-        cost_centres = get_objects_for_user(
-            user,
-            "costcentre.change_costcentre",
-        )
-    except NoForecastViewPermission:
-        return False
 
     # If user has permission on
     # one or more CCs then let them view
@@ -61,6 +94,18 @@ class ForecastViewPermissionMixin(UserPassesTestMixin):
     cost_centre_code = None
 
     def test_func(self):
+        # Users with permission to edit ANY
+        # cost centre can view forecasts
+        cost_centres = guardian_get_objects_for_user(
+            self.request.user,
+            "costcentre.change_costcentre",
+        )
+
+        # If user has permission on
+        # one or more CCs then let them view
+        if cost_centres.count() > 0:
+            return True
+
         return self.request.user.has_perm(
             "forecast.can_view_forecasts"
         )
@@ -75,7 +120,7 @@ class ForecastViewPermissionMixin(UserPassesTestMixin):
 
 class CostCentrePermissionTest(UserPassesTestMixin):
     cost_centre_code = None
-    edit_locked = False
+    edit_not_available = False
 
     def test_func(self):
         if 'cost_centre_code' not in self.kwargs:
@@ -93,15 +138,15 @@ class CostCentrePermissionTest(UserPassesTestMixin):
         can_edit = can_edit_forecast(self.request.user)
 
         if not can_edit:
-            self.edit_locked = True
+            self.edit_not_available = True
             return False
 
         return has_permission
 
     def handle_no_permission(self):
-        if self.edit_locked:
+        if self.edit_not_available:
             return redirect(
-                reverse("edit_locked")
+                reverse("edit_unavailable")
             )
         else:
             return redirect(

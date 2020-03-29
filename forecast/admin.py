@@ -12,8 +12,9 @@ from forecast.import_csv import import_adi_file_class
 from forecast.models import (
     BudgetMonthlyFigure,
     FinancialPeriod,
-    ForecastEditLock,
+    ForecastEditOpenState,
     ForecastMonthlyFigure,
+    UnlockedForecastEditors,
 )
 
 
@@ -47,11 +48,16 @@ class FinancialPeriodAdmin(AdminReadOnly):
             ]
 
 
-class ForecastEditLockAdmin(AdminEditOnly, SimpleHistoryAdmin):
+class ForecastEditOpenStateAdmin(AdminEditOnly, SimpleHistoryAdmin):
     history_list_display = ["locked"]
+
+
+class UnlockedForecastEditorsAdmin(admin.ModelAdmin):
+    pass
 
 
 admin.site.register(ForecastMonthlyFigure, MonthlyFigureAdmin)
 admin.site.register(FinancialPeriod, FinancialPeriodAdmin)
 admin.site.register(BudgetMonthlyFigure, BudgetAdmin)
-admin.site.register(ForecastEditLock, ForecastEditLockAdmin)
+admin.site.register(ForecastEditOpenState, ForecastEditOpenStateAdmin)
+admin.site.register(UnlockedForecastEditors, UnlockedForecastEditorsAdmin)

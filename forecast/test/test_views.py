@@ -30,7 +30,7 @@ from costcentre.test.factories import (
 from forecast.models import (
     FinancialCode,
     FinancialPeriod,
-    ForecastEditLock,
+    ForecastEditOpenState,
     ForecastMonthlyFigure,
 )
 from forecast.permission_shortcuts import assign_perm
@@ -1164,7 +1164,7 @@ class EditForecastLockTest(TestCase, RequestFactoryBase):
         self.assertEqual(resp.status_code, 200)
 
         # Lock forecast for editing
-        edit_lock = ForecastEditLock.objects.get()
+        edit_lock = ForecastEditOpenState.objects.get()
         edit_lock.locked = True
         edit_lock.save()
 
