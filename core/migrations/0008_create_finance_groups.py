@@ -1,12 +1,21 @@
-from django.contrib.auth.models import (
-    Group,
-    Permission,
-)
-
+from django.apps import apps
+from django.contrib.auth.management import create_permissions
 from django.db import migrations
 
 
+def add_all_permissions():
+    for app_config in apps.get_app_configs():
+        app_config.models_module = True
+        create_permissions(app_config, verbosity=0)
+        app_config.models_module = None
+
+
 def create_groups(apps, schema_editor):
+    add_all_permissions()
+
+    Group = apps.get_model('auth', 'Group')
+    Permission = apps.get_model('auth', 'Permission')
+
     finance_business_partners, _ = Group.objects.get_or_create(
         name='Finance Business Partner/BSCE',
 
@@ -16,6 +25,13 @@ def create_groups(apps, schema_editor):
     )
     finance_business_partners.permissions.add(
         assign_edit_for_own_cost_centres,
+    )
+
+    can_edit_whilst_closed = Permission.objects.get(
+        codename='can_edit_whilst_closed',
+    )
+    finance_business_partners.permissions.add(
+        can_edit_whilst_closed,
     )
 
     finance_adminstrators, _ = Group.objects.get_or_create(
@@ -46,7 +62,7 @@ def create_groups(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("forecast", "0002_populate_models"),
+        ("core", "0007_create_financial_years"),
         ("costcentre", "0033_auto_20200327_0931"),
     ]
 

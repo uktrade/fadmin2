@@ -57,7 +57,14 @@ class ForecastEditOpenState(BaseModel):
         default_permissions = ('', )
         permissions = [
             ("can_set_edit_lock", "Can set edit lock"),
-            ("can_edit_whilst_locked", "Can edit forecasts whilst locked"),
+            (
+                "can_edit_whilst_closed",
+                "Can edit forecasts whilst system is closed",
+            ),
+            (
+                "can_edit_whilst_locked",
+                "Can edit forecasts whilst system is locked",
+            ),
         ]
 
 

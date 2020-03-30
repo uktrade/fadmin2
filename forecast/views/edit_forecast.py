@@ -14,6 +14,10 @@ from django.urls import (
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
+from guardian.shortcuts import (
+    get_objects_for_user,
+)
+
 from core.models import FinancialYear
 from core.myutils import get_current_financial_year
 
@@ -35,7 +39,6 @@ from forecast.models import (
 )
 from forecast.permission_shortcuts import (
     NoForecastViewPermission,
-    get_objects_for_user,
 )
 from forecast.serialisers import FinancialCodeSerializer
 from forecast.utils.edit_helpers import (

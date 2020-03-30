@@ -190,15 +190,15 @@ class CostCentreAdmin(GuardedModelAdmin, AdminActiveField, AdminImportExport):
         return render(request, "admin/csv_form.html", payload)
 
     def has_change_permission(self, request, obj=None):
-        if request.user.is_superuser or request.user.groups.filter(
-            name='Finance Administrator',
+        if request.user.is_superuser or request.user.has_perm(
+            codename='forecast.change_costcentre',
         ).exists():
             return True
 
         # Check to see if FBP user and has edit permission on this cost centre
-        if request.user.groups.filter(
-            name='Finance Business Partner/BSCE',
-        ).exists() and obj:
+        if request.user.has_perm(
+            "costcentre.assign_edit_for_own_cost_centres",
+        ) and obj:
             return request.user.has_perm(
                 "edit_forecast",
                 obj,

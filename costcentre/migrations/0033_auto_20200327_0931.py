@@ -12,6 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='costcentre',
-            options={'default_permissions': ('',), 'ordering': ['cost_centre_code'], 'permissions': (('edit_forecast', 'Edit cost centre forecast'), ('edit_forecast_all_cost_centres', 'Edit cost centre forecast'), ('assign_edit_for_own_cost_centres', 'Assign edit cost centre for own cost centres')), 'verbose_name': 'Cost Centre', 'verbose_name_plural': 'Cost Centres'},
+            options={'default_permissions': ('change',), 'ordering': ['cost_centre_code'], 'permissions': (('edit_forecast', 'Edit cost centre forecast'), ('edit_forecast_all_cost_centres', 'Edit cost centre forecast'), ('assign_edit_for_own_cost_centres', 'Assign edit cost centre for own cost centres')), 'verbose_name': 'Cost Centre', 'verbose_name_plural': 'Cost Centres'},
         ),
     ]
