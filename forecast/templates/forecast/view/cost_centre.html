@@ -21,12 +21,11 @@
              {% is_forecast_user user as is_forecast_user %}
                 {% if is_forecast_user == True %}
                     {% has_edit_permission user as has_edit_permission %}
-                                {% if has_edit_permission == True %}
-                                        <a class="govuk-button govuk-button--secondary" href="{% url 'edit_forecast' view.cost_centre.cost_centre_code %}"> Edit Forecast </a>
-                                {% endif %}
-                            {% endif %}
+                    {% if has_edit_permission == True %}
+                        <a class="govuk-button govuk-button--secondary" href="{% url 'edit_forecast' view.cost_centre.cost_centre_code %}"> Edit Forecast </a>
+                    {% endif %}
+                {% endif %}
 
-{#            <a href="{% url 'edit_forecast' view.cost_centre.cost_centre_code %}" target="_blank" class="govuk-button govuk-button--secondary">Edit Forecast </a>#}
             <form method="post" action="" class="cost-centre-choice-form">
                 {% csrf_token %}
                 {% for field in view.cost_centres_form  %}
