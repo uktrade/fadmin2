@@ -224,6 +224,7 @@ CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_RESULT_SERIALIZER = "json"
 
 CAN_ELEVATE_SSO_USER_PERMISSIONS = False
+CAN_CREATE_TEST_USER = False
 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",

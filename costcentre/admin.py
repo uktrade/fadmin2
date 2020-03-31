@@ -1,12 +1,13 @@
 import io
 
 from django.contrib import admin
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
-from django.urls import path
-
+from django.template.response import TemplateResponse
+from django.urls import path, reverse
 from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
-from guardian.admin import GuardedModelAdmin
+from guardian.admin import GuardedModelAdminMixin
 
 from core.admin import (
     AdminActiveField,
@@ -40,13 +41,18 @@ from costcentre.models import (
     Directorate,
     HistoricCostCentre,
 )
+from costcentre.forms import ChangePermissionAdminForm
 
 
 # Displays extra fields in the list of cost centres
-class CostCentreAdmin(GuardedModelAdmin, AdminActiveField, AdminImportExport):
+class CostCentreAdmin(GuardedModelAdminMixin, AdminActiveField, AdminImportExport):
     """Define an extra import button, for the DIT specific fields"""
 
-    change_list_template = "admin/m_import_changelist.html"
+    #user_can_access_owned_objects_only = True
+    #user_owned_objects_field = "cost_centre_code"
+
+    #change_list_template = "admin/m_import_changelist.html"
+    change_form_template = "costcentre/admin/change_form.html"
 
     list_display = (
         "cost_centre_code",
@@ -165,8 +171,16 @@ class CostCentreAdmin(GuardedModelAdmin, AdminActiveField, AdminImportExport):
 
     def get_urls(self):
         urls = super().get_urls()
-        my_urls = [path("import1-csv/", self.import1_csv)]
-        return my_urls + urls
+        extra_urls = [
+            path("import1-csv/", self.import1_csv),
+            path(
+                '<costcentre_id>/change-permission/',
+                self.admin_site.admin_view(self.change_permission),
+                name='change_permission',
+            ),
+        ]
+
+        return extra_urls + urls
 
     def import1_csv(self, request):
         header_list = import_cc_dit_specific_class.header_list
@@ -189,22 +203,69 @@ class CostCentreAdmin(GuardedModelAdmin, AdminActiveField, AdminImportExport):
         payload = {"form": form}
         return render(request, "admin/csv_form.html", payload)
 
+    def change_permission(self, request, costcentre_id, *args, **kwargs):
+        costcentre = self.get_object(request, costcentre_id)
+
+        if request.method != 'POST':
+            form = ChangePermissionAdminForm()
+        else:
+            form = ChangePermissionAdminForm(request.POST)
+
+            if form.is_valid():
+                try:
+                    form.save(costcentre, request.user)
+                except form.errors.Error as e:
+                    # If save() raised, the form will a have a non
+                    # field error containing an informative message.
+                    pass
+            else:
+                self.message_user(request, 'Success')
+                url = reverse(
+                    'admin:change_permission',
+                    args=[costcentre.pk],
+                    current_app=self.admin_site.name,
+                )
+
+                return HttpResponseRedirect(url)
+
+        context = self.admin_site.each_context(request)
+        context['opts'] = self.model._meta
+        context['form'] = form
+        context['costcentre'] = costcentre
+        context['title'] = "Change Cost Centre permission"
+
+        return TemplateResponse(
+            request,
+            "costcentre/admin/change_permission_form.html",
+            context,
+        )
+
     def has_change_permission(self, request, obj=None):
-        if request.user.is_superuser or request.user.has_perm(
-            codename='forecast.change_costcentre',
-        ).exists():
+        if not obj:
             return True
 
-        # Check to see if FBP user and has edit permission on this cost centre
+        if request.user.is_superuser or request.user.has_perm(
+            'costcentre.can_allow_user_to_edit_cost_centre',
+        ):
+            return True
+
+        print(self.opts.pk)
+
+        test = False
+
+        # Check to see if FBP user and has
+        # edit permission on this cost centre
         if request.user.has_perm(
             "costcentre.assign_edit_for_own_cost_centres",
         ) and obj:
-            return request.user.has_perm(
-                "edit_forecast",
+            test = request.user.has_perm(
+                "edit_cost_centre_forecast",
                 obj,
             )
 
-        return False
+        print(f"test: {test}")
+
+        return test
 
 
 class DirectorateAdmin(AdminActiveField, AdminImportExport):

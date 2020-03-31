@@ -9,7 +9,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if settings.CAN_ELEVATE_SSO_USER_PERMISSIONS:
             user = get_user_model()
-            sso_user = user.objects.exclude(email="AnonymousUser").first()
+            sso_user = user.objects.exclude(
+                email="AnonymousUser",
+            ).exclude(
+                email="test@test.com"
+            ).first()
             sso_user.is_superuser = True
             sso_user.is_staff = True
             sso_user.save()
@@ -22,5 +26,8 @@ class Command(BaseCommand):
             )
         else:
             self.stdout.write(
-                self.style.FATAL("You do not have permission to perform this action")
+                self.style.FATAL(
+                    "The setting CAN_ELEVATE_SSO_USER_PERMISSIONS"
+                    " is set to false, action not allowed"
+                )
             )

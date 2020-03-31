@@ -79,7 +79,7 @@ def can_forecast_be_edited(user):
 def can_edit_at_least_one_cost_centre(user):
     cost_centres = guardian_get_objects_for_user(
         user,
-        "costcentre.change_costcentre",
+        "costcentre.edit_cost_centre_forecast",
     )
 
     return cost_centres.count() > 0
@@ -87,6 +87,6 @@ def can_edit_at_least_one_cost_centre(user):
 
 def can_edit_cost_centre(user, cost_centre_code):
     return user.has_perm(
-        "costcentre.change_costcentre",
+        "costcentre.edit_cost_centre_forecast",
         cost_centre_code,
     )

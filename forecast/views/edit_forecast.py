@@ -86,7 +86,7 @@ class ChooseCostCentreView(
         try:
             cost_centres = get_objects_for_user(
                 self.request.user,
-                "costcentre.change_costcentre",
+                "costcentre.edit_cost_centre_forecast",
             )
         except NoForecastViewPermission:
             raise PermissionDenied()

@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from django.forms import Select
 
 from guardian.shortcuts import (
@@ -69,7 +70,7 @@ class MyCostCentresForm(forms.Form):
 
         self.base_fields['cost_centre'].queryset = get_objects_for_user(
             user,
-            "costcentre.change_costcentre",
+            "costcentre.edit_cost_centre_forecast",
         )
 
         super(MyCostCentresForm, self).__init__(
@@ -87,3 +88,29 @@ class MyCostCentresForm(forms.Form):
             "class": "govuk-select",
         }
     )
+
+
+class ChangePermissionAdminForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        User = get_user_model()
+
+        #cost_centre = kwargs.pop('cost_centre')
+
+        self.base_fields['user'].queryset = User.objects.all()
+
+        super(ChangePermissionAdminForm, self).__init__(
+            *args,
+            **kwargs,
+        )
+
+    user = forms.ModelChoiceField(
+        queryset=None,
+        widget=Select(),
+    )
+
+# class ChangePermissionAdminForm(forms.ModelForm):
+#     class Meta:
+#         model = get_user_model()
+#         fields = ['email']
+
+
