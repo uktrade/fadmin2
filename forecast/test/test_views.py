@@ -1370,29 +1370,11 @@ class ViewEditTest(TestCase, RequestFactoryBase):
         assert len(directorate_code_links) == 1
         assert directorate_code_links[0]['href'] == view_directorate_forecast_url
 
-    def test_view_edit_forecast_button(self):
-        # forecast/view/cost-centre/<cost_centre_code>/ page Test
-        view_forecast_url = reverse(
-            "forecast_cost_centre",
-            kwargs={
-                'cost_centre_code': self.cost_centre_code
-            }
-        )
-
-        response = self.client.get(view_forecast_url)
-        assert response.status_code == 200
-
-        soup = BeautifulSoup(response.content, features="html.parser")
-
-        # Button 'edit_forecast' Test
-        edit_forecast_url = reverse(
-            "edit_forecast",
-            kwargs={
-                'cost_centre_code': self.cost_centre_code
-            }
-        )
-
-        cost_centre_links = soup.find_all("a", class_="govuk-button--secondary")
-
-        assert len(cost_centre_links) == 1
-        assert cost_centre_links[0]['href'] == edit_forecast_url
+        # response = self.client.get(view_forecast_url)
+        # assert response.status_code == 200
+        # soup = BeautifulSoup(response.content, features="html.parser")
+        #
+        # cost_centre_links = soup.find_all("a", class_="govuk-button--secondary")
+        #
+        # assert len(cost_centre_links) == 1
+        # assert cost_centre_links[0]['href'] == edit_forecast_url
