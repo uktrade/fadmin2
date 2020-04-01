@@ -84,6 +84,7 @@ class GiftAndHospitality(BaseModel):
     venue = models.CharField(max_length=1000)
     reason = models.CharField("Description of offer and reason", max_length=1000)
     value = models.IntegerField("Estimated value of offer (£)")
+    # rep_fk = models.CharField("DIT people", max_length=255)
     rep_fk = models.ForeignKey(
         DITPeople,
         on_delete=models.SET_NULL,

@@ -3,5 +3,18 @@
 {% block content %}
     <h1 class="govuk-heading-l">Gifts &amp; Hospitality Register</h1>
 
-    {% include "core/quick_links.html" with quick_links=quick_links %}
+    <dl class="govuk-summary-list">
+  {% for quick_link in quick_links %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          {{ quick_link.title }}
+        </dt>
+        <dd class="govuk-summary-list__value">
+          <a class="govuk-button govuk-button" href="{% url quick_link.url %}">
+             {{ quick_link.text }}
+          </a>
+        </dd>
+      </div>
+  {% endfor %}
+</dl>
 {% endblock %}

@@ -55,7 +55,7 @@ class GiftAndHospitalityReceivedForm(forms.ModelForm):
         labels = {
             "company_fk": _("Company received from"),
             "company_rep": _("Company Representative received from"),
-            "rep_fk": _("DIT Representative offered to"),
+            "rep": _("DIT Representative offered to"),
         }
 
         widgets = {
