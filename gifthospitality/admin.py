@@ -92,8 +92,9 @@ class GiftAndHospitalityAdmin(AdminImportExport):
         "venue",
         "reason",
         "value",
+        "group",
         "rep",
-        "grade_fk",
+        # "grade_fk",
         "offer",
         "company_rep",
         "company",
@@ -101,7 +102,7 @@ class GiftAndHospitalityAdmin(AdminImportExport):
         "entered_date_stamp",
         "entered_by",
     )
-    search_fields = ["id", "rep", "entered_by"]
+    search_fields = ["id", "group", "entered_by"]
 
     list_filter = ("classification_fk__gift_type", "offer", "action_taken")
 
@@ -115,8 +116,9 @@ class GiftAndHospitalityAdmin(AdminImportExport):
             "venue",
             "reason",
             "value",
+            "group",
             "rep",
-            "grade_fk",
+            # "grade_fk",
             "offer",
             "company_rep",
             "company",

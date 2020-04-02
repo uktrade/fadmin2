@@ -2,7 +2,7 @@ from django.db import models
 
 from core.metamodels import BaseModel, IsActiveModel
 
-from costcentre.models import CostCentre, DepartmentalGroup
+from costcentre.models import CostCentre, DepartmentalGroup, Directorate
 
 
 # salaries data
@@ -19,6 +19,25 @@ class Grade(BaseModel):
         verbose_name = "Grade"
         verbose_name_plural = "Grades"
 
+class DITGroup(IsActiveModel):
+    group_display_name = models.CharField(primary_key=True, max_length=50,)
+    group_code = models.ForeignKey(
+        DepartmentalGroup, on_delete=models.PROTECT, null=True, blank=True
+    )
+    directorate_code = models.ForeignKey(
+        Directorate, on_delete=models.PROTECT, null=True, blank=True
+    )
+    cost_centre = models.ForeignKey(
+        CostCentre, on_delete=models.PROTECT, null=True, blank=True
+    )
+
+    def __str__(self):
+        return self.group_display_name
+
+    class Meta:
+        verbose_name = "DIT Group"
+        verbose_name_plural = "DIT Group"
+        ordering = ["cost_centre"]
 
 class DITPeople(IsActiveModel):
     employee_number = models.CharField(primary_key=True, max_length=10)

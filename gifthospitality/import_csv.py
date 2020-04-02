@@ -81,6 +81,7 @@ GH_KEY = {
         GiftAndHospitality.venue.field_name: "Venue",
         GiftAndHospitality.reason.field_name: "Description of offer & reason",
         GiftAndHospitality.value.field_name: "Estimate value of offer",
+        GiftAndHospitality.group.field_name: "DIT group offered to/from",
         GiftAndHospitality.rep.field_name: "DIT representative offered to/from",
         GiftAndHospitality.offer.field_name: "Offer",
         GiftAndHospitality.company_rep.field_name: "Company representative offered to/from",  # noqa
@@ -89,7 +90,7 @@ GH_KEY = {
         GiftAndHospitality.entered_by.field_name: "Entered By",
         GiftAndHospitality.entered_date_stamp.field_name: "Date Entered",
         GiftAndHospitality.category_fk.field.name: GH_CAT_FK_KEY,
-        GiftAndHospitality.grade_fk.field.name: GH_GRADE_FK_KEY,
+        # GiftAndHospitality.grade_fk.field.name: GH_GRADE_FK_KEY,
     },
 }
 

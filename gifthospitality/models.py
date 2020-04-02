@@ -5,8 +5,7 @@ from core.metamodels import (
     IsActiveModel,
 )
 
-from payroll.models import DITPeople, Grade
-
+from payroll.models import DITPeople, Grade, DITGroup
 
 class GiftAndHospitalityClassification(IsActiveModel):
     GIFT = "Gift"
@@ -79,20 +78,25 @@ class GiftAndHospitality(BaseModel):
         verbose_name="Type",
     )
 
-    group_name = models.CharField("Group", max_length=200)
+    group_name = models.CharField("Group", max_length=200, blank=True, null=True)
     date_offered = models.DateField("Date of event /  gift offered")
     venue = models.CharField(max_length=1000)
     reason = models.CharField("Description of offer and reason", max_length=1000)
     value = models.IntegerField("Estimated value of offer (£)")
-    rep_fk = models.ForeignKey(
-        DITPeople,
+    rep_fk = models.CharField(
+        "DIT representative offered to/from", max_length=200, blank=True
+    )
+
+    group_fk = models.ForeignKey(
+        DITGroup,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name="DIT Representative",
+        verbose_name="DIT Group",
     )
 
     rep = models.CharField("DIT representative offered to/from", max_length=255)
+    group = models.CharField("DIT Group offered to/from", max_length=255)
     offer = models.CharField(max_length=200, choices=OFFER_CHOICE)
     company_rep = models.CharField(
         "Company representative offered to/from", max_length=200
@@ -123,7 +127,7 @@ class GiftAndHospitality(BaseModel):
         limit_choices_to={"active": True},
         verbose_name="category",
     )
-    grade_fk = models.ForeignKey(Grade, on_delete=models.PROTECT, verbose_name="grade")
+    grade_fk = models.ForeignKey(Grade, on_delete=models.PROTECT, verbose_name="grade", null=True)
 
     class Meta:
         verbose_name = "Gift and Hospitality"

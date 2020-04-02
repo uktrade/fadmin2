@@ -26,11 +26,10 @@ class GiftAndHospitalityReceivedForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         self.instance.offer = self.offer
         self.instance.entered_date_stamp = datetime.datetime.now()
-        if self.instance.rep_fk:
-            self.instance.rep = self.instance.rep_fk
-            self.instance.grade_fk = self.instance.rep_fk.grade
+        if self.instance.group_fk:
+            self.instance.group = self.instance.group_fk
             self.instance.group_name = (
-                self.instance.rep_fk.cost_centre.directorate.group.group_name
+                self.instance.group_fk.cost_centre.directorate.group.group_name
             )
         return super(GiftAndHospitalityReceivedForm, self).save(*args, **kwargs)
 
@@ -48,6 +47,7 @@ class GiftAndHospitalityReceivedForm(forms.ModelForm):
             "reason",
             "value",
             "rep_fk",
+            "group_fk",
             "company_rep",
             "company_fk",
             "company",
@@ -55,12 +55,13 @@ class GiftAndHospitalityReceivedForm(forms.ModelForm):
         labels = {
             "company_fk": _("Company received from"),
             "company_rep": _("Company Representative received from"),
+            "group_fk": _("DIT Group offered to"),
             "rep_fk": _("DIT Representative offered to"),
         }
 
         widgets = {
             # 'rep_fk' : ModelSelect2Bootstrap(url='people-autocomplete'),
-            "rep_fk": autocomplete.ModelSelect2(url="people-autocomplete"),
+            # "rep_fk": autocomplete.ModelSelect2(url="people-autocomplete"),
             "date_offered": DatePickerInput(
                 options={
                     "format": "DD/MM/YYYY",  # moment date-time format
@@ -81,5 +82,6 @@ class GiftAndHospitalityOfferedForm(GiftAndHospitalityReceivedForm):
         labels = {
             "company_fk": _("Company offered to"),
             "company_rep": _("Company Representative offered to"),
+            "group_fk": _("DIT Group received from"),
             "rep_fk": _("DIT Representative received from"),
         }
