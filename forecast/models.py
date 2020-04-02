@@ -41,7 +41,7 @@ class SubTotalFieldNotSpecifiedError(Exception):
     pass
 
 
-class ForecastEditOpenState(BaseModel):
+class ForecastEditState(BaseModel):
     closed = models.BooleanField(default=False,)
     lock_date = models.DateField(
         null=True,
@@ -68,17 +68,15 @@ class ForecastEditOpenState(BaseModel):
         ]
 
 
-class UnlockedForecastEditors(BaseModel):
+class UnlockedForecastEditor(BaseModel):
     user = models.ForeignKey(
         get_user_model(),
         on_delete=models.CASCADE,
+        related_name="users"
     )
 
-    class Meta:
-        default_permissions = ('', )
-        permissions = [
-            ("can_unlock_user", "Can unlock a user"),
-        ]
+    def __str__(self):
+        return self.user.email
 
 
 class ForecastExpenditureType(BaseModel):

@@ -41,6 +41,7 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 # Application definition
 
 INSTALLED_APPS = [
+    "custom_usermodel",
     "authbroker_client",
     # 'admintool_support.apps.AdmintoolSupportConfig',
     "downloadsupport.apps.DownloadSupportConfig",
@@ -71,7 +72,6 @@ INSTALLED_APPS = [
     "dal",
     "dal_select2",
     "bootstrap_datepicker_plus",  # https://pypi.org/project/django-bootstrap-datepicker-plus/  # noqa
-    "custom_usermodel",
     "storages",
     "sass_processor",
     "webpack_loader",

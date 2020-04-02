@@ -5,8 +5,8 @@ from guardian.shortcuts import (
 )
 
 from forecast.models import (
-    ForecastEditOpenState,
-    UnlockedForecastEditors,
+    ForecastEditState,
+    UnlockedForecastEditor,
 )
 
 
@@ -68,7 +68,7 @@ def can_forecast_be_edited(user):
     if closed and not locked and user.has_perm("forecast.can_edit_whilst_closed"):
         return True
 
-    if UnlockedForecastEditors.objects.filter(
+    if UnlockedForecastEditor.objects.filter(
         user=user,
     ).exists():
         return True

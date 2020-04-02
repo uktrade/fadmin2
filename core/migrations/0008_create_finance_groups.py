@@ -52,8 +52,11 @@ def create_groups(apps, schema_editor):
             "assign_user_to_cost_centre",
             "can_set_edit_lock",
             "can_edit_whilst_locked",
-            "can_unlock_user",
             "change_costcentre",  # admin permission
+            "change_user",  # admin permission
+            "add_unlockedforecasteditors",  # admin permission
+            "delete_unlockedforecasteditors",  # admin permission
+            "view_unlockedforecasteditors",  # admin permission
         ],
     )
 

@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 
 from simple_history.admin import SimpleHistoryAdmin
 
@@ -8,14 +9,18 @@ from core.admin import (
     AdminReadOnly,
 )
 
+from forecast.forms import UnlockedForecastEditorForm
 from forecast.import_csv import import_adi_file_class
 from forecast.models import (
     BudgetMonthlyFigure,
     FinancialPeriod,
-    ForecastEditOpenState,
+    ForecastEditState,
     ForecastMonthlyFigure,
-    UnlockedForecastEditors,
+    UnlockedForecastEditor,
 )
+
+
+User = get_user_model()
 
 
 class MonthlyFigureAdmin(AdminImportExport, AdminReadOnly, SimpleHistoryAdmin):
@@ -52,12 +57,22 @@ class ForecastEditOpenStateAdmin(AdminEditOnly, SimpleHistoryAdmin):
     history_list_display = ["locked"]
 
 
-class UnlockedForecastEditorsAdmin(admin.ModelAdmin):
-    pass
+class UnlockedForecastEditorAdmin(admin.ModelAdmin):
+    list_display_links = None
+
+    form = UnlockedForecastEditorForm
+
+    def get_form(self, request, obj=None, **kwargs):
+        unlock_form = super(
+            UnlockedForecastEditorAdmin,
+            self,
+        ).get_form(request, **kwargs)
+        unlock_form.current_user = request.user
+        return unlock_form
 
 
 admin.site.register(ForecastMonthlyFigure, MonthlyFigureAdmin)
 admin.site.register(FinancialPeriod, FinancialPeriodAdmin)
 admin.site.register(BudgetMonthlyFigure, BudgetAdmin)
-admin.site.register(ForecastEditOpenState, ForecastEditOpenStateAdmin)
-admin.site.register(UnlockedForecastEditors, UnlockedForecastEditorsAdmin)
+admin.site.register(ForecastEditState, ForecastEditOpenStateAdmin)
+admin.site.register(UnlockedForecastEditor, UnlockedForecastEditorAdmin)

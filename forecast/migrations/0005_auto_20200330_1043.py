@@ -14,10 +14,6 @@ class Migration(migrations.Migration):
             name='forecasteditopenstate',
             options={'default_permissions': ('',), 'permissions': [('can_set_edit_lock', 'Can set edit lock'), ('can_edit_whilst_closed', 'Can edit forecasts whilst system is closed'), ('can_edit_whilst_locked', 'Can edit forecasts whilst system is locked')]},
         ),
-        migrations.AlterModelOptions(
-            name='unlockedforecasteditors',
-            options={'default_permissions': ('',), 'permissions': [('can_unlock_user', 'Can unlock a user')]},
-        ),
         migrations.RemoveField(
             model_name='forecasteditopenstate',
             name='locked',

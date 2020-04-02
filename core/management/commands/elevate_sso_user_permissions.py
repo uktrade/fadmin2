@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
+from django.db.models import Q
 
 
 class Command(BaseCommand):
@@ -12,7 +13,7 @@ class Command(BaseCommand):
             sso_user = user.objects.exclude(
                 email="AnonymousUser",
             ).exclude(
-                email="test@test.com"
+                Q(email__contains='test.com')
             ).first()
             sso_user.is_superuser = True
             sso_user.is_staff = True

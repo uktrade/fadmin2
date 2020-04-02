@@ -7,6 +7,7 @@ from django.contrib.admin.models import (
     DELETION,
     LogEntry,
 )
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect, render
 from django.urls import path, reverse
@@ -315,3 +316,74 @@ class AdminAsyncImportExport(AdminImportExport):
         }
 
         return render(request, "admin/csv_form.html", payload)
+
+
+User = get_user_model()
+
+
+class UserListFilter(admin.SimpleListFilter):
+    title = 'users'
+    parameter_name = 'users'
+    default_value = None
+
+    def lookups(self, request, model_admin):
+        list_of_users = []
+        users = User.objects.all()
+
+        for user in self.queryset(
+            request,
+            users,
+        ):
+            list_of_users.append(
+                (str(user.id), user.email)
+            )
+
+        return sorted(list_of_users, key=lambda tp: tp[1])
+
+    def queryset(self, request, queryset):
+        if request.user.groups.filter(
+            name="Finance Administrator"
+        ).exists():
+            # Remove super users and fellow finance admins
+            super_users = User.objects.filter(is_superuser=True)
+            id_list = [user.id for user in super_users]
+
+            finance_admin_users = User.objects.filter(
+                groups__name='Finance Administrator',
+            )
+            id_list = id_list + [user.id for user in finance_admin_users]
+
+            # Remove administering user
+            id_list.append(request.user.id)
+
+            return queryset.exclude(
+                pk__in=id_list
+            ).order_by("-email")
+
+        return queryset
+
+
+class UserAdmin(admin.ModelAdmin):
+    list_filter = (UserListFilter,)
+
+    def get_exclude(self, request, obj=None):
+        if request.user.is_superuser:
+            return None
+
+        return [
+            "first_name",
+            "password",
+            "last_name",
+            "email",
+            "password",
+            "last_login",
+            "is_superuser",
+            "user_permissions",
+            "is_active",
+            "is_staff",
+            "date_joined",
+        ]
+
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)

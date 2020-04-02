@@ -2,7 +2,10 @@
 {% load i18n admin_urls %}
 
 {% block object-tools-items %}
-
-<li><a href="{% url 'admin:change_permission' object_id %}" class="permissionslink">Manage permissions</a></li>
+{% if has_change_permission %}
+    <li>
+        <a href="{% url 'admin:change_permission' object_id %}" class="permissionslink">Manage permissions</a>
+    </li>
+{% endif %}
 {{ block.super }}
 {% endblock %}
