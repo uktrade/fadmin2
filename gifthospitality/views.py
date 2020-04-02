@@ -109,18 +109,18 @@ def quick_links(request):
     return render(request, 'gifthospitality/quick_links.html', {
         "quick_links": [
             {
-                "title": "Gift/Hosp Received",
-                "text": "Go",
+                "title": "Add Gift/Hosp Received",
+                "text": "TODO",
                 "url": "gifts_hospitality:gift-received",
             },
             {
-                "title": "Gift/Hosp Offered",
-                "text": "Go",
+                "title": "Add Gift/Hosp Offered",
+                "text": "TODO",
                 "url": "gifts_hospitality:gift-offered",
             },
             {
                 "title": "Search Records",
-                "text": "Go",
+                "text": "TODO",
                 "url": "gifts_hospitality:gift-search",
             },
         ]
