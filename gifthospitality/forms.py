@@ -18,7 +18,8 @@
 #             self.fields[f].required = True
 #         self.fields["company"].visible = False
 #
-#         self.fields['classification_fk'].widget.attrs.update({'class': 'govuk-select'})
+#         self.fields['classification_fk'].
+#         widget.attrs.update({'class': 'govuk-select'})
 #         self.fields['category_fk'].widget.attrs.update({'class': 'govuk-select'})
 #         self.fields['date_offered'].widget.attrs.update({'class': 'govuk-input'})
 #         self.fields['venue'].widget.attrs.update({'class': 'govuk-input'})

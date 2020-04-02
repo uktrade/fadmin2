@@ -1340,7 +1340,7 @@ class ViewEditTest(TestCase, RequestFactoryBase):
         assert len(cost_centre_links) == 1
         assert cost_centre_links[0]['href'] == view_forecast_url
 
-        # Checks Group Code href in the 'Edit Forecast' tab links to 'View Forecast' GC tab
+        # Checks Group Code in 'Edit Forecast' tab links to 'View Forecast' GC tab
         view_group_forecast_url = reverse(
             "forecast_group",
             kwargs={
@@ -1353,7 +1353,7 @@ class ViewEditTest(TestCase, RequestFactoryBase):
         assert len(group_code_links) == 1
         assert group_code_links[0]['href'] == view_group_forecast_url
 
-        # Checks Directorate href in the 'Edit Forecast' tab links to 'View Forecast' tab
+        # Checks Directorate in 'Edit Forecast' tab links to 'View Forecast' tab
         view_directorate_forecast_url = reverse(
             "forecast_directorate",
             kwargs={
@@ -1396,10 +1396,13 @@ class ViewEditButtonTest(TestCase, RequestFactoryBase):
         )
 
     def test_user_can_view_edit_button(self):
-        # Test user has Edit Forecast permissions for cost centre 888812
+        """
+        Test user has Edit Forecast permissions to view specific cost centre
+        """
+
         assign_perm("change_costcentre", self.test_user, self.cost_centre)
 
-        # Takes the client to the 'View Forecast' tab for the Cost Centre 888812
+        # Takes the client to the 'View Forecast' tab for a specified Cost Centre
         view_forecast_url = reverse(
             "forecast_cost_centre",
             kwargs={
@@ -1419,7 +1422,10 @@ class ViewEditButtonTest(TestCase, RequestFactoryBase):
         assert len(edit_forecast_links) == 1
 
     def test_user_cannot_view_edit_button(self):
-        # This takes the client to the 'View Forecast' tab for the Cost Centre 888812
+        """
+        Tests 'Edit Forecast' button does not appear when
+        user has not been assigned editing permissions.
+        """
         view_forecast_url = reverse(
             "forecast_cost_centre",
             kwargs={
@@ -1433,23 +1439,27 @@ class ViewEditButtonTest(TestCase, RequestFactoryBase):
         soup = BeautifulSoup(response.content, features="html.parser")
 
         # Looks for 'edit-forecast-link' class (Edit Forecast Button) returns '[]'
-        # User not assigned with any Cost Centre Forecast edit permissions.
         edit_forecast_links = soup.find_all("a", class_="edit-forecast-link")
 
         assert len(edit_forecast_links) == 0
 
     def test_user_cannot_view_unassigned_cost_centre(self):
-        # Assigns test user to the cost centre 888812 but NOT 888332
+        """
+        Tests user can view a cost centre but cannot see
+        'Edit Forecast' button as they do not have the permissions.
+        """
+
+        # Assigns user to one cost centre
         assign_perm("change_costcentre", self.test_user, self.cost_centre)
 
-        # Changes cost_centre_code to 888332, that user can view NOT edit
+        # Changes cost_centre_code to one that user can view but NOT edit
         self.test_cost_centre = 888332
         self.cost_centre_code = self.test_cost_centre
         self.cost_centre = CostCentreFactory.create(
             cost_centre_code=self.cost_centre_code
         )
 
-        # Takes client to 'View Forecast' tab for Cost Centre 888332
+        # Client to 'View Forecast' tab for Cost Centre they cannot edit
         view_forecast_url = reverse(
             "forecast_cost_centre",
             kwargs={
@@ -1461,7 +1471,7 @@ class ViewEditButtonTest(TestCase, RequestFactoryBase):
 
         soup = BeautifulSoup(response.content, features="html.parser")
 
-        # User not assigned with editing permissions for this Cost Centre.
+        # Tests that user cannot see 'Edit Forecast' button
         edit_forecast_links = soup.find_all("a", class_="edit-forecast-link")
 
         assert len(edit_forecast_links) == 0
