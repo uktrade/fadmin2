@@ -10,7 +10,7 @@ from core.import_csv import (
 
 from costcentre.models import CostCentre, DepartmentalGroup, Directorate
 
-from .models import DITPeople, Grade, DITGroup
+from .models import DITGroup, DITPeople, Grade
 
 GRADE_KEY = {
     IMPORT_CSV_MODEL_KEY: Grade,
@@ -69,6 +69,7 @@ GROUP_KEY = {
 
 def import_HR_Report(csvfile):
     import_obj(csvfile, PEOPLE_KEY)
+
 
 def import_GROUP_Report(csvfile):
     import_obj(csvfile, GROUP_KEY)

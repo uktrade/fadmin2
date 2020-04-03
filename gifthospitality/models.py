@@ -5,7 +5,8 @@ from core.metamodels import (
     IsActiveModel,
 )
 
-from payroll.models import DITPeople, Grade, DITGroup
+from payroll.models import DITGroup, Grade
+
 
 class GiftAndHospitalityClassification(IsActiveModel):
     GIFT = "Gift"
@@ -127,7 +128,8 @@ class GiftAndHospitality(BaseModel):
         limit_choices_to={"active": True},
         verbose_name="category",
     )
-    grade_fk = models.ForeignKey(Grade, on_delete=models.PROTECT, verbose_name="grade", null=True)
+    grade_fk = models.ForeignKey(Grade, on_delete=models.PROTECT, verbose_name="grade",
+                                 null=True)
 
     class Meta:
         verbose_name = "Gift and Hospitality"

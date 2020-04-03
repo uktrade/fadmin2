@@ -10,13 +10,13 @@ from core.admin import (
 )
 
 from payroll.import_csv import (
-    import_HR_class,
     import_GROUP_class,
+    import_HR_class,
     import_grade_class,
 )
 from payroll.models import (
-    DITPeople,
     DITGroup,
+    DITPeople,
     Grade,
 )
 
@@ -44,6 +44,7 @@ def _export_people_iterator(queryset):
             obj.cost_centre.directorate.group.group_name,
             obj.active,
         ]
+
 
 def _export_group_iterator(queryset):
     yield [
@@ -92,22 +93,27 @@ class DIT_PeopleAdmin(AdminActiveField, AdminImportExport):
     def import_info(self):
         return import_HR_class
 
+
 class DIT_GroupAdmin(AdminActiveField, AdminImportExport):
-    list_display = ("group_display_name", "cost_centre", "directorate_code", "group_code", "active")
+    list_display = ("group_display_name", "cost_centre", "directorate_code",
+                    "group_code", "active")
 
     # different fields editable if updating or creating the object
     def get_readonly_fields(self, request, obj=None):
         if obj:
-            return ["cost_centre", "group_display_name", "directorate_code", "group_code", "created", "updated"]
+            return ["cost_centre", "group_display_name", "directorate_code",
+                    "group_code", "created", "updated"]
         else:
             return ["created", "updated"]
 
     # different fields visible if updating or creating the object
     def get_fields(self, request, obj=None):
         if obj:
-            return ["cost_centre", "group_display_name", "directorate_code", "group_code", "created", "updated"]
+            return ["cost_centre", "group_display_name", "directorate_code",
+                    "group_code", "created", "updated"]
         else:
-            return ["cost_centre", "group_display_name", "directorate_code", "group_code", "active"]
+            return ["cost_centre", "group_display_name", "directorate_code",
+                    "group_code", "active"]
 
     search_fields = ["cost_centre", "group_display_name"]
     list_filter = ("active", ("cost_centre", RelatedDropdownFilter))
@@ -119,6 +125,7 @@ class DIT_GroupAdmin(AdminActiveField, AdminImportExport):
     @property
     def import_info(self):
         return import_GROUP_class
+
 
 def _export_grade_iterator(queryset):
     yield ["Grade", "Grade Description"]

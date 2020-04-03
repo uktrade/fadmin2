@@ -19,6 +19,7 @@ class Grade(BaseModel):
         verbose_name = "Grade"
         verbose_name_plural = "Grades"
 
+
 class DITGroup(IsActiveModel):
     group_display_name = models.CharField(primary_key=True, max_length=50,)
     group_code = models.ForeignKey(
@@ -38,6 +39,7 @@ class DITGroup(IsActiveModel):
         verbose_name = "DIT Group"
         verbose_name_plural = "DIT Group"
         ordering = ["cost_centre"]
+
 
 class DITPeople(IsActiveModel):
     employee_number = models.CharField(primary_key=True, max_length=10)
