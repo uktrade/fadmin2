@@ -18,8 +18,6 @@ class Migration(migrations.Migration):
                     'assign_edit_for_own_cost_centres',
                     'Assign edit cost centre for own cost centres',
                 ),
-                ('can_allow_user_to_edit_cost_centre', 'Can allow users to edit cost centres'),
-                ('assign_user_to_cost_centre', 'Can assign user to a cost centre'),
             ), 'verbose_name': 'Cost Centre', 'verbose_name_plural': 'Cost Centres'},
         ),
     ]

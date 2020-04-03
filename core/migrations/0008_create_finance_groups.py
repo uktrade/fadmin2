@@ -61,9 +61,6 @@ def create_groups(apps, schema_editor):
         finance_adminstrators, [
             "can_view_forecasts",
             "edit_forecast_all_cost_centres",
-            "can_allow_user_to_edit_cost_centre",
-            "assign_user_to_cost_centre",
-            "can_set_edit_lock",
             "can_edit_whilst_locked",
             "change_costcentre",  # admin permission
             "change_user",  # admin permission
