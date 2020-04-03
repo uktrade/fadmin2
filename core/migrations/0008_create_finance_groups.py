@@ -26,6 +26,17 @@ def assign_permissions(group, permission_codenames):
 def create_groups(apps, schema_editor):
     add_all_permissions()
 
+    # Forecast viewers
+    forecast_viewers, _ = Group.objects.get_or_create(
+        name='Forecast viewers',
+    )
+
+    assign_permissions(
+        forecast_viewers, [
+            "can_view_forecasts",
+        ]
+    )
+
     # Finance Business Partners
     finance_business_partners, _ = Group.objects.get_or_create(
         name='Finance Business Partner/BSCE',
@@ -34,6 +45,7 @@ def create_groups(apps, schema_editor):
 
     assign_permissions(
         finance_business_partners, [
+            "can_view_forecasts",
             "can_edit_whilst_closed",
             "assign_edit_for_own_cost_centres",
             "change_costcentre",  # admin permission
@@ -47,6 +59,7 @@ def create_groups(apps, schema_editor):
 
     assign_permissions(
         finance_adminstrators, [
+            "can_view_forecasts",
             "edit_forecast_all_cost_centres",
             "can_allow_user_to_edit_cost_centre",
             "assign_user_to_cost_centre",
@@ -54,9 +67,11 @@ def create_groups(apps, schema_editor):
             "can_edit_whilst_locked",
             "change_costcentre",  # admin permission
             "change_user",  # admin permission
-            "add_unlockedforecasteditors",  # admin permission
-            "delete_unlockedforecasteditors",  # admin permission
-            "view_unlockedforecasteditors",  # admin permission
+            "add_unlockedforecasteditor",  # admin permission
+            "delete_unlockedforecasteditor",  # admin permission
+            "view_unlockedforecasteditor",  # admin permission
+            "view_forecasteditstate",  # admin permission
+            "change_forecasteditstate",  # admin permission
         ],
     )
 
@@ -64,7 +79,7 @@ def create_groups(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("core", "0007_create_financial_years"),
-        ("forecast", "0005_auto_20200330_1043"),
+        ("forecast", "0011_auto_20200402_1605"),
         ("costcentre", "0033_auto_20200327_0931"),
     ]
 

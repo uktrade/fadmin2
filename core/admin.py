@@ -8,6 +8,7 @@ from django.contrib.admin.models import (
     LogEntry,
 )
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import redirect, render
 from django.urls import path, reverse
@@ -348,10 +349,10 @@ class UserListFilter(admin.SimpleListFilter):
             super_users = User.objects.filter(is_superuser=True)
             id_list = [user.id for user in super_users]
 
-            finance_admin_users = User.objects.filter(
-                groups__name='Finance Administrator',
-            )
-            id_list = id_list + [user.id for user in finance_admin_users]
+            # finance_admin_users = User.objects.filter(
+            #     groups__name='Finance Administrator',
+            # )
+            # id_list = id_list + [user.id for user in finance_admin_users]
 
             # Remove administering user
             id_list.append(request.user.id)
@@ -365,6 +366,20 @@ class UserListFilter(admin.SimpleListFilter):
 
 class UserAdmin(admin.ModelAdmin):
     list_filter = (UserListFilter,)
+
+    def save_model(self, request, obj, form, change):
+        for group in form.cleaned_data["groups"]:
+            if group.name in [
+                "Finance Business Partner/BSCE",
+                "Finance Administrator",
+            ]:
+                obj.is_staff = True
+                break
+        else:
+            if not obj.is_superuser:
+                obj.is_staff = False
+
+        super().save_model(request, obj, form, change)
 
     def get_exclude(self, request, obj=None):
         if request.user.is_superuser:
@@ -386,4 +401,6 @@ class UserAdmin(admin.ModelAdmin):
 
 
 admin.site.unregister(User)
+admin.site.unregister(Group)
+
 admin.site.register(User, UserAdmin)

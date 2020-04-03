@@ -45,16 +45,18 @@ class ForecastEditState(BaseModel):
     closed = models.BooleanField(default=False,)
     lock_date = models.DateField(
         null=True,
+        blank=True,
         help_text="If the lock date is set, after this date "
-                  "the system will remain locked for the "
-                  "remainder of the date's month"
+                  "the system will remain locked until the "
+                  "date is removed"
     )
 
     def __str__(self):
-        return 'Forecast edit open state'
+        return 'Forecast edit state'
 
     class Meta:
-        default_permissions = ('', )
+        verbose_name_plural = "Forecast edit state"
+        default_permissions = ('view', 'change')
         permissions = [
             ("can_set_edit_lock", "Can set edit lock"),
             (

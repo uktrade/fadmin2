@@ -154,7 +154,6 @@ class CostCentre(IsActiveModel):
         ordering = ["cost_centre_code"]
         default_permissions = ('change',)
         permissions = (
-            ('edit_cost_centre_forecast', 'Edit cost centre forecast'),
             ('edit_forecast_all_cost_centres', 'Edit all cost centres'),
             (
                 'assign_edit_for_own_cost_centres',

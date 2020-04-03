@@ -1,7 +1,11 @@
-from datetime import datetime
+from datetime import date
 
 from guardian.shortcuts import (
     get_objects_for_user as guardian_get_objects_for_user,
+)
+
+from costcentre.models import (
+    CostCentre,
 )
 
 from forecast.models import (
@@ -24,13 +28,11 @@ def can_view_forecasts(user):
 
 
 def is_system_locked():
-    today = datetime.now()
-    forecast_edit_date = ForecastEditOpenState.objects.get()
+    forecast_edit_date = ForecastEditState.objects.get()
 
     if (
         forecast_edit_date.lock_date and
-        forecast_edit_date.lock_date.month == today.month and
-        forecast_edit_date.lock_date.year == today.year
+        date.today() >= forecast_edit_date.lock_date
     ):
         return True
 
@@ -38,7 +40,7 @@ def is_system_locked():
 
 
 def is_system_closed():
-    forecast_edit_date = ForecastEditOpenState.objects.get()
+    forecast_edit_date = ForecastEditState.objects.get()
 
     if forecast_edit_date.closed:
         return True
@@ -79,14 +81,23 @@ def can_forecast_be_edited(user):
 def can_edit_at_least_one_cost_centre(user):
     cost_centres = guardian_get_objects_for_user(
         user,
-        "costcentre.edit_cost_centre_forecast",
+        "costcentre.change_costcentre",
     )
 
     return cost_centres.count() > 0
 
 
 def can_edit_cost_centre(user, cost_centre_code):
+    if user.has_perm(
+        "costcentre.edit_forecast_all_cost_centres"
+    ):
+        return True
+
+    cost_centre = CostCentre.objects.get(
+        cost_centre_code=cost_centre_code,
+    )
+
     return user.has_perm(
-        "costcentre.edit_cost_centre_forecast",
-        cost_centre_code,
+        "costcentre.change_costcentre",
+        cost_centre,
     )

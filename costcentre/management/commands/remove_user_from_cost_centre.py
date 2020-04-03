@@ -44,7 +44,7 @@ class Command(BaseCommand):
             )
             return
 
-        if not user.has_perm("edit_cost_centre_forecast", cost_centre):
+        if not user.has_perm("change_costcentre", cost_centre):
             self.stdout.write(
                 self.style.ERROR(
                     "User does not have permission to edit cost centre {}".format(
@@ -54,7 +54,7 @@ class Command(BaseCommand):
             )
             return
 
-        remove_perm("edit_cost_centre_forecast", user, cost_centre)
+        remove_perm("change_costcentre", user, cost_centre)
 
         self.stdout.write(
             self.style.SUCCESS(

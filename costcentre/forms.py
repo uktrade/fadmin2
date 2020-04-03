@@ -67,10 +67,15 @@ class DirectorateCostCentresForm(forms.Form):
 class MyCostCentresForm(forms.Form):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
+        accept_global_perms = False
+
+        if user.has_perm("costcentre.edit_forecast_all_cost_centres"):
+            accept_global_perms = True
 
         self.base_fields['cost_centre'].queryset = get_objects_for_user(
             user,
-            "costcentre.edit_cost_centre_forecast",
+            "costcentre.change_costcentre",
+            accept_global_perms=accept_global_perms,
         )
 
         super(MyCostCentresForm, self).__init__(

@@ -18,12 +18,19 @@ class Command(BaseCommand):
             help="Group for user to join",
             dest="group",
         )
+        parser.add_argument(
+            "--is_admin",
+            help="Is the user na admin?",
+            dest="is_admin",
+        )
 
     def handle(self, *args, **options):
         if settings.CAN_CREATE_TEST_USER:
             _User = get_user_model()
 
+            is_admin = options["is_admin"]
             email = options["email"]
+            group = options["group"]
 
             if not email:
                 email = "test@test.com"
@@ -39,9 +46,11 @@ class Command(BaseCommand):
             user.email = email
             user.is_staff = True
             user.set_password(password)
-            user.save()
 
-            group = options["group"]
+            if is_admin:
+                user.is_superuser = True
+
+            user.save()
 
             if group:
                 group = Group.objects.get(name=group)
