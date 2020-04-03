@@ -16,12 +16,19 @@ class GiftAndHospitalityReceivedForm(forms.ModelForm):
         super(GiftAndHospitalityReceivedForm, self).__init__(*args, **kwargs)
         for f in self.fields:
             self.fields[f].required = True
-        self.fields["company"].visible = False
+        # self.fields["company"].visible = False
 
         self.fields['classification_fk'].widget.attrs.update({'class': 'govuk-select'})
         self.fields['category_fk'].widget.attrs.update({'class': 'govuk-select'})
         self.fields['date_offered'].widget.attrs.update({'class': 'govuk-input'})
+        self.fields['action_taken'].widget.attrs.update({'class': 'govuk-select'})
         self.fields['venue'].widget.attrs.update({'class': 'govuk-input'})
+        self.fields['reason'].widget.attrs.update({'class': 'govuk-input'})
+        self.fields['value'].widget.attrs.update({'class': 'govuk-input'})
+        self.fields['rep_fk'].widget.attrs.update({'class': 'govuk-input'})
+        self.fields['group_fk'].widget.attrs.update({'class': 'govuk-select'})
+        self.fields['company_rep'].widget.attrs.update({'class': 'govuk-input'})
+        self.fields['company_fk'].widget.attrs.update({'class': 'govuk-select'})
 
     def save(self, *args, **kwargs):
         self.instance.offer = self.offer
@@ -50,7 +57,7 @@ class GiftAndHospitalityReceivedForm(forms.ModelForm):
             "group_fk",
             "company_rep",
             "company_fk",
-            "company",
+            # "company",
         ]
         labels = {
             "company_fk": _("Company received from"),
@@ -77,6 +84,18 @@ class GiftAndHospitalityOfferedForm(GiftAndHospitalityReceivedForm):
     def __init__(self, *args, **kwargs):
         self.offer = GIFT_OFFERED
         super(GiftAndHospitalityReceivedForm, self).__init__(*args, **kwargs)
+
+        self.fields['classification_fk'].widget.attrs.update({'class': 'govuk-select'})
+        self.fields['category_fk'].widget.attrs.update({'class': 'govuk-select'})
+        self.fields['date_offered'].widget.attrs.update({'class': 'govuk-input'})
+        self.fields['action_taken'].widget.attrs.update({'class': 'govuk-select'})
+        self.fields['venue'].widget.attrs.update({'class': 'govuk-input'})
+        self.fields['reason'].widget.attrs.update({'class': 'govuk-input'})
+        self.fields['value'].widget.attrs.update({'class': 'govuk-input'})
+        self.fields['rep_fk'].widget.attrs.update({'class': 'govuk-input'})
+        self.fields['group_fk'].widget.attrs.update({'class': 'govuk-select'})
+        self.fields['company_rep'].widget.attrs.update({'class': 'govuk-input'})
+        self.fields['company_fk'].widget.attrs.update({'class': 'govuk-select'})
 
     class Meta(GiftAndHospitalityReceivedForm.Meta):
         labels = {
