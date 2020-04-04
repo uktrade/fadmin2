@@ -1,6 +1,7 @@
 from .base import *  # noqa
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+import structlog
 
 MIDDLEWARE += [
     "authbroker_client.middleware.ProtectAllViewsMiddleware",
@@ -32,19 +33,26 @@ CACHES = {
 }
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "json_formatter": {
+            "()": structlog.stdlib.ProcessorFormatter,
+            "processor": structlog.processors.JSONRenderer(),
         },
     },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "json_formatter",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
             'level': env('DJANGO_LOG_LEVEL', default='INFO'),
         },
-    },
+    }
 }
 
 # Use anti virus check on uploaded files
