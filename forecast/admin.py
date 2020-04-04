@@ -53,7 +53,7 @@ class FinancialPeriodAdmin(AdminReadOnly):
             ]
 
 
-class ForecastEditOpenStateAdmin(AdminEditOnly, SimpleHistoryAdmin):
+class ForecastEditStateAdmin(AdminEditOnly, SimpleHistoryAdmin):
     history_list_display = ["locked"]
 
 
@@ -74,5 +74,5 @@ class UnlockedForecastEditorAdmin(admin.ModelAdmin):
 admin.site.register(ForecastMonthlyFigure, MonthlyFigureAdmin)
 admin.site.register(FinancialPeriod, FinancialPeriodAdmin)
 admin.site.register(BudgetMonthlyFigure, BudgetAdmin)
-admin.site.register(ForecastEditState, ForecastEditOpenStateAdmin)
+admin.site.register(ForecastEditState, ForecastEditStateAdmin)
 admin.site.register(UnlockedForecastEditor, UnlockedForecastEditorAdmin)

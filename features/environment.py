@@ -43,12 +43,12 @@ from chartofaccountDIT.test.factories import (
 from forecast.models import (
     FinancialCode,
     FinancialPeriod,
-    ForecastEditOpenState,
+    ForecastEditState,
     ForecastMonthlyFigure,
 )
 from forecast.test.factories import (
     FinancialPeriodFactory,
-    ForecastEditOpenStateFactory,
+    ForecastEditStateFactory,
 )
 
 TEST_COST_CENTRE_CODE = 888812
@@ -147,8 +147,8 @@ def set_up_test_objects(context):
                 amount=0,
             )
 
-    if ForecastEditOpenState.objects.count() == 0:
-        ForecastEditOpenStateFactory.create()
+    if ForecastEditState.objects.count() == 0:
+        ForecastEditStateFactory.create()
 
 
 def create_test_user(context):

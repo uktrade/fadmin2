@@ -18,3 +18,6 @@ makemigrations:
 
 migrate:
 	docker-compose run fido python manage.py migrate
+
+test:
+	docker-compose run fido python manage.py test
