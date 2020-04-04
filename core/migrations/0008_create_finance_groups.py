@@ -76,8 +76,8 @@ def create_groups(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("core", "0007_create_financial_years"),
-        ("forecast", "0011_auto_20200402_1605"),
-        ("costcentre", "0033_auto_20200327_0931"),
+        ("forecast", "0003_auto_20200403_0828"),
+        ("costcentre", "0031_auto_20200403_0828"),
     ]
 
     operations = [
