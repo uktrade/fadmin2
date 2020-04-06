@@ -1,3 +1,4 @@
+from datetime import datetime
 from bs4 import BeautifulSoup
 
 from django.conf import settings
@@ -1164,7 +1165,7 @@ class EditForecastLockTest(TestCase, RequestFactoryBase):
 
         # Lock forecast for editing
         edit_lock = ForecastEditState.objects.get()
-        edit_lock.locked = True
+        edit_lock.lock_date = datetime.now()
         edit_lock.save()
 
         # Should be redirected to lock page
@@ -1174,8 +1175,10 @@ class EditForecastLockTest(TestCase, RequestFactoryBase):
             cost_centre_code=self.cost_centre_code,
         )
 
+        editing_locked_url = reverse("edit_unavailable")
+
         assert resp.status_code == 302
-        assert resp.url == "/forecast/edit/editing-locked/"
+        assert resp.url == editing_locked_url
 
         # Add edit whilst lock permission
         can_edit_whilst_locked = Permission.objects.get(
