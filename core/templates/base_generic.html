@@ -110,7 +110,7 @@
 
                 {%  if request.user.is_superuser %}
                     <li class="internal-header__navigation__item">
-                        <a class="internal-header__navigation__item__link {% if request.path|startswith:'/gifthospitality/' %}internal-header__navigation__item__link--active{% endif %}" href="{% url 'gifthospitality:quick_links' %}">
+                        <a class="internal-header__navigation__item__link hospitality {% if request.path|startswith:'/gifthospitality/' %}internal-header__navigation__item__link--active{% endif %}" href="{% url 'gifthospitality:quick_links' %}">
                             Gifts &amp; Hospitality Register
                         </a>
                     </li>
