@@ -54,6 +54,15 @@ def user_in_group(user, group):
     ).exists()
 
 
+def can_edit_at_least_one_cost_centre(user):
+    cost_centres = guardian_get_objects_for_user(
+        user,
+        "costcentre.change_costcentre",
+    )
+
+    return cost_centres.count() > 0
+
+
 def can_forecast_be_edited(user):
     if user.is_superuser:
         return True
@@ -76,15 +85,6 @@ def can_forecast_be_edited(user):
         return True
 
     return False
-
-
-def can_edit_at_least_one_cost_centre(user):
-    cost_centres = guardian_get_objects_for_user(
-        user,
-        "costcentre.change_costcentre",
-    )
-
-    return cost_centres.count() > 0
 
 
 def can_edit_cost_centre(user, cost_centre_code):

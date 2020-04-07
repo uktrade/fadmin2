@@ -21,3 +21,6 @@ migrate:
 
 test:
 	docker-compose run fido python manage.py test
+
+shell:
+	docker-compose run fido python manage.py shell

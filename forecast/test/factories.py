@@ -15,6 +15,7 @@ from forecast.models import (
     FinancialPeriod,
     ForecastEditState,
     ForecastMonthlyFigure,
+    UnlockedForecastEditor,
 )
 
 
@@ -73,3 +74,9 @@ class ForecastEditStateFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = ForecastEditState
+
+
+class UnlockedForecastEditorFactory(factory.DjangoModelFactory):
+
+    class Meta:
+        model = UnlockedForecastEditor
