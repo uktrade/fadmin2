@@ -12,10 +12,8 @@ from gifthospitality.models import (
     GiftAndHospitalityCategory,
     GiftAndHospitalityClassification,
     GiftAndHospitalityCompany,
+    Grade,
 )
-
-from payroll.models import Grade
-
 
 GH_CLASSIF_KEY = {
     IMPORT_CSV_MODEL_KEY: GiftAndHospitalityClassification,

@@ -10,7 +10,9 @@ from core.import_csv import (
 
 from costcentre.models import CostCentre, DepartmentalGroup, Directorate
 
-from .models import DITGroup, DITPeople, Grade
+from gifthospitality.models import DITGroup
+
+from .models import DITPeople, Grade
 
 GRADE_KEY = {
     IMPORT_CSV_MODEL_KEY: Grade,
