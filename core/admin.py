@@ -349,11 +349,6 @@ class UserListFilter(admin.SimpleListFilter):
             super_users = User.objects.filter(is_superuser=True)
             id_list = [user.id for user in super_users]
 
-            # finance_admin_users = User.objects.filter(
-            #     groups__name='Finance Administrator',
-            # )
-            # id_list = id_list + [user.id for user in finance_admin_users]
-
             # Remove administering user
             id_list.append(request.user.id)
 
