@@ -67,6 +67,7 @@ class Command(BaseCommand):
         else:
             self.stdout.write(
                 self.style.FATAL(
-                    "The setting CAN_CREATE_TEST_USER is set to false, action not allowed"
+                    "The setting CAN_CREATE_TEST_USER is "
+                    "set to false, action not allowed"
                 )
             )

@@ -57,7 +57,8 @@ def user_in_group(user, group):
 def can_edit_at_least_one_cost_centre(user):
     cost_centres = guardian_get_objects_for_user(
         user,
-        "costcentre.change_costcentre",
+        "change_costcentre",
+        klass=CostCentre,
     )
 
     return cost_centres.count() > 0

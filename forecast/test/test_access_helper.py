@@ -17,13 +17,13 @@ from forecast.models import (
 from forecast.permission_shortcuts import assign_perm
 from forecast.test.factories import UnlockedForecastEditorFactory
 from forecast.utils.access_helpers import (
-    can_view_forecasts,
-    is_system_locked,
-    is_system_closed,
-    user_in_group,
     can_edit_at_least_one_cost_centre,
-    can_forecast_be_edited,
     can_edit_cost_centre,
+    can_forecast_be_edited,
+    can_view_forecasts,
+    is_system_closed,
+    is_system_locked,
+    user_in_group,
 )
 
 

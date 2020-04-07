@@ -24,3 +24,10 @@ test:
 
 shell:
 	docker-compose run fido python manage.py shell
+
+flake8:
+	docker-compose run fido flake8
+
+bdd:
+	docker-compose exec fido bash
+	python manage.py behave --settings=config.settings.bdd

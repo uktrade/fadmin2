@@ -1,11 +1,11 @@
 import io
 
 from django.contrib import admin
-from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
+
 from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
 from guardian.admin import GuardedModelAdminMixin
@@ -31,6 +31,10 @@ from costcentre.exportcsv import (
     export_historic_costcentre_iterator,
     export_person_iterator,
 )
+from costcentre.forms import (
+    GivePermissionAdminForm,
+    RemovePermissionAdminForm,
+)
 from costcentre.import_csv import (
     import_cc_class,
     import_cc_dit_specific_class,
@@ -45,10 +49,6 @@ from costcentre.models import (
     DepartmentalGroup,
     Directorate,
     HistoricCostCentre,
-)
-from costcentre.forms import (
-    GivePermissionAdminForm,
-    RemovePermissionAdminForm,
 )
 
 from forecast.permission_shortcuts import assign_perm
@@ -232,6 +232,7 @@ class CostCentreAdmin(GuardedModelAdminMixin, AdminActiveField, AdminImportExpor
 
         return True
 
+    # flake8: noqa: C901
     def change_permission(self, request, cost_centre_id, *args, **kwargs):
         cost_centre = self.get_object(request, cost_centre_id)
         cost_centre_url = reverse(
@@ -278,7 +279,8 @@ class CostCentreAdmin(GuardedModelAdminMixin, AdminActiveField, AdminImportExpor
                     )
                     self.message_user(
                         request,
-                        'Successfully gave user permission to edit cost centre forecast',
+                        'Successfully gave user permission '
+                        'to edit cost centre forecast',
                     )
 
                     return HttpResponseRedirect(url)
