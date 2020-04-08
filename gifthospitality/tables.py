@@ -8,8 +8,8 @@ class GiftHospitalityTable(FadminTable):
         model = GiftAndHospitality
         fields = (
             "id",
-            "category_fk",
-            "classification_fk",
+            "category",
+            "classification",
             "group_name",
             "date_offered",
             "venue",
@@ -17,7 +17,7 @@ class GiftHospitalityTable(FadminTable):
             "value",
             "rep",
             "group",
-            "grade_fk",
+            "grade",
             "offer",
             "company_rep",
             "company",

@@ -50,11 +50,11 @@ class GiftHospitalityFilter(MyFilterSet):
         model = GiftAndHospitality
         fields = [
             "id",
-            "category_fk",
-            "classification_fk",
+            "category",
+            "classification",
             "value",
             "rep",
-            "grade_fk",
+            "grade",
             "group",
             "offer",
             "company",

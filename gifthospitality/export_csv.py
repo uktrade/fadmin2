@@ -28,9 +28,9 @@ def _export_gh_iterator(queryset):
         yield [
             obj.old_id,
             obj.id,
-            get_fk_value(obj.category_fk, "gif_hospitality_category"),
-            get_fk_value(obj.classification_fk, "gift_type"),
-            get_fk_value(obj.classification_fk, "gif_hospitality_classification"),
+            get_fk_value(obj.category, "gif_hospitality_category"),
+            get_fk_value(obj.classification, "gift_type"),
+            get_fk_value(obj.classification, "gif_hospitality_classification"),
             obj.group_name,
             obj.date_offered,
             obj.venue,

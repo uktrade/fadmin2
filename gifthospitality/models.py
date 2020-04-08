@@ -108,7 +108,7 @@ class GiftAndHospitality(BaseModel):
 
     id = models.AutoField("Record ID", primary_key=True)
     old_id = models.IntegerField(null=True, blank=True)
-    classification_fk = models.ForeignKey(
+    classification = models.ForeignKey(
         GiftAndHospitalityClassification,
         on_delete=models.PROTECT,
         limit_choices_to={"active": True},
@@ -120,11 +120,11 @@ class GiftAndHospitality(BaseModel):
     venue = models.CharField(max_length=1000)
     reason = models.CharField("Description of offer and reason", max_length=1000)
     value = models.IntegerField("Estimated value of offer (£)")
-    rep_fk = models.CharField(
+    rep = models.CharField(
         "DIT representative offered to/from", max_length=200, blank=True
     )
 
-    group_fk = models.ForeignKey(
+    group = models.ForeignKey(
         DITGroup,
         on_delete=models.SET_NULL,
         null=True,
@@ -132,13 +132,13 @@ class GiftAndHospitality(BaseModel):
         verbose_name="DIT Group",
     )
 
-    rep = models.CharField("DIT representative offered to/from", max_length=255)
-    group = models.CharField("DIT Group offered to/from", max_length=255)
+    # rep = models.CharField("DIT representative offered to/from", max_length=255)
+    # group = models.CharField("DIT Group offered to/from", max_length=255)
     offer = models.CharField(max_length=200, choices=OFFER_CHOICE)
     company_rep = models.CharField(
         "Company representative offered to/from", max_length=200
     )
-    company_fk = models.ForeignKey(
+    company = models.ForeignKey(
         GiftAndHospitalityCompany,
         on_delete=models.SET_NULL,
         limit_choices_to={"active": True},
@@ -146,7 +146,7 @@ class GiftAndHospitality(BaseModel):
         blank=True,
         verbose_name="company",
     )
-    company = models.CharField("Company offered to/from", max_length=200)
+    # company = models.CharField("Company offered to/from", max_length=200)
     ACTION_TYPE = (
         ("Action1", "Rejected"),
         ("Action2", "Accepted (difference paid to Department)"),
@@ -158,13 +158,13 @@ class GiftAndHospitality(BaseModel):
     )
     entered_by = models.CharField(max_length=100)
     entered_date_stamp = models.DateField("Date entered")
-    category_fk = models.ForeignKey(
+    category = models.ForeignKey(
         GiftAndHospitalityCategory,
         on_delete=models.PROTECT,
         limit_choices_to={"active": True},
         verbose_name="category",
     )
-    grade_fk = models.ForeignKey(Grade, on_delete=models.PROTECT, verbose_name="grade",
+    grade = models.ForeignKey(Grade, on_delete=models.PROTECT, verbose_name="grade",
                                  null=True)
 
     class Meta:

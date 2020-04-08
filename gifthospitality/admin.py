@@ -78,15 +78,15 @@ class GiftAndHospitalityAdmin(AdminImportExport):
     def gift_or_hospitality(
         self, instance
     ):  # required to display the field from a foreign key
-        return instance.classification_fk.gift_type
+        return instance.classification.gift_type
 
-    gift_or_hospitality.admin_order_field = "classification_fk__gift_type"
+    gift_or_hospitality.admin_order_field = "classification__gift_type"
 
     list_display = (
         "id",
         "gift_or_hospitality",
-        "category_fk",
-        "classification_fk",
+        "category",
+        "classification",
         "group_name",
         "date_offered",
         "venue",
@@ -94,7 +94,7 @@ class GiftAndHospitalityAdmin(AdminImportExport):
         "value",
         "group",
         "rep",
-        # "grade_fk",
+        "grade",
         "offer",
         "company_rep",
         "company",
@@ -104,13 +104,13 @@ class GiftAndHospitalityAdmin(AdminImportExport):
     )
     search_fields = ["id", "rep", "group", "entered_by"]
 
-    list_filter = ("classification_fk__gift_type", "offer", "action_taken")
+    list_filter = ("classification__gift_type", "offer", "action_taken")
 
     def get_fields(self, request, obj=None):
         return [
             "gift_or_hospitality",
-            "category_fk",
-            "classification_fk",
+            "category",
+            "classification",
             "group_name",
             "date_offered",
             "venue",
@@ -118,7 +118,7 @@ class GiftAndHospitalityAdmin(AdminImportExport):
             "value",
             "group",
             "rep",
-            "grade_fk",
+            "grade",
             "offer",
             "company_rep",
             "company",

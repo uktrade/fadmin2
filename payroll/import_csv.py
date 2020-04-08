@@ -22,11 +22,11 @@ GRADE_KEY = {
 
 import_grade_class = ImportInfo(GRADE_KEY)
 
-GRADE_FK_KEY = {
-    IMPORT_CSV_MODEL_KEY: Grade,
-    IMPORT_CSV_IS_FK: "",
-    IMPORT_CSV_PK_KEY: "Grade",
-}
+# GRADE_KEY = {
+#     IMPORT_CSV_MODEL_KEY: Grade,
+#     IMPORT_CSV_IS_FK: "",
+#     IMPORT_CSV_PK_KEY: "Grade",
+# }
 
 CC_FK_KEY = {
     IMPORT_CSV_MODEL_KEY: CostCentre,
@@ -52,7 +52,7 @@ PEOPLE_KEY = {
     IMPORT_CSV_FIELDLIST_KEY: {
         DITPeople.surname.field_name: "Last Name",
         DITPeople.name.field_name: "First Name",
-        # DITPeople.grade.field.name: GRADE_FK_KEY,
+        DITPeople.grade.field.name: GRADE_KEY,
         DITPeople.cost_centre.field.name: CC_FK_KEY,
     },
 }
