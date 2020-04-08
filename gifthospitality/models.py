@@ -165,7 +165,7 @@ class GiftAndHospitality(BaseModel):
         verbose_name="category",
     )
     grade = models.ForeignKey(Grade, on_delete=models.PROTECT, verbose_name="grade",
-                                 null=True)
+                              null=True)
 
     class Meta:
         verbose_name = "Gift and Hospitality"
