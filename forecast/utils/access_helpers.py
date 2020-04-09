@@ -15,8 +15,8 @@ from forecast.models import (
 
 
 def can_view_forecasts(user):
-    # If user can edit ANY cost centre, they
-    # are allowed to view ALL forecasts
+    """Checks view permission, if the user can edit ANY
+    cost centre, they are allowed to view ALL forecasts"""
     if can_edit_at_least_one_cost_centre(
         user
     ):

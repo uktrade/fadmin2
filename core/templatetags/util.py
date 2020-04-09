@@ -13,6 +13,8 @@ def startswith(text, starts):
 
 @register.filter
 def instances_and_widgets(bound_field):
+    """Allows the access of both model instance
+    and form widget in template"""
     instance_widgets = []
     index = 0
     for instance in bound_field.field.queryset.all():

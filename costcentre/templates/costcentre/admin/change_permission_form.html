@@ -28,14 +28,6 @@
             </thead>
             <tbody>
                  {% for user, widget in remove_permission_form.users|instances_and_widgets %}
-{#                    <tr class="{% cycle 'row1' 'row2' %}">#}
-{#                        <td>#}
-{#                            <input type="checkbox" name="_selected_user" value={{user.pk}} class="action-select">#}
-{#                        </td>#}
-{#                        <td>{{ user.first_name }}</td>#}
-{#                        <td>{{ user.lasty_name }}</td>#}
-{#                        <td>{{ user.email }}</td>#}
-{#                    </tr>#}
                     <tr>
                         <td>
                             {{ widget.tag }}

@@ -20,7 +20,7 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "--is_admin",
-            help="Is the user na admin?",
+            help="Is the user an admin?",
             dest="is_admin",
         )
 
