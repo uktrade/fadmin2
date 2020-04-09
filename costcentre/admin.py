@@ -253,24 +253,24 @@ class CostCentreAdmin(GuardedModelAdminMixin, AdminActiveField, AdminImportExpor
             current_app=self.admin_site.name,
         )
 
-        if request.method != 'POST':
-            give_permission_form = GivePermissionAdminForm(
-                cost_centre=cost_centre,
-                user=request.user,
-            )
-            remove_permission_form = RemovePermissionAdminForm(
-                cost_centre=cost_centre,
-                user=request.user,
-            )
-        elif 'submit_give_permission' in request.POST:
-            give_permission_form = GivePermissionAdminForm(
-                request.POST,
-                cost_centre=cost_centre,
-                user=request.user,
-            )
+        give_permission_form = GivePermissionAdminForm(
+            cost_centre=cost_centre,
+            user=request.user,
+        )
+        remove_permission_form = RemovePermissionAdminForm(
+            cost_centre=cost_centre,
+            user=request.user,
+        )
 
-            if give_permission_form.is_valid():
-                try:
+        if request.method == 'POST':
+            if 'submit_give_permission' in request.POST:
+                give_permission_form = GivePermissionAdminForm(
+                    request.POST,
+                    cost_centre=cost_centre,
+                    user=request.user,
+                )
+
+                if give_permission_form.is_valid():
                     user = give_permission_form.cleaned_data["user"]
                     assign_perm(
                         "change_costcentre",
@@ -284,34 +284,29 @@ class CostCentreAdmin(GuardedModelAdminMixin, AdminActiveField, AdminImportExpor
                     )
 
                     return HttpResponseRedirect(url)
-                # TODO - figure out what the funk this is
-                except give_permission_form.errors.Error as e:
-                    # If save() raised, the form will a have a non
-                    # field error containing an informative message.
-                    pass
-        elif 'submit_remove_permission' in request.POST:
-            remove_permission_form = RemovePermissionAdminForm(
-                request.POST,
-                cost_centre=cost_centre,
-                user=request.user,
-            )
+            elif 'submit_remove_permission' in request.POST:
+                remove_permission_form = RemovePermissionAdminForm(
+                    request.POST,
+                    cost_centre=cost_centre,
+                    user=request.user,
+                )
 
-            if remove_permission_form.is_valid():
-                if remove_permission_form.cleaned_data["users"].count() == 0:
-                    self.message_user(
-                        request,
-                        'No users selected',
-                    )
-                else:
-                    for user in remove_permission_form.cleaned_data["users"]:
-                        remove_perm("change_costcentre", user, cost_centre)
+                if remove_permission_form.is_valid():
+                    if remove_permission_form.cleaned_data["users"].count() == 0:
+                        self.message_user(
+                            request,
+                            'No users selected',
+                        )
+                    else:
+                        for user in remove_permission_form.cleaned_data["users"]:
+                            remove_perm("change_costcentre", user, cost_centre)
 
-                    self.message_user(
-                        request,
-                        'Successfully removed users from cost centre',
-                    )
+                        self.message_user(
+                            request,
+                            'Successfully removed users from cost centre',
+                        )
 
-                    return HttpResponseRedirect(url)
+                        return HttpResponseRedirect(url)
 
         users_with_edit_permission = get_users_with_perms(
             cost_centre,

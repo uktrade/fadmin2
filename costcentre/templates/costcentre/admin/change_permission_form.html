@@ -14,9 +14,30 @@
 {% endblock %}
 
 {% block content %}
-<div id="content-main">
+<p id="content-main">
     <form action="." method="POST">
         {% csrf_token %}
+
+        {% for error in remove_permission_form.non_field_errors %}
+            <p class="errornote">
+                <strong>{{ error|escape }}</strong>
+            </p>
+        {% endfor %}
+        {% if remove_permission_form.errors %}
+            <p class="errornote">
+                {% if remove_permission_form.errors.items|length == 1 %}Please correct the error below.{% else %}Please correct the errors below.{% endif %}
+            </p>
+            <div class="errors">
+                <ul class="errorlist">
+                    {% for field in remove_permission_form %}
+                        {% for error in field.errors %}
+                            <li><strong>{{ field.name }} - {{ error|escape }}</strong></li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
         <table id="result_list">
             <thead>
                 <tr>
