@@ -9,10 +9,6 @@ from core.admin import (
     AdminImportExport,
 )
 
-from gifthospitality.models import (
-    DITGroup,
-)
-
 # from payroll.import_csv import (
 #     import_GROUP_class,
 #     import_HR_class,
@@ -150,7 +146,6 @@ class GradeAdmin(AdminImportExport):
 
 
 admin.site.register(DITPeople, DIT_PeopleAdmin)
-admin.site.register(DITGroup, DIT_GroupAdmin)
 admin.site.register(Grade, GradeAdmin)
 # admin.site.register(SalaryMonthlyAverage)
 # admin.site.register(PayModel)

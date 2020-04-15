@@ -34,7 +34,7 @@ class GiftAndHospitalityReceivedForm(forms.ModelForm):
         self.instance.entered_date_stamp = datetime.datetime.now()
         if self.instance.group:
             self.instance.group_name = (
-                self.instance.group.cost_centre.directorate.group.group_name
+                self.instance.group.group_name
             )
         return super(GiftAndHospitalityReceivedForm, self).save(*args, **kwargs)
 

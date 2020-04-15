@@ -17,7 +17,8 @@
 # GRADE_KEY = {
 #     IMPORT_CSV_MODEL_KEY: Grade,
 #     IMPORT_CSV_PK_KEY: "Grade",
-#     IMPORT_CSV_FIELDLIST_KEY: {Grade.gradedescription.field_name: "Grade Description"},
+#     IMPORT_CSV_FIELDLIST_KEY: {Grade.gradedescription.field_name:
+#     "Grade Description"},
 # }
 #
 # import_grade_class = ImportInfo(GRADE_KEY)
