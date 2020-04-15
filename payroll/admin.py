@@ -13,11 +13,11 @@ from gifthospitality.models import (
     DITGroup,
 )
 
-from payroll.import_csv import (
-    import_GROUP_class,
-    import_HR_class,
-    import_grade_class,
-)
+# from payroll.import_csv import (
+#     import_GROUP_class,
+#     import_HR_class,
+#     import_grade_class,
+# )
 from payroll.models import (
     DITPeople,
     Grade,
@@ -92,9 +92,9 @@ class DIT_PeopleAdmin(AdminActiveField, AdminImportExport):
     def export_func(self):
         return _export_people_iterator
 
-    @property
-    def import_info(self):
-        return import_HR_class
+    # @property
+    # def import_info(self):
+    #     return import_HR_class
 
 
 class DIT_GroupAdmin(AdminActiveField, AdminImportExport):
@@ -125,9 +125,9 @@ class DIT_GroupAdmin(AdminActiveField, AdminImportExport):
     def export_func(self):
         return _export_group_iterator
 
-    @property
-    def import_info(self):
-        return import_GROUP_class
+    # @property
+    # def import_info(self):
+    #     return import_GROUP_class
 
 
 def _export_grade_iterator(queryset):
@@ -144,9 +144,9 @@ class GradeAdmin(AdminImportExport):
     def export_func(self):
         return _export_grade_iterator
 
-    @property
-    def import_info(self):
-        return import_grade_class
+    # @property
+    # def import_info(self):
+    #     return import_grade_class
 
 
 admin.site.register(DITPeople, DIT_PeopleAdmin)
