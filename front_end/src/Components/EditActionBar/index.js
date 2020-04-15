@@ -20,14 +20,22 @@ const EditActionBar = () => {
         let addForecastRow = document.getElementById("add_forecast_row")
         let downloadForecast = document.getElementById("download_forecast")
 
-        containerRef.current.insertBefore(
-            downloadForecast,
-            containerRef.current.firstChild,
-        )
-        containerRef.current.insertBefore(
-            addForecastRow,
-            containerRef.current.firstChild,
-        )
+        if (containerRef.current) {
+
+            console.log("test", containerRef.current instanceof HTMLElement)
+
+            console.log(containerRef);
+            console.log(containerRef.current);
+
+            // containerRef.current.insertBefore(
+            //     downloadForecast,
+            //     containerRef.current.firstChild,
+            // )
+            // containerRef.current.insertBefore(
+            //     addForecastRow,
+            //     containerRef.current.firstChild,
+            // )
+        }
     }, [])
 
     const getClasses = () => {

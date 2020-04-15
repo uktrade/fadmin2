@@ -33,3 +33,12 @@ bdd:
 
 up:
 	docker-compose up
+
+elevate:
+	docker-compose run fido python manage.py elevate_sso_user_permissions
+
+collectstatic:
+	docker-compose run fido python manage.py collectstatic
+
+bash:
+	docker-compose run fido bash

@@ -1,6 +1,5 @@
 {% extends "forecast/forecast_base.html" %}
-
-{% load render_bundle from webpack_loader %}
+{% load util %}
 {% load django_bootstrap_breadcrumbs %}
 
 {% block breadcrumbs %}
@@ -33,9 +32,7 @@
     </form>
 {% endblock %}
 {% block scripts %}
-    {% render_bundle 'vendors' %}
-    {% render_bundle 'main' %}
-    {% render_bundle 'runtime-main' %}
+    {% render_front_end_script %}
     <script>
         window.actuals = {{ actuals|safe }};
         window.period_display = {{ period_display|safe }};
