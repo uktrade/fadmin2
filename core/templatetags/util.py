@@ -27,8 +27,9 @@ def render_front_end_script():
         with open(assets_manifest_path) as assets_manifest:
             asset_json = json.load(assets_manifest)
 
-            print("==asset_json==")
-            print(asset_json)
+            # Check for legacy format asset manifest
+            if "files" in asset_json:
+                asset_json = asset_json["files"]
 
             scripts = []
 
