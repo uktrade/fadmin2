@@ -13,7 +13,7 @@ register = template.Library()
 
 @register.simple_tag
 def render_front_end_script():
-    if not settings.DEBUG:
+    if settings.DEBUG:
         return mark_safe(
             '<script '
             'type="text/javascript" ' 
