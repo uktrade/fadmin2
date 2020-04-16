@@ -71,7 +71,6 @@ INSTALLED_APPS = [
     "bootstrap_datepicker_plus",  # https://pypi.org/project/django-bootstrap-datepicker-plus/  # noqa
     "storages",
     "sass_processor",
-    "webpack_loader",
     "django_bootstrap_breadcrumbs",
     "guardian",
     "reversion",
