@@ -85,11 +85,11 @@ class DepartmentalGroup(IsActiveModel):
             self.group_name,
         )
 
-    def __str__(self):
-        return self.full_name
-
     # def __str__(self):
-    #     return str(self.group_name)
+    #     return self.full_name
+
+    def __str__(self):
+        return str(self.group_name)
 
     class Meta:
         verbose_name = "Departmental Group"
