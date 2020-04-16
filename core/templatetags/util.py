@@ -13,7 +13,7 @@ register = template.Library()
 
 @register.simple_tag
 def render_front_end_script():
-    if settings.DEBUG:
+    if not settings.DEBUG:
         return mark_safe(
             '<script '
             'type="text/javascript" ' 
@@ -26,11 +26,19 @@ def render_front_end_script():
         )
         with open(assets_manifest_path) as assets_manifest:
             asset_json = json.load(assets_manifest)
+            scripts = []
+
+            for key in asset_json:
+                if asset_json[key].endswith(".js"):
+                    scripts.append(
+                        '<script '
+                        'type="text/javascript" '
+                        f'src="/{asset_json[key]}">'
+                        '</script>'
+                    )
+
             return mark_safe(
-                '<script '
-                'type="text/javascript" ' 
-                f'src="/{asset_json["main.js"]}">' 
-                '</script>'
+                ''.join(scripts)
             )
 
 
