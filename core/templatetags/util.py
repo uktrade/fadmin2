@@ -13,11 +13,11 @@ register = template.Library()
 
 @register.simple_tag
 def render_front_end_script():
-    if not settings.DEBUG:
+    if settings.DEBUG:
         return mark_safe(
             '<script '
             'type="text/javascript" ' 
-            'src="http://localhost:3000/static/js/bundle.js">' 
+            f'src="{settings.FRONT_END_SERVER}/static/js/bundle.js">' 
             '</script>'
         )
     else:

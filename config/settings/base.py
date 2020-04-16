@@ -101,7 +101,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-VCAP_SERVICES = env.json('VCAP_SERVICES', {})
+VCAP_SERVICES = env.json('VCAP_SERVICES', default={})
 
 if 'postgres' in VCAP_SERVICES:
     DATABASE_URL = VCAP_SERVICES['postgres'][0]['credentials']['uri']
