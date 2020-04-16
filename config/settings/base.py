@@ -12,8 +12,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 import environ
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 
 env = environ.Env()
 env.read_env()
@@ -87,7 +86,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        #"DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -169,15 +168,6 @@ GIT_COMMIT = env("GIT_COMMIT", default=None)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "/static/"
-
-# Django webpack loader
-WEBPACK_LOADER = {
-    "DEFAULT": {
-        "CACHE": not DEBUG,
-        "BUNDLE_DIR_NAME": "build/",  # must end with slash
-        "STATS_FILE": os.path.join(BASE_DIR, "../front_end/config/webpack-stats.json"),
-    }
-}
 
 # AWS
 if 'aws-s3-bucket' in VCAP_SERVICES:

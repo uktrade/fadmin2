@@ -5,27 +5,33 @@ from copy import copy
 
 from django import template
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 
 register = template.Library()
 
 
 @register.simple_tag
-def render_front_end_script(user):
+def render_front_end_script():
     if settings.DEBUG:
-        return '<script ' \
-               'type="text/javascript" ' \
-               'src="http://localhost:3000/static/js/bundle.js">' \
-               '</script>'
+        return mark_safe(
+            '<script '
+            'type="text/javascript" ' 
+            'src="http://localhost:3000/static/js/bundle.js">' 
+            '</script>'
+        )
     else:
-        assets_path = os.path.join(
+        assets_manifest_path = os.path.join(
             settings.BASE_DIR, "front_end/build/asset-manifest.json"
         )
-        asset_json = json.load(assets_path)
-        return '<script ' \
-               'type="text/javascript" ' \
-               f'src="{asset_json["main.js"]}">' \
-               '</script>'
+        with open(assets_manifest_path) as assets_manifest:
+            asset_json = json.load(assets_manifest)
+            return mark_safe(
+                '<script '
+                'type="text/javascript" ' 
+                f'src="/{asset_json["main.js"]}">' 
+                '</script>'
+            )
 
 
 @register.filter('startswith')
