@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, Fragment } from 'react'
+import React, { Fragment } from 'react'
 import ReactDOM from 'react-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { 
@@ -165,7 +165,7 @@ const EditActionBar = () => {
 
     return ReactDOM.createPortal(
         getComponent(),
-        document.getElementById('action-bar-wrapper')
+        document.getElementById('action-bar')
     )
 }
 
