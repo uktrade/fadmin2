@@ -28,8 +28,8 @@ def render_front_end_script():
             asset_json = json.load(assets_manifest)
 
             # Check for legacy format asset manifest
-            if "files" in asset_json:
-                asset_json = asset_json["files"]
+            if "entrypoints" in asset_json:
+                asset_json = asset_json["entrypoints"]
 
             scripts = []
 
