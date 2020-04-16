@@ -26,6 +26,10 @@ def render_front_end_script():
         )
         with open(assets_manifest_path) as assets_manifest:
             asset_json = json.load(assets_manifest)
+
+            print("==asset_json==")
+            print(asset_json)
+
             scripts = []
 
             for key in asset_json:
