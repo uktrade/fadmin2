@@ -44,6 +44,7 @@ jobs:
           key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
           paths:
             - "venv"
+      - run: npm install -g npm
       - run:
           name: Install React app
           command:
