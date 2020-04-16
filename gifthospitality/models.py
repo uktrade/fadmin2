@@ -10,7 +10,7 @@ from costcentre.models import DepartmentalGroup
 
 # salaries data
 # define a choice field for this
-class Grade(BaseModel):
+class Grade(IsActiveModel):
     grade = models.CharField(primary_key=True, max_length=10)
     gradedescription = models.CharField("Grade Description", max_length=50)
     order = models.IntegerField

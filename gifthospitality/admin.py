@@ -9,12 +9,14 @@ from gifthospitality.import_csv import (
     import_gh_class,
     import_gh_classification_class,
     import_gh_company_class,
+    import_grade_class,
 )
 from gifthospitality.models import (
     GiftAndHospitality,
     GiftAndHospitalityCategory,
     GiftAndHospitalityClassification,
     GiftAndHospitalityCompany,
+    Grade,
 )
 
 
@@ -72,6 +74,24 @@ class GiftAndHospitalityClassificationAdmin(AdminActiveField, AdminImportExport)
     @property
     def import_info(self):
         return import_gh_classification_class
+
+
+def _export_grade_iterator(queryset):
+    yield ["Grade", "Grade Description"]
+    for obj in queryset:
+        yield [obj.grade, obj.gradedescription]
+
+
+class GradeAdmin(AdminImportExport):
+    list_display = ("grade", "gradedescription")
+
+    @property
+    def export_func(self):
+        return _export_grade_iterator
+
+    @property
+    def import_info(self):
+        return import_grade_class
 
 
 class GiftAndHospitalityAdmin(AdminImportExport):
@@ -149,3 +169,4 @@ admin.site.register(GiftAndHospitalityCategory, GiftAndHospitalityCategoryAdmin)
 admin.site.register(
     GiftAndHospitalityClassification, GiftAndHospitalityClassificationAdmin
 )
+admin.site.register(Grade, GradeAdmin)
