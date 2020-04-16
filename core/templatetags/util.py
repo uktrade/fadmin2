@@ -13,11 +13,11 @@ register = template.Library()
 
 @register.simple_tag
 def render_front_end_script():
-    if settings.DEBUG:
+    if not settings.DEBUG:
         return mark_safe(
             '<script '
             'type="text/javascript" ' 
-            f'src="{settings.FRONT_END_SERVER}/static/js/bundle.js">' 
+            f'src="/{settings.FRONT_END_SERVER}/static/js/bundle.js">' 
             '</script>'
         )
     else:
@@ -26,24 +26,23 @@ def render_front_end_script():
         )
         with open(assets_manifest_path) as assets_manifest:
             asset_json = json.load(assets_manifest)
+            scripts = []
 
             # Check for legacy format asset manifest
             if "entrypoints" in asset_json:
-                asset_json = asset_json["entrypoints"]
-
-            scripts = []
-
-            for key in asset_json:
-                if asset_json[key].endswith(".js"):
-                    scripts.append(
-                        '<script '
-                        'type="text/javascript" '
-                        f'src="/{asset_json[key]}">'
-                        '</script>'
-                    )
+                for script_path in asset_json["entrypoints"]:
+                    scripts.append(script_path)
+            else:
+                for key in asset_json:
+                    if asset_json[key].endswith(".js"):
+                        scripts.append(asset_json[key])
 
             return mark_safe(
-                ''.join(scripts)
+                ''.join([
+                    '<script type="text/javascript" src="/{}"></script>'.format(
+                        script
+                    ) for script in scripts
+                ])
             )
 
 
