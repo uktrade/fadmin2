@@ -19,9 +19,6 @@ env.read_env()
 
 DEBUG = env.bool("DEBUG", default=False)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 
@@ -29,20 +26,11 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 VCAP_SERVICES = env.json('VCAP_SERVICES', {})
 
-# ALLOWED_HOSTS = [
-# 'financeadmin-dev.cloudapps.digital',
-# 'd3sy7fs6o4dizv.cloudfront.net',
-# 'fido.uat.uktrade.io','fna.uat.uktrade.io']
-
-# Application definition
-
 INSTALLED_APPS = [
     "custom_usermodel",
     "authbroker_client",
-    # 'admintool_support.apps.AdmintoolSupportConfig',
     "downloadsupport.apps.DownloadSupportConfig",
     "forecast.apps.ForecastConfig",
-    # 'dit_user_management',
     "gifthospitality.apps.GifthospitalityConfig",
     "payroll.apps.PayrollConfig",
     "costcentre.apps.CostCentreConfig",
@@ -85,7 +73,6 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        #"DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -124,16 +111,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
-
 LANGUAGE_CODE = "en-gb"  # must be gb for date entry to work
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
+
 
 # Remove extra details in the label
 # for the filter fields, it does
@@ -153,7 +136,6 @@ def FILTERS_VERBOSE_LOOKUPS():
 
 
 AUTH_USER_MODEL = "custom_usermodel.User"
-
 AUTHBROKER_URL = env("AUTHBROKER_URL", default=None)
 AUTHBROKER_CLIENT_ID = env("AUTHBROKER_CLIENT_ID", default=None)
 AUTHBROKER_CLIENT_SECRET = env("AUTHBROKER_CLIENT_SECRET", default=None)
@@ -195,6 +177,7 @@ DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 # Redis
 if 'redis' in VCAP_SERVICES:
     credentials = VCAP_SERVICES['redis'][0]['credentials']
+
     CELERY_BROKER_URL = "rediss://:{}@{}:{}/0?ssl_cert_reqs=required".format(
         credentials['password'],
         credentials['host'],

@@ -1,6 +1,5 @@
-import os
 import json
-
+import os
 from copy import copy
 
 from django import template
@@ -16,8 +15,8 @@ def render_front_end_script():
     if settings.DEBUG:
         return mark_safe(
             '<script '
-            'type="text/javascript" ' 
-            f'src="/{settings.FRONT_END_SERVER}/static/js/bundle.js">' 
+            'type="text/javascript" '
+            f'src="/{settings.FRONT_END_SERVER}/static/js/bundle.js">'
             '</script>'
         )
     else:

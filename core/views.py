@@ -21,16 +21,6 @@ def index(request):
     return render(request, "core/index.html")
 
 
-class AboutView(TemplateView):
-    template_name = "core/about.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["django_version"] = get_version()
-        context["git_commit"] = settings.GIT_COMMIT
-        return context
-
-
 class TableExportWithSheetName(TableExport):
     def __init__(self, sheet_name=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
