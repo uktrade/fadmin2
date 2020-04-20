@@ -28,6 +28,7 @@ class GiftHospitalityFilter(MyFilterSet):
             }
         ),
     )
+
     entered_date_stamp_to = DateFilter(
         field_name="entered_date_stamp",
         label="To:",

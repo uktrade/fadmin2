@@ -7,8 +7,9 @@ class FadminTable(tables.Table):
         attrs = {
             "class": "govuk-table",
             "thead": {"class": "govuk-table__head"},
-            "tbody": {"class": "govuk-table__body"},
+            "tr": {"class": "govuk-table__row"},
             "th": {"class": "govuk-table__header"},
+            "tbody": {"class": "govuk-table__body"},
             "td": {"class": "govuk-table__cell"},
             "tf": {"class": "govuk-table__cell"},
             "a": {"class": "govuk-link"},
