@@ -1,5 +1,4 @@
-{#{% extends "standard_content.html" %}#}
-{% extends "core/table_filter_generic.html" %}
+{% extends "standard_content.html" %}
 
 {% load render_table from django_tables2 %}
 {% load querystring from django_tables2 %}
@@ -14,33 +13,15 @@
     <p>{{ section_description }}</p>
     {% csrf_token %}
     {% if filter %}
-                    <div>
-
-
-            <form action="" method="get" class="govuk-table govuk-form-group govuk-table__cell">
-
-            <table>
-                <tr>{{ filter.form.as_table }}</tr>
-
-                <td><button type="submit" class="govuk-button">Search</button></td></tr>
-                                    </table>
-
-
-
-        </form>
-                                            <td>Record returned: {{ table.rows|length }}</td>
-
-                                </div>
-
-
+        <div class="govuk-table">
+            <form action="" method="get" class="govuk-table__cell">
+                {% csrf_token %}
+                {% include "core/govt_uk_form.html" with form=filter.form %}
+                <input type="submit" value="Search" class="govuk-button" data-module="govuk-button"/>
+            </form>
+            <p>Record returned: {{ table.rows|length }}</p>
+        </div>
     {% endif %}
-    <br>
-
-
-
-    <p></p>
     <a class="govuk-button govuk-button--secondary" href="{% querystring '_export'='xlsx' %}">Download to Excel</a>
-
     {% render_table table %}
-    </div>
 {% endblock %}

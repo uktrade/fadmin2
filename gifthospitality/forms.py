@@ -10,8 +10,7 @@ from .models import GIFT_OFFERED, GIFT_RECEIVED, GiftAndHospitality
 class DateSelectorWidget(forms.MultiWidget):
     def __init__(self, attrs=None):
         widgets = [
-            forms.NumberInput(attrs={'class': 'govuk-date-input__item govuk-input govuk-date-input__input govuk-input--width-2',
-                                     'placeholder': 'Day'}),
+            forms.NumberInput(attrs={'class': 'govuk-date-input__item govuk-input govuk-date-input__input govuk-input--width-2', 'placeholder': 'Day'}),
             forms.NumberInput(attrs={'class': 'govuk-date-input__item govuk-input govuk-date-input__input govuk-input--width-3',
                                      'placeholder': 'Month'}),
             forms.NumberInput(attrs={'class': 'govuk-input govuk-date-input__input govuk-input--width-3',
@@ -27,10 +26,10 @@ class DateSelectorWidget(forms.MultiWidget):
             return [day, month, year]
         return [None, None, None]
 
-    def value_from_datadict(self, data, files, name):
-        day, month, year = super().value_from_datadict(data, files, name)
-        # DateField expects a single string that it can parse into a date.
-        return '{}-{}-{}'.format(year, month, day)
+    # def value_from_datadict(self, data, files, name):
+    #     day, month, year = super().value_from_datadict(data, files, name)
+    #     # DateField expects a single string that it can parse into a date.
+    #     return '{}-{}-{}'.format(year, month, day)
 
 
 class GiftAndHospitalityReceivedForm(forms.ModelForm):
