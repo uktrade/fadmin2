@@ -8,10 +8,6 @@ body {
   font-size: 16px;
 }
 
-::placeholder{
-  background-color: #1A01CC;
-}
-
 .actual-month {
   background-color: rgba(177, 180, 182, 0.5);
 }
@@ -94,10 +90,6 @@ input.cell-input {
   .govuk-form-group {
     float: left;
   }
-
-  #table_adjustment {
-  background-color: yellow !important;
-}
 
   select, input {
     display: inline;
