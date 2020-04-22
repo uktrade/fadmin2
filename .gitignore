@@ -149,8 +149,10 @@ selenium-server-standalone-3.5.3.jar
 chromedriver
 
 #CSS
-
 core/static/core/css/styles.css
+
+#HTML
+core/templates/core/quick_links.html
 
 # Fixture data
 fixtures/*
