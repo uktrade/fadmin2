@@ -99,22 +99,22 @@ def check_row_match(index, pasted_at_row, cell_data):  # noqa C901
         if pasted_at_row["programme"]["value"] != cell_data[0]:
             mismatched_cols.append('"Programme"')
 
-    except ValueError:
+        if pasted_at_row["natural_account_code"]["value"] != int(cell_data[2]):
+            mismatched_cols.append('"Natural account code"')
+
+        if pasted_at_row["analysis1_code"]["value"] != check_empty(cell_data[4]):
+            mismatched_cols.append('"Analysis 1"')
+
+        if pasted_at_row["analysis2_code"]["value"] != check_empty(cell_data[5]):
+            mismatched_cols.append('"Analysis 2"')
+
+        if pasted_at_row["project_code"]["value"] != check_empty(cell_data[6]):
+            mismatched_cols.append('"Project code"')
+
+    except (ValueError, IndexError):
         raise BadFormatException(
             "Your pasted data is not in the correct format"
         )
-
-    if pasted_at_row["natural_account_code"]["value"] != int(cell_data[2]):
-        mismatched_cols.append('"Natural account code"')
-
-    if pasted_at_row["analysis1_code"]["value"] != check_empty(cell_data[4]):
-        mismatched_cols.append('"Analysis 1"')
-
-    if pasted_at_row["analysis2_code"]["value"] != check_empty(cell_data[5]):
-        mismatched_cols.append('"Analysis 2"')
-
-    if pasted_at_row["project_code"]["value"] != check_empty(cell_data[6]):
-        mismatched_cols.append('"Project code"')
 
     if len(mismatched_cols) > 0:
         raise RowMatchException(
