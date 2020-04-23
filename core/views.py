@@ -1,9 +1,6 @@
-from django import get_version
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
 
 from django_filters.views import FilterView
@@ -13,22 +10,13 @@ from django_tables2.views import SingleTableMixin
 
 from core.exportutils import EXC_TAB_NAME_LEN
 from core.models import Document
+from core.myutils import get_year_display
 from core.utils import today_string
 
 
 @login_required()
 def index(request):
     return render(request, "core/index.html")
-
-
-class AboutView(TemplateView):
-    template_name = "core/about.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["django_version"] = get_version()
-        context["git_commit"] = settings.GIT_COMMIT
-        return context
 
 
 class TableExportWithSheetName(TableExport):
@@ -85,6 +73,15 @@ class FAdminFilteredView(
         # The max length for an Excel tab name is 31.
         # So truncate the name, if needed
         self.sheet_name = self.name[:EXC_TAB_NAME_LEN]
+
+
+class HistoricalFilteredView(FAdminFilteredView):
+    def get(self, request, *args, **kwargs):
+        year = kwargs["year"]
+        self.filterset_class.year = year
+        year_display = get_year_display(year)
+        self.name = f"{self.name} {year_display}"
+        return super().get(request, *args, **kwargs)
 
 
 class DocumentCreateView(CreateView):
