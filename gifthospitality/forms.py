@@ -10,12 +10,18 @@ from .models import GIFT_OFFERED, GIFT_RECEIVED, GiftAndHospitality
 class DateSelectorWidget(forms.MultiWidget):
     def __init__(self, attrs=None):
         widgets = [
-            forms.NumberInput(attrs={'class': 'govuk-date-input__item govuk-input govuk-input--width-2',  # noqa
-                                     'placeholder': 'Day'}),
-            forms.NumberInput(attrs={'class': 'govuk-date-input__item govuk-input govuk-input--width-3',  # noqa
-                                     'placeholder': 'Month'}),
-            forms.NumberInput(attrs={'class': 'govuk-date-input__item govuk-input govuk-input--width-3',  # noqa
-                                     'placeholder': 'Year'}),
+            forms.NumberInput(
+                attrs={
+                    'class': 'govuk-date-input__item govuk-input govuk-input--width-2',
+                    'placeholder': 'Day'}),
+            forms.NumberInput(
+                attrs={
+                    'class': 'govuk-date-input__item govuk-input govuk-input--width-3',
+                    'placeholder': 'Month'}),
+            forms.NumberInput(
+                attrs={
+                    'class': 'govuk-date-input__item govuk-input govuk-input--width-3',
+                    'placeholder': 'Year'}),
         ]
         super().__init__(widgets, attrs)
 
