@@ -151,9 +151,6 @@ chromedriver
 #CSS
 core/static/core/css/styles.css
 
-#HTML
-core/templates/core/quick_links.html
-
 # Fixture data
 fixtures/*
 

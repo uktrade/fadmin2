@@ -27,26 +27,3 @@ class GiftHospitalityTable(FadminTable):
             "entered_date_stamp",
             "entered_by",
         ]
-
-# class GiftHospitalityForm(forms.ModelForm):
-#     class Meta:
-#         model = GiftAndHospitality
-#         fields = (
-#             "id",
-#             "category",
-#             "classification",
-#             "group_name",
-#             "date_offered",
-#             "venue",
-#             "reason",
-#             "value",
-#             "rep",
-#             "group",
-#             "grade",
-#             "offer",
-#             "company_rep",
-#             "company",
-#             "action_taken",
-#             "entered_date_stamp",
-#             "entered_by",
-#         )

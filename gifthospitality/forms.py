@@ -86,17 +86,6 @@ class GiftAndHospitalityReceivedForm(forms.ModelForm):
         }
 
         widgets = {
-            # 'rep' : ModelSelect2Bootstrap(url='people-autocomplete'),
-            # "rep": autocomplete.ModelSelect2(url="people-autocomplete"),
-            # "date_offered": DatePickerInput(
-            #     options={
-            #         "format": "DD/MM/YYYY",  # moment date-time format
-            #         "showClose": True,
-            #         "showClear": True,
-            #         "showTodayButton": True,
-            #     }
-            #
-            # ),
             "date_offered": DateSelectorWidget(
 
             ),

@@ -99,7 +99,6 @@ class GiftHospitalityFilter(MyFilterSet):
     company = ModelChoiceFilter(queryset=GiftAndHospitalityCompany.objects.all())
 
     class Meta(MyFilterSet.Meta):
-
         model = GiftAndHospitality
         fields = [
             "id",
