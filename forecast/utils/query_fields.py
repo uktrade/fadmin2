@@ -115,15 +115,15 @@ expenditure_order_list = [
 
 # Project data
 project_columns = {
-    BUDGET_TYPE: 'Budget type',
     PROJECT_NAME: "Project description",
     PROJECT_CODE: "code",
+    FORECAST_EXPENDITURE_TYPE_NAME: "Expenditure type",
 }
 project_order_list = [
-    BUDGET_TYPE_ORDER,
+    PROJECT_CODE,
 ]
 project_sub_total = [
-    BUDGET_TYPE,
+    FORECAST_EXPENDITURE_TYPE_NAME,
 ]
 project_display_sub_total_column = PROJECT_NAME
 
@@ -365,10 +365,10 @@ VIEW_FORECAST_DOWNLOAD_COLUMNS = {
 
 
 EDIT_KEYS_DOWNLOAD = {
-    NAC_CODE: 'Natural Account code',
-    NAC_NAME: "Natural Account Code Description",
     PROGRAMME_CODE: 'Programme code',
     PROGRAMME_NAME: "Programme code Description",
+    NAC_CODE: 'Natural Account code',
+    NAC_NAME: "Natural Account Code Description",
     ANALYSIS1_CODE: 'Contract Code',
     ANALYSIS2_CODE: 'Market Code',
     PROJECT_CODE: 'Project Code',

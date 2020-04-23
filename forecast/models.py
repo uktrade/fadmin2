@@ -1,3 +1,5 @@
+import copy
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import (
@@ -359,6 +361,12 @@ class SubTotalForecast:
 
     def __init__(self, data):
         self.display_data = data
+        self.result_table = []
+        self.period_list = []
+        self.full_list = []
+        self.output_subtotal = []
+        self.previous_values = []
+        self.display_total_column = ""
 
     def output_row_to_table(self, row, style_name=""):
         #     Add the stile entry to the dictionary
@@ -443,7 +451,7 @@ class SubTotalForecast:
         # the outer totals for calculation,
         # it is easier to call subtotal 0
         # the innermost subtotal
-        self.subtotal_columns = subtotal_columns_arg
+        self.subtotal_columns = copy.deepcopy(subtotal_columns_arg)
         self.subtotal_columns.reverse()
         self.display_total_column = display_total_column
         self.result_table = []
