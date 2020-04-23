@@ -22,22 +22,23 @@ from forecast.views.view_forecast.expenditure_details import (
     GroupExpenditureDetailsView,
 )
 from forecast.views.view_forecast.export_forecast_data import (
-    export_edit_forecast_data,
-    export_forecast_data_cost_centre,
-    export_forecast_data_directorate,
-    export_forecast_data_dit,
-    export_forecast_data_expenditure_detail_cost_centre,
-    export_forecast_data_expenditure_detail_directorate,
-    export_forecast_data_expenditure_detail_group,
-    export_forecast_data_expenditure_dit,
-    export_forecast_data_group,
-    export_forecast_data_programme_detail_directorate,
-    export_forecast_data_programme_detail_dit,
-    export_forecast_data_programme_detail_group,
-    export_forecast_data_project_detail_cost_centre,
-    export_forecast_data_project_detail_directorate,
-    export_forecast_data_project_detail_dit,
-    export_forecast_data_project_detail_group,
+    ExportForecastData
+    # export_edit_forecast_data,
+    # export_forecast_data_cost_centre,
+    # export_forecast_data_directorate,
+    # export_forecast_data_dit,
+    # export_forecast_data_expenditure_detail_cost_centre,
+    # export_forecast_data_expenditure_detail_directorate,
+    # export_forecast_data_expenditure_detail_group,
+    # export_forecast_data_expenditure_dit,
+    # export_forecast_data_group,
+    # export_forecast_data_programme_detail_directorate,
+    # export_forecast_data_programme_detail_dit,
+    # export_forecast_data_programme_detail_group,
+    # export_forecast_data_project_detail_cost_centre,
+    # export_forecast_data_project_detail_directorate,
+    # export_forecast_data_project_detail_dit,
+    # export_forecast_data_project_detail_group,
 )
 from forecast.views.view_forecast.forecast_summary import (
     CostCentreView,
@@ -192,27 +193,27 @@ urlpatterns = [
     ),
     path(
         "export-forecast-data/dit/",
-        export_forecast_data_dit,
+        ExportForecastData.export_forecast_data_dit,
         name="export_forecast_data_dit"
     ),
     path(
         "export-forecast-data/group/<group_code>",
-        export_forecast_data_group,
+        ExportForecastData.export_forecast_data_group,
         name="export_forecast_data_group"
     ),
     path(
         "export-forecast-data/directorate/<directorate_code>",
-        export_forecast_data_directorate,
+        ExportForecastData.export_forecast_data_directorate,
         name="export_forecast_data_directorate"
     ),
     path(
         "export-forecast-data/cost-centre/<cost_centre>",
-        export_forecast_data_cost_centre,
+        ExportForecastData.export_forecast_data_cost_centre,
         name="export_forecast_data_cost_centre"
     ),
     path(
         "export-edit-forecast-data/<cost_centre>",
-        export_edit_forecast_data,
+        ExportForecastData.export_edit_forecast_data,
         name="export_edit_forecast_data_cost_centre"
     ),
     path(
@@ -227,59 +228,59 @@ urlpatterns = [
     ),
     path(
         "export-expenditure-details/dit/<expenditure_category_id>/<budget_type_id>/",
-        export_forecast_data_expenditure_dit,
+        ExportForecastData.export_forecast_data_expenditure_dit,
         name="export_expenditure_details_dit",
     ),
     path(
         "export-expenditure-details/group/<group_code>/<expenditure_category_id>/<budget_type_id>/",  # noqa
-        export_forecast_data_expenditure_detail_group,
+        ExportForecastData.export_forecast_data_expenditure_detail_group,
         name="export_expenditure_details_group",
     ),
     path(
         "export-expenditure-details/directorate/<directorate_code>/<expenditure_category_id>/<budget_type_id>/",  # noqa
-        export_forecast_data_expenditure_detail_directorate,
+        ExportForecastData.export_forecast_data_expenditure_detail_directorate,
         name="export_expenditure_details_directorate",
     ),
     path(
         "export-expenditure-details/cost-centre/<cost_centre>/<expenditure_category_id>/<budget_type_id>/",  # noqa
-        export_forecast_data_expenditure_detail_cost_centre,
+        ExportForecastData.export_forecast_data_expenditure_detail_cost_centre,
         name="export_expenditure_details_cost_centre",
     ),
     path(
         "export-project-details/cost-centre/<cost_centre>/<project_code_id>/",
-        export_forecast_data_project_detail_cost_centre,
+        ExportForecastData.export_forecast_data_project_detail_cost_centre,
         name="export_forecast_data_project_detail_cost_centre",
     ),
     path(
         "export-project-details/directorate/<directorate_code>/<project_code_id>/",
-        export_forecast_data_project_detail_directorate,
+        ExportForecastData.export_forecast_data_project_detail_directorate,
         name="export_forecast_data_project_detail_directorate",
     ),
     path(
         "export-project-details/group/<group_code>/<project_code_id>/",
-        export_forecast_data_project_detail_group,
+        ExportForecastData.export_forecast_data_project_detail_group,
         name="export_forecast_data_project_detail_group",
     ),
     path(
         "export-project-details/<project_code_id>/",
-        export_forecast_data_project_detail_dit,
+        ExportForecastData.export_forecast_data_project_detail_dit,
         name="export_forecast_data_project_detail_dit",
     ),
     path(
         "export-dit-programme/<programme_code_id>/<forecast_expenditure_type_name>/",
-        export_forecast_data_programme_detail_dit,
+        ExportForecastData.export_forecast_data_programme_detail_dit,
         name="export_programme_details_dit",
     ),
 
     path(
         "export-group-programme/<group_code>/<programme_code_id>/<forecast_expenditure_type_name>/", # noqa
-        export_forecast_data_programme_detail_group,
+        ExportForecastData.export_forecast_data_programme_detail_group,
         name="export_programme_details_group",
     ),
 
     path(
         "export-directorate-programme/<directorate_code>/<programme_code_id>/<forecast_expenditure_type_name>/", # noqa
-        export_forecast_data_programme_detail_directorate,
+        ExportForecastData.export_forecast_data_programme_detail_directorate,
         name="export_programme_details_directorate",
     ),
 ]
