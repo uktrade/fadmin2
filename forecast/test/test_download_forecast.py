@@ -113,19 +113,32 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.spend_to_date_total = self.amount_apr
 
     def test_dit_download(self):
-        response = self.factory_get(
+        dit_url = self.factory_get(
             reverse("export_forecast_data_dit"),
             export_forecast_data_dit,
         )
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(dit_url.status_code, 200)
 
-        file = io.BytesIO(response.content)
+        file = io.BytesIO(dit_url.content)
         wb = load_workbook(filename=file)
         ws = wb.active
         # Check group
         assert ws["A1"].value == "Group name"
         assert ws["B2"].value == self.group_code
+
+    def test_dit_cannot_download(self):
+        can_view_forecasts = Permission.objects.get(
+            codename='can_view_forecasts'
+        )
+        self.test_user.user_permissions.remove(can_view_forecasts)
+
+        dit_url = self.factory_get(
+            reverse("export_forecast_data_dit"),
+            export_forecast_data_dit,
+        )
+
+        self.assertEqual(dit_url.status_code, 302)
 
     def test_group_download(self):
         response = self.factory_get(
@@ -148,6 +161,25 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
         assert ws["A1"].value == "Group name"
         assert ws["B2"].value == self.group_code
 
+    def test_group_cannot_download(self):
+        can_view_forecasts = Permission.objects.get(
+            codename='can_view_forecasts'
+        )
+        self.test_user.user_permissions.remove(can_view_forecasts)
+
+        response = self.factory_get(
+            reverse(
+                "export_forecast_data_group",
+                kwargs={
+                    'group_code': self.group.group_code
+                },
+            ),
+            export_forecast_data_group,
+            group_code=self.group.group_code,
+        )
+
+        self.assertEqual(response.status_code, 302)
+
     def test_directorate_download(self):
         response = self.factory_get(
             reverse(
@@ -168,12 +200,33 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
         assert ws["A1"].value == "Group name"
         assert ws["B2"].value == self.group_code
 
+    def test_directorate_cannot_download(self):
+        can_view_forecasts = Permission.objects.get(
+            codename='can_view_forecasts'
+        )
+        self.test_user.user_permissions.remove(can_view_forecasts)
+
+        response = self.factory_get(
+            reverse(
+                "export_forecast_data_directorate",
+                kwargs={
+                    'directorate_code': self.directorate.directorate_code
+                },
+            ),
+            export_forecast_data_directorate,
+            directorate_code=self.directorate.directorate_code, )
+
+        self.assertEqual(response.status_code, 302)
+
     def test_cost_centre_download(self):
+        assign_perm("change_costcentre", self.test_user, self.cost_centre)
+        self.cost_centre_code = self.cost_centre
+
         response = self.factory_get(
             reverse(
                 "export_forecast_data_cost_centre",
                 kwargs={
-                    'cost_centre': self.cost_centre_code
+                    'cost_centre': self.cost_centre.cost_centre_code
                 },
             ),
             export_forecast_data_cost_centre,
@@ -188,6 +241,25 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
         # Check group
         assert ws["A1"].value == "Group name"
         assert ws["B2"].value == self.group_code
+
+    def test_cost_centre_cannot_download(self):
+        can_view_forecasts = Permission.objects.get(
+            codename='can_view_forecasts'
+        )
+        self.test_user.user_permissions.remove(can_view_forecasts)
+
+        response = self.factory_get(
+            reverse(
+                "export_forecast_data_cost_centre",
+                kwargs={
+                    'cost_centre': self.cost_centre.cost_centre_code
+                },
+            ),
+            export_forecast_data_cost_centre,
+            cost_centre=self.cost_centre.cost_centre_code,
+        )
+
+        self.assertEqual(response.status_code, 302)
 
 
 class DownloadEditForecastTest(TestCase, RequestFactoryBase):
