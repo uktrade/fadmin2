@@ -97,7 +97,8 @@ class ForecastMultiTableMixin(MultiTableMixin):
             pivot_filter,
             order_list=expenditure_order_list,
         )
-
+        k = f'{PROJECT_CODE}__isnull'
+        pivot_filter.update( {k : False} )
         project_data = ForecastingDataView.view_data.subtotal_data(
             project_display_sub_total_column,
             project_sub_total,
