@@ -27,6 +27,7 @@ from forecast.models import (
     FinancialPeriod,
     ForecastMonthlyFigure,
 )
+from forecast.permission_shortcuts import assign_perm
 from forecast.test.test_utils import create_budget
 from forecast.views.view_forecast.export_forecast_data import (
     export_edit_forecast_data,
@@ -199,6 +200,13 @@ class DownloadEditForecastTest(TestCase, RequestFactoryBase):
         self.directorate_code = "TestDD"
         self.cost_centre_code = 109076
 
+        can_view_forecasts = Permission.objects.get(
+            codename='can_view_forecasts'
+        )
+
+        self.test_user.user_permissions.add(can_view_forecasts)
+        self.test_user.save()
+
         self.group = DepartmentalGroupFactory(
             group_code=self.group_code,
             group_name=self.group_name,
@@ -274,8 +282,15 @@ class DownloadEditForecastTest(TestCase, RequestFactoryBase):
         self.underspend_total = self.budget - self.amount_apr - self.amount_may
         self.spend_to_date_total = self.amount_apr
 
-    def test_download(self):
-        response = self.factory_get(
+    def test_user_can_download_forecast(self):
+        """
+        User can access download URL if they have cost centre editing permission
+        """
+
+        assign_perm("change_costcentre", self.test_user, self.cost_centre)
+        self.cost_centre_code = self.cost_centre
+
+        download_forecast_url = self.factory_get(
             reverse(
                 "export_edit_forecast_data_cost_centre",
                 kwargs={
@@ -285,13 +300,57 @@ class DownloadEditForecastTest(TestCase, RequestFactoryBase):
             export_edit_forecast_data,
             cost_centre=self.cost_centre.cost_centre_code,
         )
+        self.assertEqual(download_forecast_url.status_code, 200)
 
-        self.assertEqual(response.status_code, 200)
-
-        file = io.BytesIO(response.content)
+        file = io.BytesIO(download_forecast_url.content)
         wb = load_workbook(filename=file)
         ws = wb.active
         assert ws["A1"].value == "Natural Account code"
         assert ws["A2"].value == self.nac_obj.natural_account_code
         assert ws["I1"].value == 'Apr'
         assert ws.max_row == 3
+
+    def test_user_cannot_download_forecast(self):
+        """
+        User can't access download URL if they have no editing permission
+        """
+        self.cost_centre_code = self.cost_centre
+
+        download_forecast_url = self.factory_get(
+            reverse(
+                "export_edit_forecast_data_cost_centre",
+                kwargs={
+                    'cost_centre': self.cost_centre_code
+                },
+            ),
+            export_edit_forecast_data,
+            cost_centre=self.cost_centre.cost_centre_code,
+        )
+        self.assertEqual(download_forecast_url.status_code, 302)
+
+    def test_user_cannot_download_wrong_forecast(self):
+        """
+            User can't access download URL if they do not
+            have editing permission for certain Cost Centre
+        """
+        # Assigns user to one cost centre
+        assign_perm("change_costcentre", self.test_user, self.cost_centre)
+
+        # Changes cost_centre_code to one that user can view but NOT edit
+        self.test_cost_centre = 888332
+        self.cost_centre_code = self.test_cost_centre
+        self.cost_centre = CostCentreFactory.create(
+            cost_centre_code=self.cost_centre_code
+        )
+
+        download_forecast_url = self.factory_get(
+            reverse(
+                "export_edit_forecast_data_cost_centre",
+                kwargs={
+                    'cost_centre': self.cost_centre_code
+                },
+            ),
+            export_edit_forecast_data,
+            cost_centre=self.cost_centre.cost_centre_code,
+        )
+        self.assertEqual(download_forecast_url.status_code, 302)

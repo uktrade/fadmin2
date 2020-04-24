@@ -24,7 +24,7 @@ from forecast.utils.query_fields import (
 
 
 # class ExportForecastData(TemplateView,):
-def export_forecast_data_dit(self, request):
+def export_forecast_data_dit(request):
     q = ForecastingDataView.view_data.raw_data_annotated(
         VIEW_FORECAST_DOWNLOAD_COLUMNS)
     return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, "DIT")
