@@ -291,7 +291,7 @@ class DownloadEditForecastTest(TestCase, RequestFactoryBase):
         file = io.BytesIO(response.content)
         wb = load_workbook(filename=file)
         ws = wb.active
-        assert ws["A1"].value == "Natural Account code"
-        assert ws["A2"].value == self.nac_obj.natural_account_code
+        assert ws["C1"].value == "Natural Account code"
+        assert ws["C2"].value == self.nac_obj.natural_account_code
         assert ws["I1"].value == 'Apr'
         assert ws.max_row == 3
