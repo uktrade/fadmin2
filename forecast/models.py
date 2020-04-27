@@ -447,11 +447,14 @@ class SubTotalForecast:
     def subtotal_data(
         self, display_total_column, subtotal_columns_arg, show_grand_total,
     ):
+        # Make a copy so that modifying this will not touch
+        # the original subtotal_columns_arg
+        # otherwise each time the view is called the calculation order changes.
+        self.subtotal_columns = copy.deepcopy(subtotal_columns_arg)
         # The self.subtotals are passed in from
         # the outer totals for calculation,
         # it is easier to call subtotal 0
         # the innermost subtotal
-        self.subtotal_columns = copy.deepcopy(subtotal_columns_arg)
         self.subtotal_columns.reverse()
         self.display_total_column = display_total_column
         self.result_table = []
