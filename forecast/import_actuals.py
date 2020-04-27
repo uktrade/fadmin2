@@ -213,7 +213,8 @@ def upload_trial_balance_report(file_upload, month_number, year):
         financial_period=period_obj,
     ).delete()
 
-    for row in range(TRIAL_BALANCE_FIRST_DATA_ROW, worksheet.max_row + 1):
+    rows_to_process = worksheet.max_row + 1
+    for row in range(TRIAL_BALANCE_FIRST_DATA_ROW, rows_to_process):
         # don't delete this comment: useful for debugging, but it gives a
         # 'too complex error'
         # if not row % 100:

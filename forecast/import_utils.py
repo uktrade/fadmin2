@@ -7,10 +7,17 @@ from chartofaccountDIT.models import (
     Analysis2,
     ProjectCode,
 )
+from chartofaccountDIT.models import (
+    NaturalCode,
+    ProgrammeCode,
+)
 
 from core.import_csv import get_fk, get_fk_from_field
 
+from costcentre.models import CostCentre
+
 from forecast.models import (
+    FinancialCode,
     FinancialPeriod,
 )
 
@@ -166,3 +173,68 @@ def get_error_from_list(error_list):
     if error_message != '':
         error_message = error_message[:-1]
     return error_message
+
+
+def get_primary_nac_obj(code):
+    nac_obj, message = get_fk(NaturalCode, code)
+    if nac_obj:
+        #  Error if NAC is not a primary nac
+        if not nac_obj.used_for_budget:
+            message = f'{code}-{nac_obj.natural_account_code_description} ' \
+                      f'is not a Primary NAC. \n'
+    else:
+        nac_obj = None
+        message = ""
+    return nac_obj, message
+
+
+
+class CheckFinancialCode():
+    display_error = ''
+    financial_code_obj = None
+    error_found = False
+
+    def __init__(self,
+                 cost_centre,
+                 nac,
+                 programme_code,
+                 analysis1,
+                 analysis2,
+                 project_code
+                 ):
+        error_list = []
+        self.display_error = ''
+        self.financial_code_obj = None
+        self.error_found = False
+
+        self.nac_obj, message = get_fk(NaturalCode, nac)
+        #  Temporary disable the check for Primary NACs, as most of the NAC
+        #  used for budgets are NOT primary nacs.
+        # nac_obj, message = get_primary_nac_obj(nac)
+        error_list.append(message)
+        self.cc_obj, message = get_fk(CostCentre, cost_centre)
+        error_list.append(message)
+        self.programme_obj, message = get_fk(ProgrammeCode, programme_code)
+        error_list.append(message)
+        self.analysis1_obj, message = get_analysys1_obj(analysis1)
+        error_list.append(message)
+        self.analysis2_obj, message = get_analysys2_obj(analysis2)
+        error_list.append(message)
+        self.project_obj, message = get_project_obj(project_code)
+        error_list.append(message)
+        error_message = get_error_from_list(error_list)
+        if error_message:
+            self.error_found = True
+            self.display_error = error_message
+
+    def get_financial_code(self):
+        self.financialcode_obj, created = FinancialCode.objects.get_or_create(
+            programme=self.programme_obj,
+            cost_centre=self.cc_obj,
+            natural_account_code=self.nac_obj,
+            analysis1_code=self.analysis1_obj,
+            analysis2_code=self.analysis2_obj,
+            project_code=self.project_obj,
+        )
+        self.financialcode_obj.save()
+        return self.financialcode_obj
