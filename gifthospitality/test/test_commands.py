@@ -26,7 +26,7 @@ class GiftsHospitalityCommandsTest(TestCase):
 
     def test_g_and_h_imported(self):
         call_command(
-            "create_forecast_table",
+            "create_gift_hospitality_table",
         )
         self.assertTrue(GiftAndHospitalityCompany.objects.filter(
             sequence_no=10).exists())
