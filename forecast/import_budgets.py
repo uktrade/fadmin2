@@ -86,6 +86,7 @@ def upload_budget(worksheet, year, header_dict, file_upload):
         year_obj.save()
 
     month_dict = get_forecast_month_dict()
+    #  Convert this to have index as key
     # Clear the table used to upload the budgets.
     # The budgets are uploaded to to a temporary storage, and copied
     # when the upload is completed successfully.
@@ -96,8 +97,19 @@ def upload_budget(worksheet, year, header_dict, file_upload):
 
     error_found = False
     check_financial_code = CheckFinancialCode(file_upload)
+    cc_index = header_dict['cost centre']
+    nac_index = header_dict['natural account']
+    prog_index = header_dict['programme']
+    a1_index = header_dict['analysis']
+    a2_index = header_dict['analysis2']
+    proj_index = header_dict['project']
+    max_row = worksheet.max_row + 1
+    row = 0
     start_time = time.perf_counter()
-    for row in range(2, rows_to_process):
+    for budget_row in worksheet.rows:
+        row += 1
+        if row == 1:
+            continue
         if not row % 20:
             print(f'Processing {row}')
         if not row % 100:
@@ -109,12 +121,15 @@ def upload_budget(worksheet, year, header_dict, file_upload):
             set_file_upload_feedback(
                 file_upload, f"Processing row {row} of {rows_to_process}."
             )
-        cost_centre = worksheet[f"{header_dict['cost centre']}{row}"].value
-        nac = worksheet[f"{header_dict['natural account']}{row}"].value
-        programme_code = worksheet[f"{header_dict['programme']}{row}"].value
-        analysis1 = worksheet[f"{header_dict['analysis']}{row}"].value
-        analysis2 = worksheet[f"{header_dict['analysis2']}{row}"].value
-        project_code = worksheet[f"{header_dict['project']}{row}"].value
+        cost_centre = budget_row[cc_index].value
+        if not cost_centre:
+            # protection against empty rows
+            break
+        nac = budget_row[nac_index].value
+        programme_code = budget_row[prog_index].value
+        analysis1 = budget_row[a1_index].value
+        analysis2 = budget_row[a2_index].value
+        project_code = budget_row[proj_index].value
         error_found = check_financial_code.validate(
             cost_centre,
             nac,
@@ -127,8 +142,8 @@ def upload_budget(worksheet, year, header_dict, file_upload):
 
         if not error_found:
             financialcode_obj = check_financial_code.get_financial_code()
-            for month, period_obj in month_dict.items():
-                period_budget = worksheet[f"{header_dict[month.lower()]}{row}"].value
+            for month_idx, period_obj in month_dict.items():
+                period_budget = budget_row[month_idx].value
                 if period_budget:
                     (
                         budget_obj,
