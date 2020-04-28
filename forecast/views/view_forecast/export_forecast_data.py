@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.contrib.auth.decorators import user_passes_test
 
 from forecast.models import ForecastingDataView
 from forecast.utils.access_helpers import can_edit_cost_centre, can_view_forecasts
@@ -23,242 +24,210 @@ from forecast.utils.query_fields import (
 )
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_dit(request):
-    if can_view_forecasts(request.user):
-        q = ForecastingDataView.view_data.raw_data_annotated(
+    q = ForecastingDataView.view_data.raw_data_annotated(
             VIEW_FORECAST_DOWNLOAD_COLUMNS)
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, "DIT")
-    else:
-        return redirect(reverse("index"))
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, "DIT")
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_group(request, group_code):
-    if can_view_forecasts(request.user):
-        filter = {GROUP_CODE: group_code}
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, group_code)
-    else:
-        return redirect(reverse("index"))
+    filter = {GROUP_CODE: group_code}
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, group_code)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_directorate(request, directorate_code):
-    if can_view_forecasts(request.user):
-        filter = {DIRECTORATE_CODE: directorate_code}
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS,
-                                     directorate_code)
-    else:
-        return redirect(reverse("index"))
+    filter = {DIRECTORATE_CODE: directorate_code}
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS,
+                                 directorate_code)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_cost_centre(request, cost_centre):
-    if can_view_forecasts(request.user):
-        filter = {COST_CENTRE_CODE: cost_centre}
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, cost_centre)
-    else:
-        return redirect(reverse("index"))
+    filter = {COST_CENTRE_CODE: cost_centre}
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, cost_centre)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_programme_details(request, cost_centre):
-    if can_view_forecasts(request.user):
-        filter = {COST_CENTRE_CODE: cost_centre}
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, cost_centre)
-    else:
-        return redirect(reverse("index"))
+    filter = {COST_CENTRE_CODE: cost_centre}
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, cost_centre)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_expenditure_detail_cost_centre(
         request, cost_centre, expenditure_category_id, budget_type_id):
-    if can_view_forecasts(request.user):
-        filter = {
-            COST_CENTRE_CODE: cost_centre,
-            BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
-            BUDGET_TYPE: f"{budget_type_id}",
-        }
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        title = f"{cost_centre}  Expenditure"
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
-    else:
-        return redirect(reverse("index"))
+    filter = {
+        COST_CENTRE_CODE: cost_centre,
+        BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
+        BUDGET_TYPE: f"{budget_type_id}",
+    }
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    title = f"{cost_centre}  Expenditure"
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_expenditure_detail_directorate(
         request, directorate_code, expenditure_category_id, budget_type_id):
-    if can_view_forecasts(request.user):
-        filter = {
-            DIRECTORATE_CODE: directorate_code,
-            BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
-            BUDGET_TYPE: f"{budget_type_id}",
-        }
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        title = f"{directorate_code}  Expenditure"
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
-    else:
-        return redirect(reverse("index"))
+    filter = {
+        DIRECTORATE_CODE: directorate_code,
+        BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
+        BUDGET_TYPE: f"{budget_type_id}",
+    }
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    title = f"{directorate_code}  Expenditure"
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_expenditure_detail_group(
     request, group_code, expenditure_category_id, budget_type_id
 ):
-    if can_view_forecasts(request.user):
-        filter = {
-            GROUP_CODE: group_code,
-            BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
-            BUDGET_TYPE: f"{budget_type_id}",
-        }
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        title = f"{group_code}  Expenditure"
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
-    else:
-        return redirect(reverse("index"))
+    filter = {
+        GROUP_CODE: group_code,
+        BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
+        BUDGET_TYPE: f"{budget_type_id}",
+    }
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    title = f"{group_code}  Expenditure"
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_expenditure_dit(
     request, expenditure_category_id, budget_type_id
 ):
-    if can_view_forecasts(request.user):
-        filter = {
-            BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
-            BUDGET_TYPE: f"{budget_type_id}",
-        }
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        title = f"DIT  Expenditure"
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
-    else:
-        return redirect(reverse("index"))
+    filter = {
+        BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
+        BUDGET_TYPE: f"{budget_type_id}",
+    }
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    title = f"DIT  Expenditure"
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_programme_detail_directorate(
     request, directorate_code, programme_code_id, forecast_expenditure_type_name
 ):
-    if can_view_forecasts(request.user):
-        filter = {
-            DIRECTORATE_CODE: directorate_code,
-            PROGRAMME_CODE: f"{programme_code_id}",
-            FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
-        }
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        title = f"{directorate_code} {programme_code_id}"
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
-    else:
-        return redirect(reverse("index"))
+    filter = {
+        DIRECTORATE_CODE: directorate_code,
+        PROGRAMME_CODE: f"{programme_code_id}",
+        FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
+    }
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    title = f"{directorate_code} {programme_code_id}"
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_programme_detail_group(
     request, group_code, programme_code_id, forecast_expenditure_type_name
 ):
-    if can_view_forecasts(request.user):
-        filter = {
-            GROUP_CODE: group_code,
-            PROGRAMME_CODE: f"{programme_code_id}",
-            FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
-        }
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        title = f"{group_code} {programme_code_id}"
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
-    else:
-        return redirect(reverse("index"))
+    filter = {
+        GROUP_CODE: group_code,
+        PROGRAMME_CODE: f"{programme_code_id}",
+        FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
+    }
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    title = f"{group_code} {programme_code_id}"
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_programme_detail_dit(
     request, programme_code_id, forecast_expenditure_type_name
 ):
-    if can_view_forecasts(request.user):
-        filter = {
-            PROGRAMME_CODE: f"{programme_code_id}",
-            FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
-        }
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        title = f"DIT {programme_code_id}"
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
-    else:
-        return redirect(reverse("index"))
+    filter = {
+        PROGRAMME_CODE: f"{programme_code_id}",
+        FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
+    }
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    title = f"DIT {programme_code_id}"
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_project_detail_cost_centre(
     request, cost_centre, project_code_id
 ):
-    if can_view_forecasts(request.user):
-        filter = {
-            COST_CENTRE_CODE: cost_centre,
-            PROJECT_CODE: f"{project_code_id}",
-        }
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        title = f"{cost_centre} {project_code_id}"
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
-    else:
-        return redirect(reverse("index"))
+    filter = {
+        COST_CENTRE_CODE: cost_centre,
+        PROJECT_CODE: f"{project_code_id}",
+    }
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    title = f"{cost_centre} {project_code_id}"
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_project_detail_directorate(request, directorate_code,
                                                     project_code_id):
-    if can_view_forecasts(request.user):
-        filter = {
-            DIRECTORATE_CODE: directorate_code,
-            PROJECT_CODE: f"{project_code_id}",
-        }
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        title = f"{directorate_code} {project_code_id}"
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
-    else:
-        return redirect(reverse("index"))
+    filter = {
+        DIRECTORATE_CODE: directorate_code,
+        PROJECT_CODE: f"{project_code_id}",
+    }
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    title = f"{directorate_code} {project_code_id}"
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_project_detail_group(request, group_code, project_code_id):
-    if can_view_forecasts(request.user):
-        filter = {
-            GROUP_CODE: group_code,
-            PROJECT_CODE: f"{project_code_id}",
-        }
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        title = f"{group_code} {project_code_id}"
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
-    else:
-        return redirect(reverse("index"))
+    filter = {
+        GROUP_CODE: group_code,
+        PROJECT_CODE: f"{project_code_id}",
+    }
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    title = f"{group_code} {project_code_id}"
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
+@user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_project_detail_dit(request, project_code_id):
-    if can_view_forecasts(request.user):
-        filter = {
-            PROJECT_CODE: f"{project_code_id}",
-        }
-        q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
-        )
-        title = f"DIT {project_code_id}"
-        return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
-    else:
-        return redirect(reverse("index"))
+    filter = {
+        PROJECT_CODE: f"{project_code_id}",
+    }
+    q = ForecastingDataView.view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+    )
+    title = f"DIT {project_code_id}"
+    return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
 def export_edit_forecast_data(request, cost_centre):
