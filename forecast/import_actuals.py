@@ -28,7 +28,7 @@ from forecast.models import (
 )
 
 from upload_file.models import FileUpload
-from upload_file.utils import set_file_upload_error
+from upload_file.utils import set_file_upload_fatal_error
 
 CHART_OF_ACCOUNT_COL = "D"
 ACTUAL_FIGURE_COL = "F"
@@ -180,7 +180,7 @@ def upload_trial_balance_report(file_upload, month_number, year):
         workbook, worksheet = \
             validate_excel_file(file_upload, CORRECT_TRIAL_BALANCE_WORKSHEET_NAME)
     except UploadFileFormatError as ex:
-        set_file_upload_error(
+        set_file_upload_fatal_error(
             file_upload,
             str(ex),
             str(ex),
@@ -190,7 +190,7 @@ def upload_trial_balance_report(file_upload, month_number, year):
     try:
         check_trial_balance_format(worksheet, month_number, year)
     except UploadFileFormatError as ex:
-        set_file_upload_error(
+        set_file_upload_fatal_error(
             file_upload,
             str(ex),
             str(ex),
@@ -234,7 +234,7 @@ def upload_trial_balance_report(file_upload, month_number, year):
                     workbook.close
                     msg = 'Error at row {}: {}'. \
                         format(row, str(ex))
-                    set_file_upload_error(
+                    set_file_upload_fatal_error(
                         file_upload,
                         msg,
                         msg,

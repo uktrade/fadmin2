@@ -1,7 +1,6 @@
 from django.db import connection
 
-
-from core.import_csv import get_fk, xslx_header_to_dict
+from core.import_csv import xslx_header_to_dict
 from core.models import FinancialYear
 
 from forecast.import_utils import (
@@ -19,9 +18,8 @@ from forecast.models import (
 
 from upload_file.models import FileUpload
 from upload_file.utils import (
-    set_file_upload_error,
+    set_file_upload_fatal_error,
     set_file_upload_feedback,
-    set_incremental_file_upload_error,
 )
 
 EXPECTED_BUDGET_HEADERS = [
@@ -79,6 +77,7 @@ def copy_uploaded_budget(year, month_dict):
             financial_year=year, financial_period=period_obj
         ).delete()
 
+import time
 
 def upload_budget(worksheet, year, header_dict, file_upload):
     year_obj, created = FinancialYear.objects.get_or_create(financial_year=year)
@@ -94,33 +93,39 @@ def upload_budget(worksheet, year, header_dict, file_upload):
     BudgetUploadMonthlyFigure.objects.filter(financial_year=year,).delete()
     rows_to_process = worksheet.max_row + 1
 
-    error_found = False
-    warning_message = ""
 
+    error_found = False
+    check_financial_code = CheckFinancialCode(file_upload)
+    start_time = time.perf_counter()
     for row in range(2, rows_to_process):
+        if not row % 20:
+            print(f'Processing {row}')
+        if not row % 100:
+            end_time = time.perf_counter()
+            diff = end_time - start_time
+            print(f"Processed 100 lines start {start_time}, end {end_time} diff {diff}")
+            start_time = time.perf_counter()
+            print(f'Start time {start_time}')
+            set_file_upload_feedback(
+                file_upload, f"Processing row {row} of {rows_to_process}."
+            )
         cost_centre = worksheet[f"{header_dict['cost centre']}{row}"].value
         nac = worksheet[f"{header_dict['natural account']}{row}"].value
         programme_code = worksheet[f"{header_dict['programme']}{row}"].value
         analysis1 = worksheet[f"{header_dict['analysis']}{row}"].value
         analysis2 = worksheet[f"{header_dict['analysis2']}{row}"].value
         project_code = worksheet[f"{header_dict['project']}{row}"].value
-        check_financial_code = CheckFinancialCode(
-            cost_centre, nac, programme_code, analysis1, analysis2, project_code
+        error_found = check_financial_code.validate(
+            cost_centre,
+            nac,
+            programme_code,
+            analysis1,
+            analysis2,
+            project_code,
+            row
         )
 
-        if check_financial_code.error_found:
-            error_found = True
-            set_incremental_file_upload_error(
-                file_upload,
-                f"Row {row}: {check_financial_code.display_error} not valid.",
-                "Upload aborted: Data error.",
-            )
-
         if not error_found:
-            if not row % 100:
-                set_file_upload_feedback(
-                    file_upload, f"Processing row {row} of {rows_to_process}."
-                )
             financialcode_obj = check_financial_code.get_financial_code()
             for month, period_obj in month_dict.items():
                 period_budget = worksheet[f"{header_dict[month.lower()]}{row}"].value
@@ -144,13 +149,14 @@ def upload_budget(worksheet, year, header_dict, file_upload):
 
     if not error_found:
         copy_uploaded_budget(year, month_dict)
+    return not error_found
 
 
 def upload_budget_from_file(file_upload, year):
     try:
         workbook, worksheet = validate_excel_file(file_upload, "Budgets")
     except UploadFileFormatError as ex:
-        set_file_upload_error(
+        set_file_upload_fatal_error(
             file_upload, str(ex), str(ex),
         )
         raise ex
@@ -158,7 +164,7 @@ def upload_budget_from_file(file_upload, year):
     try:
         check_budget_header(header_dict, EXPECTED_BUDGET_HEADERS)
     except UploadFileFormatError as ex:
-        set_file_upload_error(
+        set_file_upload_fatal_error(
             file_upload, str(ex), str(ex),
         )
         workbook.close
@@ -166,7 +172,7 @@ def upload_budget_from_file(file_upload, year):
     try:
         upload_budget(worksheet, year, header_dict, file_upload)
     except (UploadFileDataError) as ex:
-        set_file_upload_error(
+        set_file_upload_fatal_error(
             file_upload, str(ex), str(ex),
         )
         workbook.close

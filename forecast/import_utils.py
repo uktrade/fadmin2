@@ -24,7 +24,12 @@ from forecast.models import (
 )
 
 from upload_file.models import FileUpload
-from upload_file.utils import set_file_upload_error
+from upload_file.utils import (
+    set_file_upload_fatal_error,
+    set_file_upload_error,
+    set_file_upload_warning,
+)
+
 
 # When the following codes are used, they must be a fixed length and padded with "0"
 ANALYSIS1_CODE_LENGTH = 5
@@ -118,7 +123,7 @@ def validate_excel_file(file_upload, worksheet_title):
             read_only=True,
         )
     except BadZipFile as ex:
-        set_file_upload_error(
+        set_file_upload_fatal_error(
             file_upload,
             "The file is not in the correct format (.xlsx)",
             "BadZipFile (user file is not .xlsx)",
@@ -204,14 +209,17 @@ status_index = 1
 error_index = 2
 message_index = 3
 
-
 class CheckFinancialCode():
     display_error = ''
+    display_warning = ''
+
     financial_code_obj = None
     error_found_in_last_row = False
     error_found = False
     # Dictionary of tuples
     # Each tuple contains : (obj, status, error_code, message)
+    # The objects of codes already used are kept in the dictionary,
+    # to reduce the number of database accesses
     nac_dict = {}
     cc_dict = {}
     prog_dict = {}
@@ -219,7 +227,7 @@ class CheckFinancialCode():
     analysis2_dict = {}
     project_dict = {}
 
-    error_row = ''
+    error_row = 0
 
     def get_info_tuple(self, model, pk):
         obj, msg = get_fk(model, pk)
@@ -255,14 +263,14 @@ class CheckFinancialCode():
             self.display_error = self.display_error + msg
         else:
             if status == CODE_WARNING:
-                self.display_error = self.display_error + msg
+                self.display_warning = self.display_warning + msg
         return obj
 
     def get_obj_code(self, code_dict, code, model_name):
         info_tuple = code_dict.get(code, None)
         if not info_tuple:
             info_tuple = self.get_info_tuple(model_name, code)
-            code_dict.append(code, info_tuple)
+            code_dict[code] = info_tuple
         return self.validate_info_tuple(info_tuple)
 
     def validate_nac(self, nac):
@@ -278,7 +286,7 @@ class CheckFinancialCode():
                     msg = f'Natural Account "{nac}" is not a primary NAC. \n'
                     info_tuple = (obj, status, error_code, msg)
 
-            self.nac_dict.append(nac, info_tuple)
+            self.nac_dict[nac] = info_tuple
         return self.validate_info_tuple(info_tuple)
 
     def validate_cost_centre(self, cost_centre):
@@ -339,6 +347,7 @@ class CheckFinancialCode():
                  row_number
                  ):
         self.display_error = ''
+        self.display_warning = ''
         self.error_found_in_last_row = False
         self.nac_obj = self.validate_nac(nac)
         self.programme_obj = self.validate_programme(programme)
@@ -347,15 +356,24 @@ class CheckFinancialCode():
         self.analysis2_obj = self.validate_analysis2(analysis2)
         self.project_obj = self.validate_project(project)
 
+        if self.display_warning:
+            set_file_upload_warning(
+                self.file_upload,
+                f"Row {row_number}: {self.display_warning}"
+            )
+
         if self.error_found_in_last_row:
-            #         output error
-            pass
+                set_file_upload_error(
+                    self.file_upload,
+                    f"Row {row_number}: {self.display_error}",
+                    "Upload aborted: Data error."
+                )
         return self.error_found
 
     def get_financial_code(self):
         if self.error_found:
             return None
-        financialcode_obj, created = FinancialCode.objects.get_or_create(
+        financial_code_obj, created = FinancialCode.objects.get_or_create(
             programme=self.programme_obj,
             cost_centre=self.cc_obj,
             natural_account_code=self.nac_obj,
@@ -363,5 +381,5 @@ class CheckFinancialCode():
             analysis2_code=self.analysis2_obj,
             project_code=self.project_obj,
         )
-        financialcode_obj.save()
-        return financialcode_obj
+        financial_code_obj.save()
+        return financial_code_obj
