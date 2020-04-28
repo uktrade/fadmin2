@@ -27,7 +27,7 @@ docker-compose run fido python manage.py create_stub_forecast_data
 You can add Gift and Hospitality data if you are developing Gift and Hospitality related functions:
 
 ```
-docker-compose run fido python manage.py create_gift_hospitality_table
+docker-compose run fido python manage.py populate_gift_hospitality_table
 ```
 
 Now access any page within the site and log in with your single sign on credentials.

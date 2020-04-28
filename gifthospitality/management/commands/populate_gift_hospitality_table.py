@@ -241,15 +241,15 @@ class Grades:
 
 
 class Command(BaseCommand):
-    TEST_TYPE = {
+    GIFT_HOSPITALITY_TABLES = {
         "GiftAndHospitalityCategories": GiftAndHospitalityCategories,
         "GiftAndHospitalityCompanies": GiftAndHospitalityCompanies,
         "GiftAndHospitalityClassifications": GiftAndHospitalityClassifications,
         "Grades": Grades,
     }
 
-    help = "Create stub data. Allowed types are - All - {}".format(
-        " - ".join(TEST_TYPE.keys())
+    help = "Create Gift and Hospitality data. Allowed types are - All - {}".format(
+        " - ".join(GIFT_HOSPITALITY_TABLES.keys())
     )
     arg_name = "what"
 
@@ -261,20 +261,17 @@ class Command(BaseCommand):
         parser.add_argument(
             "--delete",
             action="store_true",
-            help="Delete stub data instead of creating it",
+            help="Delete Gift and Hospitality data instead of creating it",
         )
 
     def create(self, what):
-        # The modified save writes the current user to the log, but
-        # the user is not available while we are running a command.
-        # So set  the test flag to stop writing to the log
         core._called_from_test = True
         p = what()
         p.create()
         del core._called_from_test
         self.stdout.write(
             self.style.SUCCESS(
-                "Successfully completed stub data creation for {}.".format(
+                "Successfully completed G and H data creation for {}.".format(
                     p.name
                 )
             )
@@ -287,7 +284,7 @@ class Command(BaseCommand):
         del core._called_from_test
         self.stdout.write(
             self.style.SUCCESS(
-                "Successfully cleared stub data for {}.".format(
+                "Successfully cleared Gift and Hospitality data for {}.".format(
                     p.name
                 )
             )
@@ -300,8 +297,8 @@ class Command(BaseCommand):
             func = self.create
         for arg in options[self.arg_name]:
             if arg == "All":
-                for t in self.TEST_TYPE.values():
+                for t in self.GIFT_HOSPITALITY_TABLES.values():
                     func(t)
                 return
             else:
-                func(self.TEST_TYPE[arg])
+                func(self.GIFT_HOSPITALITY_TABLES[arg])
