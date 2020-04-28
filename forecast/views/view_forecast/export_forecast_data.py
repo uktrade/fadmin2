@@ -1,6 +1,6 @@
+from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.contrib.auth.decorators import user_passes_test
 
 from forecast.models import ForecastingDataView
 from forecast.utils.access_helpers import can_edit_cost_centre, can_view_forecasts
@@ -27,7 +27,7 @@ from forecast.utils.query_fields import (
 @user_passes_test(can_view_forecasts, login_url='index')
 def export_forecast_data_dit(request):
     q = ForecastingDataView.view_data.raw_data_annotated(
-            VIEW_FORECAST_DOWNLOAD_COLUMNS)
+        VIEW_FORECAST_DOWNLOAD_COLUMNS)
     return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, "DIT")
 
 
