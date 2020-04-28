@@ -5,14 +5,16 @@ from openpyxl import load_workbook
 from chartofaccountDIT.models import (
     Analysis1,
     Analysis2,
-    ProjectCode,
-)
-from chartofaccountDIT.models import (
     NaturalCode,
     ProgrammeCode,
+    ProjectCode,
 )
 
-from core.import_csv import get_fk, get_fk_from_field
+from core.import_csv import (
+    get_fk,
+    get_fk_from_field,
+    get_pk_verbose_name,
+)
 
 from costcentre.models import CostCentre
 
@@ -188,47 +190,172 @@ def get_primary_nac_obj(code):
     return nac_obj, message
 
 
+CODE_OK = 1
+CODE_ERROR = 2
+CODE_WARNING = 3
+
+NO_ERROR = 0
+ERROR_DOES_NOT_EXIST = 20
+ERROR_IS_NOT_ACTIVE = 21
+WARNING_IS_NOT_BUDGET = 22
+
+obj_index = 0
+status_index = 1
+error_index = 2
+message_index = 3
+
 
 class CheckFinancialCode():
     display_error = ''
     financial_code_obj = None
+    error_found_in_last_row = False
     error_found = False
+    # Dictionary of tuples
+    # Each tuple contains : (obj, status, error_code, message)
+    nac_dict = {}
+    cc_dict = {}
+    prog_dict = {}
+    analysis1_dict = {}
+    analysis2_dict = {}
+    project_dict = {}
 
-    def __init__(self,
+    error_row = ''
+
+    def get_info_tuple(self, model, pk):
+        obj, msg = get_fk(model, pk)
+        if not obj:
+            status = CODE_ERROR
+            error_code = ERROR_DOES_NOT_EXIST
+        else:
+            if not obj.active:
+                status = CODE_ERROR
+                error_code = ERROR_IS_NOT_ACTIVE
+                msg = \
+                    f'{get_pk_verbose_name(model)} "{pk}" ' \
+                    f'is not in the approved list. \n'
+                obj = None
+            else:
+                status = CODE_OK
+                error_code = NO_ERROR
+                msg = ''
+        info_tuple = (obj, status, error_code, msg)
+        return info_tuple
+
+    def __init__(self, file_upload):
+        self.file_upload = file_upload
+
+    def validate_info_tuple(self, info_tuple):
+        status = info_tuple[status_index]
+        msg = info_tuple[message_index]
+        obj = info_tuple[obj_index]
+
+        if status == CODE_ERROR:
+            self.error_found_in_last_row = True
+            self.error_found = True
+            self.display_error = self.display_error + msg
+        else:
+            if status == CODE_WARNING:
+                self.display_error = self.display_error + msg
+        return obj
+
+    def get_obj_code(self, code_dict, code, model_name):
+        info_tuple = code_dict.get(code, None)
+        if not info_tuple:
+            info_tuple = self.get_info_tuple(model_name, code)
+            code_dict.append(code, info_tuple)
+        return self.validate_info_tuple(info_tuple)
+
+    def validate_nac(self, nac):
+        info_tuple = self.nac_dict.get(nac, None)
+        if not info_tuple:
+            info_tuple = self.get_info_tuple(NaturalCode, nac)
+            if info_tuple[status_index] == CODE_OK:
+                obj = info_tuple[obj_index]
+            #  test if the nac is a primary nac
+                if not obj.used_for_budget:
+                    status = CODE_WARNING
+                    error_code = WARNING_IS_NOT_BUDGET
+                    msg = f'Natural Account "{nac}" is not a primary NAC. \n'
+                    info_tuple = (obj, status, error_code, msg)
+
+            self.nac_dict.append(nac, info_tuple)
+        return self.validate_info_tuple(info_tuple)
+
+    def validate_cost_centre(self, cost_centre):
+        return self.get_obj_code(self.cc_dict,
+                                 cost_centre,
+                                 CostCentre
+                                 )
+
+    def validate_programme(self, programme_code):
+        return self.get_obj_code(self.prog_dict,
+                                 programme_code,
+                                 ProgrammeCode
+                                 )
+
+    def validate_analysis1(self, analysis1):
+        if int(analysis1):
+            analysis1_code = get_id(
+                analysis1,
+                ANALYSIS1_CODE_LENGTH)
+
+            return self.get_obj_code(self.analysis1_dict,
+                                     analysis1_code,
+                                     Analysis1
+                                     )
+        else:
+            return None
+
+    def validate_analysis2(self, analysis2):
+        if int(analysis2):
+            analysis2_code = get_id(
+                analysis2,
+                ANALYSIS1_CODE_LENGTH)
+
+            return self.get_obj_code(self.analysis2_dict,
+                                     analysis2_code,
+                                     Analysis2
+                                     )
+        else:
+            return None
+
+    def validate_project(self, project):
+        if int(project):
+            project_code = get_id(project, PROJECT_CODE_LENGTH)
+            return self.get_obj_code(self.project_dict,
+                                     project_code,
+                                     ProjectCode
+                                     )
+        else:
+            return None
+
+    def validate(self,
                  cost_centre,
                  nac,
-                 programme_code,
+                 programme,
                  analysis1,
                  analysis2,
-                 project_code
+                 project,
+                 row_number
                  ):
-        error_list = []
         self.display_error = ''
-        self.financial_code_obj = None
-        self.error_found = False
+        self.error_found_in_last_row = False
+        self.nac_obj = self.validate_nac(nac)
+        self.programme_obj = self.validate_programme(programme)
+        self.cc_obj = self.validate_cost_centre(cost_centre)
+        self.analysis1_obj = self.validate_analysis1(analysis1)
+        self.analysis2_obj = self.validate_analysis2(analysis2)
+        self.project_obj = self.validate_project(project)
 
-        self.nac_obj, message = get_fk(NaturalCode, nac)
-        #  Temporary disable the check for Primary NACs, as most of the NAC
-        #  used for budgets are NOT primary nacs.
-        # nac_obj, message = get_primary_nac_obj(nac)
-        error_list.append(message)
-        self.cc_obj, message = get_fk(CostCentre, cost_centre)
-        error_list.append(message)
-        self.programme_obj, message = get_fk(ProgrammeCode, programme_code)
-        error_list.append(message)
-        self.analysis1_obj, message = get_analysys1_obj(analysis1)
-        error_list.append(message)
-        self.analysis2_obj, message = get_analysys2_obj(analysis2)
-        error_list.append(message)
-        self.project_obj, message = get_project_obj(project_code)
-        error_list.append(message)
-        error_message = get_error_from_list(error_list)
-        if error_message:
-            self.error_found = True
-            self.display_error = error_message
+        if self.error_found_in_last_row:
+            #         output error
+            pass
+        return self.error_found
 
     def get_financial_code(self):
-        self.financialcode_obj, created = FinancialCode.objects.get_or_create(
+        if self.error_found:
+            return None
+        financialcode_obj, created = FinancialCode.objects.get_or_create(
             programme=self.programme_obj,
             cost_centre=self.cc_obj,
             natural_account_code=self.nac_obj,
@@ -236,5 +363,5 @@ class CheckFinancialCode():
             analysis2_code=self.analysis2_obj,
             project_code=self.project_obj,
         )
-        self.financialcode_obj.save()
-        return self.financialcode_obj
+        financialcode_obj.save()
+        return financialcode_obj

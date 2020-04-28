@@ -77,6 +77,14 @@
               </div>
               <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
+                  Processing status:
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {{ document.row_process_message }}
+                </dd>
+              </div>
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
                   Last updated
                 </dt>
                 <dd class="govuk-summary-list__value">
@@ -84,7 +92,7 @@
                 </dd>
               </div>
             </dl>
-            {% if document.status == "processing" %}
+            {% if document.status == "processing" or document.status == "parsing" %}
                 <button onclick="javascript:window.location.reload();" class="govuk-button" data-module="govuk-button">
                     Refresh
                 </button>

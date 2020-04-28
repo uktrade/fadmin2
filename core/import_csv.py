@@ -91,10 +91,10 @@ def get_fk(m, pk_value):
     try:
         obj = m.objects.get(pk=pk_value)
     except m.DoesNotExist:
-        msg = f'{get_pk_verbose_name(m)} "{pk_value}"'
+        msg = f'{get_pk_verbose_name(m)} "{pk_value}" does not exist.\n'
         obj = None
     except ValueError:
-        msg = f'{get_pk_verbose_name(m)} "{pk_value}" is the wrong type. \n'
+        msg = f'{get_pk_verbose_name(m)} "{pk_value}" is the wrong type.\n'
         obj = None
     return obj, msg
 

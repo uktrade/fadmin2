@@ -12,6 +12,7 @@ class FileUpload(BaseModel):
     UNPROCESSED = 'unprocessed'
     PROCESSING = 'processing'
     PROCESSED = 'processed'
+    PARSING = 'Parsing'
     ERROR = 'error'
     ANTIVIRUS = 'antivirus'
 
@@ -19,6 +20,7 @@ class FileUpload(BaseModel):
         (UNPROCESSED, 'Unprocessed'),
         (ANTIVIRUS, 'Checking for viruses'),
         (PROCESSING, 'Processing'),
+        (PARSING, 'Processing after error'),
         (PROCESSED, 'Processed'),
         (ERROR, 'Error'),
     ]
@@ -45,15 +47,27 @@ class FileUpload(BaseModel):
         default=UNPROCESSED,
     )
     user_error_message = models.CharField(
-        max_length=1000,
+        max_length=10000,
         null=True,
         blank=True,
     )
+    user_warning_message = models.CharField(
+        max_length=10000,
+        null=True,
+        blank=True,
+    )
+    row_process_message = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
     error_message = models.CharField(
         max_length=255,
         null=True,
         blank=True,
     )
+
     uploading_user = models.ForeignKey(
         get_user_model(),
         on_delete=models.CASCADE,
