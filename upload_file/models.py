@@ -21,12 +21,12 @@ class FileUpload(BaseModel):
     STATUS_CHOICES = [
         (UNPROCESSED, 'Unprocessed'),
         (ANTIVIRUS, 'Checking for viruses'),
-        (PROCESSEDWITHERROR, 'Processed. Not uploaded, error(s) found'),
-        (PROCESSEDWITHWARNING, 'Processed. Uploaded, warning(s) found'),
+        (PROCESSEDWITHERROR, 'Processed. Not uploaded, error(s) found.'),
+        (PROCESSEDWITHWARNING, 'Processed. Uploaded, warning(s) found.'),
         (PROCESSING, 'Processing'),
         (PARSING, 'Processing after error'),
-        (PROCESSED, 'Processed and uploaded'),
-        (ERROR, 'Error'),
+        (PROCESSED, 'Processed and uploaded.'),
+        (ERROR, 'Fatal error.'),
     ]
 
     ACTUALS = 'actuals'
@@ -66,6 +66,16 @@ class FileUpload(BaseModel):
 
     error_message = models.CharField(
         max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    error_count = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    warning_count = models.IntegerField(
         null=True,
         blank=True,
     )
