@@ -25,8 +25,8 @@ from forecast.models import (
 
 from upload_file.models import FileUpload
 from upload_file.utils import (
-    set_file_upload_fatal_error,
     set_file_upload_error,
+    set_file_upload_fatal_error,
     set_file_upload_warning,
 )
 
@@ -39,41 +39,43 @@ PROJECT_CODE_LENGTH = 4
 
 def sql_for_data_copy(data_type, financial_period_id, financial_year_id):
     if data_type == FileUpload.ACTUALS:
-        temp_data_file = 'forecast_actualuploadmonthlyfigure'
-        target = 'forecast_forecastmonthlyfigure'
+        temp_data_file = "forecast_actualuploadmonthlyfigure"
+        target = "forecast_forecastmonthlyfigure"
     else:
         if data_type == FileUpload.BUDGET:
-            temp_data_file = 'forecast_budgetuploadmonthlyfigure'
-            target = 'forecast_budgetmonthlyfigure'
+            temp_data_file = "forecast_budgetuploadmonthlyfigure"
+            target = "forecast_budgetmonthlyfigure"
         else:
-            raise UploadFileDataError(
-                'Unknown upload type.'
-            )
+            raise UploadFileDataError("Unknown upload type.")
 
-    sql_update = f'UPDATE {target} t ' \
-                 f'SET  updated=now(), amount=u.amount, starting_amount=u.amount	' \
-                 f'FROM {temp_data_file} u ' \
-                 f'WHERE  ' \
-                 f't.financial_code_id = u.financial_code_id and ' \
-                 f't.financial_period_id = u.financial_period_id and ' \
-                 f't.financial_year_id = u.financial_year_id and ' \
-                 f't.financial_period_id = {financial_period_id} and ' \
-                 f't.financial_year_id = {financial_year_id};'
+    sql_update = (
+        f"UPDATE {target} t "
+        f"SET  updated=now(), amount=u.amount, starting_amount=u.amount	"
+        f"FROM {temp_data_file} u "
+        f"WHERE  "
+        f"t.financial_code_id = u.financial_code_id and "
+        f"t.financial_period_id = u.financial_period_id and "
+        f"t.financial_year_id = u.financial_year_id and "
+        f"t.financial_period_id = {financial_period_id} and "
+        f"t.financial_year_id = {financial_year_id};"
+    )
 
-    sql_insert = f'INSERT INTO {target}(created, ' \
-                 f'updated, amount, starting_amount, financial_code_id, ' \
-                 f'financial_period_id, financial_year_id) ' \
-                 f'SELECT now(), now(), amount, amount, financial_code_id, ' \
-                 f'financial_period_id, financial_year_id ' \
-                 f'FROM {temp_data_file} ' \
-                 f'WHERE ' \
-                 f'financial_period_id = {financial_period_id} and ' \
-                 f'financial_year_id = {financial_year_id}  and ' \
-                 f' financial_code_id ' \
-                 f'not in (select financial_code_id ' \
-                 f'from {target} where ' \
-                 f'financial_period_id = {financial_period_id} and ' \
-                 f'financial_year_id = {financial_year_id});'
+    sql_insert = (
+        f"INSERT INTO {target}(created, "
+        f"updated, amount, starting_amount, financial_code_id, "
+        f"financial_period_id, financial_year_id) "
+        f"SELECT now(), now(), amount, amount, financial_code_id, "
+        f"financial_period_id, financial_year_id "
+        f"FROM {temp_data_file} "
+        f"WHERE "
+        f"financial_period_id = {financial_period_id} and "
+        f"financial_year_id = {financial_year_id}  and "
+        f" financial_code_id "
+        f"not in (select financial_code_id "
+        f"from {target} where "
+        f"financial_period_id = {financial_period_id} and "
+        f"financial_year_id = {financial_year_id});"
+    )
 
     return sql_update, sql_insert
 
@@ -118,10 +120,7 @@ def get_analysys2_obj(code):
 
 def validate_excel_file(file_upload, worksheet_title):
     try:
-        workbook = load_workbook(
-            file_upload.document_file,
-            read_only=True,
-        )
+        workbook = load_workbook(file_upload.document_file, read_only=True,)
     except BadZipFile as ex:
         set_file_upload_fatal_error(
             file_upload,
@@ -157,11 +156,8 @@ def get_forecast_month_dict():
     Exclude months were actuals have been uploaded."""
     actual_month = FinancialPeriod.financial_period_info.actual_month()
     q = FinancialPeriod.objects.filter(
-        financial_period_code__gt=actual_month,
-        financial_period_code__lt=13
-    ).values(
-        "period_short_name"
-    )
+        financial_period_code__gt=actual_month, financial_period_code__lt=13
+    ).values("period_short_name")
     period_dict = {}
     for e in q:
         per_obj, msg = get_fk_from_field(
@@ -173,11 +169,11 @@ def get_forecast_month_dict():
 
 
 def get_error_from_list(error_list):
-    error_message = ''
+    error_message = ""
     for item in error_list:
-        if item and item != '':
-            error_message = f'{error_message}, {item}'
-    if error_message != '':
+        if item and item != "":
+            error_message = f"{error_message}, {item}"
+    if error_message != "":
         error_message = error_message[:-1]
     return error_message
 
@@ -187,8 +183,10 @@ def get_primary_nac_obj(code):
     if nac_obj:
         #  Error if NAC is not a primary nac
         if not nac_obj.used_for_budget:
-            message = f'{code}-{nac_obj.natural_account_code_description} ' \
-                      f'is not a Primary NAC. \n'
+            message = (
+                f"{code}-{nac_obj.natural_account_code_description} "
+                f"is not a Primary NAC. \n"
+            )
     else:
         nac_obj = None
         message = ""
@@ -209,9 +207,10 @@ status_index = 1
 error_index = 2
 message_index = 3
 
-class CheckFinancialCode():
-    display_error = ''
-    display_warning = ''
+
+class CheckFinancialCode:
+    display_error = ""
+    display_warning = ""
 
     financial_code_obj = None
     error_found = False
@@ -238,14 +237,15 @@ class CheckFinancialCode():
             if not obj.active:
                 status = CODE_ERROR
                 error_code = ERROR_IS_NOT_ACTIVE
-                msg = \
-                    f'{get_pk_verbose_name(model)} "{pk}" ' \
-                    f'is not in the approved list. \n'
+                msg = (
+                    f'{get_pk_verbose_name(model)} "{pk}" '
+                    f"is not in the approved list. \n"
+                )
                 obj = None
             else:
                 status = CODE_OK
                 error_code = NO_ERROR
-                msg = ''
+                msg = ""
         info_tuple = (obj, status, error_code, msg)
         return info_tuple
 
@@ -287,7 +287,7 @@ class CheckFinancialCode():
             info_tuple = self.get_info_tuple(NaturalCode, nac)
             if info_tuple[status_index] == CODE_OK:
                 obj = info_tuple[obj_index]
-            #  test if the nac is a primary nac
+                #  test if the nac is a primary nac
                 if not obj.used_for_budget:
                     status = CODE_WARNING
                     error_code = WARNING_IS_NOT_BUDGET
@@ -298,64 +298,39 @@ class CheckFinancialCode():
         return self.validate_info_tuple(info_tuple)
 
     def validate_cost_centre(self, cost_centre):
-        return self.get_obj_code(self.cc_dict,
-                                 cost_centre,
-                                 CostCentre
-                                 )
+        return self.get_obj_code(self.cc_dict, cost_centre, CostCentre)
 
     def validate_programme(self, programme_code):
-        return self.get_obj_code(self.prog_dict,
-                                 programme_code,
-                                 ProgrammeCode
-                                 )
+        return self.get_obj_code(self.prog_dict, programme_code, ProgrammeCode)
 
     def validate_analysis1(self, analysis1):
         if int(analysis1):
-            analysis1_code = get_id(
-                analysis1,
-                ANALYSIS1_CODE_LENGTH)
+            analysis1_code = get_id(analysis1, ANALYSIS1_CODE_LENGTH)
 
-            return self.get_obj_code(self.analysis1_dict,
-                                     analysis1_code,
-                                     Analysis1
-                                     )
+            return self.get_obj_code(self.analysis1_dict, analysis1_code, Analysis1)
         else:
             return None
 
     def validate_analysis2(self, analysis2):
         if int(analysis2):
-            analysis2_code = get_id(
-                analysis2,
-                ANALYSIS1_CODE_LENGTH)
+            analysis2_code = get_id(analysis2, ANALYSIS1_CODE_LENGTH)
 
-            return self.get_obj_code(self.analysis2_dict,
-                                     analysis2_code,
-                                     Analysis2
-                                     )
+            return self.get_obj_code(self.analysis2_dict, analysis2_code, Analysis2)
         else:
             return None
 
     def validate_project(self, project):
         if int(project):
             project_code = get_id(project, PROJECT_CODE_LENGTH)
-            return self.get_obj_code(self.project_dict,
-                                     project_code,
-                                     ProjectCode
-                                     )
+            return self.get_obj_code(self.project_dict, project_code, ProjectCode)
         else:
             return None
 
-    def validate(self,
-                 cost_centre,
-                 nac,
-                 programme,
-                 analysis1,
-                 analysis2,
-                 project,
-                 row_number
-                 ):
-        self.display_error = ''
-        self.display_warning = ''
+    def validate(
+        self, cost_centre, nac, programme, analysis1, analysis2, project, row_number
+    ):
+        self.display_error = ""
+        self.display_warning = ""
         self.nac_obj = self.validate_nac(nac)
         self.programme_obj = self.validate_programme(programme)
         self.cc_obj = self.validate_cost_centre(cost_centre)
@@ -365,16 +340,15 @@ class CheckFinancialCode():
 
         if self.display_warning:
             set_file_upload_warning(
-                self.file_upload,
-                f"Row {row_number} warning: {self.display_warning}"
+                self.file_upload, f"Row {row_number} warning: {self.display_warning}"
             )
 
         if self.display_error:
-                set_file_upload_error(
-                    self.file_upload,
-                    f"Row {row_number} error: {self.display_error}",
-                    "Upload aborted: Data error."
-                )
+            set_file_upload_error(
+                self.file_upload,
+                f"Row {row_number} error: {self.display_error}",
+                "Upload aborted: Data error.",
+            )
         return self.error_found
 
     def get_financial_code(self):

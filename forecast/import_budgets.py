@@ -73,11 +73,26 @@ def copy_uploaded_budget(year, month_dict):
             amount=0,
             starting_amount=0,
         ).delete()
-    BudgetUploadMonthlyFigure.objects.filter(
-            financial_year=year
-    ).delete()
+    BudgetUploadMonthlyFigure.objects.filter(financial_year=year).delete()
 
-import time
+
+def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
+    for month_idx, period_obj in month_dict.items():
+        period_budget = budget_row[month_idx].value
+        if period_budget:
+            (budget_obj, created,) = BudgetUploadMonthlyFigure.objects.get_or_create(
+                financial_year=year_obj,
+                financial_code=financialcode_obj,
+                financial_period=period_obj,
+            )
+            # to avoid problems with precision,
+            # we store the figures in pence
+            if created:
+                budget_obj.amount = period_budget * 100
+            else:
+                budget_obj.amount += period_budget * 100
+            budget_obj.save()
+
 
 def upload_budget(worksheet, year, header_dict, file_upload):
     year_obj, created = FinancialYear.objects.get_or_create(financial_year=year)
@@ -86,7 +101,7 @@ def upload_budget(worksheet, year, header_dict, file_upload):
         year_obj.save()
 
     forecast_months = get_forecast_month_dict()
-    month_dict = {header_dict[k]:v for (k,v) in forecast_months.items()}
+    month_dict = {header_dict[k]: v for (k, v) in forecast_months.items()}
     # Clear the table used to upload the budgets.
     # The budgets are uploaded to to a temporary storage, and copied
     # when the upload is completed successfully.
@@ -95,14 +110,13 @@ def upload_budget(worksheet, year, header_dict, file_upload):
     rows_to_process = worksheet.max_row + 1
 
     check_financial_code = CheckFinancialCode(file_upload)
-    cc_index = header_dict['cost centre']
-    nac_index = header_dict['natural account']
-    prog_index = header_dict['programme']
-    a1_index = header_dict['analysis']
-    a2_index = header_dict['analysis2']
-    proj_index = header_dict['project']
+    cc_index = header_dict["cost centre"]
+    nac_index = header_dict["natural account"]
+    prog_index = header_dict["programme"]
+    a1_index = header_dict["analysis"]
+    a2_index = header_dict["analysis2"]
+    proj_index = header_dict["project"]
     row = 0
-    initial_time = time.perf_counter()
     for budget_row in worksheet.rows:
         row += 1
         if row == 1:
@@ -124,49 +138,24 @@ def upload_budget(worksheet, year, header_dict, file_upload):
         analysis2 = budget_row[a2_index].value
         project_code = budget_row[proj_index].value
         check_financial_code.validate(
-            cost_centre,
-            nac,
-            programme_code,
-            analysis1,
-            analysis2,
-            project_code,
-            row
+            cost_centre, nac, programme_code, analysis1, analysis2, project_code, row
         )
 
         if not check_financial_code.error_found:
             financialcode_obj = check_financial_code.get_financial_code()
-            for month_idx, period_obj in month_dict.items():
-                period_budget = budget_row[month_idx].value
-                if period_budget:
-                    (
-                        budget_obj,
-                        created,
-                    ) = BudgetUploadMonthlyFigure.objects.get_or_create(
-                        financial_year=year_obj,
-                        financial_code=financialcode_obj,
-                        financial_period=period_obj,
-                    )
-                    # to avoid problems with precision,
-                    # we store the figures in pence
-                    if created:
-                        budget_obj.amount = period_budget * 100
-                    else:
-                        budget_obj.amount += period_budget * 100
-                    budget_obj.save()
+            upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict)
 
-    diff = time.perf_counter() - initial_time
-    print(f"-----Processed completed in {diff}")
     final_status = FileUpload.PROCESSED
     if check_financial_code.error_found:
         final_status = FileUpload.PROCESSEDWITHERROR
     else:
+        # No errors, so we can copy the figures from the temporary table to the budgets
         copy_uploaded_budget(year, month_dict)
         if check_financial_code.warning_found:
             final_status = FileUpload.PROCESSEDWITHWARNING
 
     set_file_upload_feedback(
-        file_upload, f"Processed {rows_to_process} rows.",
-        final_status
+        file_upload, f"Processed {rows_to_process} rows.", final_status
     )
 
     return not check_financial_code.error_found

@@ -13,23 +13,21 @@ from upload_file.models import FileUpload
 
 @shared_task
 def process_uploaded_file(*args):
-    latest_unprocessed = FileUpload.objects.filter(
-        status=FileUpload.UNPROCESSED,
-    ).order_by('-created').first()
+    latest_unprocessed = (
+        FileUpload.objects.filter(status=FileUpload.UNPROCESSED,)
+        .order_by("-created")
+        .first()
+    )
 
     if latest_unprocessed is not None:
         latest_unprocessed.status = FileUpload.ANTIVIRUS
         latest_unprocessed.save()
 
         # Get file body from S3
-        file_body = get_s3_file_body(
-            latest_unprocessed.document_file.name
-        )
+        file_body = get_s3_file_body(latest_unprocessed.document_file.name)
 
         # Check for viruses
-        anti_virus_result = run_anti_virus(
-            file_body,
-        )
+        anti_virus_result = run_anti_virus(file_body,)
 
         if anti_virus_result["malware"]:
             latest_unprocessed.status = FileUpload.ERROR
@@ -41,13 +39,6 @@ def process_uploaded_file(*args):
             latest_unprocessed.save()
 
             if latest_unprocessed.document_type == FileUpload.ACTUALS:
-                upload_trial_balance_report(
-                    latest_unprocessed,
-                    *args
-                )
+                upload_trial_balance_report(latest_unprocessed, *args)
             if latest_unprocessed.document_type == FileUpload.BUDGET:
-                upload_budget_from_file(
-                    latest_unprocessed,
-                    *args
-                )
-
+                upload_budget_from_file(latest_unprocessed, *args)
