@@ -46,13 +46,11 @@ class FileUpload(BaseModel):
         choices=STATUS_CHOICES,
         default=UNPROCESSED,
     )
-    user_error_message = models.CharField(
-        max_length=10000,
+    user_error_message = models.TextField(
         null=True,
         blank=True,
     )
-    user_warning_message = models.CharField(
-        max_length=10000,
+    user_warning_message = models.TextField(
         null=True,
         blank=True,
     )

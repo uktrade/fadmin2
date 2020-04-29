@@ -56,7 +56,7 @@ def check_budget_header(header_dict, correct_header):
 
 
 def copy_uploaded_budget(year, month_dict):
-    for m, period_obj in month_dict.items():
+    for period_obj in month_dict.values():
         # Now copy the newly uploaded budgets to the monthly figure table
         BudgetMonthlyFigure.objects.filter(
             financial_year=year, financial_period=period_obj,
@@ -73,9 +73,9 @@ def copy_uploaded_budget(year, month_dict):
             amount=0,
             starting_amount=0,
         ).delete()
-        BudgetUploadMonthlyFigure.objects.filter(
-            financial_year=year, financial_period=period_obj
-        ).delete()
+    BudgetUploadMonthlyFigure.objects.filter(
+            financial_year=year
+    ).delete()
 
 import time
 
@@ -85,7 +85,8 @@ def upload_budget(worksheet, year, header_dict, file_upload):
         year_obj.financial_year_display = f"{year}/{year - 1999}"
         year_obj.save()
 
-    month_dict = get_forecast_month_dict()
+    forecast_months = get_forecast_month_dict()
+    month_dict = {header_dict[k]:v for (k,v) in forecast_months.items()}
     #  Convert this to have index as key
     # Clear the table used to upload the budgets.
     # The budgets are uploaded to to a temporary storage, and copied
@@ -105,19 +106,17 @@ def upload_budget(worksheet, year, header_dict, file_upload):
     proj_index = header_dict['project']
     max_row = worksheet.max_row + 1
     row = 0
+    initial_time = time.perf_counter()
     start_time = time.perf_counter()
     for budget_row in worksheet.rows:
         row += 1
         if row == 1:
             continue
-        if not row % 20:
-            print(f'Processing {row}')
         if not row % 100:
             end_time = time.perf_counter()
             diff = end_time - start_time
-            print(f"Processed 100 lines start {start_time}, end {end_time} diff {diff}")
+            print(f"Processed 100 lines diff {diff}")
             start_time = time.perf_counter()
-            print(f'Start time {start_time}')
             set_file_upload_feedback(
                 file_upload, f"Processing row {row} of {rows_to_process}."
             )
@@ -161,6 +160,9 @@ def upload_budget(worksheet, year, header_dict, file_upload):
                     else:
                         budget_obj.amount += period_budget * 100
                     budget_obj.save()
+
+    diff = time.perf_counter() - initial_time
+    print(f"-----Processed completed in {diff}")
 
     if not error_found:
         copy_uploaded_budget(year, month_dict)
