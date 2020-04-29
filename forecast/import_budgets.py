@@ -87,7 +87,6 @@ def upload_budget(worksheet, year, header_dict, file_upload):
 
     forecast_months = get_forecast_month_dict()
     month_dict = {header_dict[k]:v for (k,v) in forecast_months.items()}
-    #  Convert this to have index as key
     # Clear the table used to upload the budgets.
     # The budgets are uploaded to to a temporary storage, and copied
     # when the upload is completed successfully.
@@ -95,8 +94,6 @@ def upload_budget(worksheet, year, header_dict, file_upload):
     BudgetUploadMonthlyFigure.objects.filter(financial_year=year,).delete()
     rows_to_process = worksheet.max_row + 1
 
-
-    error_found = False
     check_financial_code = CheckFinancialCode(file_upload)
     cc_index = header_dict['cost centre']
     nac_index = header_dict['natural account']
@@ -104,19 +101,16 @@ def upload_budget(worksheet, year, header_dict, file_upload):
     a1_index = header_dict['analysis']
     a2_index = header_dict['analysis2']
     proj_index = header_dict['project']
-    max_row = worksheet.max_row + 1
     row = 0
     initial_time = time.perf_counter()
-    start_time = time.perf_counter()
     for budget_row in worksheet.rows:
         row += 1
         if row == 1:
+            # There is no way to start reading rows from a specific place.
+            # Ignore first row, the headers have been processed already
             continue
         if not row % 100:
-            end_time = time.perf_counter()
-            diff = end_time - start_time
-            print(f"Processed 100 lines diff {diff}")
-            start_time = time.perf_counter()
+            # Display the number of rows processed every 100 rows
             set_file_upload_feedback(
                 file_upload, f"Processing row {row} of {rows_to_process}."
             )
@@ -129,7 +123,7 @@ def upload_budget(worksheet, year, header_dict, file_upload):
         analysis1 = budget_row[a1_index].value
         analysis2 = budget_row[a2_index].value
         project_code = budget_row[proj_index].value
-        error_found = check_financial_code.validate(
+        check_financial_code.validate(
             cost_centre,
             nac,
             programme_code,
@@ -139,7 +133,7 @@ def upload_budget(worksheet, year, header_dict, file_upload):
             row
         )
 
-        if not error_found:
+        if not check_financial_code.error_found:
             financialcode_obj = check_financial_code.get_financial_code()
             for month_idx, period_obj in month_dict.items():
                 period_budget = budget_row[month_idx].value
@@ -152,10 +146,9 @@ def upload_budget(worksheet, year, header_dict, file_upload):
                         financial_code=financialcode_obj,
                         financial_period=period_obj,
                     )
-
+                    # to avoid problems with precision,
+                    # we store the figures in pence
                     if created:
-                        # to avoid problems with precision,
-                        # we store the figures in pence
                         budget_obj.amount = period_budget * 100
                     else:
                         budget_obj.amount += period_budget * 100
@@ -163,10 +156,20 @@ def upload_budget(worksheet, year, header_dict, file_upload):
 
     diff = time.perf_counter() - initial_time
     print(f"-----Processed completed in {diff}")
-
-    if not error_found:
+    final_status = FileUpload.PROCESSED
+    if check_financial_code.error_found:
+        final_status = FileUpload.PROCESSEDWITHERROR
+    else:
         copy_uploaded_budget(year, month_dict)
-    return not error_found
+        if check_financial_code.warning_found:
+            final_status = FileUpload.PROCESSEDWITHWARNING
+
+    set_file_upload_feedback(
+        file_upload, f"Processed {rows_to_process} rows.",
+        final_status
+    )
+
+    return not check_financial_code.error_found
 
 
 def upload_budget_from_file(file_upload, year):
@@ -195,4 +198,3 @@ def upload_budget_from_file(file_upload, year):
         workbook.close
         raise ex
     workbook.close
-    return True

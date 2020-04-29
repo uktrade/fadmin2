@@ -214,8 +214,8 @@ class CheckFinancialCode():
     display_warning = ''
 
     financial_code_obj = None
-    error_found_in_last_row = False
     error_found = False
+    warning_found = False
     # Dictionary of tuples
     # Each tuple contains : (obj, status, error_code, message)
     # The objects of codes already used are kept in the dictionary,
@@ -251,6 +251,14 @@ class CheckFinancialCode():
 
     def __init__(self, file_upload):
         self.file_upload = file_upload
+        self.error_found = False
+        self.warning_found = False
+        self.nac_dict = {}
+        self.cc_dict = {}
+        self.prog_dict = {}
+        self.analysis1_dict = {}
+        self.analysis2_dict = {}
+        self.project_dict = {}
 
     def validate_info_tuple(self, info_tuple):
         status = info_tuple[status_index]
@@ -258,11 +266,11 @@ class CheckFinancialCode():
         obj = info_tuple[obj_index]
 
         if status == CODE_ERROR:
-            self.error_found_in_last_row = True
             self.error_found = True
             self.display_error = self.display_error + msg
         else:
             if status == CODE_WARNING:
+                self.warning_found = True
                 self.display_warning = self.display_warning + msg
         return obj
 
@@ -348,7 +356,6 @@ class CheckFinancialCode():
                  ):
         self.display_error = ''
         self.display_warning = ''
-        self.error_found_in_last_row = False
         self.nac_obj = self.validate_nac(nac)
         self.programme_obj = self.validate_programme(programme)
         self.cc_obj = self.validate_cost_centre(cost_centre)
@@ -359,13 +366,13 @@ class CheckFinancialCode():
         if self.display_warning:
             set_file_upload_warning(
                 self.file_upload,
-                f"Row {row_number}: {self.display_warning}"
+                f"Row {row_number} warning: {self.display_warning}"
             )
 
-        if self.error_found_in_last_row:
+        if self.display_error:
                 set_file_upload_error(
                     self.file_upload,
-                    f"Row {row_number}: {self.display_error}",
+                    f"Row {row_number} error: {self.display_error}",
                     "Upload aborted: Data error."
                 )
         return self.error_found

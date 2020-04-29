@@ -12,16 +12,20 @@ class FileUpload(BaseModel):
     UNPROCESSED = 'unprocessed'
     PROCESSING = 'processing'
     PROCESSED = 'processed'
-    PARSING = 'Parsing'
+    PROCESSEDWITHERROR = 'processed_error'
+    PROCESSEDWITHWARNING = 'processed_warning'
+    PARSING = 'parsing'
     ERROR = 'error'
     ANTIVIRUS = 'antivirus'
 
     STATUS_CHOICES = [
         (UNPROCESSED, 'Unprocessed'),
         (ANTIVIRUS, 'Checking for viruses'),
+        (PROCESSEDWITHERROR, 'Processed. Not uploaded, error(s) found'),
+        (PROCESSEDWITHWARNING, 'Processed. Uploaded, warning(s) found'),
         (PROCESSING, 'Processing'),
         (PARSING, 'Processing after error'),
-        (PROCESSED, 'Processed'),
+        (PROCESSED, 'Processed and uploaded'),
         (ERROR, 'Error'),
     ]
 
@@ -34,7 +38,7 @@ class FileUpload(BaseModel):
     ]
 
     document_type = models.CharField(
-        max_length=7,
+        max_length=100,
         choices=DOCUMENT_TYPE_CHOICES,
         default=ACTUALS,
     )
@@ -42,7 +46,7 @@ class FileUpload(BaseModel):
         max_length=1000,
     )
     status = models.CharField(
-        max_length=11,
+        max_length=100,
         choices=STATUS_CHOICES,
         default=UNPROCESSED,
     )
