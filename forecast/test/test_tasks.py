@@ -88,5 +88,4 @@ class ProcessUploadTest(TestCase):
         assert mock_get_s3_file_body.called
         assert mock_run_anti_virus.called
         assert mock_upload_budget_from_file.called
-        print(self.file_upload.status)
         assert self.file_upload.status == FileUpload.PROCESSED

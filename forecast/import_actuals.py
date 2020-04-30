@@ -153,17 +153,27 @@ def check_trial_balance_format(worksheet, period, year):
     """Check that the file is really the trial
     balance and it is the correct period"""
 
-    if worksheet[TITLE_CELL].value != CORRECT_TRIAL_BALANCE_TITLE:
+    try:
+        if worksheet[TITLE_CELL].value != CORRECT_TRIAL_BALANCE_TITLE:
+            raise UploadFileFormatError(
+                "This file appears to be corrupt (title is incorrect)")
+    except TypeError as ex:
         # wrong file
         raise UploadFileFormatError(
-            "This file appears to be corrupt (title is incorrect)"
+            "This file appears to be corrupt and it cannot be read"
         )
 
-    report_date = worksheet[MONTH_CELL].value
-    if report_date.year != year:
-        # wrong date
+    try:
+        report_date = worksheet[MONTH_CELL].value
+        if report_date.year != year:
+            # wrong date
+            raise UploadFileFormatError(
+                "File is for wrong year"
+            )
+    except TypeError as ex:
+        # wrong file
         raise UploadFileFormatError(
-            "File is for wrong year"
+            "This file appears to be corrupt and it cannot be read"
         )
 
     if report_date.month != period:

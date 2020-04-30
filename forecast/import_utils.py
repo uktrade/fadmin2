@@ -129,20 +129,21 @@ def validate_excel_file(file_upload, worksheet_title_pattern):
         )
         raise ex
     worksheet_found = False
+    worksheet = None
     for ws in workbook:
         if ws.title[:len(worksheet_title_pattern)] == worksheet_title_pattern:
             worksheet_found = True
             worksheet = ws
             break
     worksheet_found = True
-    if not worksheet_found:
-        # wrong file
-        raise UploadFileFormatError(
-            f"File appears to be incorrect:  "
-            f"it does not contain a worksheet "
-            f"with name starting by {worksheet_title_pattern}"
-        )
-    return workbook, worksheet
+    if  worksheet_found:
+        return workbook, worksheet
+    # wrong file
+    raise UploadFileFormatError(
+        f"File appears to be incorrect:  "
+        f"it does not contain a worksheet "
+        f"with name starting by {worksheet_title_pattern}"
+    )
 
 
 def get_id(value, length=0):
