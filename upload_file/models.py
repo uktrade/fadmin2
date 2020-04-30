@@ -73,11 +73,13 @@ class FileUpload(BaseModel):
     error_count = models.IntegerField(
         null=True,
         blank=True,
+        default=0,
     )
 
     warning_count = models.IntegerField(
         null=True,
         blank=True,
+        default=0,
     )
 
     uploading_user = models.ForeignKey(
