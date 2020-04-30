@@ -11,6 +11,7 @@ from forecast.import_budgets import upload_budget_from_file
 from upload_file.models import FileUpload
 from upload_file.utils import set_file_upload_finished
 
+
 @shared_task
 def process_uploaded_file(*args):
     latest_unprocessed = (

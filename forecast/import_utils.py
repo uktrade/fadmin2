@@ -131,12 +131,12 @@ def validate_excel_file(file_upload, worksheet_title_pattern):
     worksheet_found = False
     worksheet = None
     for ws in workbook:
-        if ws.title[:len(worksheet_title_pattern)] == worksheet_title_pattern:
+        if ws.title[: len(worksheet_title_pattern)] == worksheet_title_pattern:
             worksheet_found = True
             worksheet = ws
             break
     worksheet_found = True
-    if  worksheet_found:
+    if worksheet_found:
         return workbook, worksheet
     # wrong file
     raise UploadFileFormatError(
