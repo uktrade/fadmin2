@@ -135,7 +135,7 @@ def validate_excel_file(file_upload, worksheet_title_pattern):
             worksheet_found = True
             worksheet = ws
             break
-    worksheet_found = True
+
     if worksheet_found:
         return workbook, worksheet
     # wrong file
@@ -218,7 +218,6 @@ message_index = 3
 class CheckFinancialCode:
     display_error = ""
     display_warning = ""
-
     financial_code_obj = None
     error_found = False
     warning_found = False
@@ -242,13 +241,23 @@ class CheckFinancialCode:
             error_code = ERROR_DOES_NOT_EXIST
         else:
             if not obj.active:
-                status = CODE_ERROR
-                error_code = ERROR_IS_NOT_ACTIVE
-                msg = (
-                    f'{get_pk_verbose_name(model)} "{pk}" '
-                    f"is not in the approved list. \n"
-                )
-                obj = None
+                if self.upload_type == FileUpload.BUDGET:
+                    status = CODE_ERROR
+                    error_code = ERROR_IS_NOT_ACTIVE
+                    msg = (
+                        f'{get_pk_verbose_name(model)} "{pk}" '
+                        f"is not in the approved list. \n"
+                    )
+                    obj = None
+                else:
+                    obj.active
+                    obj.save
+                    status = CODE_WARNING
+                    error_code = ERROR_IS_NOT_ACTIVE
+                    msg = (
+                        f'{get_pk_verbose_name(model)} "{pk}" '
+                        f"added to the approved list. \n"
+                    )
             else:
                 status = CODE_OK
                 error_code = NO_ERROR
@@ -258,6 +267,7 @@ class CheckFinancialCode:
 
     def __init__(self, file_upload):
         self.file_upload = file_upload
+        self.upload_type = self.file_upload.document_type
         self.error_found = False
         self.warning_found = False
         self.nac_dict = {}
@@ -295,10 +305,10 @@ class CheckFinancialCode:
             if info_tuple[status_index] == CODE_OK:
                 obj = info_tuple[obj_index]
                 #  test if the nac is a primary nac
-                if not obj.used_for_budget:
+                if self.upload_type == FileUpload.BUDGET and not obj.used_for_budget:
                     status = CODE_WARNING
                     error_code = WARNING_IS_NOT_BUDGET
-                    msg = f'Natural Account "{nac}" is not a primary NAC. \n'
+                    msg = f'Natural Account "{nac}" is not a primary NAC.\n'
                     info_tuple = (obj, status, error_code, msg)
 
             self.nac_dict[nac] = info_tuple

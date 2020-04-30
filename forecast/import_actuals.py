@@ -30,9 +30,8 @@ from forecast.models import (
 from upload_file.models import FileUpload
 from upload_file.utils import set_file_upload_fatal_error
 
-CHART_OF_ACCOUNT_COL = "D"
-ACTUAL_FIGURE_COL = "F"
-NAC_COL = "A"
+CHART_OF_ACCOUNT_COL = 3
+ACTUAL_FIGURE_COL = 5
 
 TRIAL_BALANCE_FIRST_DATA_ROW = 13
 
@@ -55,8 +54,7 @@ CHART_ACCOUNT_SEPARATOR = "-"
 
 VALID_ECONOMIC_CODE_LIST = ['RESOURCE', 'CAPITAL']
 
-# TODO Read the value from the database. It should be
-# possible for the business to change it.
+# Used when the programme code is 0
 GENERIC_PROGRAMME_CODE = 310940
 
 
@@ -184,7 +182,7 @@ def check_trial_balance_format(worksheet, period, year):
 
     return True
 
-
+import time
 def upload_trial_balance_report(file_upload, month_number, year):
     try:
         workbook, worksheet = \
@@ -222,16 +220,24 @@ def upload_trial_balance_report(file_upload, month_number, year):
         financial_year=year,
         financial_period=period_obj,
     ).delete()
-
+    initial_time = time.perf_counter()
     rows_to_process = worksheet.max_row + 1
-    for row in range(TRIAL_BALANCE_FIRST_DATA_ROW, rows_to_process):
+    row = 0
+    for actual_row in worksheet.rows:
+        row += 1
+        if row < TRIAL_BALANCE_FIRST_DATA_ROW:
+            # There is no way to start reading rows from a specific place.
+            # Ignore the header rows
+            continue
+
         # don't delete this comment: useful for debugging, but it gives a
         # 'too complex error'
-        # if not row % 100:
-        #     print(row)
-        chart_of_account = worksheet["{}{}".format(CHART_OF_ACCOUNT_COL, row)].value
+        if not row % 100:
+            diff = time.perf_counter() - initial_time
+            print(f"Row {row}  Elapsed time {diff}")
+        chart_of_account = actual_row[CHART_OF_ACCOUNT_COL].value
         if chart_of_account:
-            actual = worksheet["{}{}".format(ACTUAL_FIGURE_COL, row)].value
+            actual = actual_row[ACTUAL_FIGURE_COL].value
             # No need to save 0 values, because the data has been cleared
             # before starting the upload
             if actual:
@@ -259,4 +265,6 @@ def upload_trial_balance_report(file_upload, month_number, year):
     # TODO set all previous month to be Actual Loaded
     period_obj.save()
     workbook.close
+    diff  = time.perf_counter() - initial_time
+    print(f"Total Elapsed time {diff}")
     return True
