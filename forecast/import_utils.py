@@ -203,6 +203,7 @@ def get_primary_nac_obj(code):
 CODE_OK = 1
 CODE_ERROR = 2
 CODE_WARNING = 3
+IGNORE= 4
 
 NO_ERROR = 0
 ERROR_DOES_NOT_EXIST = 20
@@ -323,18 +324,17 @@ class CheckFinancialCode:
             if info_tuple[status_index] != CODE_ERROR:
                 obj = info_tuple[obj_index]
                 #  Check that the NAC is resource or capital
+                # If not, we skip the row
                 if not obj.economic_budget_code or \
                         obj.economic_budget_code.upper() not in VALID_ECONOMIC_CODE_LIST:
-                    return True, ""
-                if self.upload_type == FileUpload.BUDGET and not obj.used_for_budget:
-                    status = CODE_WARNING
-                    error_code = WARNING_IS_NOT_BUDGET
-                    msg = f'Natural Account "{nac}" is not a primary NAC.\n'
-                    info_tuple = (obj, status, error_code, msg)
+                    status = IGNORE
+                    error_code = NO_ERROR
+                    msg = ''
+                    info_tuple = (None, status, error_code, msg)
 
             self.nac_dict[nac] = info_tuple
-            if not obj:
-                self.ignore_row = True
+        if info_tuple[status_index] == IGNORE:
+            self.ignore_row = True
         return self.validate_info_tuple(info_tuple)
 
     def validate_cost_centre(self, cost_centre):

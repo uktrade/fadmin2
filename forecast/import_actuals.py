@@ -95,7 +95,7 @@ def save_trial_balance_row(chart_of_account,
     check_financial_code.validate(
         cost_centre, nac, programme_code, analysis1, analysis2, project_code, row
     )
-    if check_financial_code.ignore:
+    if check_financial_code.ignore_row:
         return
 
     if not check_financial_code.error_found:
@@ -218,7 +218,8 @@ def upload_trial_balance_report(file_upload, month_number, year):
                                            actual,
                                            period_obj,
                                            year_obj,
-                                           check_financial_code)
+                                           check_financial_code,
+                                            row)
         else:
             break
     workbook.close
