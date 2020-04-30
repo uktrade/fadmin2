@@ -9,7 +9,7 @@ from forecast.import_actuals import upload_trial_balance_report
 from forecast.import_budgets import upload_budget_from_file
 
 from upload_file.models import FileUpload
-
+from upload_file.utils import set_file_upload_finished
 
 @shared_task
 def process_uploaded_file(*args):
@@ -42,3 +42,5 @@ def process_uploaded_file(*args):
                 upload_trial_balance_report(latest_unprocessed, *args)
             if latest_unprocessed.document_type == FileUpload.BUDGET:
                 upload_budget_from_file(latest_unprocessed, *args)
+
+        set_file_upload_finished(latest_unprocessed)

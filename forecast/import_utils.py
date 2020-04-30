@@ -118,7 +118,7 @@ def get_analysys2_obj(code):
     return obj, message
 
 
-def validate_excel_file(file_upload, worksheet_title):
+def validate_excel_file(file_upload, worksheet_title_pattern):
     try:
         workbook = load_workbook(file_upload.document_file, read_only=True,)
     except BadZipFile as ex:
@@ -128,13 +128,19 @@ def validate_excel_file(file_upload, worksheet_title):
             "BadZipFile (user file is not .xlsx)",
         )
         raise ex
-
-    worksheet = workbook.worksheets[0]
-    if worksheet.title != worksheet_title:
+    worksheet_found = False
+    for ws in workbook:
+        if ws.title[:len(worksheet_title_pattern)] == worksheet_title_pattern:
+            worksheet_found = True
+            worksheet = ws
+            break
+    worksheet_found = True
+    if not worksheet_found:
         # wrong file
         raise UploadFileFormatError(
-            "File appears to be incorrect: worksheet name is '{}', "
-            "expected name is '{}".format(worksheet.title, worksheet_title)
+            f"File appears to be incorrect:  "
+            f"it does not contain a worksheet "
+            f"with name starting by {worksheet_title_pattern}"
         )
     return workbook, worksheet
 

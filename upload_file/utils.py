@@ -37,3 +37,11 @@ def set_file_upload_warning(file_upload, user_warning):
         file_upload.user_warning_message = \
             f"{file_upload.user_warning_message}{user_warning}"
     file_upload.save()
+
+
+def set_file_upload_finished(file_upload):
+    if file_upload.status == FileUpload.PROCESSING or \
+            file_upload.status == FileUpload.PARSING:
+        file_upload.status = FileUpload.PROCESSED
+    file_upload.save()
+
