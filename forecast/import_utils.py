@@ -214,6 +214,7 @@ status_index = 1
 error_index = 2
 message_index = 3
 
+VALID_ECONOMIC_CODE_LIST = ['RESOURCE', 'CAPITAL']
 
 class CheckFinancialCode:
     display_error = ""
@@ -221,6 +222,7 @@ class CheckFinancialCode:
     financial_code_obj = None
     error_found = False
     warning_found = False
+    ignore_row = False
     # Dictionary of tuples
     # Each tuple contains : (obj, status, error_code, message)
     # The objects of codes already used are kept in the dictionary,
@@ -298,13 +300,32 @@ class CheckFinancialCode:
             code_dict[code] = info_tuple
         return self.validate_info_tuple(info_tuple)
 
-    def validate_nac(self, nac):
+    def validate_nac_for_budget(self, nac):
         info_tuple = self.nac_dict.get(nac, None)
         if not info_tuple:
             info_tuple = self.get_info_tuple(NaturalCode, nac)
             if info_tuple[status_index] == CODE_OK:
                 obj = info_tuple[obj_index]
                 #  test if the nac is a primary nac
+                if not obj.used_for_budget:
+                    status = CODE_WARNING
+                    error_code = WARNING_IS_NOT_BUDGET
+                    msg = f'Natural Account "{nac}" is not a primary NAC.\n'
+                    info_tuple = (obj, status, error_code, msg)
+
+            self.nac_dict[nac] = info_tuple
+        return self.validate_info_tuple(info_tuple)
+
+    def validate_nac_for_actual(self, nac):
+        info_tuple = self.nac_dict.get(nac, None)
+        if not info_tuple:
+            info_tuple = self.get_info_tuple(NaturalCode, nac)
+            if info_tuple[status_index] != CODE_ERROR:
+                obj = info_tuple[obj_index]
+                #  Check that the NAC is resource or capital
+                if not obj.economic_budget_code or \
+                        obj.economic_budget_code.upper() not in VALID_ECONOMIC_CODE_LIST:
+                    return True, ""
                 if self.upload_type == FileUpload.BUDGET and not obj.used_for_budget:
                     status = CODE_WARNING
                     error_code = WARNING_IS_NOT_BUDGET
@@ -312,6 +333,8 @@ class CheckFinancialCode:
                     info_tuple = (obj, status, error_code, msg)
 
             self.nac_dict[nac] = info_tuple
+            if not obj:
+                self.ignore_row = True
         return self.validate_info_tuple(info_tuple)
 
     def validate_cost_centre(self, cost_centre):
@@ -331,7 +354,6 @@ class CheckFinancialCode:
     def validate_analysis2(self, analysis2):
         if int(analysis2):
             analysis2_code = get_id(analysis2, ANALYSIS1_CODE_LENGTH)
-
             return self.get_obj_code(self.analysis2_dict, analysis2_code, Analysis2)
         else:
             return None
@@ -348,7 +370,13 @@ class CheckFinancialCode:
     ):
         self.display_error = ""
         self.display_warning = ""
-        self.nac_obj = self.validate_nac(nac)
+        self.ignore_row = False
+        if self.upload_type == FileUpload.BUDGET:
+            self.nac_obj = self.validate_nac_for_budget(nac)
+        else:
+            self.nac_obj = self.validate_nac_for_actual(nac)
+            if self.ignore_row:
+                return
         self.programme_obj = self.validate_programme(programme)
         self.cc_obj = self.validate_cost_centre(cost_centre)
         self.analysis1_obj = self.validate_analysis1(analysis1)

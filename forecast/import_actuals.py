@@ -1,34 +1,25 @@
 from django.db import connection
 
-from chartofaccountDIT.models import (
-    NaturalCode,
-    ProgrammeCode,
-)
-
 from core.import_csv import get_fk, get_fk_from_field
 from core.models import FinancialYear
 
-from costcentre.models import CostCentre
-
 from forecast.import_utils import (
-    UploadFileDataError,
+    CheckFinancialCode,
     UploadFileFormatError,
-    get_analysys1_obj,
-    get_analysys2_obj,
-    get_error_from_list,
-    get_project_obj,
     sql_for_data_copy,
     validate_excel_file,
 )
 from forecast.models import (
     ActualUploadMonthlyFigure,
-    FinancialCode,
     FinancialPeriod,
     ForecastMonthlyFigure,
 )
 
 from upload_file.models import FileUpload
-from upload_file.utils import set_file_upload_fatal_error
+from upload_file.utils import (
+    set_file_upload_fatal_error,
+    set_file_upload_feedback,
+)
 
 CHART_OF_ACCOUNT_COL = 3
 ACTUAL_FIGURE_COL = 5
@@ -51,8 +42,6 @@ ANALYSIS1_INDEX = 5
 ANALYSIS2_INDEX = 6
 PROJECT_INDEX = 7
 CHART_ACCOUNT_SEPARATOR = "-"
-
-VALID_ECONOMIC_CODE_LIST = ['RESOURCE', 'CAPITAL']
 
 # Used when the programme code is 0
 GENERIC_PROGRAMME_CODE = 310940
@@ -80,13 +69,18 @@ def copy_actuals_to_monthly_figure(period_obj, year):
     ).delete()
 
 
-def save_trial_balance_row(chart_of_account, value, period_obj, year_obj):
+def save_trial_balance_row(chart_of_account,
+                           value,
+                           period_obj,
+                           year_obj,
+                           check_financial_code,
+                           row):
     """Parse the long strings containing the
     chart of account information. Return errors
     if the elements of the chart of account are missing from database."""
     chart_account_list = chart_of_account.split(CHART_ACCOUNT_SEPARATOR)
     programme_code = chart_account_list[PROGRAMME_INDEX]
-    # TODO put GENERIC_PROGRAMME_CODE in database
+
     # Handle lines without programme code
     if not int(programme_code):
         if value:
@@ -98,53 +92,27 @@ def save_trial_balance_row(chart_of_account, value, period_obj, year_obj):
     analysis1 = chart_account_list[ANALYSIS1_INDEX]
     analysis2 = chart_account_list[ANALYSIS2_INDEX]
     project_code = chart_account_list[PROJECT_INDEX]
+    check_financial_code.validate(
+        cost_centre, nac, programme_code, analysis1, analysis2, project_code, row
+    )
+    if check_financial_code.ignore:
+        return
 
-    error_list = []
-    nac_obj, message = get_fk(NaturalCode, nac)
-    error_list.append(message)
-    if nac_obj:
-        #  Check that the NAC is resource or capital
-        if not nac_obj.economic_budget_code or \
-                nac_obj.economic_budget_code.upper() not in VALID_ECONOMIC_CODE_LIST:
-            return True, ""
-    cc_obj, message = get_fk(CostCentre, cost_centre)
-    error_list.append(message)
-    programme_obj, message = get_fk(ProgrammeCode, programme_code)
-    error_list.append(message)
-    analysis1_obj, message = get_analysys1_obj(analysis1)
-    error_list.append(message)
-    analysis2_obj, message = get_analysys2_obj(analysis2)
-    error_list.append(message)
-    project_obj, message = get_project_obj(project_code)
-    error_list.append(message)
-    error_message = get_error_from_list(error_list)
-    if error_message:
-        raise UploadFileDataError(
-            error_message
+    if not check_financial_code.error_found:
+        financialcode_obj = check_financial_code.get_financial_code()
+        monthlyfigure_obj, created = ActualUploadMonthlyFigure.objects.get_or_create(
+            financial_year=year_obj,
+            financial_code=financialcode_obj,
+            financial_period=period_obj,
         )
-    financialcode_obj, created = FinancialCode.objects.get_or_create(
-        programme=programme_obj,
-        cost_centre=cc_obj,
-        natural_account_code=nac_obj,
-        analysis1_code=analysis1_obj,
-        analysis2_code=analysis2_obj,
-        project_code=project_obj,
-    )
-    financialcode_obj.save()
-    monthlyfigure_obj, created = ActualUploadMonthlyFigure.objects.get_or_create(
-        financial_year=year_obj,
-        financial_code=financialcode_obj,
-        financial_period=period_obj,
-    )
-    if created:
-        # to avoid problems with precision,
-        # we store the figures in pence
-        monthlyfigure_obj.amount = value * 100
-    else:
-        monthlyfigure_obj.amount += value * 100
+        if created:
+            # to avoid problems with precision,
+            # we store the figures in pence
+            monthlyfigure_obj.amount = value * 100
+        else:
+            monthlyfigure_obj.amount += value * 100
 
-    monthlyfigure_obj.save()
-    return True
+        monthlyfigure_obj.save()
 
 
 def check_trial_balance_format(worksheet, period, year):
@@ -223,6 +191,8 @@ def upload_trial_balance_report(file_upload, month_number, year):
     initial_time = time.perf_counter()
     rows_to_process = worksheet.max_row + 1
     row = 0
+    check_financial_code = CheckFinancialCode(file_upload)
+
     for actual_row in worksheet.rows:
         row += 1
         if row < TRIAL_BALANCE_FIRST_DATA_ROW:
@@ -230,8 +200,11 @@ def upload_trial_balance_report(file_upload, month_number, year):
             # Ignore the header rows
             continue
 
-        # don't delete this comment: useful for debugging, but it gives a
-        # 'too complex error'
+        if not row % 100:
+            # Display the number of rows processed every 100 rows
+            set_file_upload_feedback(
+                file_upload, f"Processing row {row} of {rows_to_process}."
+            )
         if not row % 100:
             diff = time.perf_counter() - initial_time
             print(f"Row {row}  Elapsed time {diff}")
@@ -241,30 +214,32 @@ def upload_trial_balance_report(file_upload, month_number, year):
             # No need to save 0 values, because the data has been cleared
             # before starting the upload
             if actual:
-                try:
-                    save_trial_balance_row(chart_of_account,
+                save_trial_balance_row(chart_of_account,
                                            actual,
                                            period_obj,
-                                           year_obj)
-                except UploadFileDataError as ex:
-                    workbook.close
-                    msg = 'Error at row {}: {}'. \
-                        format(row, str(ex))
-                    set_file_upload_fatal_error(
-                        file_upload,
-                        msg,
-                        msg,
-                    )
-                    raise ex
+                                           year_obj,
+                                           check_financial_code)
         else:
             break
-
-    # Now copy the newly uploaded actuals to the monthly figure table
-    copy_actuals_to_monthly_figure(period_obj, year)
-    period_obj.actual_loaded = True
-    # TODO set all previous month to be Actual Loaded
-    period_obj.save()
     workbook.close
+
+    final_status = FileUpload.PROCESSED
+    if check_financial_code.error_found:
+        final_status = FileUpload.PROCESSEDWITHERROR
+    else:
+        # Now copy the newly uploaded actuals to the monthly figure table
+        copy_actuals_to_monthly_figure(period_obj, year)
+        if check_financial_code.warning_found:
+            final_status = FileUpload.PROCESSEDWITHWARNING
+
+        FinancialPeriod.objects.\
+            filter(financial_period_code__lte=period_obj.financial_period_code).\
+            update(actual_loaded = True)
+
+    set_file_upload_feedback(
+        file_upload, f"Processed {rows_to_process} rows.", final_status
+    )
+
     diff  = time.perf_counter() - initial_time
     print(f"Total Elapsed time {diff}")
     return True
