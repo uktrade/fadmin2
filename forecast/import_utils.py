@@ -203,7 +203,7 @@ def get_primary_nac_obj(code):
 CODE_OK = 1
 CODE_ERROR = 2
 CODE_WARNING = 3
-IGNORE= 4
+IGNORE = 4
 
 NO_ERROR = 0
 ERROR_DOES_NOT_EXIST = 20
@@ -215,7 +215,8 @@ status_index = 1
 error_index = 2
 message_index = 3
 
-VALID_ECONOMIC_CODE_LIST = ['RESOURCE', 'CAPITAL']
+VALID_ECONOMIC_CODE_LIST = ["RESOURCE", "CAPITAL"]
+
 
 class CheckFinancialCode:
     display_error = ""
@@ -325,11 +326,13 @@ class CheckFinancialCode:
                 obj = info_tuple[obj_index]
                 #  Check that the NAC is resource or capital
                 # If not, we skip the row
-                if not obj.economic_budget_code or \
-                        obj.economic_budget_code.upper() not in VALID_ECONOMIC_CODE_LIST:
+                if (
+                    not obj.economic_budget_code
+                    or obj.economic_budget_code.upper() not in VALID_ECONOMIC_CODE_LIST
+                ):
                     status = IGNORE
                     error_code = NO_ERROR
-                    msg = ''
+                    msg = ""
                     info_tuple = (None, status, error_code, msg)
 
             self.nac_dict[nac] = info_tuple
