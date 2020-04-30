@@ -153,3 +153,8 @@ class GiftAndHospitality(BaseModel):
 
     def __str__(self):
         return str(self.date_offered)
+
+
+class GiftHospitalityPermissions(models.Model):
+    class Meta:
+        permissions = (("can_view_gifthospitality", "Can view all Gift Hospitality entries"),)

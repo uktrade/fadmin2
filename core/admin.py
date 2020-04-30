@@ -369,6 +369,7 @@ class UserAdmin(UserAdmin):
             if group.name in [
                 "Finance Business Partner/BSCE",
                 "Finance Administrator",
+                "Gift and Hospitality Admin",
             ]:
                 obj.is_staff = True
                 break
@@ -398,6 +399,6 @@ class UserAdmin(UserAdmin):
 
 
 admin.site.unregister(User)
-admin.site.unregister(Group)
+# admin.site.unregister(Group)
 
 admin.site.register(User, UserAdmin)
