@@ -136,11 +136,14 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
             BudgetMonthlyFigure.objects.all().count(),
             0,
         )
-        with self.assertRaises(UploadFileDataError):
-            upload_budget_from_file(
+        upload_budget_from_file(
                 bad_file_upload,
                 self.test_year,
-            )
+        )
+        self.assert_(
+            bad_file_upload.status,
+            FileUpload.PROCESSEDWITHERROR
+        )
         self.assertEqual(
             BudgetMonthlyFigure.objects.all().count(),
             0,
