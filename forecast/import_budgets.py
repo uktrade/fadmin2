@@ -3,7 +3,7 @@ from django.db import connection
 from core.import_csv import xslx_header_to_dict
 from core.models import FinancialYear
 
-from forecast.import_utils import (
+from forecast.utils.import_helpers import (
     CheckFinancialCode,
     UploadFileDataError,
     UploadFileFormatError,

@@ -21,7 +21,7 @@ from costcentre.test.factories import (
 )
 
 from forecast.import_budgets import upload_budget_from_file
-from forecast.import_utils import (
+from forecast.utils.import_helpers import (
     UploadFileFormatError,
 )
 from forecast.models import (

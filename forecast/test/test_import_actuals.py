@@ -43,7 +43,7 @@ from forecast.import_actuals import (
     save_trial_balance_row,
     upload_trial_balance_report,
 )
-from forecast.import_utils import (
+from forecast.utils.import_helpers import (
     CheckFinancialCode,
     VALID_ECONOMIC_CODE_LIST,
 )
