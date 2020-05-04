@@ -140,7 +140,7 @@ def check_trial_balance_format(worksheet, period, year):
     return True
 
 
-def upload_trial_balance_report(file_upload, month_number, year):
+def validate_trial_balance_report(file_upload, month_number, year):
     try:
         workbook, worksheet = validate_excel_file(
             file_upload, CORRECT_TRIAL_BALANCE_WORKSHEET_NAME
@@ -159,9 +159,14 @@ def upload_trial_balance_report(file_upload, month_number, year):
         )
         workbook.close
         raise ex
+    return workbook, worksheet
 
-    year_obj, msg = get_fk(FinancialYear, year)
-    period_obj, msg = get_fk_from_field(
+
+def upload_trial_balance_report(file_upload, month_number, year):
+    workbook, worksheet = validate_trial_balance_report(file_upload, month_number, year)
+
+    year_obj, _ = get_fk(FinancialYear, year)
+    period_obj, _ = get_fk_from_field(
         FinancialPeriod, "period_calendar_code", month_number
     )
 
