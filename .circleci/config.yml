@@ -60,7 +60,7 @@ jobs:
           name: Compile CSS
           command: |
             . venv/bin/activate
-            python manage.py compilescss --noinput
+            python manage.py compilescss
       - run:
           name: Run tests
           command: |
