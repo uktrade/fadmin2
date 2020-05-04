@@ -43,12 +43,10 @@ from forecast.import_actuals import (
     save_trial_balance_row,
     upload_trial_balance_report,
 )
-from forecast.import_utils import  (
-    VALID_ECONOMIC_CODE_LIST,
+from forecast.import_utils import (
     CheckFinancialCode,
-    UploadFileDataError,
+    VALID_ECONOMIC_CODE_LIST,
 )
-
 from forecast.models import (
     ActualUploadMonthlyFigure,
     FinancialCode,
@@ -290,10 +288,10 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
         )
 
         save_trial_balance_row(
-                '3000-30000-123456-12345678-123456-12345-12345-1234-1234-1234',
-                10,
-                self.period_obj,
-                self.year_obj,
+            '3000-30000-123456-12345678-123456-12345-12345-1234-1234-1234',
+            10,
+            self.period_obj,
+            self.year_obj,
             self.check_financial_code,
             2
         )
@@ -408,9 +406,9 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
         bad_file_upload.save()
 
         upload_trial_balance_report(
-                bad_file_upload,
-                self.test_period,
-                self.test_year,
+            bad_file_upload,
+            self.test_period,
+            self.test_year,
         )
 
         self.assertFalse(
