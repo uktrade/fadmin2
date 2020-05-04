@@ -4,8 +4,6 @@
 {% load forecast_permissions %}
 {% load upload_permissions %}
 {% load download_permissions %}
-{% load gifthospitality_permissions %}
-
 
 <!DOCTYPE html>
 <html lang="en" class="govuk-template ">
@@ -111,8 +109,7 @@
                     </a>
                 </li>
 
-                {% is_gifthospitality_user user as is_gifthospitality_user %}
-                {%  if is_gifthospitality_user == True %}
+                {%  if request.user.is_superuser %}
                     <li class="internal-header__navigation__item">
                         <a class="internal-header__navigation__item__link hospitality {% if request.path|startswith:'/gifthospitality/' %}internal-header__navigation__item__link--active{% endif %}" href="{% url 'gifthospitality:quick_links' %}">
                             Gifts &amp; Hospitality Register

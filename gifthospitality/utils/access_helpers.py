@@ -11,12 +11,8 @@ from gifthospitality.models import (
 
 
 def can_view_gifthospitality(user):
-    """Checks view permission, if the user can edit ANY
-    cost centre, they are allowed to view ALL forecasts"""
-    if can_view_gifthospitality(
-        user
-    ):
-        return True
+    """Checks view permission, if the user can view gifthospitality
+    they are allowed to view the section"""
 
     return user.has_perm(
         "gifthospitality.can_view_gifthospitality"
@@ -35,3 +31,4 @@ def can_all_gifthospitality_be_viewed(user):
 
     if user.has_perm("gifthospitality.can_view_all_gifthospitality"):
         return True
+    return False
