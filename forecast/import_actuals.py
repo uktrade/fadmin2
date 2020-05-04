@@ -70,15 +70,17 @@ def save_trial_balance_row(
     """Parse the long strings containing the
     chart of account information. Return errors
     if the elements of the chart of account are missing from database."""
+    # Don't save zero values
+    if not value:
+        return True, ""
+
     chart_account_list = chart_of_account.split(CHART_ACCOUNT_SEPARATOR)
     programme_code = chart_account_list[PROGRAMME_INDEX]
 
     # Handle lines without programme code
     if not int(programme_code):
-        if value:
-            programme_code = GENERIC_PROGRAMME_CODE
-        else:
-            return True, ""
+        programme_code = GENERIC_PROGRAMME_CODE
+
     cost_centre = chart_account_list[CC_INDEX]
     nac = chart_account_list[NAC_INDEX]
     analysis1 = chart_account_list[ANALYSIS1_INDEX]
