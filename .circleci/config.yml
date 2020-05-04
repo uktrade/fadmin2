@@ -57,6 +57,11 @@ jobs:
             . venv/bin/activate
             python manage.py collectstatic --noinput
       - run:
+          name: Compile CSS
+          command: |
+            . venv/bin/activate
+            python manage.py compilescss --noinput
+      - run:
           name: Run tests
           command: |
             . venv/bin/activate
