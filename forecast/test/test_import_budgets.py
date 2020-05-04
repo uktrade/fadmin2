@@ -87,6 +87,7 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
                 os.path.dirname(__file__), "test_assets/bad_file_type.csv",
             ),
             uploading_user=self.test_user,
+            document_type=FileUpload.BUDGET,
         )
         bad_file_type_upload.save()
         with self.assertRaises(BadZipFile):
@@ -99,6 +100,7 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
                 os.path.dirname(__file__), "test_assets/budget_upload_bad_header.xlsx",
             ),
             uploading_user=self.test_user,
+            document_type=FileUpload.BUDGET,
         )
         bad_header_file_upload.save()
 
@@ -112,6 +114,7 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
                 os.path.dirname(__file__), "test_assets/budget_upload_bad_data.xlsx",
             ),
             uploading_user=self.test_user,
+            document_type=FileUpload.BUDGET,
         )
         bad_file_upload.save()
 
@@ -131,6 +134,7 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
                 os.path.dirname(__file__), "test_assets/budget_upload_test.xlsx",
             ),
             uploading_user=self.test_user,
+            document_type=FileUpload.BUDGET,
         )
         good_file_upload.save()
 
@@ -191,6 +195,7 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
                 os.path.dirname(__file__), "test_assets/budget_upload_test.xlsx",
             ),
             uploading_user=self.test_user,
+            document_type=FileUpload.BUDGET,
         )
         good_file_upload.save()
 

@@ -37,14 +37,18 @@ from forecast.import_actuals import (
     GENERIC_PROGRAMME_CODE,
     MONTH_CELL,
     TITLE_CELL,
-    UploadFileDataError,
     UploadFileFormatError,
-    VALID_ECONOMIC_CODE_LIST,
     check_trial_balance_format,
     copy_actuals_to_monthly_figure,
     save_trial_balance_row,
     upload_trial_balance_report,
 )
+from forecast.import_utils import  (
+    VALID_ECONOMIC_CODE_LIST,
+    CheckFinancialCode,
+    UploadFileDataError,
+)
+
 from forecast.models import (
     ActualUploadMonthlyFigure,
     FinancialCode,
@@ -130,8 +134,16 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             period_calendar_code=self.test_period
         )
         self.year_obj = FinancialYear.objects.get(financial_year=2019)
+        dummy_upload = FileUpload(
+            document_file='dummy.csv',
+            uploading_user=self.test_user,
+            document_type=FileUpload.ACTUALS,
+        )
+        dummy_upload.save()
+        self.check_financial_code = CheckFinancialCode(dummy_upload)
 
     def test_save_row(self):
+
         self.assertEqual(
             FinancialCode.objects.filter(
                 cost_centre=self.cost_centre_code
@@ -156,6 +168,8 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             self.test_amount,
             self.period_obj,
             self.year_obj,
+            self.check_financial_code,
+            2
         )
 
         self.assertEqual(
@@ -172,12 +186,13 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             q.amount,
             self.test_amount * 100,
         )
-
         save_trial_balance_row(
             chart_of_account_line_correct,
             self.test_amount * 2,
             self.period_obj,
             self.year_obj,
+            self.check_financial_code,
+            1
         )
         # check that lines with the same chart of account are added together
         self.assertEqual(
@@ -211,6 +226,8 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             0,
             self.period_obj,
             self.year_obj,
+            self.check_financial_code,
+            2
         )
         # Lines with 0 programme and 0 amount are not saved
         self.assertEqual(
@@ -224,6 +241,8 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             self.test_amount,
             self.period_obj,
             self.year_obj,
+            self.check_financial_code,
+            3
         )
 
         q = FinancialCode.objects.get(
@@ -255,6 +274,8 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             10,
             self.period_obj,
             self.year_obj,
+            self.check_financial_code,
+            1
         )
         self.assertEqual(
             FinancialCode.objects.filter(
@@ -263,13 +284,23 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             0,
         )
 
-        with self.assertRaises(UploadFileDataError):
-            save_trial_balance_row(
+        self.assertEqual(
+            self.check_financial_code.error_found,
+            False,
+        )
+
+        save_trial_balance_row(
                 '3000-30000-123456-12345678-123456-12345-12345-1234-1234-1234',
                 10,
                 self.period_obj,
                 self.year_obj,
-            )
+            self.check_financial_code,
+            2
+        )
+        self.assertEqual(
+            self.check_financial_code.error_found,
+            True,
+        )
 
     def test_upload_trial_balance_report(self):
         # Check that BadZipFile is raised on
@@ -280,6 +311,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
                 'test_assets/bad_file_type.csv',
             ),
             uploading_user=self.test_user,
+            document_type=FileUpload.ACTUALS,
         )
         bad_file_type_upload.save()
         with self.assertRaises(BadZipFile):
@@ -295,6 +327,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
                 'test_assets/bad_title_upload_test.xlsx',
             ),
             uploading_user=self.test_user,
+            document_type=FileUpload.ACTUALS,
         )
         bad_title_file_upload.save()
 
@@ -326,6 +359,8 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             self.test_amount,
             self.period_obj,
             self.year_obj,
+            self.check_financial_code,
+            2
         )
 
         self.assertEqual(
@@ -368,15 +403,15 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
                 'test_assets/upload_bad_data.xlsx',
             ),
             uploading_user=self.test_user,
+            document_type=FileUpload.ACTUALS,
         )
         bad_file_upload.save()
 
-        with self.assertRaises(UploadFileDataError):
-            upload_trial_balance_report(
+        upload_trial_balance_report(
                 bad_file_upload,
                 self.test_period,
                 self.test_year,
-            )
+        )
 
         self.assertFalse(
             FinancialPeriod.objects.get(
@@ -397,6 +432,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
                 'test_assets/upload_test.xlsx',
             ),
             uploading_user=self.test_user,
+            document_type=FileUpload.ACTUALS,
         )
         good_file_upload.save()
 
