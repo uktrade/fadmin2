@@ -3,16 +3,16 @@ from django.db import connection
 from core.import_csv import get_fk, get_fk_from_field
 from core.models import FinancialYear
 
+from forecast.models import (
+    ActualUploadMonthlyFigure,
+    FinancialPeriod,
+    ForecastMonthlyFigure,
+)
 from forecast.utils.import_helpers import (
     CheckFinancialCode,
     UploadFileFormatError,
     sql_for_data_copy,
     validate_excel_file,
-)
-from forecast.models import (
-    ActualUploadMonthlyFigure,
-    FinancialPeriod,
-    ForecastMonthlyFigure,
 )
 
 from upload_file.models import FileUpload

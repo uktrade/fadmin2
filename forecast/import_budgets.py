@@ -3,6 +3,10 @@ from django.db import connection
 from core.import_csv import xslx_header_to_dict
 from core.models import FinancialYear
 
+from forecast.models import (
+    BudgetMonthlyFigure,
+    BudgetUploadMonthlyFigure,
+)
 from forecast.utils.import_helpers import (
     CheckFinancialCode,
     UploadFileDataError,
@@ -10,10 +14,6 @@ from forecast.utils.import_helpers import (
     get_forecast_month_dict,
     sql_for_data_copy,
     validate_excel_file,
-)
-from forecast.models import (
-    BudgetMonthlyFigure,
-    BudgetUploadMonthlyFigure,
 )
 
 from upload_file.models import FileUpload
