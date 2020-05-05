@@ -187,7 +187,7 @@ def upload_trial_balance_report(file_upload, month_number, year):
         row += 1
         if row < TRIAL_BALANCE_FIRST_DATA_ROW:
             # There is no way to start reading rows from a specific place.
-            # Ignore the header rows
+            # so keep reading until the first row
             continue
 
         if not row % 100:
