@@ -1,7 +1,12 @@
 from core.exportutils import export_to_excel
 from core.utils import today_string
 
-from forecast.models import ForecastingDataView
+from forecast.models import (
+    ForecastingDataView,
+    BudgetMonthlyFigure,
+)
+
+
 from forecast.utils.query_fields import (
     ANALYSIS1_CODE,
     ANALYSIS2_CODE,
@@ -13,7 +18,7 @@ from forecast.utils.query_fields import (
 )
 
 
-def export_oscarreport_iterator(queryset):
+def export_mi_iterator(queryset):
     yield [
         "Entity",
         "Cost Centre",
@@ -89,12 +94,11 @@ def create_mi_source_report():
     queryset = ForecastingDataView.view_data.raw_data_annotated(
         MI_REPORT_DOWNLOAD_COLUMNS
     )
-    return export_to_excel(queryset, export_oscarreport_iterator, title)
+    return export_to_excel(queryset, export_mi_iterator, title)
 
 
 def create_mi_budget_report():
-    title = f"MI Report {today_string()}"
-    queryset = ForecastingDataView.view_data.raw_data_annotated(
-        MI_REPORT_DOWNLOAD_COLUMNS
-    )
-    return export_to_excel(queryset, export_oscarreport_iterator, title)
+    title = f"MI Budget {today_string()}"
+    queryset = BudgetMonthlyFigure.pivot.pivot_data(MI_REPORT_DOWNLOAD_COLUMNS,
+                                                    {'archived_status__isnull': True})
+    return export_to_excel(queryset, export_mi_iterator, title)
