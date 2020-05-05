@@ -45,6 +45,24 @@ def export_mi_iterator(queryset):
         "Total",
     ]
     for obj in queryset:
+        apr = obj["Apr"] if "Apr" in obj else 0
+        may = obj["May"] if "May" in obj else 0
+        jun = obj["Jun"] if "Jun" in obj else 0
+        jul = obj["Jul"] if "Jul" in obj else 0
+        aug = obj["Aug"] if "Aug" in obj else 0
+        sep = obj["Sep"] if "Sep" in obj else 0
+        oct = obj["Oct"] if "Oct" in obj else 0
+        nov = obj["Nov"] if "Nov" in obj else 0
+        dec = obj["Dec"] if "Dec" in obj else 0
+        jan = obj["Jan"] if "Jan" in obj else 0
+        feb = obj["Feb"] if "Feb" in obj else 0
+        mar = obj["Mar"] if "Mar" in obj else 0
+        adj1 = obj["Adj1"] if "Adj1" in obj else 0
+        adj2 = obj["Adj2"] if "Adj2" in obj else 0
+        adj3 = obj["Adj3"] if "Adj3" in obj else 0
+
+        total = apr + may + jun + jul + aug + sep + oct + nov + dec + jan + feb + \
+                mar + adj1 + adj2 + adj3
         yield [
             "3000",
             obj[COST_CENTRE_CODE],
@@ -53,39 +71,22 @@ def export_mi_iterator(queryset):
             obj[ANALYSIS1_CODE],
             obj[ANALYSIS2_CODE],
             obj[PROJECT_CODE],
-            obj["Apr"] / 100,
-            obj["May"] / 100,
-            obj["Jun"] / 100,
-            obj["Jul"] / 100,
-            obj["Aug"] / 100,
-            obj["Sep"] / 100,
-            obj["Oct"] / 100,
-            obj["Nov"] / 100,
-            obj["Dec"] / 100,
-            obj["Jan"] / 100,
-            obj["Feb"] / 100,
-            obj["Mar"] / 100,
-            obj["Adj1"] / 100,
-            obj["Adj2"] / 100,
-            obj["Adj3"] / 100,
-            (
-                obj["Apr"]
-                + obj["May"]
-                + obj["Jun"]
-                + obj["Jul"]
-                + obj["Aug"]
-                + obj["Sep"]
-                + obj["Oct"]
-                + obj["Nov"]
-                + obj["Dec"]
-                + obj["Jan"]
-                + obj["Feb"]
-                + obj["Mar"]
-                + obj["Adj1"]
-                + obj["Adj2"]
-                + obj["Adj3"]
-            )
-            / 100,
+            apr / 100,
+            may / 100,
+            jun / 100,
+            jul / 100,
+            aug / 100,
+            sep / 100,
+            oct / 100,
+            nov / 100,
+            dec / 100,
+            jan / 100,
+            feb / 100,
+            mar / 100,
+            adj1 / 100,
+            adj2 / 100,
+            adj3 / 100,
+            total  / 100,
         ]
 
 
