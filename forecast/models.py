@@ -821,14 +821,14 @@ class BudgetUploadMonthlyFigure(MonthlyFigureAbstract):
             ),
         ]
 
-        # Does not inherit from BaseModel as it maps to view
+
 
 
 class OSCARReturn(models.Model):
     """Used for downloading the Oscar return.
     Mapped to a view in the database, because
     the query is too complex"""
-
+    # Does not inherit from BaseModel as it maps to view
     # The view is created by  migration 0038_auto_create_view_forecast_oscar_return.py
 
     row_number = models.BigIntegerField()

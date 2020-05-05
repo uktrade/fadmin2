@@ -90,3 +90,11 @@ def create_mi_source_report():
         MI_REPORT_DOWNLOAD_COLUMNS
     )
     return export_to_excel(queryset, export_oscarreport_iterator, title)
+
+
+def create_mi_budget_report():
+    title = f"MI Report {today_string()}"
+    queryset = ForecastingDataView.view_data.raw_data_annotated(
+        MI_REPORT_DOWNLOAD_COLUMNS
+    )
+    return export_to_excel(queryset, export_oscarreport_iterator, title)
