@@ -41,14 +41,11 @@ def csv_header_to_dict(row):
 # build the dict from the header row
 # make everything lower case to make
 # it case insensitive
-# it will break if the header row is over row 9
 def xslx_header_to_dict(row):
     d = {}
     col = 0
     for cell in row:
-        # save the letter part of the cell coordinates
         if cell.value:
-            # d[cell.value.lower()] = cell.coordinate[:-1]
             d[cell.value.lower()] = col
         col += 1
     return d

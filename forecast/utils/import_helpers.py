@@ -93,10 +93,9 @@ def validate_excel_file(file_upload, worksheet_title_pattern):
         # read_only=True makes the opening process much faster
         # data_only=True to read values from cells with formula.
         # otherwise the formula is returned instead of the value.
-        workbook = load_workbook(file_upload.document_file,
-                                 read_only=True,
-                                 data_only=True,
-                                 )
+        workbook = load_workbook(
+            file_upload.document_file, read_only=True, data_only=True,
+        )
     except BadZipFile as ex:
         set_file_upload_fatal_error(
             file_upload,
@@ -263,7 +262,7 @@ class CheckFinancialCode:
 
     def get_obj_code(self, code_dict, code, model_name):
         # protection in case the code was read from an empty cell
-        if code == None:
+        if code is None:
             code = 0
         info_tuple = code_dict.get(code, None)
         if not info_tuple:
@@ -272,7 +271,7 @@ class CheckFinancialCode:
         return self.validate_info_tuple(info_tuple)
 
     def validate_nac_for_budget(self, nac):
-        if nac == None:
+        if nac is None:
             nac = 0
         info_tuple = self.nac_dict.get(nac, None)
         if not info_tuple:
@@ -302,7 +301,7 @@ class CheckFinancialCode:
                 ):
                     status = IGNORE
                     msg = ""
-                    info_tuple = (None, status,  msg)
+                    info_tuple = (None, status, msg)
 
             self.nac_dict[nac] = info_tuple
         if info_tuple[status_index] == IGNORE:

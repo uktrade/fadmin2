@@ -27,7 +27,6 @@ def format_numbers(ws, row, start):
 def unlock_forecast_cells(ws, row, start, end):
     for c in range(start, end):
         ws.cell(column=c, row=row).protection = Protection(locked=False)
-        # ws[f'{get_column_letter(c)}{row}'].protection = Protection(locked=False)
 
 
 def forecast_query_iterator(queryset, keys_dict, columns_dict, period_list):
