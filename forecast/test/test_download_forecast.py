@@ -138,6 +138,8 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
             export_forecast_data_dit,
         )
 
+        self.assertEqual(dit_url.status_code, 302)
+
     def test_group_download(self):
         response = self.factory_get(
             reverse(
