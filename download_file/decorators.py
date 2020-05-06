@@ -15,7 +15,7 @@ def has_download_oscar_permission(function):
 
 def has_download_mi_report_permission(function):
     def wrap(view_func, *args, **kwargs):
-        if view_func.request.user.has_perm("forecast.can_download_mi_report"):
+        if view_func.request.user.has_perm("forecast.can_download_mi_reports"):
             return function(view_func, *args, **kwargs)
         else:
             raise PermissionDenied

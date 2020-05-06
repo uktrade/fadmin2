@@ -311,6 +311,8 @@ class FinancialCode(BaseModel):
         permissions = [
             ("can_view_forecasts", "Can view forecast"),
             ("can_upload_files", "Can upload files"),
+            ("can_download_oscar", "Can download OSCAR"),
+            ("can_download_mi_reports", "Can download mi reports"),
         ]
 
     programme = models.ForeignKey(ProgrammeCode, on_delete=models.PROTECT)
