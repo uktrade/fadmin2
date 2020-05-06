@@ -2,11 +2,9 @@ from core.exportutils import export_to_excel
 from core.utils import today_string
 
 from forecast.models import (
-    ForecastingDataView,
     BudgetMonthlyFigure,
+    ForecastingDataView,
 )
-
-
 from forecast.utils.query_fields import (
     ANALYSIS1_CODE,
     ANALYSIS2_CODE,
@@ -61,8 +59,23 @@ def export_mi_iterator(queryset):
         adj2 = obj["Adj2"] if "Adj2" in obj else 0
         adj3 = obj["Adj3"] if "Adj3" in obj else 0
 
-        total = apr + may + jun + jul + aug + sep + oct + nov + dec + jan + feb + \
-                mar + adj1 + adj2 + adj3
+        total = (
+            apr
+            + may
+            + jun
+            + jul
+            + aug
+            + sep
+            + oct
+            + nov
+            + dec
+            + jan
+            + feb
+            + mar
+            + adj1
+            + adj2
+            + adj3
+        )
         yield [
             "3000",
             obj[COST_CENTRE_CODE],
@@ -86,7 +99,7 @@ def export_mi_iterator(queryset):
             adj1 / 100,
             adj2 / 100,
             adj3 / 100,
-            total  / 100,
+            total / 100,
         ]
 
 
@@ -100,6 +113,7 @@ def create_mi_source_report():
 
 def create_mi_budget_report():
     title = f"MI Budget {today_string()}"
-    queryset = BudgetMonthlyFigure.pivot.pivot_data(MI_REPORT_DOWNLOAD_COLUMNS,
-                                                    {'archived_status__isnull': True})
+    queryset = BudgetMonthlyFigure.pivot.pivot_data(
+        MI_REPORT_DOWNLOAD_COLUMNS, {"archived_status__isnull": True}
+    )
     return export_to_excel(queryset, export_mi_iterator, title)

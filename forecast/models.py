@@ -822,8 +822,6 @@ class BudgetUploadMonthlyFigure(MonthlyFigureAbstract):
         ]
 
 
-
-
 class OSCARReturn(models.Model):
     """Used for downloading the Oscar return.
     Mapped to a view in the database, because
