@@ -5,6 +5,7 @@ from forecast.utils.access_helpers import (
     can_download_oscar,
 )
 
+
 def has_download_oscar_permission(function):
     def wrap(view_func, *args, **kwargs):
         if can_download_oscar(view_func.request.user):

@@ -9,6 +9,7 @@ from forecast.utils.access_helpers import (
     can_download_mi_reports,
 )
 
+
 @user_passes_test(can_download_mi_reports, login_url='index')
 def export_mi_report(request):
     file_download = FileDownload(
@@ -21,6 +22,7 @@ def export_mi_report(request):
     file_download.status = FileDownload.DOWNLOADED
     file_download.save()
     return mi_report_source
+
 
 @user_passes_test(can_download_mi_reports, login_url='index')
 def export_mi_budget_report(request):

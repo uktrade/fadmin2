@@ -102,6 +102,7 @@ def export_mi_iterator(queryset):
             total / 100,
         ]
 
+
 def create_mi_source_report():
     title = f"MI Report {today_string()}"
     queryset = ForecastingDataView.view_data.raw_data_annotated(
@@ -109,9 +110,9 @@ def create_mi_source_report():
     )
     return export_to_excel(queryset, export_mi_iterator, title)
 
+
 def create_mi_budget_report():
     title = f"MI Budget {today_string()}"
-    q = BudgetMonthlyFigure.objects.all()
     queryset = BudgetMonthlyFigure.pivot.pivot_data(
         MI_REPORT_DOWNLOAD_COLUMNS, {"archived_status__isnull": True}
     )
