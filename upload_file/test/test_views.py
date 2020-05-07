@@ -38,7 +38,7 @@ class UploadedViewTests(TestCase, RequestFactoryBase):
             uploading_user=self.test_user, document_file=file_mock,
         )
         self.file_mock_name = file_upload.document_file.name
-        print(self.file_mock_name)
+
 
     def test_upload_view(self):
         assert not self.test_user.has_perm("forecast.can_upload_files")
@@ -65,4 +65,3 @@ class UploadedViewTests(TestCase, RequestFactoryBase):
 
         if os.path.exists(self.file_mock_name):
             os.remove(self.file_mock_name)
-            print(f"Removed {self.file_mock_name}")

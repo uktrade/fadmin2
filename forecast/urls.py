@@ -9,9 +9,10 @@ from forecast.views.edit_forecast import (
     ErrorView,
     PasteForecastRowsView,
 )
-from forecast.views.export.mi_report_source import (export_mi_budget_report,
-                                                    export_mi_report,
-                                                    )
+from forecast.views.export.mi_report_source import (
+    export_mi_budget_report,
+    export_mi_report,
+)
 from forecast.views.export.oscar_return import export_oscar_report
 from forecast.views.upload_file import (
     UploadActualsView,
