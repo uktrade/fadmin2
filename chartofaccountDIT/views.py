@@ -273,7 +273,15 @@ class HistoricalFilteredFCOMappingView(FilteredFCOMappingView, HistoricalFiltere
 
 
 def choose_year(request):
-    return render(request, "chartofaccountDIT/choose_year.html",)
+    return render(request, "chartofaccountDIT/choose_year.html",
+                  { "chart_of_account_years": [
+                      {"year": 2019,
+                       "display": "2019-20"},
+
+                      {"year": 2018,
+                       "display": "2018-19"},
+
+                  ] })
 
 
 def quick_links(request, year):
