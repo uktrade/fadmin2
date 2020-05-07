@@ -1,12 +1,7 @@
-from django.contrib.auth.decorators import user_passes_test
-
 from core.exportutils import export_to_excel
 from core.utils import today_string
 
 from forecast.models import OSCARReturn
-from forecast.utils.access_helpers import (
-    can_download_oscar,
-)
 
 
 def export_oscarreport_iterator(queryset):
@@ -62,7 +57,6 @@ def export_oscarreport_iterator(queryset):
             pass
 
 
-@user_passes_test(can_download_oscar, login_url='index')
 def create_oscar_report():
     title = f"OSCAR {today_string()}"
     queryset = OSCARReturn.objects.all()
