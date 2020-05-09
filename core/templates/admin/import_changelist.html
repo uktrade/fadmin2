@@ -1,4 +1,5 @@
 {% extends 'admin/export_changelist.html' %}
+{% load upload_permissions %}
 
 
 {% block object-tools-items %}
@@ -8,14 +9,15 @@
 {#                <button type="submit">Export CSV</button>#}
 {#        </form>#}
 {#     </li>#}
-
-    <li>
-        <form action="import-csv/" method="POST">
-            {% csrf_token %}
-                <button type="submit">Import CSV</button>
-        </form>
-    </li>
-
+    {% has_admin_upload_permission user as has_admin_upload_permission %}
+    {% if has_admin_upload_permission == True %}
+        <li>
+            <form action="import-csv/" method="POST">
+                {% csrf_token %}
+                    <button type="submit">Import CSV</button>
+            </form>
+        </li>
+    {% endif %}
     {{ block.super }}
 
 {% endblock %}
