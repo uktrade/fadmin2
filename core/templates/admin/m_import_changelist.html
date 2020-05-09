@@ -4,12 +4,12 @@
 {% block object-tools-items %}
     {% has_admin_upload_permission user as has_admin_upload_permission %}
     {% if has_admin_upload_permission == True %}
-        <li>
-            <form action="export1-csv/" method="POST">
-                {% csrf_token %}
-                    <button type="submit">Export extra CSV</button>
-            </form>
-         </li>
+{#        <li>#}
+{#            <form action="export1-csv/" method="POST">#}
+{#                {% csrf_token %}#}
+{#                    <button type="submit">Export extra CSV</button>#}
+{#            </form>#}
+{#         </li>#}
         <li>
             <form action="import1-csv/" method="POST">
                 {% csrf_token %}
