@@ -193,7 +193,7 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.assertEqual(response.status_code, 200)
 
         file = io.BytesIO(response.content)
-        wb = load_workbook(filename=file, read_only=True, data_only=True,)
+        wb = load_workbook(filename=file, read_only=True)
         ws = wb.active
         # Check group
         assert ws["A1"].value == "Group name"
