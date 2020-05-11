@@ -65,12 +65,14 @@ def create_headers(keys_dict, columns_dict, period_list):
     return k
 
 
-def export_to_excel(queryset,
-                    columns_dict,
-                    extra_columns_dict,
-                    protect,
-                    title,
-                    include_month_total = False):
+def export_to_excel(
+    queryset,
+    columns_dict,
+    extra_columns_dict,
+    protect,
+    title,
+    include_month_total=False,
+):
     resp = HttpResponse(content_type=EXCEL_TYPE)
     filename = f"{title}  {today_string()} .xlsx"
     resp["Content-Disposition"] = "attachment; filename=" + filename
@@ -134,17 +136,15 @@ def export_to_excel(queryset,
         unlock_forecast_cells(ws, row_count, first_forecast_index, last_month_index + 1)
     if include_month_total:
         row_count += 1
-        grand_total_column = get_column_letter(column_index_from_string(budget_col)-1)
-        ws[
-            f"{grand_total_column}{row_count}"
-        ].value = "Grand Total:"
+        grand_total_column = get_column_letter(column_index_from_string(budget_col) - 1)
+        ws[f"{grand_total_column}{row_count}"].value = "Grand Total:"
 
-        for col_idx in range(column_index_from_string(budget_col),
-                         column_index_from_string(year_to_date_col)+1):
+        for col_idx in range(
+            column_index_from_string(budget_col),
+            column_index_from_string(year_to_date_col) + 1,
+        ):
             col = get_column_letter(col_idx)
-            ws[
-                f"{col}{row_count}"
-            ].value = f"=SUM({col}2:{col}{row_count-1})"
+            ws[f"{col}{row_count}"].value = f"=SUM({col}2:{col}{row_count-1})"
 
     wb.save(resp)
     return resp
