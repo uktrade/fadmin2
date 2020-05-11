@@ -104,8 +104,8 @@ class DownloadEditForecastTest(TestCase, RequestFactoryBase):
         )
         may_figure.save
 
+        # This will create a row with no figures.
         project_obj1 = ProjectCodeFactory.create(project_code='123456')
-
         financial_code_obj1 = FinancialCode.objects.create(
             programme=self.programme_obj,
             cost_centre=self.cost_centre,
@@ -149,68 +149,35 @@ class DownloadEditForecastTest(TestCase, RequestFactoryBase):
         file = io.BytesIO(download_forecast_url.content)
         wb = load_workbook(filename=file, )
         ws = wb.active
-        print(f'ws["I1"].value == {ws["I1"].value}')
-        print(f'ws["I2"].value == {ws["I2"].value}')
-        print(f'ws["I3"].value == {ws["I3"].value}')
-        print(f'ws["I4"].value == {ws["I4"].value}')
+        # 4 rows: Heading, row with Apr/May figure,
+        # row with 0 figures and grand totals
+        assert ws.max_row == 4
 
-        print(f'ws["J1"].value == {ws["J1"].value}')
-        print(f'ws["J2"].value == {ws["J2"].value}')
-        print(f'ws["J3"].value == {ws["J3"].value}')
-        print(f'ws["J4"].value == {ws["J4"].value}')
-
-        print(f'ws["X1"].value == {ws["X1"].value}')
-        print(f'ws["X2"].value == {ws["X2"].value}')
-        print(f'ws["X3"].value == {ws["X3"].value}')
-        print(f'ws["X4"].value == {ws["X4"].value}')
-
-        print(f'ws["Y1"].value == {ws["Y1"].value}')
-        print(f'ws["Y2"].value == {ws["Y2"].value}')
-        print(f'ws["Y3"].value == {ws["Y3"].value}')
-        print(f'ws["Y4"].value == {ws["Y4"].value}')
-
-        print(f'ws["Z1"].value == {ws["Z1"].value}')
-        print(f'ws["Z2"].value == {ws["Z2"].value}')
-        print(f'ws["Z3"].value == {ws["Z3"].value}')
-        print(f'ws["Z4"].value == {ws["Z4"].value}')
-
-
-
-        print(f'self.budget {self.budget}')
-        print(f'self.amount_apr {self.amount_apr}')
-        print(f'self.amount_may {self.amount_may}')
-        print(f'self.year_total {self.year_total}')
-        print(f'self.underspend_total {self.underspend_total}')
-        print(f'self.spend_to_date_total {self.spend_to_date_total}')
         assert ws["C1"].value == "Natural Account code"
         assert ws["C2"].value == self.nac_obj.natural_account_code
         assert ws["I1"].value == 'Apr'
-        assert ws.max_row == 4
-        ws["I1"].value == 'Apr'
-        ws["I2"].value == 0
-        ws["I3"].value == -98765.43
-        ws["I4"].value == '= SUM(I2:I3)'
-        ws["J1"].value == 'May'
-        ws["J2"].value == 0
-        ws["J3"].value == 12345.67
-        ws["J4"].value == '= SUM(J2:J3)'
-        ws["X1"].value == 'Forecast outturn'
-        ws["X2"].value == ''= SUM(I2:W2)''
-        ws["X3"].value == '= SUM(I3:W3)''
-        ws["X4"].value == ''= SUM(X2:X3)''
-        ws["Y1"].value == Variance - overspend / underspend
-        ws["Y2"].value == = (H2 - X2)
-        ws["Y3"].value == = (H3 - X3)
-        ws["Y4"].value == = SUM(Y2:Y3)
-        ws["Z1"].value == Year
-        to
-        Date
-        Actuals
-        ws["Z2"].value == = SUM(I2:I2)
-        ws["Z3"].value == = SUM(I3:I3)
-        ws["Z4"].value == = SUM(Z2:Z3)
+        assert ws["I2"].value == 0
+        assert ws["I3"].value == self.amount_apr/100
+        print(ws["I4"].value)
+        assert ws["I4"].value == '=SUM(I2:I3)'
+        assert ws["J1"].value == 'May'
+        assert ws["J2"].value == 0
+        assert ws["J3"].value == self.amount_may/100
+        assert ws["J4"].value == '=SUM(J2:J3)'
+        assert ws["X1"].value == 'Forecast outturn'
+        assert ws["X2"].value == '=SUM(I2:W2)'
+        assert ws["X3"].value == '=SUM(I3:W3)'
+        assert ws["X4"].value == '=SUM(X2:X3)'
+        assert ws["Y1"].value == 'Variance -overspend/underspend'
+        assert ws["Y2"].value == '=(H2-X2)'
+        assert ws["Y3"].value == '=(H3-X3)'
+        assert ws["Y4"].value == '=SUM(Y2:Y3)'
+        assert ws["Z1"].value == 'Year to Date Actuals'
+        assert ws["Z2"].value == '=SUM(I2:I2)'
+        assert ws["Z3"].value == '=SUM(I3:I3)'
+        assert ws["Z4"].value == '=SUM(Z2:Z3)'
 
-        wb.save("test.xlsx")
+
     def test_user_cannot_download_forecast(self):
         """
         User can't access download URL if they have no editing permission
