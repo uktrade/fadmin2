@@ -344,7 +344,7 @@ class EditForecastFigureView(
             raise NoFinancialCodeForEditedValue()
 
         monthly_figure = ForecastMonthlyFigure.objects.filter(
-            financial_year=financial_year,
+            financial_year_id=financial_year,
             financial_code=financial_code.first(),
             financial_period__financial_period_code=month,
             archived_status=None,
@@ -365,7 +365,7 @@ class EditForecastFigureView(
                 financial_period_code=month
             ).first()
             monthly_figure = ForecastMonthlyFigure(
-                financial_year=financial_year,
+                financial_year_id=financial_year,
                 financial_code=financial_code.first(),
                 financial_period=financial_period,
                 amount=amount,
