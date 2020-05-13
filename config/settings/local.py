@@ -3,10 +3,10 @@ from .base import *  # noqa
 CAN_ELEVATE_SSO_USER_PERMISSIONS = True
 CAN_CREATE_TEST_USER = True
 
-FRONT_END_SERVER = env(
-    "FRONT_END_SERVER",
-    default="http://localhost:3000",
-)
+# FRONT_END_SERVER = env(
+#     "FRONT_END_SERVER",
+#     default="http://localhost:3000",
+# )
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "front_end/build/static"),
