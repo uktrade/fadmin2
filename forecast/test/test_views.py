@@ -1586,7 +1586,6 @@ class ViewForecastHierarchyZeroProjectTest(TestCase, RequestFactoryBase):
         self.test_user.user_permissions.add(can_view_forecasts)
         self.test_user.save()
 
-
     def test_view_directorate_summary(self):
         resp = self.factory_get(
             reverse(
@@ -1611,7 +1610,6 @@ class ViewForecastHierarchyZeroProjectTest(TestCase, RequestFactoryBase):
         table_rows = soup.find_all("tr", class_="govuk-table__row")
         assert len(table_rows) == 8
 
-
     def test_view_group_summary(self):
         response = self.factory_get(
             reverse(
@@ -1634,7 +1632,6 @@ class ViewForecastHierarchyZeroProjectTest(TestCase, RequestFactoryBase):
 
         table_rows = soup.find_all("tr", class_="govuk-table__row")
         assert len(table_rows) == 4
-
 
     def test_view_dit_summary(self):
         response = self.factory_get(
