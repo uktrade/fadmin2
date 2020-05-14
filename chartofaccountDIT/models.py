@@ -207,6 +207,9 @@ class ArchivedExpenditureCategory(
     ExpenditureCategoryAbstract,
     ArchivedModel,
 ):
+    grouping_description = models.CharField(
+        max_length=255, verbose_name="Budget Category", unique=False
+    )
     linked_budget_code = models.IntegerField(verbose_name="Budget Code")
     linked_budget_code_description = models.CharField(
         max_length=200, verbose_name="Budget Description"
@@ -282,6 +285,12 @@ class ArchivedCommercialCategory(
     CommercialCategoryAbstract,
     ArchivedModel,
 ):
+    commercial_category = models.CharField(
+        max_length=255,
+        verbose_name="Commercial Category",
+        unique=False,
+    )
+
     active = models.BooleanField(default=False)
 
     def __str__(self):
