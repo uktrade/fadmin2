@@ -1,6 +1,5 @@
 Feature: Actuals and Forecast Column Headers
 
-  @setup
   Scenario: Viewing Six Months of Actuals on the Edit Forecast Page
     Given the user views the edit forecast page with six months of actuals
      When the user checks the actuals columns
