@@ -1,4 +1,5 @@
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
+import logging
 
 from django.conf import settings
 
@@ -34,6 +35,9 @@ class NotEnoughMatchException(Exception):
 
 class NoFinancialCodeForEditedValue(Exception):
     pass
+
+
+logger = logging.getLogger(__name__)
 
 
 def set_monthly_figure_amount(cost_centre_code, cell_data):
@@ -124,7 +128,11 @@ def check_row_match(index, pasted_at_row, cell_data):  # noqa C901
 
 
 def convert_forecast_amount(amount):
-    return Decimal(amount.replace(",", "")) * 100
+    try:
+        return Decimal(amount.replace(",", "")) * 100
+    except InvalidOperation:
+        logger.warning(f"Unable to convert value '{amount}' to decimal")
+        print(f"Unable to convert value '{amount}' to decimal")
 
 
 def check_cols_match(cell_data):
