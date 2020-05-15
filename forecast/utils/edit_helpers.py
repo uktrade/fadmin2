@@ -63,6 +63,9 @@ def set_monthly_figure_amount(cost_centre_code, cell_data):
 
         new_value = convert_forecast_amount(cell_data[col])
 
+        if not new_value:
+            continue
+
         if not monthly_figure:
             # Return if not required to make record
             if new_value == 0:
@@ -130,9 +133,9 @@ def check_row_match(index, pasted_at_row, cell_data):  # noqa C901
 def convert_forecast_amount(amount):
     try:
         return Decimal(amount.replace(",", "")) * 100
-    except InvalidOperation:
+    except InvalidOperation as ex:
         logger.warning(f"Unable to convert value '{amount}' to decimal")
-        print(f"Unable to convert value '{amount}' to decimal")
+        raise InvalidOperation(ex)
 
 
 def check_cols_match(cell_data):

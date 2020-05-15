@@ -272,9 +272,6 @@ class PasteForecastRowsView(
 
                 cell_data = re.split(r"\t", row.rstrip("\t"))
 
-                if not cell_data:
-                    continue
-
                 # Check that pasted at content and desired first row match
                 check_row_match(
                     index, pasted_at_row, cell_data,
