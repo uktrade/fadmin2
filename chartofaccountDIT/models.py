@@ -210,13 +210,18 @@ class ArchivedExpenditureCategory(
     grouping_description = models.CharField(
         max_length=255, verbose_name="Budget Category", unique=False
     )
-    linked_budget_code = models.IntegerField(verbose_name="Budget Code")
+    linked_budget_code = models.IntegerField(verbose_name="Budget Code", blank=True,
+        null=True,)
     linked_budget_code_description = models.CharField(
-        max_length=200, verbose_name="Budget Description"
+        max_length=200, verbose_name="Budget Description",
+        blank = True,
+        null = True,
     )
     NAC_category = models.CharField(
         max_length=255,
         verbose_name="Budget Grouping",
+        blank=True,
+        null=True,
     )
     active = models.BooleanField(default=False)
 
@@ -232,11 +237,11 @@ class ArchivedExpenditureCategory(
             financial_year=year_obj,
             active=obj.active,
             grouping_description=obj.grouping_description + suffix,
-            NAC_category=obj.NAC_category.NAC_category_description,
+            NAC_category=obj.NAC_category.NAC_category_description if obj.NAC_category else None,
             description=obj.description,
             further_description=obj.further_description,
-            linked_budget_code=obj.linked_budget_code.natural_account_code,
-            linked_budget_code_description=obj.linked_budget_code.natural_account_code_description, # noqa
+            linked_budget_code=obj.linked_budget_code.natural_account_code if obj.linked_budget_code else None,
+            linked_budget_code_description=obj.linked_budget_code.natural_account_code_description if obj.linked_budget_code else None, # noqa
         )
         obj_hist.save()
         return obj_hist

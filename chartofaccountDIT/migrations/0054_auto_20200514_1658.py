@@ -11,6 +11,36 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
+            model_name='archivedexpenditurecategory',
+            name='NAC_category',
+            field=models.CharField(blank=True, max_length=255, null=True, verbose_name='Budget Grouping'),
+        ),
+        migrations.AlterField(
+            model_name='archivedexpenditurecategory',
+            name='linked_budget_code',
+            field=models.IntegerField(blank=True, null=True, verbose_name='Budget Code'),
+        ),
+        migrations.AlterField(
+            model_name='archivedexpenditurecategory',
+            name='linked_budget_code_description',
+            field=models.CharField(blank=True, max_length=200, null=True, verbose_name='Budget Description'),
+        ),
+        migrations.AlterField(
+            model_name='simplehistoryarchivedexpenditurecategory',
+            name='NAC_category',
+            field=models.CharField(blank=True, max_length=255, null=True, verbose_name='Budget Grouping'),
+        ),
+        migrations.AlterField(
+            model_name='simplehistoryarchivedexpenditurecategory',
+            name='linked_budget_code',
+            field=models.IntegerField(blank=True, null=True, verbose_name='Budget Code'),
+        ),
+        migrations.AlterField(
+            model_name='simplehistoryarchivedexpenditurecategory',
+            name='linked_budget_code_description',
+            field=models.CharField(blank=True, max_length=200, null=True, verbose_name='Budget Description'),
+        ),
+        migrations.AlterField(
             model_name='archivedcommercialcategory',
             name='commercial_category',
             field=models.CharField(max_length=255, verbose_name='Commercial Category'),
