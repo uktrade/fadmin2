@@ -17,7 +17,6 @@ from guardian.shortcuts import (
     get_objects_for_user,
 )
 
-from core.models import FinancialYear
 from core.myutils import get_current_financial_year
 
 from costcentre.forms import MyCostCentresForm
@@ -50,6 +49,7 @@ from forecast.utils.edit_helpers import (
     check_row_match,
     set_monthly_figure_amount,
 )
+from forecast.utils.query_fields import edit_forecast_order
 from forecast.views.base import (
     CostCentrePermissionTest,
     NoCostCentreCodeInURLError,
@@ -59,16 +59,10 @@ from forecast.views.base import (
 def get_financial_code_serialiser(cost_centre_code):
     financial_codes = (
         FinancialCode.objects.filter(cost_centre_id=cost_centre_code, )
-            .prefetch_related(
+        .prefetch_related(
             "forecast_forecastmonthlyfigures",
             "forecast_forecastmonthlyfigures__financial_period",
-        )
-            .order_by(
-            "programme__budget_type_fk__budget_type_edit_display_order",
-            "programme__programme_code",
-            "natural_account_code__expenditure_category__NAC_category__NAC_category_display_order",  # noqa: E501
-            "natural_account_code__natural_account_code",
-        )
+        ).order_by(*edit_forecast_order())
     )
 
     return FinancialCodeSerializer(financial_codes, many=True, )
@@ -324,7 +318,7 @@ class EditForecastFigureView(
             cost_centre_code=cost_centre_code,
         ).first()
 
-        financial_year = FinancialYear.objects.filter(current=True).first()
+        financial_year = get_current_financial_year()
 
         financial_code = FinancialCode.objects.filter(
             cost_centre=cost_centre,
@@ -345,7 +339,7 @@ class EditForecastFigureView(
             raise NoFinancialCodeForEditedValue()
 
         monthly_figure = ForecastMonthlyFigure.objects.filter(
-            financial_year=financial_year,
+            financial_year_id=financial_year,
             financial_code=financial_code.first(),
             financial_period__financial_period_code=month,
             archived_status=None,
@@ -366,7 +360,7 @@ class EditForecastFigureView(
                 financial_period_code=month
             ).first()
             monthly_figure = ForecastMonthlyFigure(
-                financial_year=financial_year,
+                financial_year_id=financial_year,
                 financial_code=financial_code.first(),
                 financial_period=financial_period,
                 amount=amount,
