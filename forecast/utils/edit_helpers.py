@@ -61,38 +61,34 @@ def set_monthly_figure_amount(cost_centre_code, cell_data):
 
         col = (settings.NUM_META_COLS + financial_period_month) - 1
 
-        cell_value = cell_data[col]
+        new_value = convert_forecast_amount(cell_data[col])
 
-        if not cell_value:
-            continue
+        if new_value is not None:
+            if not monthly_figure:
+                # Return if not required to make record
+                if new_value == 0:
+                    return
 
-        new_value = convert_forecast_amount(cell_value)
+                financial_code = FinancialCode.objects.get(
+                    cost_centre__cost_centre_code=cost_centre_code,
+                    programme__programme_code=check_empty(cell_data[0]),
+                    natural_account_code__natural_account_code=cell_data[2],
+                    analysis1_code=check_empty(cell_data[4]),
+                    analysis2_code=check_empty(cell_data[5]),
+                    project_code=check_empty(cell_data[6]),
+                )
+                financial_period = FinancialPeriod.objects.get(
+                    financial_period_code=financial_period_month,
+                )
+                monthly_figure = ForecastMonthlyFigure.objects.create(
+                    financial_year_id=get_current_financial_year(),
+                    financial_period=financial_period,
+                    financial_code=financial_code,
+                )
 
-        if not monthly_figure:
-            # Return if not required to make record
-            if new_value == 0:
-                return
-
-            financial_code = FinancialCode.objects.get(
-                cost_centre__cost_centre_code=cost_centre_code,
-                programme__programme_code=check_empty(cell_data[0]),
-                natural_account_code__natural_account_code=cell_data[2],
-                analysis1_code=check_empty(cell_data[4]),
-                analysis2_code=check_empty(cell_data[5]),
-                project_code=check_empty(cell_data[6]),
-            )
-            financial_period = FinancialPeriod.objects.get(
-                financial_period_code=financial_period_month,
-            )
-            monthly_figure = ForecastMonthlyFigure.objects.create(
-                financial_year_id=get_current_financial_year(),
-                financial_period=financial_period,
-                financial_code=financial_code,
-            )
-
-        if new_value != monthly_figure.amount:
-            monthly_figure.amount = new_value
-            monthly_figure.save()
+            if new_value != monthly_figure.amount:
+                monthly_figure.amount = new_value
+                monthly_figure.save()
 
 
 def check_row_match(index, pasted_at_row, cell_data):  # noqa C901
@@ -132,11 +128,14 @@ def check_row_match(index, pasted_at_row, cell_data):  # noqa C901
         )
 
 
-def convert_forecast_amount(amount):
+def convert_forecast_amount(amount_string):
+    if amount_string.strip() == "":
+        return None
+
     try:
-        return Decimal(amount.replace(",", "")) * 100
+        return Decimal(amount_string.replace(",", "")) * 100
     except InvalidOperation as ex:
-        logger.warning(f"Unable to convert value '{amount}' to decimal")
+        logger.warning(f"Unable to convert value '{amount_string}' to decimal")
         raise InvalidOperation(ex)
 
 
