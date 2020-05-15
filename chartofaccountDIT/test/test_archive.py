@@ -164,9 +164,10 @@ class ArchiveExpenditureCategoryTest(TestCase, RequestFactoryBase):
         assert len(table_rows) == 1
 
         first_cols = table_rows[0].find_all("td")
-        assert first_cols[1].get_text().strip() == str(self.ExpenditureCategory_grouping_description)
+        assert first_cols[1].get_text().strip() == str(
+            self.ExpenditureCategory_grouping_description
+        )
         assert first_cols[2].get_text().strip() == self.ExpenditureCategory_description
-
 
     def test_archive_multiple_year(self):
         call_command(
@@ -174,7 +175,10 @@ class ArchiveExpenditureCategoryTest(TestCase, RequestFactoryBase):
         )
 
         call_command(
-            "archive", type="Expenditure_Cat", year=self.archive_year+1, stdout=self.out,
+            "archive",
+            type="Expenditure_Cat",
+            year=self.archive_year + 1,
+            stdout=self.out,
         )
 
         soup = self.show_historical_view()
@@ -184,6 +188,7 @@ class ArchiveExpenditureCategoryTest(TestCase, RequestFactoryBase):
         assert len(table_rows) == 1
 
         first_cols = table_rows[0].find_all("td")
-        assert first_cols[1].get_text().strip() == str(self.ExpenditureCategory_grouping_description)
+        assert first_cols[1].get_text().strip() == str(
+            self.ExpenditureCategory_grouping_description
+        )
         assert first_cols[2].get_text().strip() == self.ExpenditureCategory_description
-
