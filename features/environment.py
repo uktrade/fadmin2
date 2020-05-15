@@ -210,11 +210,11 @@ def copy_text(context, text):
     try:
         pyperclip.copy(text.replace("\\n", "\n"))
     except pyperclip.PyperclipException:
-        context.browser.execute_script(
-            """function copyToClipboard() {{
+        print(
+            f"""function copyToClipboard() {{
             const input = document.createElement('textarea');
             document.body.appendChild(input);
-            input.value = "{}";
+            input.value = "{text}";
             input.id = "clipboard-test"
             input.focus();
             input.select();
@@ -223,7 +223,23 @@ def copy_text(context, text):
             input.blur();
             }}
             copyToClipboard()
-            """.format(text)
+            """
+        )
+
+        context.browser.execute_script(
+            f"""function copyToClipboard() {{
+            const input = document.createElement('textarea');
+            document.body.appendChild(input);
+            input.value = "{text}";
+            input.id = "clipboard-test"
+            input.focus();
+            input.select();
+            const isSuccessful = document.execCommand('copy');
+            console.log(isSuccessful);
+            input.blur();
+            }}
+            copyToClipboard()
+            """
         )
 
 
