@@ -7,7 +7,7 @@ from behave import (
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 
 from features.environment import (
     TEST_COST_CENTRE_CODE,
@@ -40,10 +40,10 @@ def step_impl(context):
     header_hidden = False
 
     try:
-        WebDriverWait(context.browser, 1500).until(
+        WebDriverWait(context.browser, 5).until(
             ec.presence_of_element_located((By.ID, "natural_account_code_header"))
         )
-    except NoSuchElementException:
+    except TimeoutException:
         header_hidden = True
 
     assert header_hidden
