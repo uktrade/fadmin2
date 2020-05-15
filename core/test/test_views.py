@@ -6,6 +6,7 @@ from django.test import (
     TestCase,
 )
 from django.urls import reverse
+
 from core.test.test_base import RequestFactoryBase
 
 
