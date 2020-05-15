@@ -28,4 +28,4 @@ Feature: Paste forecast sheet data
   Scenario: Pasting valid data with no changes
      Given the user selects all rows in the edit forecast table
      When the user pastes valid sheet with no changes
-     Then no update is made
+     Then no message is displayed

@@ -40,7 +40,9 @@ def step_impl(context):
     header_hidden = False
 
     try:
-        context.browser.find_element_by_id("natural_account_code_header")
+        WebDriverWait(context.browser, 1500).until(
+            ec.presence_of_element_located((By.ID, "natural_account_code_header"))
+        )
     except NoSuchElementException:
         header_hidden = True
 

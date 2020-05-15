@@ -11,6 +11,7 @@ from openpyxl import load_workbook
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as ec
 
 from django.test import RequestFactory
@@ -125,17 +126,14 @@ def step_impl(context):
     file = io.BytesIO(response.content)
     wb = load_workbook(filename=file, read_only=True, data_only=True,)
     ws = wb.get_active_sheet()
-    csv_str = io.StringIO()
-    csv_writer = csv.writer(csv_str, quoting=csv.QUOTE_NONE)
+
+    paste_text = ""
 
     for row in ws.rows:
-        csv_writer.writerow([cell.value for cell in row])
-
-    print(csv_str.getvalue())
-
-    paste_text = csv_str.getvalue().replace("\n", "\\n")
-
-    print(paste_text)
+        for cell in row:
+            value = cell.value or "\t"
+            paste_text += f"{value}\t"
+        paste_text += "\\n"
 
     copy_text(context, paste_text)
     paste(context)
@@ -177,15 +175,18 @@ def step_impl(context):
     assert april_value == "1,000"
 
 
-@then(u'no update is made')
+@then(u'no message is displayed')
 def step_impl(context):
-    april_value = context.browser.find_element_by_id(
-        "id_0_1"
-    ).get_attribute(
-        'innerHTML'
-    )
+    shown_message = True
 
-    assert april_value == "0"
+    try:
+        WebDriverWait(context.browser, 5).until(
+            ec.presence_of_element_located((By.ID, "paste_error_msg"))
+        )
+    except TimeoutException:
+        shown_message = False
+
+    assert not shown_message
 
 
 @when(u'the user pastes invalid row data')
