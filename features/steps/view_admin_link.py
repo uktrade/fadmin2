@@ -7,6 +7,7 @@ from behave import (
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
+from selenium.common.exceptions import NoSuchElementException
 
 from features.environment import (
     create_test_user,
@@ -28,8 +29,11 @@ def step_impl(context):
 
 @then(u'I should see a link to the admin website')
 def step_impl(context):
-    admin_link = context.browser.find_element_by_id(
-        "admin_link"
-    )
+    try:
+        context.browser.find_element_by_id(
+            "admin_page"
+        )
+    except NoSuchElementException:
+        return False
+    return True
 
-    assert admin_link == True

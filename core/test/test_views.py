@@ -23,7 +23,7 @@ class ViewAdminLink(TestCase, RequestFactoryBase):
         Test admin user can view Admin link in navigation bar
         """
         # Create staff user
-        self.test_user.is_staff
+        self.test_user.is_staff = True
         self.test_user.save()
 
         view_homepage = reverse(
@@ -35,7 +35,7 @@ class ViewAdminLink(TestCase, RequestFactoryBase):
 
         soup = BeautifulSoup(response.content, features="html.parser")
 
-        admin_link = soup.find_all("a", class_="admin_page")
+        admin_link = soup.find_all("a", id="admin_page")
 
         assert len(admin_link) == 1
 
@@ -53,6 +53,6 @@ class ViewAdminLink(TestCase, RequestFactoryBase):
 
         soup = BeautifulSoup(response.content, features="html.parser")
 
-        admin_link = soup.find_all("a", class_="admin_page")
+        admin_link = soup.find_all("a", id="admin_page")
 
         assert len(admin_link) == 0
