@@ -7,9 +7,7 @@ const ActualsHeaderRow = () => {
         const timer = () => {
                 setTimeout(() => {
                 if (window.actuals) {
-                    console.log("window.actuals loaded", window.actuals)
                     if (window.actuals.length > 0) {
-                        console.log("window.actuals length", window.actuals.length)
                         setNumActuals(window.actuals.length)
                     }
                 } else {
