@@ -1,5 +1,5 @@
-from decimal import Decimal, InvalidOperation
 import logging
+from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 
