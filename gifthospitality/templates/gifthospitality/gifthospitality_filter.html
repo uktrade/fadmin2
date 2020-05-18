@@ -24,12 +24,6 @@
         </div>
     {% endif %}
     <a class="govuk-button govuk-button--secondary" href="{% querystring '_export'='xlsx' %}">Download to Excel</a>
-    {% can_view_all_gifthospitality user as can_view_all_gifthospitality %}
-    {%  if can_view_all_gifthospitality == True %}
-        {% render_table table %}
-    {% else %}
-            {% render_table table %}
-    {% endif %}
-
+    {% render_table table %}
 
 {% endblock %}
