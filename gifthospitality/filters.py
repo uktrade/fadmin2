@@ -19,7 +19,9 @@ class GiftHospitalityFilter(MyFilterSet):
     @property
     def qs(self):
         if not can_view_all_gifthospitality(self.request.user):
-            return super(GiftHospitalityFilter, self).qs.filter(entered_by=(self.request.user.first_name + " " + self.request.user.last_name))
+            return super(GiftHospitalityFilter,
+                         self).qs.filter(entered_by=(self.request.user.first_name
+                                         + " " + self.request.user.last_name))
         else:
             return super(GiftHospitalityFilter, self).qs.filter()
 
