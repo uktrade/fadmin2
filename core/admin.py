@@ -105,7 +105,7 @@ class AdminActiveField(admin.ModelAdmin):
         for obj in q:
             log_object_change(
                 request.user.id,
-                str(obj) + " " + msg,
+                msg,
                 obj=obj,
             )
 
