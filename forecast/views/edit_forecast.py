@@ -3,8 +3,6 @@ import re
 
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.core.cache import cache
-from django.core.cache.utils import make_template_fragment_key
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import JsonResponse
@@ -19,7 +17,6 @@ from guardian.shortcuts import (
     get_objects_for_user,
 )
 
-from core.models import FinancialYear
 from core.myutils import get_current_financial_year
 
 from costcentre.forms import MyCostCentresForm
@@ -52,41 +49,20 @@ from forecast.utils.edit_helpers import (
     check_row_match,
     set_monthly_figure_amount,
 )
+from forecast.utils.query_fields import edit_forecast_order
 from forecast.views.base import (
     CostCentrePermissionTest,
     NoCostCentreCodeInURLError,
 )
 
 
-def delete_forecast_cache(cost_centre_code):
-    dit_key = make_template_fragment_key("dit_forecast_tables")
-    group_key = make_template_fragment_key("group_forecast_tables")
-    directorate_key = make_template_fragment_key("directorate_forecast_tables")
-    programme_key = make_template_fragment_key("programme_forecast_tables")
-    expenditure_key = make_template_fragment_key("expenditure_forecast_tables")
-    cost_centre_key = make_template_fragment_key(cost_centre_code)
-
-    cache.delete(dit_key)
-    cache.delete(group_key)
-    cache.delete(directorate_key)
-    cache.delete(programme_key)
-    cache.delete(expenditure_key)
-    cache.delete(cost_centre_key)
-
-
 def get_financial_code_serialiser(cost_centre_code):
     financial_codes = (
         FinancialCode.objects.filter(cost_centre_id=cost_centre_code, )
-            .prefetch_related(
+        .prefetch_related(
             "forecast_forecastmonthlyfigures",
             "forecast_forecastmonthlyfigures__financial_period",
-        )
-            .order_by(
-            "programme__budget_type_fk__budget_type_edit_display_order",
-            "programme__programme_code",
-            "natural_account_code__expenditure_category__NAC_category__NAC_category_display_order",  # noqa: E501
-            "natural_account_code__natural_account_code",
-        )
+        ).order_by(*edit_forecast_order())
     )
 
     return FinancialCodeSerializer(financial_codes, many=True, )
@@ -110,6 +86,21 @@ class ChooseCostCentreView(
         # If user has permission on
         # one or more CCs then let them view
         return cost_centres.count() > 0
+
+    def get_user_cost_centres(self):
+        user_cost_centres = get_objects_for_user(
+            self.request.user, "costcentre.change_costcentre",
+        )
+
+        cost_centres = []
+
+        for (cost_centre) in user_cost_centres:
+            cost_centres.append({
+                "name": cost_centre.cost_centre_name,
+                "code": cost_centre.cost_centre_code,
+            })
+
+        return json.dumps(cost_centres)
 
     def get_form_kwargs(self):
         kwargs = super(ChooseCostCentreView, self).get_form_kwargs()
@@ -233,6 +224,9 @@ class PasteForecastRowsView(
         row_count = financial_codes.count()
         rows = paste_content.splitlines()
 
+        # Remove any rows that start with empty cells (to account for totals etc)
+        rows = [row for row in rows if not row[0].strip() == ""]
+
         pasted_row_count = len(rows)
 
         if len(rows) == 0:
@@ -300,14 +294,6 @@ class PasteForecastRowsView(
 
         financial_code_serialiser = get_financial_code_serialiser(self.cost_centre_code)
 
-        cache.set(
-            f"{cost_centre_code}_cost_centre_cache",
-            financial_code_serialiser.data,
-            90000,
-        )
-
-        delete_forecast_cache(cost_centre_code)
-
         return JsonResponse(financial_code_serialiser.data, safe=False)
 
     def form_invalid(self, form):
@@ -335,7 +321,7 @@ class EditForecastFigureView(
             cost_centre_code=cost_centre_code,
         ).first()
 
-        financial_year = FinancialYear.objects.filter(current=True).first()
+        financial_year = get_current_financial_year()
 
         financial_code = FinancialCode.objects.filter(
             cost_centre=cost_centre,
@@ -356,7 +342,7 @@ class EditForecastFigureView(
             raise NoFinancialCodeForEditedValue()
 
         monthly_figure = ForecastMonthlyFigure.objects.filter(
-            financial_year=financial_year,
+            financial_year_id=financial_year,
             financial_code=financial_code.first(),
             financial_period__financial_period_code=month,
             archived_status=None,
@@ -377,7 +363,7 @@ class EditForecastFigureView(
                 financial_period_code=month
             ).first()
             monthly_figure = ForecastMonthlyFigure(
-                financial_year=financial_year,
+                financial_year_id=financial_year,
                 financial_code=financial_code.first(),
                 financial_period=financial_period,
                 amount=amount,
@@ -386,14 +372,6 @@ class EditForecastFigureView(
         monthly_figure.save()
 
         financial_code_serialiser = get_financial_code_serialiser(self.cost_centre_code)
-
-        cache.set(
-            f"{cost_centre_code}_cost_centre_cache",
-            financial_code_serialiser.data,
-            90000,
-        )
-
-        delete_forecast_cache(cost_centre_code)
 
         return JsonResponse(financial_code_serialiser.data, safe=False)
 
@@ -431,20 +409,12 @@ class EditForecastView(
 
         form = PublishForm(initial={"cost_centre_code": self.cost_centre_code, })
 
-        if cache.get(f"{self.cost_centre_code}_cost_centre_cache"):
-            forecast_dump = json.dumps(
-                cache.get(f"{self.cost_centre_code}_cost_centre_cache")
-            )
-        else:
-            financial_code_serialiser = get_financial_code_serialiser(
-                self.cost_centre_code,
-            )
+        financial_code_serialiser = get_financial_code_serialiser(
+            self.cost_centre_code,
+        )
 
-            serialiser_data = financial_code_serialiser.data
-            forecast_dump = json.dumps(serialiser_data)
-            cache.set(
-                f"{self.cost_centre_code}_cost_centre_cache", serialiser_data, 90000,
-            )
+        serialiser_data = financial_code_serialiser.data
+        forecast_dump = json.dumps(serialiser_data)
 
         actual_data = FinancialPeriod.financial_period_info.actual_period_code_list()
         period_display = (
