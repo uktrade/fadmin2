@@ -157,4 +157,5 @@ class GiftAndHospitality(BaseModel):
 
 class GiftHospitalityPermissions(models.Model):
     class Meta:
-        permissions = (("can_view_gifthospitality", "Can view all Gift Hospitality entries"),)
+        permissions = (("can_view_gifthospitality",
+                        "Can view all Gift Hospitality entries"),)

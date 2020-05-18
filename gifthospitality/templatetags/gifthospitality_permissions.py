@@ -1,8 +1,8 @@
 from django import template
 
 from gifthospitality.utils.access_helpers import (
-    can_view_gifthospitality as can_view_gifthospitality_helper,
     can_all_gifthospitality_be_viewed as can_all_gifthospitality_be_viewed_helper,
+    can_view_gifthospitality as can_view_gifthospitality_helper,
 )
 
 

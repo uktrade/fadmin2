@@ -15,7 +15,8 @@
 #     # Check user can view forecasts
 #
 #     if not user.has_perm("gifthospitality.can_view_gifthospitality"):
-#         can_view_forecasts = Permission.objects.get(codename='can_view_gifthospitality')
+#         can_view_forecasts = Permission.objects.get(
+#         codename='can_view_gifthospitality')
 #         user.user_permissions.add(can_view_gifthospitality)
 #         user.save()
 #

@@ -1,15 +1,3 @@
-from datetime import date
-
-from guardian.shortcuts import (
-    get_objects_for_user as guardian_get_objects_for_user,
-)
-
-from gifthospitality.models import (
-    GiftAndHospitality,
-    GiftHospitalityPermissions,
-)
-
-
 def can_view_gifthospitality(user):
     """Checks view permission, if the user can view gifthospitality
     they are allowed to view the section"""
