@@ -5,7 +5,6 @@ from custom_usermodel.admin import UserAdmin
 from django import forms
 from django.contrib import admin, messages
 from django.contrib.admin.models import (
-    CHANGE,
     DELETION,
     LogEntry,
 )
@@ -28,6 +27,7 @@ from core.exportutils import (
 )
 from core.exportutils import export_to_csv
 from core.models import FinancialYear
+from core.utils import log_object_change
 
 
 class LogEntryAdmin(admin.ModelAdmin):
@@ -106,13 +106,10 @@ class AdminActiveField(admin.ModelAdmin):
             queryset.model
         )  # for_model --> get_for_model
         for obj in q:
-            LogEntry.objects.log_action(
-                user_id=request.user.id,
-                content_type_id=ct.pk,
-                object_id=obj.pk,
-                object_repr=str(obj),
-                action_flag=CHANGE,
-                change_message=str(obj) + " " + msg,
+            log_object_change(
+                request.user.id,
+                str(obj) + " " + msg,
+                obj=obj,
             )
         rows_updated = q.update(active=new_active_value)
         if rows_updated == 1:
@@ -181,6 +178,11 @@ class AdminExport(admin.ModelAdmin):
         return my_urls + urls
 
     def export_all_xls(self, request):
+        log_object_change(
+            request.user.id,
+            "Export all xlsx",
+        )
+
         try:
             queryset = self.queryset_all
         except AttributeError:
@@ -189,6 +191,11 @@ class AdminExport(admin.ModelAdmin):
         return export_to_excel(queryset, self.export_func)
 
     def export_selection_xlsx(self, _, request, queryset):
+        log_object_change(
+            request.user.id,
+            "Export CSV selection",
+        )
+
         # _ is required because the
         # function get called with
         # self passed in twice.
@@ -244,10 +251,20 @@ class AdminImportExport(AdminExport):
         return my_urls + urls
 
     def export_csv(self, request):
+        log_object_change(
+            request.user.id,
+            "Export CSV",
+        )
+
         e = export_csv_from_import(self.import_info.key)
         return export_to_csv(e.queryset, e.yield_data)
 
     def process_csv(self, request):
+        log_object_change(
+            request.user.id,
+            "Processing CSV",
+        )
+
         import_file = request.FILES["csv_file"]
         # read() gives you the file
         # contents as a bytes object,
@@ -267,6 +284,11 @@ class AdminImportExport(AdminExport):
 
     @csrf_exempt
     def import_csv(self, request):
+        log_object_change(
+            request.user.id,
+            "Import CSV",
+        )
+
         header_list = self.import_info.header_list
         form_title = self.import_info.form_title
         # because the files are small, upload them to memory
@@ -345,6 +367,13 @@ class UserAdmin(UserAdmin):
         else:
             if not obj.is_superuser:
                 obj.is_staff = False
+
+        if len(form.cleaned_data["groups"]) > 0:
+            log_object_change(
+                request.user.id,
+                f'user added to "{form.cleaned_data["groups"]}"',
+                obj=obj,
+            )
 
         super().save_model(request, obj, form, change)
 
