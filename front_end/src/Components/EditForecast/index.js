@@ -19,7 +19,6 @@ import {
 function EditForecast() {
     const dispatch = useDispatch();
 
-
     const errorMessage = useSelector(state => state.error.errorMessage)
     const selectedRow = useSelector(state => state.selected.selectedRow)
     const allSelected = useSelector(state => state.selected.all)
@@ -64,9 +63,11 @@ function EditForecast() {
             );
 
             let clipBoardContent = event.clipboardData.getData('text/plain')
+            let crsfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value
 
             let payload = new FormData()
             payload.append("paste_content", clipBoardContent)
+            payload.append("csrfmiddlewaretoken", crsfToken)
 
             if (allSelected) {
                 payload.append("all_selected", allSelected)

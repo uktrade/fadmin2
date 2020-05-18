@@ -1,8 +1,13 @@
 import io
 
 from django.contrib import admin
+from django.core.files.uploadhandler import (
+    MemoryFileUploadHandler,
+    TemporaryFileUploadHandler,
+)
 from django.shortcuts import redirect, render
 from django.urls import path
+from django.views.decorators.csrf import csrf_exempt
 
 from django_admin_listfilter_dropdown.filters import (
     RelatedDropdownFilter,
@@ -36,6 +41,7 @@ from chartofaccountDIT.import_csv import (
     import_inter_entity_class,
     import_op_del_category_class,
     import_prog_class,
+    import_project_class,
 )
 from chartofaccountDIT.models import (
     Analysis1,
@@ -73,8 +79,7 @@ from core.exportutils import generic_table_iterator
 
 
 class NaturalCodeAdmin(AdminActiveField, AdminImportExport):
-    """Define an extra import button, for the DIT specific fields"""
-
+    # Define an extra import button, for the DIT specific fields
     change_list_template = "admin/m_import_changelist.html"
 
     list_display = (
@@ -142,10 +147,15 @@ class NaturalCodeAdmin(AdminActiveField, AdminImportExport):
         my_urls = [path("import1-csv/", self.import1_csv)]
         return my_urls + urls
 
+    @csrf_exempt
     def import1_csv(self, request):
         header_list = import_NAC_DIT_class.header_list
         import_func = import_NAC_DIT_class.import_func
         form_title = import_NAC_DIT_class.form_title
+        # because the files are small, upload them to memory
+        # instead of using S3
+        request.upload_handlers.insert(0, TemporaryFileUploadHandler(request))
+        request.upload_handlers.insert(0, MemoryFileUploadHandler(request))
         if request.method == "POST":
             form = CsvImportForm(header_list, form_title, request.POST, request.FILES)
             if form.is_valid():
@@ -553,7 +563,7 @@ class ProjectCodeAdmin(AdminActiveField, AdminImportExport):
 
     @property
     def import_info(self):
-        return import_a2_class
+        return import_project_class
 
 
 class HistoricalProjectCodeAdmin(AdminReadOnly, AdminExport):

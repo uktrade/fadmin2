@@ -143,18 +143,17 @@ def generic_export_to_csv(queryset):
     return export_to_csv(queryset, generic_table_iterator)
 
 
-def export_to_excel(queryset, f, title=""):
+def export_to_excel(queryset, func, title=""):
     if title == "":
         title = queryset.model._meta.verbose_name_plural.title()
     resp = HttpResponse(content_type=EXCEL_TYPE)
     filename = title + today_string() + " " + ".xlsx"
     resp["Content-Disposition"] = "attachment; filename=" + filename
     wb = openpyxl.Workbook()
-    ws = wb.get_active_sheet()
+    ws = wb.active
     # Truncate the tab name to the maximum lenght permitted by Excel
     ws.title = title[:EXC_TAB_NAME_LEN]
-    for row in f(queryset):
-        # ws.append(row)
+    for row in func(queryset):
         ws.append(display_yes_no(row))
     wb.save(resp)
     return resp

@@ -19,7 +19,7 @@
         <!-- End Google Tag Manager -->
     {% endif %}
     <meta charset="utf-8"/>
-    {% block title %}<title>FIDO</title>{% endblock %}
+    {% block title %}<title>Financial Forecast Tool</title>{% endblock %}
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#0b0c0c"/>
 
@@ -157,6 +157,14 @@
                     </li>
                     {% endif %}
                 {% endif %}
+
+            {% if request.user.is_staff %}
+                <li class="internal-header__navigation__item">
+                    <a target="_blank" id="admin_page" class="internal-header__navigation__item__link" href="{% url 'admin:index' %}">
+                                Admin Site
+                    </a>
+                </li>
+            {% endif %}
             </ul>
         </nav>
     </div>

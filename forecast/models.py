@@ -1,3 +1,5 @@
+import copy
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import (
@@ -309,6 +311,8 @@ class FinancialCode(BaseModel):
         permissions = [
             ("can_view_forecasts", "Can view forecast"),
             ("can_upload_files", "Can upload files"),
+            ("can_download_oscar", "Can download OSCAR"),
+            ("can_download_mi_reports", "Can download mi reports"),
         ]
 
     programme = models.ForeignKey(ProgrammeCode, on_delete=models.PROTECT)
@@ -359,6 +363,12 @@ class SubTotalForecast:
 
     def __init__(self, data):
         self.display_data = data
+        self.result_table = []
+        self.period_list = []
+        self.full_list = []
+        self.output_subtotal = []
+        self.previous_values = []
+        self.display_total_column = ""
 
     def output_row_to_table(self, row, style_name=""):
         #     Add the stile entry to the dictionary
@@ -399,7 +409,6 @@ class SubTotalForecast:
         for i in range(how_many_row, -1, -1):
             row = self.display_data[i]
             if not self.row_has_values(row):
-                print(f"Deleted {i}")
                 del self.display_data[i]
 
     def do_output_subtotal(self, current_row):
@@ -439,11 +448,14 @@ class SubTotalForecast:
     def subtotal_data(
         self, display_total_column, subtotal_columns_arg, show_grand_total,
     ):
+        # Make a copy so that modifying this will not touch
+        # the original subtotal_columns_arg
+        # otherwise each time the view is called the calculation order changes.
+        self.subtotal_columns = copy.deepcopy(subtotal_columns_arg)
         # The self.subtotals are passed in from
         # the outer totals for calculation,
         # it is easier to call subtotal 0
         # the innermost subtotal
-        self.subtotal_columns = subtotal_columns_arg
         self.subtotal_columns.reverse()
         self.display_total_column = display_total_column
         self.result_table = []
@@ -462,6 +474,10 @@ class SubTotalForecast:
         ]
         self.period_list.append("Budget")
         self.remove_empty_rows()
+        # Check that there are rows left. Maybe they were all
+        # with values of 0.
+        if not self.display_data:
+            return []
         first_row = self.display_data.pop(0)
         self.output_row_to_table(first_row, "")
         # Initialise the structure required
@@ -543,7 +559,6 @@ class PivotManager(models.Manager):
         pivot_data = pivot(
             q1, columns, "financial_period__period_short_name", "amount",
         )
-        # print(pivot_data.query)
         return pivot_data
 
 
@@ -810,14 +825,12 @@ class BudgetUploadMonthlyFigure(MonthlyFigureAbstract):
             ),
         ]
 
-        # Does not inherit from BaseModel as it maps to view
-
 
 class OSCARReturn(models.Model):
     """Used for downloading the Oscar return.
     Mapped to a view in the database, because
     the query is too complex"""
-
+    # Does not inherit from BaseModel as it maps to view
     # The view is created by  migration 0038_auto_create_view_forecast_oscar_return.py
 
     row_number = models.BigIntegerField()
