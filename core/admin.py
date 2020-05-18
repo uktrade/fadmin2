@@ -10,7 +10,6 @@ from django.contrib.admin.models import (
 )
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadhandler import (
     MemoryFileUploadHandler,
     TemporaryFileUploadHandler,
@@ -102,15 +101,14 @@ class AdminActiveField(admin.ModelAdmin):
         else:
             msg = "deactivated"
         q = queryset.filter(active=not new_active_value)
-        ct = ContentType.objects.get_for_model(
-            queryset.model
-        )  # for_model --> get_for_model
+
         for obj in q:
             log_object_change(
                 request.user.id,
                 str(obj) + " " + msg,
                 obj=obj,
             )
+
         rows_updated = q.update(active=new_active_value)
         if rows_updated == 1:
             message_bit = "1 {} was".format(queryset.model._meta.verbose_name)
