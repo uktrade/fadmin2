@@ -27,7 +27,24 @@ class PublishForm(forms.Form):
 
 
 class AddForecastRowForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.__cost_centre_code = kwargs.pop("cost_centre_code")
+        forms.Form.__init__(self, *args, **kwargs)
+
+    @property
+    def cost_centre_code(self):
+        return self.__cost_centre_code
+
+    @cost_centre_code.setter
+    def cost_centre_code(self, value):
+        self.__cost_centre_code = value
+
     def clean(self):
+        if not self.__cost_centre_code:
+            raise forms.ValidationError(
+                "A cost centre must be set on this form"
+            )
+
         cleaned_data = super().clean()
         programme = cleaned_data.get("programme")
         natural_account_code = cleaned_data.get("natural_account_code")
@@ -41,6 +58,7 @@ class AddForecastRowForm(forms.Form):
             analysis1_code=analysis1_code,
             analysis2_code=analysis2_code,
             project_code=project_code,
+            cost_centre=self.__cost_centre_code,
         ).first()
 
         if financial_code:
