@@ -11,7 +11,7 @@ from forecast.models import (
 )
 
 
-def insert_query(table_name, archived_period_id):
+def insert_query(table_name, archived_status_id):
     return (
         f"INSERT INTO public.{table_name}("
         f"created, updated, amount, starting_amount, financial_code_id, "
@@ -20,16 +20,16 @@ def insert_query(table_name, archived_period_id):
         f"created, updated, amount, amount, financial_code_id, "
         f"financial_period_id, financial_year_id "
         f"FROM public.{table_name} "
-        f"WHERE archived_status_id = {archived_period_id}"
+        f"WHERE archived_status_id = {archived_status_id}"
     )
 
-def insert_total_budget_query(archived_period_id):
+def insert_total_budget_query(archived_status_id, archived_period_id):
     return (
         f"INSERT INTO public.end_of_month_monthlytotalbudget (" \
-        f"created, updated, amount, archived_status_id, " \
-        f"financial_code_id, financial_year_id)" \
-        f"SELECT now(), now(), budget, {archived_period_id}" \
-        f"financial_code_id, financial_year_id" \
+        f"created, updated, amount, archived_period_id, " \
+        f"financial_code_id, financial_year_id, archived_status_id)" \
+        f"SELECT now(), now(), budget, {archived_period_id}," \
+        f"financial_code_id, financial_year_id, {archived_status_id}" \
         f"FROM public.yearly_budget;"
     )
 
@@ -74,7 +74,7 @@ def end_of_month_archive(end_of_month_info):
 
     # Save the yearly total for the budgets. It makes the queries
     # used to display the forecast/budget much easier.
-    budget_total_sql = insert_total_budget_query(end_of_month_info.id)
+    budget_total_sql = insert_total_budget_query(end_of_month_info.id, period_id)
     with connection.cursor() as cursor:
         cursor.execute(budget_total_sql)
 

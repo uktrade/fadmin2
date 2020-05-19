@@ -14,7 +14,6 @@ class Migration(migrations.Migration):
         ('core', '0008_create_finance_groups'),
         ('end_of_month', '0003_auto_20200408_0629'),
     ]
-
     operations = [
         migrations.CreateModel(
             name='SimpleHistoryMonthlyTotalBudget',
@@ -27,6 +26,7 @@ class Migration(migrations.Migration):
                 ('history_date', models.DateTimeField()),
                 ('history_change_reason', models.CharField(max_length=100, null=True)),
                 ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('archived_period', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='forecast.FinancialPeriod')),
                 ('archived_status', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='end_of_month.EndOfMonthStatus')),
                 ('financial_code', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='forecast.FinancialCode')),
                 ('financial_year', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.FinancialYear')),
@@ -46,6 +46,7 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
                 ('amount', models.BigIntegerField(default=0)),
+                ('archived_period', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='end_of_month_monthlytotalbudgets', to='forecast.FinancialPeriod')),
                 ('archived_status', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='end_of_month_monthlytotalbudgets', to='end_of_month.EndOfMonthStatus')),
                 ('financial_code', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='end_of_month_monthlytotalbudgets', to='forecast.FinancialCode')),
                 ('financial_year', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.FinancialYear')),
@@ -58,3 +59,4 @@ class Migration(migrations.Migration):
             },
         ),
     ]
+

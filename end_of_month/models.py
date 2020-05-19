@@ -47,8 +47,14 @@ class MonthlyTotalBudget(BaseModel):
         on_delete=models.PROTECT,
         related_name="%(app_label)s_%(class)ss",
     )
+    archived_period = models.ForeignKey(
+        FinancialPeriod,
+        on_delete=models.PROTECT,
+        related_name="%(app_label)s_%(class)ss",
+    )
     class Meta:
         verbose_name = "Archived total budget"
         verbose_name_plural = "Archived total budget"
         ordering = ["archived_status"]
         unique_together = ("financial_code", "archived_status")
+
