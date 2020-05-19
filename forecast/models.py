@@ -654,7 +654,7 @@ class DisplaySubTotalManager(models.Manager):
 
 
 # Does not inherit from BaseModel as it maps to view
-class ForecastingDataView(models.Model):
+class ForecastingDataViewAbstract(models.Model):
     """Used for joining budgets and forecast.
     The view adds rows with 0 values across the year (zero-values rows),
     to be consistent with the Edit Forecast logic.
@@ -686,6 +686,12 @@ class ForecastingDataView(models.Model):
     objects = models.Manager()  # The default manager.
     view_data = DisplaySubTotalManager()
 
+    class Meta:
+        abstract = True
+
+
+
+class ForecastingDataView(ForecastingDataViewAbstract):
     class Meta:
         managed = False
         db_table = "forecast_forecast_download_view"

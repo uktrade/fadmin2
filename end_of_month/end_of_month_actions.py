@@ -23,6 +23,15 @@ def insert_query(table_name, archived_period_id):
         f"WHERE archived_status_id = {archived_period_id}"
     )
 
+def insert_total_budget_query(archived_period_id):
+    return (
+        f"INSERT INTO public.end_of_month_monthlytotalbudget (" \
+        f"created, updated, amount, archived_status_id, " \
+        f"financial_code_id, financial_year_id)" \
+        f"SELECT now(), now(), budget, {archived_period_id}" \
+        f"financial_code_id, financial_year_id" \
+        f"FROM public.yearly_budget;"
+    )
 
 # TODO add transaction
 def end_of_month_archive(end_of_month_info):
@@ -32,7 +41,7 @@ def end_of_month_archive(end_of_month_info):
     # Add archive period to all the active forecast.
     # The actuals are not archived, because they don't change from one month to another
     forecast_periods = ForecastMonthlyFigure.objects.filter(
-        financial_period__financial_period_code__gt=period_id,
+        financial_period__financial_period_code__gte=period_id,
         financial_year_id=current_year,
         archived_status__isnull=True,
     )
@@ -62,6 +71,12 @@ def end_of_month_archive(end_of_month_info):
 
     with connection.cursor() as cursor:
         cursor.execute(budget_sql)
+
+    # Save the yearly total for the budgets. It makes the queries
+    # used to display the forecast/budget much easier.
+    budget_total_sql = insert_total_budget_query(end_of_month_info.id)
+    with connection.cursor() as cursor:
+        cursor.execute(budget_total_sql)
 
     end_of_month_info.archived = True
     end_of_month_info.archived_date = timezone.now()
