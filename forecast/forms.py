@@ -31,20 +31,7 @@ class AddForecastRowForm(forms.Form):
         self.__cost_centre_code = kwargs.pop("cost_centre_code")
         forms.Form.__init__(self, *args, **kwargs)
 
-    @property
-    def cost_centre_code(self):
-        return self.__cost_centre_code
-
-    @cost_centre_code.setter
-    def cost_centre_code(self, value):
-        self.__cost_centre_code = value
-
     def clean(self):
-        if not self.__cost_centre_code:
-            raise forms.ValidationError(
-                "A cost centre must be set on this form"
-            )
-
         cleaned_data = super().clean()
         programme = cleaned_data.get("programme")
         natural_account_code = cleaned_data.get("natural_account_code")
