@@ -185,7 +185,6 @@ class AdminExport(admin.ModelAdmin):
             queryset = self.queryset_all
         except AttributeError:
             queryset = self.model.objects.all()
-            # self.message_user(request, "Export called")
         return export_to_excel(queryset, self.export_func)
 
     def export_selection_xlsx(self, _, request, queryset):
