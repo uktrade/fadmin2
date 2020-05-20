@@ -178,7 +178,7 @@ class AdminExport(admin.ModelAdmin):
     def export_all_xls(self, request):
         log_object_change(
             request.user.id,
-            "Export all xlsx",
+            "Export all as .xlsx",
         )
 
         try:
@@ -191,7 +191,7 @@ class AdminExport(admin.ModelAdmin):
     def export_selection_xlsx(self, _, request, queryset):
         log_object_change(
             request.user.id,
-            "Export XLSX selection",
+            "Export selection as .xlsx",
         )
 
         # _ is required because the
