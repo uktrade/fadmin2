@@ -7,6 +7,7 @@ from core.models import FinancialYear
 from forecast.models import (
     FinancialCode,
     FinancialPeriod,
+    ForecastingDataViewAbstract,
 )
 
 
@@ -57,4 +58,16 @@ class MonthlyTotalBudget(BaseModel):
         verbose_name_plural = "Archived total budget"
         ordering = ["archived_status"]
         unique_together = ("financial_code", "archived_status")
+
+
+class PreviousMonthForecast(ForecastingDataViewAbstract):
+    archived_period = models.ForeignKey(FinancialPeriod, on_delete=models.PROTECT,)
+    class Meta:
+        abstract = True
+
+
+class PreviousAprForecast(PreviousMonthForecast):
+    archived_period = models.ForeignKey(FinancialPeriod, on_delete=models.PROTECT,)
+    class Meta:
+        db_table = "budget_forecast_apr_view "
 

@@ -12,25 +12,25 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL(
             """
-            DROP VIEW if exists annual_forecast_apr CASCADE;
-            DROP VIEW if exists annual_forecast_may CASCADE;
-            DROP VIEW if exists annual_forecast_jun CASCADE;
-            DROP VIEW if exists annual_forecast_jul CASCADE;
-            DROP VIEW if exists annual_forecast_aug CASCADE;
-            DROP VIEW if exists annual_forecast_sep CASCADE;
-            DROP VIEW if exists annual_forecast_oct CASCADE;
-            DROP VIEW if exists annual_forecast_nov CASCADE;
-            DROP VIEW if exists annual_forecast_dec CASCADE;
-            DROP VIEW if exists annual_forecast_jan CASCADE;
-            DROP VIEW if exists annual_forecast_feb CASCADE;
-            DROP VIEW if exists annual_forecast_mar CASCADE;
-            DROP VIEW if exists annual_forecast_adj1 CASCADE;
-            DROP VIEW if exists annual_forecast_adj2 CASCADE;
-            DROP VIEW if exists annual_forecast_adj3 CASCADE;
+            DROP VIEW if exists monthly_forecast_apr CASCADE;
+            DROP VIEW if exists monthly_forecast_may CASCADE;
+            DROP VIEW if exists monthly_forecast_jun CASCADE;
+            DROP VIEW if exists monthly_forecast_jul CASCADE;
+            DROP VIEW if exists monthly_forecast_aug CASCADE;
+            DROP VIEW if exists monthly_forecast_sep CASCADE;
+            DROP VIEW if exists monthly_forecast_oct CASCADE;
+            DROP VIEW if exists monthly_forecast_nov CASCADE;
+            DROP VIEW if exists monthly_forecast_dec CASCADE;
+            DROP VIEW if exists monthly_forecast_jan CASCADE;
+            DROP VIEW if exists monthly_forecast_feb CASCADE;
+            DROP VIEW if exists monthly_forecast_mar CASCADE;
+            DROP VIEW if exists monthly_forecast_adj1 CASCADE;
+            DROP VIEW if exists monthly_forecast_adj2 CASCADE;
+            DROP VIEW if exists monthly_forecast_adj3 CASCADE;
 
 
-           CREATE VIEW annual_forecast_apr as
-                SELECT financial_code_id, financial_year_id,
+           CREATE VIEW monthly_forecast_apr as
+                SELECT 1 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -52,8 +52,8 @@ class Migration(migrations.Migration):
                 GROUP BY financial_code_id,  financial_year_id;
 
 
-           CREATE VIEW annual_forecast_may as
-                SELECT financial_code_id, financial_year_id,
+           CREATE VIEW monthly_forecast_may as
+                SELECT 2 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS jun,
@@ -73,8 +73,8 @@ class Migration(migrations.Migration):
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
                 GROUP BY financial_code_id,  financial_year_id;
 
-           CREATE VIEW annual_forecast_jun as
-                SELECT financial_code_id, financial_year_id,
+           CREATE VIEW monthly_forecast_jun as
+                SELECT 3 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -94,8 +94,8 @@ class Migration(migrations.Migration):
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
                GROUP BY financial_code_id,  financial_year_id;
 
-           CREATE VIEW annual_forecast_jul as
-                SELECT financial_code_id, financial_year_id,
+           CREATE VIEW monthly_forecast_jul as
+                SELECT 4 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -115,8 +115,8 @@ class Migration(migrations.Migration):
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
                 GROUP BY financial_code_id,  financial_year_id;
 
-                CREATE VIEW annual_forecast_aug as
-                SELECT financial_code_id, financial_year_id,
+                CREATE VIEW monthly_forecast_aug as
+                SELECT 5 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -136,8 +136,8 @@ class Migration(migrations.Migration):
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
                 GROUP BY financial_code_id,  financial_year_id;
 
-            CREATE VIEW annual_forecast_sep as
-                SELECT financial_code_id, financial_year_id,
+            CREATE VIEW monthly_forecast_sep as
+                SELECT 6 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -157,8 +157,8 @@ class Migration(migrations.Migration):
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
                 GROUP BY financial_code_id,  financial_year_id;
 
-            CREATE VIEW annual_forecast_oct as
-                SELECT financial_code_id, financial_year_id,
+            CREATE VIEW monthly_forecast_oct as
+                SELECT 7 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -178,8 +178,8 @@ class Migration(migrations.Migration):
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
                 GROUP BY financial_code_id,  financial_year_id;
 
-            CREATE VIEW annual_forecast_nov as
-                SELECT financial_code_id, financial_year_id,
+            CREATE VIEW monthly_forecast_nov as
+                SELECT 8 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -199,8 +199,8 @@ class Migration(migrations.Migration):
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
                 GROUP BY financial_code_id,  financial_year_id;
 
-            CREATE VIEW annual_forecast_dec as
-                SELECT financial_code_id, financial_year_id,
+            CREATE VIEW monthly_forecast_dec as
+                SELECT 9 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -220,8 +220,8 @@ class Migration(migrations.Migration):
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
                 GROUP BY financial_code_id,  financial_year_id;
 
-            CREATE VIEW annual_forecast_feb as
-                SELECT financial_code_id, financial_year_id,
+            CREATE VIEW monthly_forecast_feb as
+                SELECT 10 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -241,8 +241,8 @@ class Migration(migrations.Migration):
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
                 GROUP BY financial_code_id,  financial_year_id;
 
-            CREATE VIEW annual_forecast_jan as
-                SELECT financial_code_id, financial_year_id,
+            CREATE VIEW monthly_forecast_jan as
+                SELECT 11 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -262,8 +262,8 @@ class Migration(migrations.Migration):
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
                 GROUP BY financial_code_id,  financial_year_id;
 
-            CREATE VIEW annual_forecast_mar as
-                SELECT financial_code_id, financial_year_id,
+            CREATE VIEW monthly_forecast_mar as
+                SELECT 12 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -283,8 +283,8 @@ class Migration(migrations.Migration):
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
                 GROUP BY financial_code_id,  financial_year_id;
 
-            CREATE VIEW annual_forecast_adj1 as
-                SELECT financial_code_id, financial_year_id,
+            CREATE VIEW monthly_forecast_adj1 as
+                SELECT 13 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -304,8 +304,8 @@ class Migration(migrations.Migration):
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
                 GROUP BY financial_code_id,  financial_year_id;
 
-            CREATE VIEW annual_forecast_adj2 as
-                SELECT financial_code_id, financial_year_id,
+            CREATE VIEW monthly_forecast_adj2 as
+                SELECT 14 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -325,8 +325,8 @@ class Migration(migrations.Migration):
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
                 GROUP BY financial_code_id,  financial_year_id;
 
-            CREATE VIEW annual_forecast_adj3 as
-                SELECT financial_code_id, financial_year_id,
+            CREATE VIEW monthly_forecast_adj3 as
+                SELECT 15 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id = 1 THEN amount ELSE NULL END) AS apr,
                        SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
                        SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 3 THEN amount ELSE NULL END) AS jun,
@@ -347,21 +347,21 @@ class Migration(migrations.Migration):
                 GROUP BY financial_code_id,  financial_year_id;
         """,
             """
-           DROP VIEW if exists annual_forecast_apr CASCADE;
-            DROP VIEW if exists annual_forecast_may CASCADE;
-            DROP VIEW if exists annual_forecast_jun CASCADE;
-            DROP VIEW if exists annual_forecast_jul CASCADE;
-            DROP VIEW if exists annual_forecast_aug CASCADE;
-            DROP VIEW if exists annual_forecast_sep CASCADE;
-            DROP VIEW if exists annual_forecast_oct CASCADE;
-            DROP VIEW if exists annual_forecast_nov CASCADE;
-            DROP VIEW if exists annual_forecast_dec CASCADE;
-            DROP VIEW if exists annual_forecast_jan CASCADE;
-            DROP VIEW if exists annual_forecast_feb CASCADE;
-            DROP VIEW if exists annual_forecast_mar CASCADE;
-            DROP VIEW if exists annual_forecast_adj1 CASCADE;
-            DROP VIEW if exists annual_forecast_adj2 CASCADE;
-            DROP VIEW if exists annual_forecast_adj3 CASCADE;
+           DROP VIEW if exists monthly_forecast_apr CASCADE;
+            DROP VIEW if exists monthly_forecast_may CASCADE;
+            DROP VIEW if exists monthly_forecast_jun CASCADE;
+            DROP VIEW if exists monthly_forecast_jul CASCADE;
+            DROP VIEW if exists monthly_forecast_aug CASCADE;
+            DROP VIEW if exists monthly_forecast_sep CASCADE;
+            DROP VIEW if exists monthly_forecast_oct CASCADE;
+            DROP VIEW if exists monthly_forecast_nov CASCADE;
+            DROP VIEW if exists monthly_forecast_dec CASCADE;
+            DROP VIEW if exists monthly_forecast_jan CASCADE;
+            DROP VIEW if exists monthly_forecast_feb CASCADE;
+            DROP VIEW if exists monthly_forecast_mar CASCADE;
+            DROP VIEW if exists monthly_forecast_adj1 CASCADE;
+            DROP VIEW if exists monthly_forecast_adj2 CASCADE;
+            DROP VIEW if exists monthly_forecast_adj3 CASCADE;
                 """,
         )
     ]
