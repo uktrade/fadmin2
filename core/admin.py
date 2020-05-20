@@ -191,7 +191,7 @@ class AdminExport(admin.ModelAdmin):
     def export_selection_xlsx(self, _, request, queryset):
         log_object_change(
             request.user.id,
-            "Export CSV selection",
+            "Export XLSX selection",
         )
 
         # _ is required because the
