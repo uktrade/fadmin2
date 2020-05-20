@@ -67,7 +67,91 @@ class PreviousMonthForecast(ForecastingDataViewAbstract):
 
 
 class PreviousAprForecast(PreviousMonthForecast):
-    archived_period = models.ForeignKey(FinancialPeriod, on_delete=models.PROTECT,)
     class Meta:
-        db_table = "budget_forecast_apr_view "
+        managed = False
+        db_table = "budget_forecast_apr_view"
+
+
+class PreviousMayForecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_may_view"
+
+
+class PreviousJunForecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_jun_view"
+
+
+class PreviousJulForecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_jul_view"
+
+
+class PreviousAugForecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_aug_view"
+
+
+class PreviousSepForecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_sep_view"
+
+
+class PreviousOctForecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_oct_view"
+
+
+class PreviousNovForecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_nov_view"
+
+
+class PreviousDecForecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_dec_view"
+
+
+class PreviousJanForecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_jan_view"
+
+
+class PreviousFebForecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_feb_view"
+
+
+class PreviousMarForecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_mar_view"
+
+
+class PreviousAdj1Forecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_adj1_view"
+
+
+class PreviousAdj2Forecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_adj2_view"
+
+
+class PreviousAdj3Forecast(PreviousMonthForecast):
+    class Meta:
+        managed = False
+        db_table = "budget_forecast_adj3_view"
 
