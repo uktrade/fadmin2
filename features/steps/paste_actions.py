@@ -163,6 +163,13 @@ def step_impl(context):
     paste(context)
 
 
+@when(u'the user pastes data without meta columns')
+def step_impl(context):
+    paste_text = "0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
+    copy_text(context, paste_text)
+    paste(context)
+
+
 @then(u'the clipboard data is displayed in the forecast table')
 def step_impl(context):
     april_value = context.browser.find_element_by_id(
@@ -216,6 +223,15 @@ def step_impl(context):
     check_error_message(
         context,
         "You have selected all forecast rows but the pasted data has too many rows.",
+    )
+
+
+@then('the could not find forecast error is displayed')
+def step_impl(context):
+    check_error_message(
+        context,
+        "Could not find forecast, please check that you have pasted "
+        "ALL columns from the spreadsheet",
     )
 
 
