@@ -12,7 +12,7 @@ from django.urls import reverse, path
 
 from core.test.test_base import RequestFactoryBase
 
-from gifthospitality.models import GiftAndHospitality, GiftAndHospitalityClassification
+from gifthospitality.models import GiftAndHospitality, GiftAndHospitalityClassification, GiftAndHospitalityCompany, GiftAndHospitalityCategory, Grade
 
 from gifthospitality.forms import GiftAndHospitalityReceivedForm
 from gifthospitality.views import GiftHospitalityReceivedView
@@ -30,6 +30,15 @@ class GiftHospitalityReceivedFormTest(TestCase, RequestFactoryBase):
             password=self.test_password,
         )
 
+        classification = GiftAndHospitalityClassification(sequence_no=10, gif_hospitality_classification="Test Classification")
+        classification.save()
+
+        category = GiftAndHospitalityCategory(sequence_no=10, gif_hospitality_category="Test Category")
+        category.save()
+
+        # action_taken = GiftAndHospitality(action_taken="Rejected")
+        # action_taken.save()
+
     def test_gift_hospitality_receive_form(self):
         response = reverse("gifthospitality:gift-received",)
 
@@ -37,12 +46,19 @@ class GiftHospitalityReceivedFormTest(TestCase, RequestFactoryBase):
 
         self.assertEqual(response.status_code, 200)
 
-        classification_filter = GiftAndHospitalityClassification.objects.get()
-        print(classification_filter)
+        classification_filter = GiftAndHospitalityClassification.objects.get(sequence_no=10)
+        # print(classification_filter)
+
+        category_filter = GiftAndHospitalityCategory.objects.get(sequence_no=10)
+
+        grade_filter = Grade.objects.all()
+
+        print(grade_filter)
+
 
         gift_hospitality_received_data = {
-            'classification': '88',     # Required
-            'category': 'Meeting company to discuss Trade and/or Investment opportunities',       # Required
+            'classification': classification_filter,     # Required
+            'category': category_filter,       # Required
                                           'date_offered': '22-03-2005',     # Required
                                           'action_taken': 'Rejected', # Required
                                           'venue': 'Normal Venue',  # Required
