@@ -142,7 +142,12 @@ class FinancialPeriodManager(models.Manager):
             .values_list("financial_period_code", flat=True,)
         )
 
+    def month_sublist(self, month):
+        return self.period_display_list()[: month]
+
     def actual_month(self):
+        # use the Max to protect us from the situation of
+        # non contiguous actual month.
         m = (
             self.get_queryset()
             .filter(actual_loaded=True)
@@ -151,7 +156,7 @@ class FinancialPeriodManager(models.Manager):
         return m["financial_period_code__max"] or 0
 
     def actual_month_list(self):
-        return self.period_display_list()[: self.actual_month()]
+        return self.month_sublist(self.actual_month())
 
     def periods(self):
         return (

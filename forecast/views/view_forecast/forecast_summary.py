@@ -12,7 +12,10 @@ from costcentre.models import (
 )
 from costcentre.models import DepartmentalGroup
 
-from forecast.models import ForecastingDataView
+from forecast.models import (
+    FinancialPeriod,
+    ForecastingDataView,
+)
 from forecast.tables import (
     ForecastSubTotalTable,
     ForecastWithLinkTable,
@@ -70,6 +73,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
         """
         filter_code = ""
         pivot_filter = {}
+        month_list = FinancialPeriod.financial_period_info.month_sublist(7)
         arg_name = filter_codes[self.hierarchy_type]
         if arg_name:
             filter_code = self.kwargs[arg_name]
@@ -119,6 +123,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
                 filter_code,
                 programme_columns,
                 programme_data,
+                # actual_month_list = month_list
             )
 
         programme_table.heading = "Control total report"
