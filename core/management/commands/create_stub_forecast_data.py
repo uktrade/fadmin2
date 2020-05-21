@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from chartofaccountDIT.models import NaturalCode, ProgrammeCode
+from chartofaccountDIT.models import NaturalCode, ProgrammeCode, ProjectCode
 
 from core.models import FinancialYear
 
@@ -23,30 +23,33 @@ def monthly_figures_create():
     current_financial_year = FinancialYear.objects.get(current=True)
     cost_centre_fk = CostCentre.objects.first()
     programme_list = ProgrammeCode.objects.all()
+    project_list = ProjectCode.objects.all()
     natural_account_list = NaturalCode.objects.all()
     financial_periods = FinancialPeriod.objects.exclude(
         period_long_name__icontains="adj"
     )
     monthly_amount = 0
-    for programme_fk in programme_list:
-        monthly_amount += 10
-        for natural_account_code_fk in natural_account_list:
-            financial_code = FinancialCode.objects.create(
-                programme=programme_fk,
-                cost_centre=cost_centre_fk,
-                natural_account_code=natural_account_code_fk,
-            )
-            financial_code.save()
-
-            for period in financial_periods:
-                ForecastMonthlyFigure.objects.create(
-                    financial_year=current_financial_year,
-                    financial_period=period,
-                    financial_code=financial_code,
-                    amount=monthly_amount,
+    for project_code in project_list:
+        for programme_fk in programme_list:
+            monthly_amount += 10
+            for natural_account_code_fk in natural_account_list:
+                financial_code = FinancialCode.objects.create(
+                    programme=programme_fk,
+                    cost_centre=cost_centre_fk,
+                    natural_account_code=natural_account_code_fk,
+                    project_code=project_code,
                 )
+                financial_code.save()
 
-                monthly_amount += 1
+                for period in financial_periods:
+                    ForecastMonthlyFigure.objects.create(
+                        financial_year=current_financial_year,
+                        financial_period=period,
+                        financial_code=financial_code,
+                        amount=monthly_amount,
+                    )
+
+                    monthly_amount += 1
 
         for i in range(1, 3):
             actual = FinancialPeriod.objects.get(financial_period_code=i)

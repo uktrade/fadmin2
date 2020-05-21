@@ -60,8 +60,56 @@ from forecast.utils.query_fields import (
 )
 from forecast.views.base import ForecastViewPermissionMixin
 
+class PeriodTableViewMixin(MultiTableMixin):
 
-class ForecastMultiTableMixin(MultiTableMixin):
+    def __init__(self, *args, **kwargs):
+        self._period = None
+        self._month_list = None
+        self._datamodel = None
+        self._table_tag = None
+
+        super().__init__(*args, **kwargs)
+
+    def get_period(self):
+        if self._period is None:
+            self._period = self.kwargs["period"]
+        return self._period
+
+    def get_month_list(self):
+        if self._month_list is None:
+            period = self.get_period()
+            if period:
+                # We are displaying historical forecast
+                self._month_list = FinancialPeriod.financial_period_info.month_sublist(
+                    period)
+            else:
+                self._month_list = FinancialPeriod.financial_period_info.actual_month_list()
+        return self._month_list
+
+    def get_datamodel(self):
+        if self._datamodel is None:
+            period = self.get_period()
+            if period:
+                # We are displaying historical forecast
+                self._datamodel = ForecastingDataView
+            else:
+                 self._datamodel = ForecastingDataView
+        return self._datamodel
+
+    def get_table_tag(self):
+        if self._table_tag is None:
+            period = self.get_period()
+            if period:
+                # We are displaying historical forecast
+                forecast_period_obj = FinancialPeriod.objects.get(pk=period)
+                self._table_tag  = f'Historical data for {forecast_period_obj.period_long_name}'
+            else:
+                self._table_tag = ""
+        return self._table_tag
+
+
+
+class ForecastMultiTableMixin(PeriodTableViewMixin):
     hierarchy_type = -1
 
     def class_name(self):
@@ -77,18 +125,10 @@ class ForecastMultiTableMixin(MultiTableMixin):
         if arg_name:
             filter_code = self.kwargs[arg_name]
             pivot_filter = {filter_selectors[self.hierarchy_type]: f"{filter_code}"}
-
-        period = self.kwargs["period"]
-        if period:
-            # We are displaying historical forecast
-            month_list = FinancialPeriod.financial_period_info.month_sublist(period)
-            forecast_period_obj = FinancialPeriod.objects.get(pk=period)
-            table_tag = f'Historical data for {forecast_period_obj.period_long_name}'
-            datamodel = ForecastingDataView
-        else:
-            month_list = FinancialPeriod.financial_period_info.actual_month_list()
-            table_tag = ""
-            datamodel = ForecastingDataView
+        datamodel = self.get_datamodel()
+        period = self.get_period()
+        table_tag = self.get_table_tag()
+        month_list = self.get_month_list()
 
         hierarchy_data = datamodel.view_data.subtotal_data(
             hierarchy_sub_total_column[self.hierarchy_type],
@@ -141,7 +181,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
                 actual_month_list=month_list,
             )
 
-        programme_table.heading = "Control total report"
+        programme_table.attrs['caption'] = "Control total report"
         programme_table.tag = table_tag
 
         expenditure_table = ForecastWithLinkTable(
@@ -153,7 +193,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
             expenditure_data,
             actual_month_list=month_list,
         )
-        expenditure_table.heading = "Expenditure report"
+        expenditure_table.attrs['caption'] = "Expenditure report"
         expenditure_table.tag = table_tag
 
         project_table = ForecastWithLinkTable(
@@ -165,7 +205,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
             project_data,
             actual_month_list=month_list,
         )
-        project_table.heading = "Project report"
+        project_table.attrs['caption'] = "Project report"
         project_table.tag = table_tag
 
         if self.hierarchy_type == SHOW_COSTCENTRE:
@@ -185,7 +225,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
                 actual_month_list=month_list,
             )
 
-        hierarchy_table.heading = "Forecast hierarchy report"
+        hierarchy_table.attrs['caption'] = "Forecast hierarchy report"
         hierarchy_table.tag = table_tag
 
         self.tables = [
@@ -199,7 +239,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
 
 
 class DITView(
-    ForecastViewPermissionMixin, ForecastMultiTableMixin, TemplateView,
+    ForecastViewPermissionMixin, ForecastMultiTableMixin, TemplateView
 ):
     template_name = "forecast/view/dit.html"
     table_pagination = False
@@ -238,7 +278,7 @@ class DirectorateView(
 
 
 class CostCentreView(
-    ForecastViewPermissionMixin, ForecastMultiTableMixin, TemplateView,
+    ForecastViewPermissionMixin, ForecastMultiTableMixin, TemplateView
 ):
     template_name = "forecast/view/cost_centre.html"
     table_pagination = False
@@ -257,7 +297,6 @@ class CostCentreView(
         )
 
     def post(self, request, *args, **kwargs):
-        period = self.kwargs["period"]
         cost_centre_code = request.POST.get("cost_centre", None,)
         if cost_centre_code:
             return HttpResponseRedirect(
@@ -265,7 +304,7 @@ class CostCentreView(
                     "forecast_cost_centre",
                     kwargs={
                             "cost_centre_code": cost_centre_code,
-                            "period":period,
+                            "period": self.get_period(),
                     },
                 )
             )

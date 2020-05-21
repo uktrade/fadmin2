@@ -55,6 +55,9 @@ class ForecastProjectDetailsMixin(MultiTableMixin):
             pk=self.kwargs['project_code'],
         )
 
+    def period(self):
+        return self.kwargs["period"]
+
     def project_code_form(self):
         return ProjectForm()
 
@@ -71,11 +74,11 @@ class ForecastProjectDetailsMixin(MultiTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
-        period = self.kwargs["period"]
-        if period:
+        if self.period():
             # We are displaying historical forecast
-            month_list = FinancialPeriod.financial_period_info.month_sublist(period)
-            forecast_period_obj = FinancialPeriod.objects.get(pk=period)
+            month_list = \
+                FinancialPeriod.financial_period_info.month_sublist(self.period())
+            forecast_period_obj = FinancialPeriod.objects.get(pk=self.period())
             table_tag = f'Historical data for {forecast_period_obj.period_long_name}'
             datamodel = ForecastingDataView
         else:
@@ -116,11 +119,8 @@ class DITProjectDetailsView(
     template_name = "forecast/view/project_details/dit.html"
     hierarchy_type = SHOW_DIT
 
-    def class_name(self):
-        return "wide-table"
 
     def post(self, request, *args, **kwargs):
-        period = self.kwargs["period"]
         project_code_id = request.POST.get(
             'project_code',
             None,
@@ -130,7 +130,8 @@ class DITProjectDetailsView(
             return HttpResponseRedirect(
                 reverse(
                     "project_details_dit",
-                    kwargs={'project_code': project_code_id, "period": period,
+                    kwargs={'project_code': project_code_id,
+                            "period": self.period(),
                             }
                 )
             )
@@ -153,7 +154,6 @@ class GroupProjectDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
-        period = self.kwargs["period"]
         project_code_id = request.POST.get(
             'project_code',
             None,
@@ -164,7 +164,7 @@ class GroupProjectDetailsView(
                     "project_details_group",
                     kwargs={'group_code': self.group().group_code,
                             'project_code': project_code_id,
-                            "period": period,
+                            "period": self.period(),
                             }
                 )
             )
@@ -187,7 +187,6 @@ class DirectorateProjectDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
-        period = self.kwargs["period"]
         project_code_id = request.POST.get(
             'project_code',
             None,
@@ -199,7 +198,7 @@ class DirectorateProjectDetailsView(
                     "project_details_directorate",
                     kwargs={'directorate_code': self.directorate().directorate_code,
                             'project_code': project_code_id,
-                            "period": period,
+                            "period": self.period(),
                             }
                 )
             )
@@ -222,7 +221,6 @@ class CostCentreProjectDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
-        period = self.kwargs["period"]
         project_code_id = request.POST.get(
             'project_code',
             None,
@@ -234,7 +232,7 @@ class CostCentreProjectDetailsView(
                     "project_details_costcentre",
                     kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
                             'project_code': project_code_id,
-                            "period": period,
+                            "period": self.period(),
                             }
                 )
             )
