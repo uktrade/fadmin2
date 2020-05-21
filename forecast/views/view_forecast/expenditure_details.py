@@ -41,10 +41,10 @@ from forecast.utils.query_fields import (
     nac_order_list,
     nac_sub_total,
 )
-from forecast.views.base import ForecastViewPermissionMixin
+from forecast.views.base import ForecastViewPermissionMixin, ForecastViewTableMixin
 
 
-class ForecastExpenditureDetailsMixin(MultiTableMixin):
+class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
     hierarchy_type = -1
     table_pagination = False
 
@@ -77,17 +77,9 @@ class ForecastExpenditureDetailsMixin(MultiTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
-        period = self.kwargs["period"]
-        if period:
-            # We are displaying historical forecast
-            month_list = FinancialPeriod.financial_period_info.month_sublist(period)
-            forecast_period_obj = FinancialPeriod.objects.get(pk=period)
-            table_tag = f'Historical data for {forecast_period_obj.period_long_name}'
-            datamodel = ForecastingDataView
-        else:
-            month_list = FinancialPeriod.financial_period_info.actual_month_list()
-            table_tag = ""
-            datamodel = ForecastingDataView
+        datamodel = self.get_datamodel()
+        table_tag = self.get_table_tag()
+        month_list = self.get_month_list()
 
         nac_data = datamodel.view_data.subtotal_data(
             nac_display_sub_total_column,
@@ -120,7 +112,6 @@ class DITExpenditureDetailsView(
     hierarchy_type = SHOW_DIT
 
     def post(self, request, *args, **kwargs):
-        period = self.kwargs["period"]
         expenditure_category_id = request.POST.get(
             'expenditure_category',
             None,
@@ -132,7 +123,7 @@ class DITExpenditureDetailsView(
                     "expenditure_details_dit",
                     kwargs={'expenditure_category': expenditure_category_id,
                             'budget_type': self.budget_type(),
-                            "period": period,
+                            "period": self.get_period(),
                             }
 
                 )
@@ -156,7 +147,6 @@ class GroupExpenditureDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
-        period = self.kwargs["period"]
         expenditure_category_id = request.POST.get(
             'expenditure_category',
             None,
@@ -169,7 +159,7 @@ class GroupExpenditureDetailsView(
                     kwargs={'group_code': self.group().group_code,
                             'expenditure_category': expenditure_category_id,
                             'budget_type': self.budget_type(),
-                            "period": period,
+                            "period": self.get_period(),
                             }
                 )
             )
@@ -192,7 +182,6 @@ class DirectorateExpenditureDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
-        period = self.kwargs["period"]
         expenditure_category_id = request.POST.get(
             'expenditure_category',
             None,
@@ -205,7 +194,7 @@ class DirectorateExpenditureDetailsView(
                     kwargs={'directorate_code': self.directorate().directorate_code,
                             'expenditure_category': expenditure_category_id,
                             'budget_type': self.budget_type(),
-                            "period": period,
+                            "period": self.get_period(),
                             }
                 )
             )
@@ -228,7 +217,6 @@ class CostCentreExpenditureDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
-        period = self.kwargs["period"]
         expenditure_category_id = request.POST.get(
             'expenditure_category',
             None,
@@ -241,7 +229,7 @@ class CostCentreExpenditureDetailsView(
                     kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
                             'expenditure_category': expenditure_category_id,
                             'budget_type': self.budget_type(),
-                            "period": period,
+                            "period": self.get_period(),
                             }
                 )
             )

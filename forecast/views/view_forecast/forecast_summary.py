@@ -3,8 +3,6 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.views.generic.base import TemplateView
 
-from django_tables2 import MultiTableMixin
-
 from costcentre.forms import DirectorateCostCentresForm
 from costcentre.models import (
     CostCentre,
@@ -12,10 +10,6 @@ from costcentre.models import (
 )
 from costcentre.models import DepartmentalGroup
 
-from forecast.models import (
-    FinancialPeriod,
-    ForecastingDataView,
-)
 from forecast.tables import (
     ForecastSubTotalTable,
     ForecastWithLinkTable,
@@ -58,58 +52,10 @@ from forecast.utils.query_fields import (
     project_order_list,
     project_sub_total,
 )
-from forecast.views.base import ForecastViewPermissionMixin
-
-class PeriodTableViewMixin(MultiTableMixin):
-
-    def __init__(self, *args, **kwargs):
-        self._period = None
-        self._month_list = None
-        self._datamodel = None
-        self._table_tag = None
-
-        super().__init__(*args, **kwargs)
-
-    def get_period(self):
-        if self._period is None:
-            self._period = self.kwargs["period"]
-        return self._period
-
-    def get_month_list(self):
-        if self._month_list is None:
-            period = self.get_period()
-            if period:
-                # We are displaying historical forecast
-                self._month_list = FinancialPeriod.financial_period_info.month_sublist(
-                    period)
-            else:
-                self._month_list = FinancialPeriod.financial_period_info.actual_month_list()
-        return self._month_list
-
-    def get_datamodel(self):
-        if self._datamodel is None:
-            period = self.get_period()
-            if period:
-                # We are displaying historical forecast
-                self._datamodel = ForecastingDataView
-            else:
-                 self._datamodel = ForecastingDataView
-        return self._datamodel
-
-    def get_table_tag(self):
-        if self._table_tag is None:
-            period = self.get_period()
-            if period:
-                # We are displaying historical forecast
-                forecast_period_obj = FinancialPeriod.objects.get(pk=period)
-                self._table_tag  = f'Historical data for {forecast_period_obj.period_long_name}'
-            else:
-                self._table_tag = ""
-        return self._table_tag
+from forecast.views.base import ForecastViewPermissionMixin, ForecastViewTableMixin
 
 
-
-class ForecastMultiTableMixin(PeriodTableViewMixin):
+class ForecastMultiTableMixin(ForecastViewTableMixin):
     hierarchy_type = -1
 
     def class_name(self):

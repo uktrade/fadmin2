@@ -39,10 +39,10 @@ from forecast.utils.query_fields import (
     programme_details_hierarchy_order_list,
     programme_details_sub_total,
 )
-from forecast.views.base import ForecastViewPermissionMixin
+from forecast.views.base import ForecastViewPermissionMixin, ForecastViewTableMixin
 
 
-class ForecastProgrammeDetailsMixin(MultiTableMixin):
+class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
     hierarchy_type = -1
     table_pagination = False
 
@@ -75,17 +75,9 @@ class ForecastProgrammeDetailsMixin(MultiTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
-        period = self.kwargs["period"]
-        if period:
-            # We are displaying historical forecast
-            month_list = FinancialPeriod.financial_period_info.month_sublist(period)
-            forecast_period_obj = FinancialPeriod.objects.get(pk=period)
-            table_tag = f'Historical data for {forecast_period_obj.period_long_name}'
-            datamodel = ForecastingDataView
-        else:
-            month_list = FinancialPeriod.financial_period_info.actual_month_list()
-            table_tag = ""
-            datamodel = ForecastingDataView
+        datamodel = self.get_datamodel()
+        table_tag = self.get_table_tag()
+        month_list = self.get_month_list()
 
 
         columns = programme_details_hierarchy_columns[self.hierarchy_type]
@@ -126,7 +118,6 @@ class DITProgrammeDetailsView(
         return "wide-table"
 
     def post(self, request, *args, **kwargs):
-        period = self.kwargs["period"]
         programme_code_id = request.POST.get(
             'programme_code',
             None,
@@ -139,7 +130,7 @@ class DITProgrammeDetailsView(
                     kwargs={
                         'programme_code': programme_code_id,
                         'forecast_expenditure_type': self.forecast_expenditure_type(),
-                        "period":period,
+                        "period":self.get_period(),
                             }
                 )
             )
@@ -162,7 +153,6 @@ class GroupProgrammeDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
-        period = self.kwargs["period"]
         programme_code_id = request.POST.get(
             'programme_code',
             None,
@@ -175,7 +165,7 @@ class GroupProgrammeDetailsView(
                     kwargs={'group_code': self.group().group_code,
                             'programme_code': programme_code_id,
                             'forecast_expenditure_type': self.forecast_expenditure_type(),  # noqa
-                            "period": period,
+                            "period": self.get_period(),
                             }
                 )
             )
@@ -198,7 +188,6 @@ class DirectorateProgrammeDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
-        period = self.kwargs["period"]
         programme_code_id = request.POST.get(
             'programme_code',
             None,
@@ -211,7 +200,7 @@ class DirectorateProgrammeDetailsView(
                     kwargs={'directorate_code': self.directorate().directorate_code,
                             'programme_code': programme_code_id,
                             'forecast_expenditure_type': self.forecast_expenditure_type(),  # noqa
-                            "period": period,
+                            "period": self.get_period(),
                             }
                 )
             )

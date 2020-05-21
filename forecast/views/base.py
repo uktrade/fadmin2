@@ -2,6 +2,15 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import redirect
 from django.urls import reverse
 
+from django_tables2 import MultiTableMixin
+
+
+from forecast.models import (
+    FinancialPeriod,
+    ForecastingDataView,
+)
+
+
 from forecast.utils.access_helpers import (
     can_edit_cost_centre,
     can_forecast_be_edited,
@@ -66,3 +75,53 @@ class CostCentrePermissionTest(UserPassesTestMixin):
                     }
                 )
             )
+
+
+class ForecastViewTableMixin(MultiTableMixin):
+    # It handles the differences caused by viewing
+    # forecasts entered in different period.
+    def __init__(self, *args, **kwargs):
+        self._period = None
+        self._month_list = None
+        self._datamodel = None
+        self._table_tag = None
+
+        super().__init__(*args, **kwargs)
+
+    def get_period(self):
+        if self._period is None:
+            self._period = self.kwargs["period"]
+        return self._period
+
+    def get_month_list(self):
+        if self._month_list is None:
+            period = self.get_period()
+            if period:
+                # We are displaying historical forecast
+                self._month_list = FinancialPeriod.financial_period_info.month_sublist(
+                    period)
+            else:
+                self._month_list = FinancialPeriod.financial_period_info.actual_month_list()
+        return self._month_list
+
+    def get_datamodel(self):
+        if self._datamodel is None:
+            period = self.get_period()
+            if period:
+                # We are displaying historical forecast
+                self._datamodel = ForecastingDataView
+            else:
+                 self._datamodel = ForecastingDataView
+        return self._datamodel
+
+    def get_table_tag(self):
+        if self._table_tag is None:
+            period = self.get_period()
+            if period:
+                # We are displaying historical forecast
+                forecast_period_obj = FinancialPeriod.objects.get(pk=period)
+                self._table_tag  = f'Historical data for {forecast_period_obj.period_long_name}'
+            else:
+                self._table_tag = ""
+        return self._table_tag
+

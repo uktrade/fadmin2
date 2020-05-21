@@ -5,10 +5,6 @@ from django.shortcuts import (
 )
 from django.views.generic.base import TemplateView
 
-from django_tables2 import (
-    MultiTableMixin,
-)
-
 from chartofaccountDIT.forms import (
     ProjectForm,
 )
@@ -20,10 +16,6 @@ from costcentre.models import (
     Directorate,
 )
 
-from forecast.models import (
-    FinancialPeriod,
-    ForecastingDataView,
-)
 from forecast.tables import (
     ForecastSubTotalTable,
 )
@@ -40,10 +32,10 @@ from forecast.utils.query_fields import (
     project_details_hierarchy_sub_total_column,
     project_details_sub_total,
 )
-from forecast.views.base import ForecastViewPermissionMixin
+from forecast.views.base import ForecastViewPermissionMixin, ForecastViewTableMixin
 
 
-class ForecastProjectDetailsMixin(MultiTableMixin):
+class ForecastProjectDetailsMixin(ForecastViewTableMixin):
     hierarchy_type = -1
     table_pagination = False
 
@@ -54,9 +46,6 @@ class ForecastProjectDetailsMixin(MultiTableMixin):
         return ProjectCode.objects.get(
             pk=self.kwargs['project_code'],
         )
-
-    def period(self):
-        return self.kwargs["period"]
 
     def project_code_form(self):
         return ProjectForm()
@@ -74,17 +63,9 @@ class ForecastProjectDetailsMixin(MultiTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
-        if self.period():
-            # We are displaying historical forecast
-            month_list = \
-                FinancialPeriod.financial_period_info.month_sublist(self.period())
-            forecast_period_obj = FinancialPeriod.objects.get(pk=self.period())
-            table_tag = f'Historical data for {forecast_period_obj.period_long_name}'
-            datamodel = ForecastingDataView
-        else:
-            month_list = FinancialPeriod.financial_period_info.actual_month_list()
-            table_tag = ""
-            datamodel = ForecastingDataView
+        datamodel = self.get_datamodel()
+        table_tag = self.get_table_tag()
+        month_list = self.get_month_list()
 
         columns = project_details_hierarchy_columns[self.hierarchy_type]
         project_details_data = datamodel.view_data.subtotal_data(
@@ -131,7 +112,7 @@ class DITProjectDetailsView(
                 reverse(
                     "project_details_dit",
                     kwargs={'project_code': project_code_id,
-                            "period": self.period(),
+                            "period": self.get_period(),
                             }
                 )
             )
@@ -164,7 +145,7 @@ class GroupProjectDetailsView(
                     "project_details_group",
                     kwargs={'group_code': self.group().group_code,
                             'project_code': project_code_id,
-                            "period": self.period(),
+                            "period": self.get_period(),
                             }
                 )
             )
@@ -198,7 +179,7 @@ class DirectorateProjectDetailsView(
                     "project_details_directorate",
                     kwargs={'directorate_code': self.directorate().directorate_code,
                             'project_code': project_code_id,
-                            "period": self.period(),
+                            "period": self.get_period(),
                             }
                 )
             )
@@ -232,7 +213,7 @@ class CostCentreProjectDetailsView(
                     "project_details_costcentre",
                     kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
                             'project_code': project_code_id,
-                            "period": self.period(),
+                            "period": self.get_period(),
                             }
                 )
             )
