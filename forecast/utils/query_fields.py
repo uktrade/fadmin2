@@ -170,9 +170,9 @@ hierarchy_view = [
 ]
 
 hierarchy_view_code = [
-    [GROUP_CODE],
-    [DIRECTORATE_CODE],
-    [COST_CENTRE_CODE],
+    GROUP_CODE,
+    DIRECTORATE_CODE,
+    COST_CENTRE_CODE,
 ]
 
 

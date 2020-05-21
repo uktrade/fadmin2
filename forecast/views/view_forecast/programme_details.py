@@ -20,6 +20,7 @@ from costcentre.models import (
 )
 
 from forecast.models import (
+    FinancialPeriod,
     ForecastingDataView,
 )
 from forecast.tables import (
@@ -74,8 +75,21 @@ class ForecastProgrammeDetailsMixin(MultiTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
+        period = self.kwargs["period"]
+        if period:
+            # We are displaying historical forecast
+            month_list = FinancialPeriod.financial_period_info.month_sublist(period)
+            forecast_period_obj = FinancialPeriod.objects.get(pk=period)
+            table_tag = f'Historical data for {forecast_period_obj.period_long_name}'
+            datamodel = ForecastingDataView
+        else:
+            month_list = FinancialPeriod.financial_period_info.actual_month_list()
+            table_tag = ""
+            datamodel = ForecastingDataView
+
+
         columns = programme_details_hierarchy_columns[self.hierarchy_type]
-        programme_details_data = ForecastingDataView.view_data.subtotal_data(
+        programme_details_data = datamodel.view_data.subtotal_data(
             programme_details_display_sub_total_column,
             programme_details_sub_total,
             columns.keys(),
@@ -84,11 +98,17 @@ class ForecastProgrammeDetailsMixin(MultiTableMixin):
             show_grand_total=False
         )
 
-        programme_details_table = ForecastSubTotalTable(columns, programme_details_data)
+        programme_details_table = ForecastSubTotalTable(
+            columns,
+            programme_details_data,
+            actual_month_list=month_list,
+        )
         programme_details_table.attrs['caption'] = "Programme Report"
+        programme_details_table.tag = table_tag
 
         self.tables = [
             programme_details_table,
+
         ]
 
         return self.tables
@@ -106,6 +126,7 @@ class DITProgrammeDetailsView(
         return "wide-table"
 
     def post(self, request, *args, **kwargs):
+        period = self.kwargs["period"]
         programme_code_id = request.POST.get(
             'programme_code',
             None,
@@ -115,8 +136,10 @@ class DITProgrammeDetailsView(
             return HttpResponseRedirect(
                 reverse(
                     "programme_details_dit",
-                    kwargs={'programme_code': programme_code_id,
-                            'forecast_expenditure_type': self.forecast_expenditure_type(),  # noqa
+                    kwargs={
+                        'programme_code': programme_code_id,
+                        'forecast_expenditure_type': self.forecast_expenditure_type(),
+                        "period":period,
                             }
                 )
             )
@@ -139,6 +162,7 @@ class GroupProgrammeDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
+        period = self.kwargs["period"]
         programme_code_id = request.POST.get(
             'programme_code',
             None,
@@ -151,6 +175,7 @@ class GroupProgrammeDetailsView(
                     kwargs={'group_code': self.group().group_code,
                             'programme_code': programme_code_id,
                             'forecast_expenditure_type': self.forecast_expenditure_type(),  # noqa
+                            "period": period,
                             }
                 )
             )
@@ -173,6 +198,7 @@ class DirectorateProgrammeDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
+        period = self.kwargs["period"]
         programme_code_id = request.POST.get(
             'programme_code',
             None,
@@ -185,6 +211,7 @@ class DirectorateProgrammeDetailsView(
                     kwargs={'directorate_code': self.directorate().directorate_code,
                             'programme_code': programme_code_id,
                             'forecast_expenditure_type': self.forecast_expenditure_type(),  # noqa
+                            "period": period,
                             }
                 )
             )

@@ -21,6 +21,7 @@ from costcentre.models import (
 )
 
 from forecast.models import (
+    FinancialPeriod,
     ForecastingDataView,
 )
 from forecast.tables import (
@@ -70,8 +71,20 @@ class ForecastProjectDetailsMixin(MultiTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
+        period = self.kwargs["period"]
+        if period:
+            # We are displaying historical forecast
+            month_list = FinancialPeriod.financial_period_info.month_sublist(period)
+            forecast_period_obj = FinancialPeriod.objects.get(pk=period)
+            table_tag = f'Historical data for {forecast_period_obj.period_long_name}'
+            datamodel = ForecastingDataView
+        else:
+            month_list = FinancialPeriod.financial_period_info.actual_month_list()
+            table_tag = ""
+            datamodel = ForecastingDataView
+
         columns = project_details_hierarchy_columns[self.hierarchy_type]
-        project_details_data = ForecastingDataView.view_data.subtotal_data(
+        project_details_data = datamodel.view_data.subtotal_data(
             project_details_hierarchy_sub_total_column[self.hierarchy_type],
             project_details_sub_total,
             columns.keys(),
@@ -80,8 +93,13 @@ class ForecastProjectDetailsMixin(MultiTableMixin):
             show_grand_total=False
         )
 
-        project_details_table = ForecastSubTotalTable(columns, project_details_data)
+        project_details_table = ForecastSubTotalTable(
+            columns,
+            project_details_data,
+            actual_month_list=month_list,
+        )
         project_details_table.attrs['caption'] = "Project Report"
+        project_details_table.tag = table_tag
 
         self.tables = [
             project_details_table,
@@ -102,6 +120,7 @@ class DITProjectDetailsView(
         return "wide-table"
 
     def post(self, request, *args, **kwargs):
+        period = self.kwargs["period"]
         project_code_id = request.POST.get(
             'project_code',
             None,
@@ -111,7 +130,7 @@ class DITProjectDetailsView(
             return HttpResponseRedirect(
                 reverse(
                     "project_details_dit",
-                    kwargs={'project_code': project_code_id,
+                    kwargs={'project_code': project_code_id, "period": period,
                             }
                 )
             )
@@ -134,17 +153,18 @@ class GroupProjectDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
+        period = self.kwargs["period"]
         project_code_id = request.POST.get(
             'project_code',
             None,
         )
-
         if project_code_id:
             return HttpResponseRedirect(
                 reverse(
                     "project_details_group",
                     kwargs={'group_code': self.group().group_code,
                             'project_code': project_code_id,
+                            "period": period,
                             }
                 )
             )
@@ -167,6 +187,7 @@ class DirectorateProjectDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
+        period = self.kwargs["period"]
         project_code_id = request.POST.get(
             'project_code',
             None,
@@ -178,6 +199,7 @@ class DirectorateProjectDetailsView(
                     "project_details_directorate",
                     kwargs={'directorate_code': self.directorate().directorate_code,
                             'project_code': project_code_id,
+                            "period": period,
                             }
                 )
             )
@@ -200,6 +222,7 @@ class CostCentreProjectDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
+        period = self.kwargs["period"]
         project_code_id = request.POST.get(
             'project_code',
             None,
@@ -211,6 +234,7 @@ class CostCentreProjectDetailsView(
                     "project_details_costcentre",
                     kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
                             'project_code': project_code_id,
+                            "period": period,
                             }
                 )
             )

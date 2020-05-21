@@ -86,89 +86,89 @@ urlpatterns = [
         name="choose_cost_centre",
     ),
     path(
-        "view/dit/<int:period>",
+        "view/dit/<int:period>/",
         DITView.as_view(),
         name="forecast_dit",
     ),
     path(
-        "view/group/<group_code>/",
+        "view/group/<group_code>/<int:period>/",
         GroupView.as_view(),
         name="forecast_group",
     ),
     path(
-        "view/directorate/<directorate_code>/",
+        "view/directorate/<directorate_code>/<int:period>/",
         DirectorateView.as_view(),
         name="forecast_directorate",
     ),
     path(
-        "view/cost-centre/<cost_centre_code>/",
+        "view/cost-centre/<cost_centre_code>/<int:period>/",
         CostCentreView.as_view(),
         name="forecast_cost_centre",
     ),
     path(
-        "view/dit/<expenditure_category>/<budget_type>/",
+        "view/dit/<expenditure_category>/<budget_type>/<int:period>/",
         DITExpenditureDetailsView.as_view(),
         name="expenditure_details_dit",
     ),
     path(
-        "view/group/<group_code>/<expenditure_category>/<budget_type>/",
+        "view/group/<group_code>/<expenditure_category>/<budget_type>/<int:period>/",
         GroupExpenditureDetailsView.as_view(),
         name="expenditure_details_group",
     ),
     path(
-        "view/directorate/<directorate_code>/<expenditure_category>/<budget_type>/",
+        "view/directorate/<directorate_code>/<expenditure_category>/<budget_type>/<int:period>/",
         DirectorateExpenditureDetailsView.as_view(),
         name="expenditure_details_directorate",
     ),
     path(
-        "view/cost-centre/<cost_centre_code>/<expenditure_category>/<budget_type>/",
+        "view/cost-centre/<cost_centre_code>/<expenditure_category>/<budget_type>/<int:period>/",
         CostCentreExpenditureDetailsView.as_view(),
         name="expenditure_details_cost_centre",
     ),
 
     #         dit-programme/310530/6/
     path(
-        "view/dit-programme/<programme_code>/<forecast_expenditure_type>/",
+        "view/dit-programme/<programme_code>/<forecast_expenditure_type>/<int:period>/",
         DITProgrammeDetailsView.as_view(),
         name="programme_details_dit",
     ),
 
     #  group-programme/1090HT/310530/6/
     path(
-        "view/group-programme/<group_code>/<programme_code>/<forecast_expenditure_type>/",  # noqa
+        "view/group-programme/<group_code>/<programme_code>/<forecast_expenditure_type>/<int:period>/",  # noqa
         GroupProgrammeDetailsView.as_view(),
         name="programme_details_group",
     ),
 
     #  directorate-programme/10907T/310530/6/
     path(
-        "view/directorate-programme/<directorate_code>/<programme_code>/<forecast_expenditure_type>/",  # noqa
+        "view/directorate-programme/<directorate_code>/<programme_code>/<forecast_expenditure_type>/<int:period>/",  # noqa
         DirectorateProgrammeDetailsView.as_view(),
         name="programme_details_directorate",
     ),
 
     path(
-        "dit-project/<project_code>/",
+        "dit-project/<project_code>/<int:period>/",
         DITProjectDetailsView.as_view(),
         name="project_details_dit",
     ),
 
     path(
-        "group-project/<group_code>/<project_code>/",
+        "group-project/<group_code>/<project_code>/<int:period>/",
         GroupProjectDetailsView.as_view(),
         name="project_details_group",
     ),
 
     #  directorate-project/10907T/310530/6/
     path(
-        "directorate-project/<directorate_code>/<project_code>/",
+        "directorate-project/<directorate_code>/<project_code>/<int:period>/",
         DirectorateProjectDetailsView.as_view(),
         name="project_details_directorate",
     ),
 
     #  directorate-project/10907T/310530/6/
     path(
-        "cost-centre_project/<cost_centre_code>/<project_code>/",
+        "cost-centre_project/<cost_centre_code>/<project_code>/<int:period>/",
         CostCentreProjectDetailsView.as_view(),
         name="project_details_costcentre",
     ),

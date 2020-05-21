@@ -21,6 +21,7 @@ from costcentre.models import (
 from costcentre.models import DepartmentalGroup
 
 from forecast.models import (
+    FinancialPeriod,
     ForecastingDataView,
 )
 from forecast.tables import (
@@ -76,7 +77,19 @@ class ForecastExpenditureDetailsMixin(MultiTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
-        nac_data = ForecastingDataView.view_data.subtotal_data(
+        period = self.kwargs["period"]
+        if period:
+            # We are displaying historical forecast
+            month_list = FinancialPeriod.financial_period_info.month_sublist(period)
+            forecast_period_obj = FinancialPeriod.objects.get(pk=period)
+            table_tag = f'Historical data for {forecast_period_obj.period_long_name}'
+            datamodel = ForecastingDataView
+        else:
+            month_list = FinancialPeriod.financial_period_info.actual_month_list()
+            table_tag = ""
+            datamodel = ForecastingDataView
+
+        nac_data = datamodel.view_data.subtotal_data(
             nac_display_sub_total_column,
             nac_sub_total,
             nac_columns.keys(),
@@ -85,9 +98,13 @@ class ForecastExpenditureDetailsMixin(MultiTableMixin):
             show_grand_total=False
         )
 
-        nac_table = ForecastSubTotalTable(nac_columns, nac_data)
+        nac_table = ForecastSubTotalTable(
+            nac_columns,
+            nac_data,
+            actual_month_list=month_list,
+        )
         nac_table.attrs['caption'] = "Expenditure Report"
-
+        nac_table.tag = table_tag
         self.tables = [
             nac_table,
         ]
@@ -103,6 +120,7 @@ class DITExpenditureDetailsView(
     hierarchy_type = SHOW_DIT
 
     def post(self, request, *args, **kwargs):
+        period = self.kwargs["period"]
         expenditure_category_id = request.POST.get(
             'expenditure_category',
             None,
@@ -114,6 +132,7 @@ class DITExpenditureDetailsView(
                     "expenditure_details_dit",
                     kwargs={'expenditure_category': expenditure_category_id,
                             'budget_type': self.budget_type(),
+                            "period": period,
                             }
 
                 )
@@ -137,6 +156,7 @@ class GroupExpenditureDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
+        period = self.kwargs["period"]
         expenditure_category_id = request.POST.get(
             'expenditure_category',
             None,
@@ -149,6 +169,7 @@ class GroupExpenditureDetailsView(
                     kwargs={'group_code': self.group().group_code,
                             'expenditure_category': expenditure_category_id,
                             'budget_type': self.budget_type(),
+                            "period": period,
                             }
                 )
             )
@@ -171,6 +192,7 @@ class DirectorateExpenditureDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
+        period = self.kwargs["period"]
         expenditure_category_id = request.POST.get(
             'expenditure_category',
             None,
@@ -183,6 +205,7 @@ class DirectorateExpenditureDetailsView(
                     kwargs={'directorate_code': self.directorate().directorate_code,
                             'expenditure_category': expenditure_category_id,
                             'budget_type': self.budget_type(),
+                            "period": period,
                             }
                 )
             )
@@ -205,6 +228,7 @@ class CostCentreExpenditureDetailsView(
         )
 
     def post(self, request, *args, **kwargs):
+        period = self.kwargs["period"]
         expenditure_category_id = request.POST.get(
             'expenditure_category',
             None,
@@ -217,6 +241,7 @@ class CostCentreExpenditureDetailsView(
                     kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
                             'expenditure_category': expenditure_category_id,
                             'budget_type': self.budget_type(),
+                            "period": period,
                             }
                 )
             )

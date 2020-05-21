@@ -74,6 +74,10 @@ class ForecastMultiTableMixin(MultiTableMixin):
         filter_code = ""
         pivot_filter = {}
         arg_name = filter_codes[self.hierarchy_type]
+        if arg_name:
+            filter_code = self.kwargs[arg_name]
+            pivot_filter = {filter_selectors[self.hierarchy_type]: f"{filter_code}"}
+
         period = self.kwargs["period"]
         if period:
             # We are displaying historical forecast
@@ -85,10 +89,6 @@ class ForecastMultiTableMixin(MultiTableMixin):
             month_list = FinancialPeriod.financial_period_info.actual_month_list()
             table_tag = ""
             datamodel = ForecastingDataView
-
-        if arg_name:
-            filter_code = self.kwargs[arg_name]
-            pivot_filter = {filter_selectors[self.hierarchy_type]: f"{filter_code}"}
 
         hierarchy_data = datamodel.view_data.subtotal_data(
             hierarchy_sub_total_column[self.hierarchy_type],
@@ -134,7 +134,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
             programme_table = ForecastWithLinkTable(
                 PROGRAMME_NAME,
                 programme_detail_view[self.hierarchy_type],
-                [PROGRAMME_CODE, FORECAST_EXPENDITURE_TYPE_NAME],
+                [PROGRAMME_CODE, FORECAST_EXPENDITURE_TYPE_NAME, period],
                 filter_code,
                 programme_columns,
                 programme_data,
@@ -147,7 +147,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
         expenditure_table = ForecastWithLinkTable(
             BUDGET_CATEGORY_NAME,
             expenditure_view[self.hierarchy_type],
-            [BUDGET_CATEGORY_ID, BUDGET_TYPE],
+            [BUDGET_CATEGORY_ID, BUDGET_TYPE, period],
             filter_code,
             expenditure_columns,
             expenditure_data,
@@ -159,7 +159,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
         project_table = ForecastWithLinkTable(
             PROJECT_NAME,
             project_detail_view[self.hierarchy_type],
-            [PROJECT_CODE],
+            [PROJECT_CODE, period],
             filter_code,
             project_columns,
             project_data,
@@ -178,7 +178,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
             hierarchy_table = ForecastWithLinkTable(
                 hierarchy_view_link_column[self.hierarchy_type],
                 hierarchy_view[self.hierarchy_type],
-                hierarchy_view_code[self.hierarchy_type],
+                [hierarchy_view_code[self.hierarchy_type], period],
                 "",
                 hierarchy_columns[self.hierarchy_type],
                 hierarchy_data,
@@ -257,12 +257,16 @@ class CostCentreView(
         )
 
     def post(self, request, *args, **kwargs):
+        period = self.kwargs["period"]
         cost_centre_code = request.POST.get("cost_centre", None,)
         if cost_centre_code:
             return HttpResponseRedirect(
                 reverse(
                     "forecast_cost_centre",
-                    kwargs={"cost_centre_code": cost_centre_code},
+                    kwargs={
+                            "cost_centre_code": cost_centre_code,
+                            "period":period,
+                    },
                 )
             )
         else:
