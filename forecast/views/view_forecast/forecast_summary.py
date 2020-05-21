@@ -73,20 +73,31 @@ class ForecastMultiTableMixin(MultiTableMixin):
         """
         filter_code = ""
         pivot_filter = {}
-        month_list = FinancialPeriod.financial_period_info.month_sublist(7)
         arg_name = filter_codes[self.hierarchy_type]
+        period = self.kwargs["period"]
+        if period:
+            # We are displaying historical forecast
+            month_list = FinancialPeriod.financial_period_info.month_sublist(period)
+            forecast_period_obj = FinancialPeriod.objects.get(pk=period)
+            table_tag = f'Historical data for {forecast_period_obj.period_long_name}'
+            datamodel = ForecastingDataView
+        else:
+            month_list = FinancialPeriod.financial_period_info.actual_month_list()
+            table_tag = ""
+            datamodel = ForecastingDataView
+
         if arg_name:
             filter_code = self.kwargs[arg_name]
             pivot_filter = {filter_selectors[self.hierarchy_type]: f"{filter_code}"}
 
-        hierarchy_data = ForecastingDataView.view_data.subtotal_data(
+        hierarchy_data = datamodel.view_data.subtotal_data(
             hierarchy_sub_total_column[self.hierarchy_type],
             hierarchy_sub_total,
             hierarchy_columns[self.hierarchy_type].keys(),
             pivot_filter,
             order_list=hierarchy_order_list,
         )
-        programme_data = ForecastingDataView.view_data.subtotal_data(
+        programme_data = datamodel.view_data.subtotal_data(
             programme_display_sub_total_column,
             programme_sub_total,
             programme_columns.keys(),
@@ -94,7 +105,7 @@ class ForecastMultiTableMixin(MultiTableMixin):
             order_list=programme_order_list,
         )
 
-        expenditure_data = ForecastingDataView.view_data.subtotal_data(
+        expenditure_data = datamodel.view_data.subtotal_data(
             expenditure_display_sub_total_column,
             expenditure_sub_total,
             expenditure_columns.keys(),
@@ -103,18 +114,22 @@ class ForecastMultiTableMixin(MultiTableMixin):
         )
 
         # In the project report, exclude rows without a project code.
-
         k = f"{PROJECT_CODE}__isnull"
         pivot_filter.update({k: False})
-        project_data = ForecastingDataView.view_data.subtotal_data(
+        project_data = datamodel.view_data.subtotal_data(
             project_display_sub_total_column,
             project_sub_total,
             project_columns.keys(),
             pivot_filter,
             order_list=project_order_list,
         )
+
         if self.hierarchy_type == SHOW_COSTCENTRE:
-            programme_table = ForecastSubTotalTable(programme_columns, programme_data)
+            programme_table = ForecastSubTotalTable(
+                programme_columns,
+                programme_data,
+                actual_month_list=month_list,
+            )
         else:
             programme_table = ForecastWithLinkTable(
                 PROGRAMME_NAME,
@@ -123,10 +138,12 @@ class ForecastMultiTableMixin(MultiTableMixin):
                 filter_code,
                 programme_columns,
                 programme_data,
-                # actual_month_list = month_list
+                actual_month_list=month_list,
             )
 
         programme_table.heading = "Control total report"
+        programme_table.tag = table_tag
+
         expenditure_table = ForecastWithLinkTable(
             BUDGET_CATEGORY_NAME,
             expenditure_view[self.hierarchy_type],
@@ -134,8 +151,11 @@ class ForecastMultiTableMixin(MultiTableMixin):
             filter_code,
             expenditure_columns,
             expenditure_data,
+            actual_month_list=month_list,
         )
         expenditure_table.heading = "Expenditure report"
+        expenditure_table.tag = table_tag
+
         project_table = ForecastWithLinkTable(
             PROJECT_NAME,
             project_detail_view[self.hierarchy_type],
@@ -143,12 +163,16 @@ class ForecastMultiTableMixin(MultiTableMixin):
             filter_code,
             project_columns,
             project_data,
+            actual_month_list=month_list,
         )
         project_table.heading = "Project report"
+        project_table.tag = table_tag
 
         if self.hierarchy_type == SHOW_COSTCENTRE:
             hierarchy_table = ForecastSubTotalTable(
-                hierarchy_columns[self.hierarchy_type], hierarchy_data
+                hierarchy_columns[self.hierarchy_type],
+                hierarchy_data,
+                actual_month_list=month_list,
             )
         else:
             hierarchy_table = ForecastWithLinkTable(
@@ -158,9 +182,11 @@ class ForecastMultiTableMixin(MultiTableMixin):
                 "",
                 hierarchy_columns[self.hierarchy_type],
                 hierarchy_data,
+                actual_month_list=month_list,
             )
 
         hierarchy_table.heading = "Forecast hierarchy report"
+        hierarchy_table.tag = table_tag
 
         self.tables = [
             hierarchy_table,

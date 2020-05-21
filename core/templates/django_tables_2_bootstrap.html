@@ -3,6 +3,9 @@
 {% load forecast_format %}
 {% block table-wrapper %}
 {% block table %}
+    {% if table.tag %}
+    <strong class="govuk-tag">{{ table.tag }}</strong>
+    {% endif %}
     <table {% render_attrs table.attrs class="govuk-table" %}>
         <caption class="govuk-table__caption govuk-!-font-size-27">{{ table.attrs.caption }}</caption>
         {% block table.thead %}

@@ -249,7 +249,7 @@ class ForecastWithLinkTable(ForecastSubTotalTable, tables.Table):
     display_view_details = True
 
     def __init__(self, column_name, viewname, arg_link, code="", column_dict={},
-                *args,
+                 *args,
                  **kwargs):
 
         link_args = []
