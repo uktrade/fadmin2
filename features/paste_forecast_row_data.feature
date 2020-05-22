@@ -25,12 +25,7 @@ Feature: Paste forecast row data
 #    Given the user selects a row in the edit forecast table
 #     When the user pastes too many column row data
 #     Then the too many columns error message is displayed
-
-  Scenario: Pasting data without meta columns into the edit forecast table
-    Given the user selects a row in the edit forecast table
-     When the user pastes data without meta columns
-     Then the could not find forecast error is displayed
-
+  
   Scenario: Pasting too few columns data into the edit forecast table
     Given the user selects a row in the edit forecast table
      When the user pastes too few column row data

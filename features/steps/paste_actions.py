@@ -28,6 +28,7 @@ from features.environment import (
 )
 
 from forecast.models import (
+    FinancialCode,
     FinancialPeriod,
 )
 
@@ -92,6 +93,13 @@ def step_impl(context):
 
     first_select = context.browser.find_element_by_id("select_row_0")
     first_select.click()
+
+
+@given('There is no project code')
+def step_impl(context):
+    financial_code = FinancialCode.objects.first()
+    financial_code.project_code = None
+    financial_code.save()
 
 
 @when(u'the user pastes valid row data')
@@ -163,9 +171,10 @@ def step_impl(context):
     paste(context)
 
 
-@when(u'the user pastes data without meta columns')
+@when(u'the user pastes data with incorrect meta columns')
 def step_impl(context):
-    paste_text = "0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
+    paste_text = "123456	Test	111111	Test	1111111	2222222	3000	0	1000.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
+    paste_text += "\\n0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
     copy_text(context, paste_text)
     paste(context)
 
