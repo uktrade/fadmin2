@@ -3,14 +3,14 @@ from bs4 import BeautifulSoup
 from django.test import (
     TestCase,
 )
-from django.urls import reverse, path
+from django.urls import reverse
 
 from core.test.test_base import RequestFactoryBase
 
-from gifthospitality.models import GiftAndHospitality, GiftAndHospitalityClassification,\
-    GiftAndHospitalityCompany, GiftAndHospitalityCategory, Grade, DepartmentalGroup
-
-from gifthospitality.forms import GiftAndHospitalityReceivedForm, GiftAndHospitalityOfferedForm
+from gifthospitality.forms import GiftAndHospitalityReceivedForm
+from gifthospitality.models import DepartmentalGroup, GiftAndHospitality,\
+    GiftAndHospitalityCategory, GiftAndHospitalityClassification,\
+    GiftAndHospitalityCompany, Grade
 
 
 class GiftHospitalityReceivedFormTest(TestCase, RequestFactoryBase):
@@ -22,10 +22,14 @@ class GiftHospitalityReceivedFormTest(TestCase, RequestFactoryBase):
             password=self.test_password,
         )
 
-        self.classification = GiftAndHospitalityClassification(sequence_no="10", gif_hospitality_classification="98", active=True)
+        self.classification = GiftAndHospitalityClassification(sequence_no="10",
+                                                               gif_hospitality_classification="98", # noqa
+                                                               active=True)
         self.classification.save()
 
-        self.category = GiftAndHospitalityCategory(sequence_no="10", gif_hospitality_category="10", active=True)
+        self.category = GiftAndHospitalityCategory(sequence_no="10",
+                                                   gif_hospitality_category="10",
+                                                   active=True)
         self.category.save()
 
         grade = Grade(grade="Test", gradedescription="Test Grade")
@@ -34,11 +38,18 @@ class GiftHospitalityReceivedFormTest(TestCase, RequestFactoryBase):
         departmental_group = DepartmentalGroup(group_code="8888AA", group_name="8888AA")
         departmental_group.save()
 
-        self.company = GiftAndHospitalityCompany(sequence_no="10", gif_hospitality_company="10", active=True)
+        self.company = GiftAndHospitalityCompany(sequence_no="10",
+                                                 gif_hospitality_company="10",
+                                                 active=True)
         self.company.save()
 
-        action_taken = GiftAndHospitality(action_taken="Action1", date_offered="2006-05-23", value="12",
-                                          entered_date_stamp="2020-05-22", category_id="1", classification_id="1", classification=self.classification,
+        action_taken = GiftAndHospitality(action_taken="Action1",
+                                          date_offered="2006-05-23",
+                                          value="12",
+                                          entered_date_stamp="2020-05-22",
+                                          category_id="1",
+                                          classification_id="1",
+                                          classification=self.classification,
                                           category=self.category,)
         action_taken.save()
 
@@ -53,28 +64,30 @@ class GiftHospitalityReceivedFormTest(TestCase, RequestFactoryBase):
 
         group_filter = DepartmentalGroup.objects.get(group_code="8888AA").group_code
 
-        action_taken_filter = GiftAndHospitality.objects.get(action_taken="Action1").date_offered
+        action_taken_filter = GiftAndHospitality.objects.get(
+            action_taken="Action1").date_offered
 
         gift_hospitality_received_data = {
-            'classification': self.classification.pk,     # Required
-            'category': self.category.pk,       # Required
+            'classification': self.classification.pk,
+            'category': self.category.pk,
             'date_offered_0': action_taken_filter.day,
             'date_offered_1': action_taken_filter.month,
             'date_offered_2': action_taken_filter.year,
-            'action_taken': 'Action1', # Required
-            'venue': 'Normal Venue',  # Required
-            'reason': 'Recommended by FD',  # Required
-            'value': '12',  # Required
-            'rep': 'Someone from DIT',  # Required
-            'grade': grade_filter,  # Required
-            'group': group_filter,  # Required
-            'company_rep': 'Someone from a company',  # Required
-            'company': self.company.pk,  # Required
+            'action_taken': 'Action1',
+            'venue': 'Normal Venue',
+            'reason': 'Recommended by FD',
+            'value': '12',
+            'rep': 'Someone from DIT',
+            'grade': grade_filter,
+            'group': group_filter,
+            'company_rep': 'Someone from a company',
+            'company': self.company.pk,
         }
 
         self.assertContains(response, "govuk-button")
 
-        gift_hospitality_received_form = GiftAndHospitalityReceivedForm(data=gift_hospitality_received_data)
+        gift_hospitality_received_form = GiftAndHospitalityReceivedForm(
+            data=gift_hospitality_received_data)
         gift_hospitality_received_form.save()
 
         assert gift_hospitality_received_form.is_valid()
@@ -95,11 +108,15 @@ class GiftHospitalitySearchTest(TestCase, RequestFactoryBase):
             password=self.test_password,
         )
 
-        self.classification = GiftAndHospitalityClassification(sequence_no="10", gif_hospitality_classification="98",
-                                                               active=True)
+        self.classification = GiftAndHospitalityClassification(
+            sequence_no="10",
+            gif_hospitality_classification="98",
+            active=True)
         self.classification.save()
 
-        self.category = GiftAndHospitalityCategory(sequence_no="10", gif_hospitality_category="10", active=True)
+        self.category = GiftAndHospitalityCategory(sequence_no="10",
+                                                   gif_hospitality_category="10",
+                                                   active=True)
         self.category.save()
 
         grade = Grade(grade="Test", gradedescription="Test Grade")
@@ -108,16 +125,23 @@ class GiftHospitalitySearchTest(TestCase, RequestFactoryBase):
         departmental_group = DepartmentalGroup(group_code="8888AA", group_name="8888AA")
         departmental_group.save()
 
-        self.company = GiftAndHospitalityCompany(sequence_no="10", gif_hospitality_company="10", active=True)
+        self.company = GiftAndHospitalityCompany(sequence_no="10",
+                                                 gif_hospitality_company="10",
+                                                 active=True)
         self.company.save()
 
-        action_taken = GiftAndHospitality(action_taken="Action1", date_offered="2006-05-23",  value="12", category_id="2", classification_id="2",
-                                          entered_date_stamp="2020-05-22", entered_by=self.test_user)
+        action_taken = GiftAndHospitality(action_taken="Action1",
+                                          date_offered="2006-05-23",
+                                          value="12",
+                                          category_id="2",
+                                          classification_id="2",
+                                          entered_date_stamp="2020-05-22",
+                                          entered_by=self.test_user)
         action_taken.save()
 
     def test_search_records(self):
 
-        self.test_user.is_superuser=True
+        self.test_user.is_superuser = True
         self.test_user.save()
 
         response = reverse("gifthospitality:gift-search", )
