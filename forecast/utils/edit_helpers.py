@@ -79,6 +79,7 @@ def set_monthly_figure_amount(cost_centre_code, cell_data):
 
         try:
             new_value = convert_forecast_amount(cell_data[col])
+
         except IndexError:
             raise NotEnoughColumnsException(
                 'Your pasted data does not '
