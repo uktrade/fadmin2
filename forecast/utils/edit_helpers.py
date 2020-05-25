@@ -70,7 +70,7 @@ def set_monthly_figure_amount(cost_centre_code, cell_data):
             ).first()
         except (IndexError, ValueError):
             raise CannotFindForecastMonthlyFigureException(
-                'Could not find forecast, please check that you '
+                'Could not find forecast row, please check that you '
                 'have pasted ALL columns from the spreadsheet. '
                 'Some values may have been updated.'
             )

@@ -232,7 +232,7 @@ def step_impl(context):
 def step_impl(context):
     check_error_message(
         context,
-        "Could not find forecast, please check that you "
+        "Could not find forecast row, please check that you "
         "have pasted ALL columns from the spreadsheet. "
         "Some values may have been updated."
     )
