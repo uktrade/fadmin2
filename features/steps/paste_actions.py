@@ -95,13 +95,6 @@ def step_impl(context):
     first_select.click()
 
 
-@given('There is no project code')
-def step_impl(context):
-    financial_code = FinancialCode.objects.first()
-    financial_code.project_code = None
-    financial_code.save()
-
-
 @when(u'the user pastes valid row data')
 def step_impl(context):
     paste_text = "123456	Test	111111	Test	1111111	2222222	3000	0	1000.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00"
@@ -239,8 +232,9 @@ def step_impl(context):
 def step_impl(context):
     check_error_message(
         context,
-        "Could not find forecast, please check that you have pasted "
-        "ALL columns from the spreadsheet",
+        "Could not find forecast, please check that you "
+        "have pasted ALL columns from the spreadsheet. "
+        "Some values may have been updated."
     )
 
 

@@ -1,5 +1,5 @@
-import logging
 import json
+import logging
 import re
 
 from django.conf import settings
@@ -244,7 +244,8 @@ class PasteForecastRowsView(
 
             if len(rows) == 0:
                 return JsonResponse(
-                    {"error": "Your pasted data is not formatted correctly."}, status=400,
+                    {"error": "Your pasted data is not formatted correctly."},
+                    status=400,
                 )
 
             # Check for header row
@@ -307,18 +308,26 @@ class PasteForecastRowsView(
             ) as ex:
                 return JsonResponse({"error": str(ex)}, status=400,)
 
-            financial_code_serialiser = get_financial_code_serialiser(self.cost_centre_code)
+            financial_code_serialiser = get_financial_code_serialiser(
+                self.cost_centre_code,
+            )
 
-            return JsonResponse(financial_code_serialiser.data, safe=False)
+            return JsonResponse(
+                financial_code_serialiser.data,
+                safe=False,
+            )
         except Exception:
             logger.fatal(
                 "Error when pasting forecast data",
                 exc_info=True,
             )
             return JsonResponse(
-                {"error": "There was an error when pasting your data, please make "
-                          "sure you have selected all columns. If the error persists, "
-                          "please contact the Live Services Team"},
+                {"error": "There was an error when attempting to paste "
+                          "your data, please make sure you have selected "
+                          "all columns. Some of the forecast data may "
+                          "have been updated. If the error persists, "
+                          "please contact the Live Services Team"
+                 },
                 status=400,
             )
 

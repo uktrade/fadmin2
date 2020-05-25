@@ -68,7 +68,7 @@ def set_monthly_figure_amount(cost_centre_code, cell_data):
                 financial_code__project_code=check_empty(cell_data[6]),
                 archived_status=None,
             ).first()
-        except IndexError:
+        except (IndexError, ValueError):
             raise CannotFindForecastMonthlyFigureException(
                 'Could not find forecast, please check that you '
                 'have pasted ALL columns from the spreadsheet. '
@@ -79,7 +79,6 @@ def set_monthly_figure_amount(cost_centre_code, cell_data):
 
         try:
             new_value = convert_forecast_amount(cell_data[col])
-
         except IndexError:
             raise NotEnoughColumnsException(
                 'Your pasted data does not '
