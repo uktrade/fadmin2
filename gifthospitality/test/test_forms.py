@@ -1,22 +1,20 @@
 from bs4 import BeautifulSoup
-import io
-
-from openpyxl import load_workbook
 
 from django.test import (
     TestCase,
 )
-from django.urls import reverse, path
+from django.urls import reverse
 
 from core.test.test_base import RequestFactoryBase
 
-from gifthospitality.forms import GiftAndHospitalityReceivedForm, GiftAndHospitalityOfferedForm
+from gifthospitality.forms import GiftAndHospitalityOfferedForm,\
+    GiftAndHospitalityReceivedForm
 from gifthospitality.models import DepartmentalGroup, GiftAndHospitality,\
     GiftAndHospitalityCategory, GiftAndHospitalityClassification,\
     GiftAndHospitalityCompany, Grade
 
 
-class GiftHospitalityReceivedFormTest(TestCase, RequestFactoryBase):
+class GiftHospitalityFormTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
 
