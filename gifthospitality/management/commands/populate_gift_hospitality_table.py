@@ -6,11 +6,8 @@ from gifthospitality.models import (
     GiftAndHospitalityCategory,
     GiftAndHospitalityClassification,
     GiftAndHospitalityCompany,
-    GiftAndHospitality,
     Grade,
 )
-
-GiftAndHospitality.objects.all().delete()
 
 
 class GiftAndHospitalityCategories:
