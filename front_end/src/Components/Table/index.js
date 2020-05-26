@@ -170,7 +170,7 @@ function Table({rowData, sheetUpdating}) {
                                 return <TableCell key={shortid.generate()} sheetUpdating={sheetUpdating} cellId={getCellId(rowIndex, value)} rowIndex={rowIndex} cellKey={value} />
                             })}
                             <InfoCell className="figure-cell" rowIndex={rowIndex}>
-                                <AggregateValue rowIndex={rowIndex} actualsOnly={false} />
+                                <AggregateValue rowIndex={rowIndex} actualsOnly={false} extraClasses="" />
                             </InfoCell>
                             <InfoCell className="figure-cell" rowIndex={rowIndex}>
                                 <OverspendUnderspend rowIndex={rowIndex} />
@@ -179,7 +179,7 @@ function Table({rowData, sheetUpdating}) {
                                 <VariancePercentage rowIndex={rowIndex} />
                             </InfoCell>
                             <InfoCell className="figure-cell" rowIndex={rowIndex}>
-                                <AggregateValue rowIndex={rowIndex} actualsOnly={true} />
+                                <AggregateValue rowIndex={rowIndex} actualsOnly={true} extraClasses="last-col" />
                             </InfoCell>
                         </tr>
                     })}

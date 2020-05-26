@@ -4,7 +4,7 @@ import {
     formatValue
 } from '../../Util'
 
-const TotalAggregate = ({rowIndex, actualsOnly, id, extraClasses}) => {
+const TotalAggregate = ({ actualsOnly, id, extraClasses }) => {
     const cells = useSelector(state => state.allCells.cells);
 
     let total = 0
