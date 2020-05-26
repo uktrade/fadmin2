@@ -1,0 +1,7 @@
+import io
+header = 'Entity,Cost Centre,Natural Account,Programme,Analysis,Analysis2,Project,APR,MAY,JUN,JUL,AUG,SEP,OCT,NOV,DEC,JAN,FEB,MAR,ADJ01,ADJ02,ADJ03,Total'
+line1 = '3000,109001,51111001,310530,0,0,0,22590,-57372,26955,26956,26957,26958,26959,26960,26961,26962,26963,26964,0,0,0,234814'
+line2 = '3000,109001,51111006,310530,0,0,0,45076,0,0,0,0,0,0,0,0,0,0,0,0,0,0,45076'
+line3 = '3000,109001,51112001,310530,0,0,0,2317,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2317'
+
+csvfile = io.StringIO (f'{header}\n{line1}\n{line2}\n{line3}\n')
