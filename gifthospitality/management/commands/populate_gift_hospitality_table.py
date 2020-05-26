@@ -6,9 +6,11 @@ from gifthospitality.models import (
     GiftAndHospitalityCategory,
     GiftAndHospitalityClassification,
     GiftAndHospitalityCompany,
+    GiftAndHospitality,
     Grade,
 )
 
+GiftAndHospitality.objects.all().delete()
 
 class GiftAndHospitalityCategories:
     name = "Gift and Hospitality Categories"
@@ -189,7 +191,7 @@ class Grades:
     def create(self):
         self.clear()
         Grade.objects.create(
-            grade='Unk',
+            grade='Contractor',
             gradedescription='Unknown',
             active=True,
         )
