@@ -12,6 +12,7 @@ from gifthospitality.models import (
 
 GiftAndHospitality.objects.all().delete()
 
+
 class GiftAndHospitalityCategories:
     name = "Gift and Hospitality Categories"
 
