@@ -1,13 +1,16 @@
 from bs4 import BeautifulSoup
+import io
+
+from openpyxl import load_workbook
 
 from django.test import (
     TestCase,
 )
-from django.urls import reverse
+from django.urls import reverse, path
 
 from core.test.test_base import RequestFactoryBase
 
-from gifthospitality.forms import GiftAndHospitalityReceivedForm
+from gifthospitality.forms import GiftAndHospitalityReceivedForm, GiftAndHospitalityOfferedForm
 from gifthospitality.models import DepartmentalGroup, GiftAndHospitality,\
     GiftAndHospitalityCategory, GiftAndHospitalityClassification,\
     GiftAndHospitalityCompany, Grade
@@ -47,8 +50,8 @@ class GiftHospitalityReceivedFormTest(TestCase, RequestFactoryBase):
                                           date_offered="2006-05-23",
                                           value="12",
                                           entered_date_stamp="2020-05-22",
-                                          category_id="1",
-                                          classification_id="1",
+                                          # category_id="1",
+                                          # classification_id="3",
                                           classification=self.classification,
                                           category=self.category,)
         action_taken.save()
@@ -88,56 +91,46 @@ class GiftHospitalityReceivedFormTest(TestCase, RequestFactoryBase):
 
         gift_hospitality_received_form = GiftAndHospitalityReceivedForm(
             data=gift_hospitality_received_data)
-        gift_hospitality_received_form.save()
 
         assert gift_hospitality_received_form.is_valid()
 
-        response = reverse("gifthospitality:gift-offered", )
+    def test_gift_hospitality_offered_form(self):
+        response = reverse("gifthospitality:gift-offered",)
 
         response = self.client.get(response)
 
         self.assertEqual(response.status_code, 200)
 
+        grade_filter = Grade.objects.get(grade="Test").grade
 
-class GiftHospitalitySearchTest(TestCase, RequestFactoryBase):
-    def setUp(self):
+        group_filter = DepartmentalGroup.objects.get(group_code="8888AA").group_code
 
-        RequestFactoryBase.__init__(self)
-        self.client.login(
-            username=self.test_user_email,
-            password=self.test_password,
-        )
+        action_taken_filter = GiftAndHospitality.objects.get(
+            action_taken="Action1").date_offered
 
-        self.classification = GiftAndHospitalityClassification(
-            sequence_no="10",
-            gif_hospitality_classification="98",
-            active=True)
-        self.classification.save()
+        gift_hospitality_offered_data = {
+            'classification': self.classification.pk,
+            'category': self.category.pk,
+            'date_offered_0': action_taken_filter.day,
+            'date_offered_1': action_taken_filter.month,
+            'date_offered_2': action_taken_filter.year,
+            'action_taken': 'Action1',
+            'venue': 'Normal Venue',
+            'reason': 'Recommended by FD',
+            'value': '12',
+            'rep': 'Someone from DIT',
+            'grade': grade_filter,
+            'group': group_filter,
+            'company_rep': 'Someone from a company',
+            'company': self.company.pk,
+        }
 
-        self.category = GiftAndHospitalityCategory(sequence_no="10",
-                                                   gif_hospitality_category="10",
-                                                   active=True)
-        self.category.save()
+        self.assertContains(response, "govuk-button")
 
-        grade = Grade(grade="Test", gradedescription="Test Grade")
-        grade.save()
+        gift_hospitality_offered_form = GiftAndHospitalityOfferedForm(
+            data=gift_hospitality_offered_data)
 
-        departmental_group = DepartmentalGroup(group_code="8888AA", group_name="8888AA")
-        departmental_group.save()
-
-        self.company = GiftAndHospitalityCompany(sequence_no="10",
-                                                 gif_hospitality_company="10",
-                                                 active=True)
-        self.company.save()
-
-        action_taken = GiftAndHospitality(action_taken="Action1",
-                                          date_offered="2006-05-23",
-                                          value="12",
-                                          category_id="2",
-                                          classification_id="2",
-                                          entered_date_stamp="2020-05-22",
-                                          entered_by=self.test_user)
-        action_taken.save()
+        assert gift_hospitality_offered_form.is_valid()
 
     def test_search_records(self):
 
@@ -155,3 +148,6 @@ class GiftHospitalitySearchTest(TestCase, RequestFactoryBase):
         record_id = soup.find_all('td')
 
         self.assertTrue(record_id)
+
+        download_search_records_url = self.client.get("gifthospitality:?_export.xlsx")
+        self.assertEqual(download_search_records_url.status_code, 200)
