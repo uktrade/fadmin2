@@ -5,7 +5,7 @@ import TableCell from '../../Components/TableCell/index'
 import InfoCell from '../../Components/InfoCell/index'
 import CellValue from '../../Components/CellValue/index'
 import AggregateValue from '../../Components/AggregateValue/index'
-import Variance from '../../Components/Variance/index'
+import VariancePercentage from '../../Components/VariancePercentage/index'
 import TableHeader from '../../Components/TableHeader/index'
 import TotalCol from '../../Components/TotalCol/index'
 import ToggleCell from '../../Components/ToggleCell/index'
@@ -13,7 +13,7 @@ import TotalAggregate from '../../Components/TotalAggregate/index'
 import TotalBudget from '../../Components/TotalBudget/index'
 import OverspendUnderspend from '../../Components/OverspendUnderspend/index'
 import TotalOverspendUnderspend from '../../Components/TotalOverspendUnderspend/index'
-import TotalVariance from '../../Components/TotalVariance/index'
+import TotalVariancePercentage from '../../Components/TotalVariancePercentage/index'
 import ActualsHeaderRow from '../../Components/ActualsHeaderRow/index'
 import {
     getCellId
@@ -94,10 +94,10 @@ function Table({rowData, sheetUpdating}) {
                         {window.period_display && window.period_display.includes(15) &&
                             <th className="govuk-table__header">Adj 3</th>
                         }
-                        <th className="govuk-table__header">Year to Date Actuals</th>
                         <th className="govuk-table__header">Forecast Outturn</th>
-                        <th className="govuk-table__header">Variance %</th>
                         <th className="govuk-table__header">Variance -overspend/underspend</th>
+                        <th className="govuk-table__header">Variance %</th>
+                        <th className="govuk-table__header">Year to Date Actuals</th>
                     </tr>
                 </thead>
                 <tbody className="govuk-table__body">
@@ -170,16 +170,16 @@ function Table({rowData, sheetUpdating}) {
                                 return <TableCell key={shortid.generate()} sheetUpdating={sheetUpdating} cellId={getCellId(rowIndex, value)} rowIndex={rowIndex} cellKey={value} />
                             })}
                             <InfoCell className="figure-cell" rowIndex={rowIndex}>
-                                <AggregateValue rowIndex={rowIndex} actualsOnly={true} />
-                            </InfoCell>
-                            <InfoCell className="figure-cell" rowIndex={rowIndex}>
                                 <AggregateValue rowIndex={rowIndex} actualsOnly={false} />
                             </InfoCell>
                             <InfoCell className="figure-cell" rowIndex={rowIndex}>
-                                <Variance rowIndex={rowIndex} />
+                                <OverspendUnderspend rowIndex={rowIndex} />
                             </InfoCell>
                             <InfoCell className="figure-cell" rowIndex={rowIndex}>
-                                <OverspendUnderspend rowIndex={rowIndex} />
+                                <VariancePercentage rowIndex={rowIndex} />
+                            </InfoCell>
+                            <InfoCell className="figure-cell" rowIndex={rowIndex}>
+                                <AggregateValue rowIndex={rowIndex} actualsOnly={true} />
                             </InfoCell>
                         </tr>
                     })}
@@ -196,10 +196,10 @@ function Table({rowData, sheetUpdating}) {
                         {window.period_display && window.period_display.map((value, index) => {
                             return <TotalCol key={shortid.generate()} month={value} />
                         })}
-                        <TotalAggregate actualsOnly={true} id="year-to-date" />
-                        <TotalAggregate actualsOnly={false} id="year-total" />
-                        <TotalVariance actualsOnly={false} id="year-total" />
+                        <TotalAggregate actualsOnly={false} id="year-total" extraClasses="" />
                         <TotalOverspendUnderspend id="overspend-underspend-total" />
+                        <TotalVariancePercentage id="variance-total" />
+                        <TotalAggregate actualsOnly={true} id="year-to-date" extraClasses="last-col" />
                     </tr>
                 </tbody>
             </table>
