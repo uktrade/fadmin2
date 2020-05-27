@@ -1,4 +1,7 @@
-from django.core.management.base import BaseCommand
+from django.core.management.base import (
+    BaseCommand,
+    CommandError,
+)
 
 from chartofaccountDIT.import_csv import (
     import_Analysis1,
@@ -14,7 +17,10 @@ from chartofaccountDIT.import_csv import (
 
 from costcentre.import_csv import import_cc
 
-from forecast.import_csv import import_adi_file
+from forecast.import_csv import (
+    WrongChartOFAccountCodeException,
+    import_adi_file,
+)
 
 from treasuryCOA.import_csv import import_treasury_COA
 
@@ -54,11 +60,16 @@ class Command(BaseCommand):
         importtype = options.get("type")
         # Windows-1252 or CP-1252, used because of a back quote
         csvfile = open(path, newline="", encoding="cp1252")
-        status, msg = IMPORT_TYPE[importtype](csvfile)
+        try:
+            success, msg = IMPORT_TYPE[importtype](csvfile)
+        except WrongChartOFAccountCodeException as ex:
+            csvfile.close()
+            raise CommandError(f"Failure import {importtype}: {str(ex)}.")
+
         csvfile.close()
-        if status:
+        if success:
             self.stdout.write(
                 self.style.SUCCESS(f"Successfully completed import {importtype}.")
             )
         else:
-            self.stdout.write(self.style.ERROR(f"Failure import {importtype}: {msg}."))
+            raise CommandError(f"Failure import {importtype}: {msg}.")

@@ -1,5 +1,7 @@
 import csv
 
+import logging
+
 from core.import_csv import (
     ImportInfo,
     csv_header_to_dict,
@@ -14,6 +16,12 @@ from forecast.models import (
     ForecastMonthlyFigure,
 )
 from forecast.utils.import_helpers import CheckFinancialCode
+
+logger = logging.getLogger(__name__)
+
+
+class WrongChartOFAccountCodeException(Exception):
+    pass
 
 
 def get_month_dict():
@@ -36,9 +44,7 @@ def get_month_dict():
 
 
 def import_adi_file(csvfile):
-    """Read the ADI file and unpivot it to enter the MonthlyFigure data
-    Hard coded the year because it is a temporary solution....
-    The information is used to create the OSCAR report to be uploaded to Treasury"""
+    """Read the ADI file and unpivot it to enter the MonthlyFigure data"""
     fin_year = get_current_financial_year()
     # Clear the table first. The adi file has several lines with the same key,
     # so the figures have to be added and we don't want to add to existing data!
@@ -67,7 +73,10 @@ def import_adi_file(csvfile):
         )
 
         if check_financial_code.error_found:
-            return False, f"Row {line} error: {check_financial_code.display_error}"
+            raise WrongChartOFAccountCodeException(
+                f"Importing Forecast, Row {line} error: "
+                f"{check_financial_code.display_error}"
+            )
 
         financialcode_obj = check_financial_code.get_financial_code()
 
@@ -88,7 +97,7 @@ def import_adi_file(csvfile):
                 month_figure_obj.save()
 
         if (line % 100) == 0:
-            print(line)
+            logger.info(line)
     return True, "Import completed successfully."
 
 
