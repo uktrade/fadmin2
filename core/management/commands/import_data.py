@@ -64,8 +64,7 @@ class Command(BaseCommand):
             success, msg = IMPORT_TYPE[importtype](csvfile)
         except WrongChartOFAccountCodeException as ex:
             csvfile.close()
-            raise CommandError(f"Failure import {importtype}: {str(ex)}.")
-
+            raise CommandError(f"Failure import {importtype}: {str(ex)}")
         csvfile.close()
         if success:
             self.stdout.write(
