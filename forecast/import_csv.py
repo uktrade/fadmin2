@@ -1,5 +1,4 @@
 import csv
-
 import logging
 
 from core.import_csv import (
