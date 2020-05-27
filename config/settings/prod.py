@@ -14,6 +14,10 @@ AUTHENTICATION_BACKENDS += [
     "authbroker_client.backends.AuthbrokerBackend",
 ]
 
+INSTALLED_APPS += [
+    "elasticapm.contrib.django",
+]
+
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "front_end/build/static"),
     os.path.join(BASE_DIR, "node_modules/govuk-frontend"),
@@ -60,6 +64,13 @@ LOGGING = {
             'propagate': True,
         },
     },
+}
+
+ELASTIC_APM = {
+    'SERVICE_NAME': '<APP-NAME>',
+    'SECRET_TOKEN': '<APM secret token>',
+    'SERVER_URL': 'https://apm.elk.uktrade.digital',
+    'ENVIRONMENT': '<App environment, e.g. development, staging, production>'
 }
 
 # Use anti virus check on uploaded files
