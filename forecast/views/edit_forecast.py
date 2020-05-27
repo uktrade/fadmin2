@@ -324,9 +324,10 @@ class PasteForecastRowsView(
             return JsonResponse(
                 {"error": "There was an error when attempting to paste "
                           "your data, please make sure you have selected "
-                          "all columns. Some of the forecast data may "
-                          "have been updated. If the error persists, "
-                          "please contact the Live Services Team"
+                          "all columns when you copy from the spreadsheet. "
+                          "Some of the forecast data may have been updated. "
+                          "If the error persists, please contact the Live "
+                          "Services Team"
                  },
                 status=400,
             )
