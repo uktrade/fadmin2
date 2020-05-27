@@ -6,10 +6,9 @@
     {% breadcrumb "Download MI Report" "downloaded_files" %}
 {% endblock %}
 
+{% block title %}MI Report downloads{% endblock %}
+
 {% block content %}
-    {% block title %}
-        <title>MI Report downloads - FFT</title>
-    {% endblock %}
     <h3 class="govuk-heading-l">MI Report downloads</h3>
     <p class="govuk-body">
         <a class="govuk-link" href="{% url "download_mi_report_source" %}">

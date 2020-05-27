@@ -6,10 +6,9 @@
     {% breadcrumb "Download OSCAR Return" "downloaded_files" %}
 {% endblock %}
 
+{% block title %}OSCAR Returns downloads{% endblock %}
+
 {% block content %}
-    {% block title %}
-        <title>OSCAR Returns downloads - FFT</title>
-    {% endblock %}
     <h3 class="govuk-heading-l">OSCAR Returns downloads</h3>
     <p class="govuk-body">
         <a class="govuk-link" href="{% url "download_oscar" %}">

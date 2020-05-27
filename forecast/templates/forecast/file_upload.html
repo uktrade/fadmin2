@@ -7,10 +7,9 @@
     {% breadcrumb "Upload file" "upload_file" %}
 {% endblock %}
 
+{% block title %}View Forecast{% endblock %}
+
 {% block content %}
-    {% block title %}
-        <title>View Forecast - FFT</title>
-    {% endblock %}
     <div class="app-pane__content">
         <h1 class="govuk-heading-l">{{ section_name }}</h1>
         <form method="post" enctype="multipart/form-data" action="">
