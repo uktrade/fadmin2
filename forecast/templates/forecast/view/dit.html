@@ -2,13 +2,12 @@
 {% load render_table from django_tables2 %}
 {% load django_bootstrap_breadcrumbs %}
 
-
 {% block breadcrumbs %}
     {{ block.super }}
     {% breadcrumb "DIT forecast" "forecast_dit" %}
 {% endblock %}
 
-{% block title %}View Forecast{% endblock %}
+{% block title %}View Forecast - DIT{% endblock %}
 
 {% block content %}
     <h1 class="govuk-heading-l">DIT</h1>
