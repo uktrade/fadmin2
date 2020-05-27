@@ -118,15 +118,17 @@ expenditure_order_list = [
 project_columns = {
     PROJECT_NAME: "Project",
     PROJECT_CODE: "code",
+    FORECAST_EXPENDITURE_TYPE_ORDER: "Hidden",
     FORECAST_EXPENDITURE_TYPE_NAME: "Expenditure type",
 }
 project_order_list = [
     PROJECT_CODE,
+    FORECAST_EXPENDITURE_TYPE_ORDER,
 ]
 project_sub_total = [
-    FORECAST_EXPENDITURE_TYPE_NAME,
+    PROJECT_NAME,
 ]
-project_display_sub_total_column = PROJECT_NAME
+project_display_sub_total_column = PROJECT_CODE
 
 project_detail_view = [
     'project_details_dit',

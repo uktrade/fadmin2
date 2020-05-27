@@ -27,6 +27,10 @@ class PublishForm(forms.Form):
 
 
 class AddForecastRowForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.__cost_centre_code = kwargs.pop("cost_centre_code")
+        forms.Form.__init__(self, *args, **kwargs)
+
     def clean(self):
         cleaned_data = super().clean()
         programme = cleaned_data.get("programme")
@@ -41,6 +45,7 @@ class AddForecastRowForm(forms.Form):
             analysis1_code=analysis1_code,
             analysis2_code=analysis2_code,
             project_code=project_code,
+            cost_centre=self.__cost_centre_code,
         ).first()
 
         if financial_code:
@@ -54,6 +59,7 @@ class AddForecastRowForm(forms.Form):
             active=True,
         ),
         empty_label="",
+        label="Programme Description",
     )
     programme.widget.attrs.update(
         {"class": "govuk-select", "aria-describedby": "programme-hint programme-error"}
@@ -64,6 +70,7 @@ class AddForecastRowForm(forms.Form):
             active=True,
         ),
         empty_label="",
+        label="NAC Description",
     )
     natural_account_code.widget.attrs.update(
         {
@@ -78,6 +85,7 @@ class AddForecastRowForm(forms.Form):
         ),
         required=False,
         empty_label="",
+        label="Contract Reconciliation",
     )
     analysis1_code.widget.attrs.update(
         {
@@ -92,6 +100,7 @@ class AddForecastRowForm(forms.Form):
         ),
         required=False,
         empty_label="",
+        label="Markets",
     )
     analysis2_code.widget.attrs.update(
         {
