@@ -9,6 +9,12 @@
 {% endblock %}
 
 {% block content %}
+    {% block title %}
+{#        <title>View Group Forecast - FFT</title>#}
+        {% for table in tables %}
+            <title>View {{ table.heading }} - FFT </title>
+        {% endfor %}
+    {% endblock %}
     <h1 class="govuk-heading-l">{{ view.group.group_name }} - {{ view.group.group_code }}</h1>
     <div class="action-bar-wrapper">
         <div class="action-bar">

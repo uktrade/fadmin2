@@ -19,22 +19,22 @@
         <!-- End Google Tag Manager -->
     {% endif %}
     <meta charset="utf-8"/>
-    {% block title %}
-        {% if request.path|startswith:'/forecast/view/' %}
-            <title>View Forecast - FFT</title>{% endif %}
-        {% if request.path|startswith:'/chartofaccountDIT/' %}
-            <title>Chart of Account - FFT</title>{% endif %}
-        {% if request.path|startswith:'/gifthospitality/' %}
-            <title>Gift & Hospitality - FFT</title>{% endif %}
-        {% if request.path|startswith:'/forecast/edit/' %}
-            <title>Edit Forecast - FFT</title>{% endif %}
-        {% if request.path|startswith:'/download_file/download_mi_report' %}
-            <title>MI Report downloads - FFT</title>{% endif %}
-        {% if request.path|startswith:'/download_file/download_oscar_report' %}
-            <title>OSCAR Returns downloads - FFT</title>{% endif %}
-        {% if request.path|startswith:'/upload/files' %}
-            <title>Uploaded Files - FFT</title>{% endif %}
-        <title>Financial Forecast Tool</title>{% endblock %}
+{#    {% block title %}#}
+{#        {% if request.path|startswith:'/forecast/view/' %}#}
+{#            <title>View Forecast - FFT</title>{% endif %}#}
+{#        {% if request.path|startswith:'/chartofaccountDIT/' %}#}
+{#            <title>Chart of Account - FFT</title>{% endif %}#}
+{#        {% if request.path|startswith:'/gifthospitality/' %}#}
+{#            <title>Gift & Hospitality - FFT</title>{% endif %}#}
+{#        {% if request.path|startswith:'/forecast/edit/' %}#}
+{#            <title>Edit Forecast - FFT</title>{% endif %}#}
+{#        {% if request.path|startswith:'/download_file/download_mi_report' %}#}
+{#            <title>MI Report downloads - FFT</title>{% endif %}#}
+{#        {% if request.path|startswith:'/download_file/download_oscar_report' %}#}
+{#            <title>OSCAR Returns downloads - FFT</title>{% endif %}#}
+{#        {% if request.path|startswith:'/upload/files' %}#}
+{#            <title>Uploaded Files - FFT</title>{% endif %}#}
+{#        <title>Financial Forecast Tool</title>{% endblock %}#}
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#0b0c0c"/>
 

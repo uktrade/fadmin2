@@ -11,6 +11,9 @@
     {% breadcrumb view.cost_centre.cost_centre_name "forecast_cost_centre" view.cost_centre.cost_centre_code %}
 {% endblock %}
 {% block content %}
+    {% block title %}
+        <title>View Cost Centre Forecast - FFT</title>
+    {% endblock %}
     <h1 class="govuk-heading-l">{{ view.cost_centre.cost_centre_name }} - {{ view.cost_centre.cost_centre_code }} </h1>
     <div class="action-bar-wrapper">
         <div class="action-bar">

@@ -2,6 +2,9 @@
 {% load util %}
 
 {% block page_content %}
+    {% block title %}
+        <title>Edit Forecast - FFT</title>
+    {% endblock %}
     <form method="post" action="">
         {% csrf_token %}
         {% include "core/govt_uk_form.html" %}

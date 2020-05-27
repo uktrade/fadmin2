@@ -10,6 +10,9 @@
 
 
 {% block content %}
+    {% block title %}
+        <title>Gift & Hospitality - FFT</title>
+    {% endblock %}
     <h1 class="govuk-heading-l">{{ section_name }}</h1>
     <p>{{ section_description }}</p>
     {% csrf_token %}
