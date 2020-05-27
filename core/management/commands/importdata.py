@@ -54,5 +54,11 @@ class Command(BaseCommand):
         importtype = options.get("type")
         # Windows-1252 or CP-1252, used because of a back quote
         csvfile = open(path, newline="", encoding="cp1252")
-        IMPORT_TYPE[importtype](csvfile)
+        status, msg = IMPORT_TYPE[importtype](csvfile)
         csvfile.close()
+        if status:
+            self.stdout.write(
+                self.style.SUCCESS(f"Successfully completed import {importtype}.")
+            )
+        else:
+            self.stdout.write(self.style.ERROR(f"Failure import {importtype}: {msg}."))

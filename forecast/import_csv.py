@@ -67,8 +67,7 @@ def import_adi_file(csvfile):
         )
 
         if check_financial_code.error_found:
-            print(f"Row {line} error: {check_financial_code.display_error}",)
-            return False
+            return False, f"Row {line} error: {check_financial_code.display_error}"
 
         financialcode_obj = check_financial_code.get_financial_code()
 
@@ -90,7 +89,7 @@ def import_adi_file(csvfile):
 
         if (line % 100) == 0:
             print(line)
-    return True
+    return True, "Import completed successfully."
 
 
 h_list = [
