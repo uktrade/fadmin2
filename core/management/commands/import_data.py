@@ -56,7 +56,9 @@ class Command(BaseCommand):
     # importing actual is a special case, because we need to specify the month
     def handle(self, *args, **options):
         path = options.get("csv_path")
-        print(path)
+        self.stdout.write(
+            self.style.SUCCESS(f"Processing file {path}.")
+        )
         importtype = options.get("type")
         # Windows-1252 or CP-1252, used because of a back quote
         csvfile = open(path, newline="", encoding="cp1252")
