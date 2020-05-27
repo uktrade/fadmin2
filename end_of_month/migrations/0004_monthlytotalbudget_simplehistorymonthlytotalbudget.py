@@ -9,10 +9,10 @@ import simple_history.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('forecast', '0009_auto_20200506_0843'),
+        ('forecast', '0002_data_20200522'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('core', '0008_create_finance_groups'),
-        ('end_of_month', '0003_auto_20200408_0629'),
+        ('core', '0002_data_20200522'),
+        ('end_of_month', '0002_auto_20200522_1028'),
     ]
     operations = [
         migrations.CreateModel(
