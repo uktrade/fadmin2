@@ -115,7 +115,8 @@ class ForecastViewTableMixin(MultiTableMixin):
                  self._datamodel = ForecastingDataView
         return self._datamodel
 
-    def get_table_tag(self):
+    @property
+    def table_tag(self):
         if self._table_tag is None:
             period = self.period
             if period:

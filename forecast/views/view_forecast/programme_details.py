@@ -76,7 +76,6 @@ class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
         datamodel = self.get_datamodel()
-        table_tag = self.get_table_tag()
         month_list = self.get_month_list()
 
 
@@ -96,7 +95,7 @@ class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
             actual_month_list=month_list,
         )
         programme_details_table.attrs['caption'] = "Programme Report"
-        programme_details_table.tag = table_tag
+        programme_details_table.tag = self.table_tag
 
         self.tables = [
             programme_details_table,

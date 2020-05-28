@@ -72,7 +72,6 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter = {filter_selectors[self.hierarchy_type]: f"{filter_code}"}
         datamodel = self.get_datamodel()
-        table_tag = self.get_table_tag()
         month_list = self.get_month_list()
 
         hierarchy_data = datamodel.view_data.subtotal_data(
@@ -127,7 +126,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             )
 
         programme_table.attrs['caption'] = "Control total report"
-        programme_table.tag = table_tag
+        programme_table.tag = self.table_tag
 
         expenditure_table = ForecastWithLinkTable(
             BUDGET_CATEGORY_NAME,
@@ -139,7 +138,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             actual_month_list=month_list,
         )
         expenditure_table.attrs['caption'] = "Expenditure report"
-        expenditure_table.tag = table_tag
+        expenditure_table.tag = self.table_tag
 
         project_table = ForecastWithLinkTable(
             PROJECT_NAME,
@@ -151,7 +150,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             actual_month_list=month_list,
         )
         project_table.attrs['caption'] = "Project report"
-        project_table.tag = table_tag
+        project_table.tag = self.table_tag
 
         if self.hierarchy_type == SHOW_COSTCENTRE:
             hierarchy_table = ForecastSubTotalTable(
@@ -171,7 +170,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             )
 
         hierarchy_table.attrs['caption'] = "Forecast hierarchy report"
-        hierarchy_table.tag = table_tag
+        hierarchy_table.tag = self.table_tag
 
         self.tables = [
             hierarchy_table,

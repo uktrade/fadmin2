@@ -78,7 +78,6 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
         datamodel = self.get_datamodel()
-        table_tag = self.get_table_tag()
         month_list = self.get_month_list()
 
         nac_data = datamodel.view_data.subtotal_data(
@@ -96,7 +95,7 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
             actual_month_list=month_list,
         )
         nac_table.attrs['caption'] = "Expenditure Report"
-        nac_table.tag = table_tag
+        nac_table.tag = self.table_tag
         self.tables = [
             nac_table,
         ]

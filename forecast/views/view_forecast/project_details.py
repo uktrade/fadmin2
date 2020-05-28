@@ -64,7 +64,6 @@ class ForecastProjectDetailsMixin(ForecastViewTableMixin):
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
         datamodel = self.get_datamodel()
-        table_tag = self.get_table_tag()
         month_list = self.get_month_list()
 
         columns = project_details_hierarchy_columns[self.hierarchy_type]
@@ -83,7 +82,7 @@ class ForecastProjectDetailsMixin(ForecastViewTableMixin):
             actual_month_list=month_list,
         )
         project_details_table.attrs['caption'] = "Project Report"
-        project_details_table.tag = table_tag
+        project_details_table.tag = self.table_tag
 
         self.tables = [
             project_details_table,
