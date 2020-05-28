@@ -120,7 +120,7 @@ class ForecastViewTableMixin(MultiTableMixin):
             if period:
                 # We are displaying historical forecast
                 forecast_period_obj = FinancialPeriod.objects.get(pk=period)
-                self._table_tag  = f'Historical data for {forecast_period_obj.period_long_name}'
+                self._table_tag = f'Historical data for {forecast_period_obj.period_long_name}'
             else:
                 self._table_tag = ""
         return self._table_tag

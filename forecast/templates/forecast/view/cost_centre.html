@@ -48,13 +48,13 @@
             <ul class="govuk-tabs__list">
                 {% for table in tables %}
                     <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" href="#tab-{{ forloop.counter }}">{{ table.heading }}</a>
+                        <a class="govuk-tabs__tab" href="#tab-{{ forloop.counter }}">{{ table.attrs.caption }}</a>
                     </li>
                 {% endfor %}
             </ul>
             {% for table in tables %}
                 <div class="govuk-tabs__panel" id="tab-{{ forloop.counter }}">
-                    <h2 class="govuk-heading-l">{{ table.heading }}</h2>
+                    <h2 class="govuk-heading-l">{{ table.attrs.caption }}</h2>
                     <div class="{% if forloop.counter != 3 %}cc-forecast-table{% else %}cc-forecast-table-3{% endif %} tables-container forecast-table-{{ forloop.counter }}">
                         {% render_table table %}
                     </div>
