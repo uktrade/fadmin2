@@ -77,10 +77,7 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
-        datamodel = self.get_datamodel()
-        month_list = self.get_month_list()
-
-        nac_data = datamodel.view_data.subtotal_data(
+        nac_data = self.datamodel.view_data.subtotal_data(
             nac_display_sub_total_column,
             nac_sub_total,
             nac_columns.keys(),
@@ -92,7 +89,7 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
         nac_table = ForecastSubTotalTable(
             nac_columns,
             nac_data,
-            actual_month_list=month_list,
+            actual_month_list=self.month_list,
         )
         nac_table.attrs['caption'] = "Expenditure Report"
         nac_table.tag = self.table_tag

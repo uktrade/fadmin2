@@ -63,11 +63,8 @@ class ForecastProjectDetailsMixin(ForecastViewTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
-        datamodel = self.get_datamodel()
-        month_list = self.get_month_list()
-
         columns = project_details_hierarchy_columns[self.hierarchy_type]
-        project_details_data = datamodel.view_data.subtotal_data(
+        project_details_data = self.datamodel.view_data.subtotal_data(
             project_details_hierarchy_sub_total_column[self.hierarchy_type],
             project_details_sub_total,
             columns.keys(),
@@ -79,7 +76,7 @@ class ForecastProjectDetailsMixin(ForecastViewTableMixin):
         project_details_table = ForecastSubTotalTable(
             columns,
             project_details_data,
-            actual_month_list=month_list,
+            actual_month_list=self.month_list,
         )
         project_details_table.attrs['caption'] = "Project Report"
         project_details_table.tag = self.table_tag

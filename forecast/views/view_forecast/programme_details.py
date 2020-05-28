@@ -75,12 +75,8 @@ class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
-        datamodel = self.get_datamodel()
-        month_list = self.get_month_list()
-
-
         columns = programme_details_hierarchy_columns[self.hierarchy_type]
-        programme_details_data = datamodel.view_data.subtotal_data(
+        programme_details_data = self.datamodel.view_data.subtotal_data(
             programme_details_display_sub_total_column,
             programme_details_sub_total,
             columns.keys(),
@@ -92,7 +88,7 @@ class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
         programme_details_table = ForecastSubTotalTable(
             columns,
             programme_details_data,
-            actual_month_list=month_list,
+            actual_month_list=self.month_list,
         )
         programme_details_table.attrs['caption'] = "Programme Report"
         programme_details_table.tag = self.table_tag

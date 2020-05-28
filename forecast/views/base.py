@@ -94,7 +94,8 @@ class ForecastViewTableMixin(MultiTableMixin):
             self._period = self.kwargs["period"]
         return self._period
 
-    def get_month_list(self):
+    @property
+    def month_list(self):
         if self._month_list is None:
             period = self.period
             if period:
@@ -105,7 +106,8 @@ class ForecastViewTableMixin(MultiTableMixin):
                 self._month_list = FinancialPeriod.financial_period_info.actual_month_list()
         return self._month_list
 
-    def get_datamodel(self):
+    @property
+    def datamodel(self):
         if self._datamodel is None:
             period = self.period
             if period:
