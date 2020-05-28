@@ -86,6 +86,7 @@ for example:
 0004_data_20200501_1345
 ```
 
+
 ### Running manage.py on an app droplet
 ```
 /home/vcap/deps/1/bin/python3.6 ~/app/manage.py
