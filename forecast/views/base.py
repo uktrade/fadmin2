@@ -10,13 +10,13 @@ from forecast.models import (
     ForecastingDataView,
 )
 
-
 from forecast.utils.access_helpers import (
     can_edit_cost_centre,
     can_forecast_be_edited,
     can_view_forecasts,
 )
 
+from end_of_month.models import forecast_budget_view_model
 
 class NoCostCentreCodeInURLError(Exception):
     pass
@@ -109,12 +109,7 @@ class ForecastViewTableMixin(MultiTableMixin):
     @property
     def datamodel(self):
         if self._datamodel is None:
-            period = self.period
-            if period:
-                # We are displaying historical forecast
-                self._datamodel = ForecastingDataView
-            else:
-                 self._datamodel = ForecastingDataView
+            self._datamodel = forecast_budget_view_model[self.period]
         return self._datamodel
 
     @property

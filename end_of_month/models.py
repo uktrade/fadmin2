@@ -7,6 +7,7 @@ from core.models import FinancialYear
 from forecast.models import (
     FinancialCode,
     FinancialPeriod,
+    ForecastingDataView,
     ForecastingDataViewAbstract,
 )
 
@@ -155,3 +156,22 @@ class PreviousAdj3Forecast(PreviousMonthForecast):
         managed = False
         db_table = "budget_forecast_adj3_view"
 
+
+forecast_budget_view_model = [
+    ForecastingDataView,
+    PreviousAprForecast,
+    PreviousMayForecast,
+    PreviousJunForecast,
+    PreviousJulForecast,
+    PreviousAugForecast,
+    PreviousSepForecast,
+    PreviousOctForecast,
+    PreviousNovForecast,
+    PreviousDecForecast,
+    PreviousJanForecast,
+    PreviousFebForecast,
+    PreviousMarForecast,
+    PreviousAdj1Forecast,
+    PreviousAdj2Forecast,
+    PreviousAdj2Forecast,
+]
