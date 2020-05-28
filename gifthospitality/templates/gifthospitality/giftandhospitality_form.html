@@ -81,10 +81,14 @@ $(document).one('autocompleteLightInitialize', '[data-autocomplete-light-functio
         <a href="https://workspace.trade.gov.uk/working-at-dit/policies-and-guidance/gifts-and-hospitality/">
            here</a>.</p>
 
+    <p class="govuk-body">If you need to report any bugs or technical problems, please email:
+        <a href="mailto:fft@uktrade.zendesk.com">fft@uktrade.zendesk.com</a>.
+    </p>
+
   <div class="container">
     <div class="col-md-12">
 
-<form method='post'>
+<form novalidate method='post'>
     {% csrf_token %}
     {% include "core/govt_uk_form.html" with form=form %}
     <input type="submit" value="Save" class="govuk-button" data-module="govuk-button"/>
