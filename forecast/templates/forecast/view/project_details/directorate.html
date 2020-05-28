@@ -3,9 +3,9 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb view.directorate.group.group_name "forecast_group" view.directorate.group_id %}
-    {% breadcrumb view.directorate.directorate_name "forecast_directorate" view.directorate.directorate_code %}
-    {% breadcrumb view.project_code.project_description "project_details_directorate"  %}
+    {% breadcrumb view.directorate.group.group_name "forecast_group" view.directorate.group_id view.period %}
+    {% breadcrumb view.directorate.directorate_name "forecast_directorate" view.directorate.directorate_code view.period %}
+    {% breadcrumb view.project_code.project_description "project_details_directorate"  view.period %}
 {% endblock %}
 
 {% block view_hierarchy_title %}

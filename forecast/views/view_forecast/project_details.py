@@ -112,7 +112,7 @@ class DITProjectDetailsView(
                 reverse(
                     "project_details_dit",
                     kwargs={'project_code': project_code_id,
-                            "period": self.get_period(),
+                            "period": self.period,
                             }
                 )
             )
@@ -145,7 +145,7 @@ class GroupProjectDetailsView(
                     "project_details_group",
                     kwargs={'group_code': self.group().group_code,
                             'project_code': project_code_id,
-                            "period": self.get_period(),
+                            "period": self.period,
                             }
                 )
             )
@@ -179,7 +179,7 @@ class DirectorateProjectDetailsView(
                     "project_details_directorate",
                     kwargs={'directorate_code': self.directorate().directorate_code,
                             'project_code': project_code_id,
-                            "period": self.get_period(),
+                            "period": self.period,
                             }
                 )
             )
@@ -213,7 +213,7 @@ class CostCentreProjectDetailsView(
                     "project_details_costcentre",
                     kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
                             'project_code': project_code_id,
-                            "period": self.get_period(),
+                            "period": self.period,
                             }
                 )
             )

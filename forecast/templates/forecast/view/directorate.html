@@ -4,9 +4,9 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb "DIT" "forecast_dit" %}
-    {% breadcrumb view.directorate.group.group_name "forecast_group" view.directorate.group_id %}
-    {% breadcrumb view.directorate.directorate_name "forecast_directorate" view.directorate.directorate_code %}
+    {% breadcrumb "DIT" "forecast_dit" view.period %}
+    {% breadcrumb view.directorate.group.group_name "forecast_group" view.directorate.group_id view.period %}
+    {% breadcrumb view.directorate.directorate_name "forecast_directorate" view.directorate.directorate_code view.period %}
 {% endblock %}
 
 {% block content %}

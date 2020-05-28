@@ -4,7 +4,7 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb "DIT" "forecast_dit" %}
+    {% breadcrumb "DIT" "forecast_dit" view.period %}
     {% breadcrumb view.group.group_name "" %}
 {% endblock %}
 

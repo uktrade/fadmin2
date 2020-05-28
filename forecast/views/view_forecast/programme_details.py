@@ -130,7 +130,7 @@ class DITProgrammeDetailsView(
                     kwargs={
                         'programme_code': programme_code_id,
                         'forecast_expenditure_type': self.forecast_expenditure_type(),
-                        "period":self.get_period(),
+                        "period":self.period,
                             }
                 )
             )
@@ -165,7 +165,7 @@ class GroupProgrammeDetailsView(
                     kwargs={'group_code': self.group().group_code,
                             'programme_code': programme_code_id,
                             'forecast_expenditure_type': self.forecast_expenditure_type(),  # noqa
-                            "period": self.get_period(),
+                            "period": self.period,
                             }
                 )
             )
@@ -200,7 +200,7 @@ class DirectorateProgrammeDetailsView(
                     kwargs={'directorate_code': self.directorate().directorate_code,
                             'programme_code': programme_code_id,
                             'forecast_expenditure_type': self.forecast_expenditure_type(),  # noqa
-                            "period": self.get_period(),
+                            "period": self.period,
                             }
                 )
             )

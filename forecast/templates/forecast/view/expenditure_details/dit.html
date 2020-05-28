@@ -3,7 +3,7 @@
 
 {% block breadcrumbs %}
     {{ block.super }}
-    {% breadcrumb view.expenditure_category.grouping_description "expenditure_details_cost_centre"  %}
+    {% breadcrumb view.expenditure_category.grouping_description "expenditure_details_cost_centre"  view.period %}
 {% endblock %}
 
 {% block view_hierarchy_title %}

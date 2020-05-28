@@ -88,14 +88,15 @@ class ForecastViewTableMixin(MultiTableMixin):
 
         super().__init__(*args, **kwargs)
 
-    def get_period(self):
+    @property
+    def period(self):
         if self._period is None:
             self._period = self.kwargs["period"]
         return self._period
 
     def get_month_list(self):
         if self._month_list is None:
-            period = self.get_period()
+            period = self.period
             if period:
                 # We are displaying historical forecast
                 self._month_list = FinancialPeriod.financial_period_info.month_sublist(
@@ -106,7 +107,7 @@ class ForecastViewTableMixin(MultiTableMixin):
 
     def get_datamodel(self):
         if self._datamodel is None:
-            period = self.get_period()
+            period = self.period
             if period:
                 # We are displaying historical forecast
                 self._datamodel = ForecastingDataView
@@ -116,7 +117,7 @@ class ForecastViewTableMixin(MultiTableMixin):
 
     def get_table_tag(self):
         if self._table_tag is None:
-            period = self.get_period()
+            period = self.period
             if period:
                 # We are displaying historical forecast
                 forecast_period_obj = FinancialPeriod.objects.get(pk=period)

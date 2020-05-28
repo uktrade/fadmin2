@@ -72,7 +72,6 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter = {filter_selectors[self.hierarchy_type]: f"{filter_code}"}
         datamodel = self.get_datamodel()
-        period = self.get_period()
         table_tag = self.get_table_tag()
         month_list = self.get_month_list()
 
@@ -120,7 +119,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             programme_table = ForecastWithLinkTable(
                 PROGRAMME_NAME,
                 programme_detail_view[self.hierarchy_type],
-                [PROGRAMME_CODE, FORECAST_EXPENDITURE_TYPE_NAME, period],
+                [PROGRAMME_CODE, FORECAST_EXPENDITURE_TYPE_NAME, self.period],
                 filter_code,
                 programme_columns,
                 programme_data,
@@ -133,7 +132,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
         expenditure_table = ForecastWithLinkTable(
             BUDGET_CATEGORY_NAME,
             expenditure_view[self.hierarchy_type],
-            [BUDGET_CATEGORY_ID, BUDGET_TYPE, period],
+            [BUDGET_CATEGORY_ID, BUDGET_TYPE, self.period],
             filter_code,
             expenditure_columns,
             expenditure_data,
@@ -145,7 +144,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
         project_table = ForecastWithLinkTable(
             PROJECT_NAME,
             project_detail_view[self.hierarchy_type],
-            [PROJECT_CODE, period],
+            [PROJECT_CODE, self.period],
             filter_code,
             project_columns,
             project_data,
@@ -164,7 +163,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             hierarchy_table = ForecastWithLinkTable(
                 hierarchy_view_link_column[self.hierarchy_type],
                 hierarchy_view[self.hierarchy_type],
-                [hierarchy_view_code[self.hierarchy_type], period],
+                [hierarchy_view_code[self.hierarchy_type], self.period],
                 "",
                 hierarchy_columns[self.hierarchy_type],
                 hierarchy_data,
@@ -250,7 +249,7 @@ class CostCentreView(
                     "forecast_cost_centre",
                     kwargs={
                             "cost_centre_code": cost_centre_code,
-                            "period": self.get_period(),
+                            "period": self.period,
                     },
                 )
             )

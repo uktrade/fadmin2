@@ -123,7 +123,7 @@ class DITExpenditureDetailsView(
                     "expenditure_details_dit",
                     kwargs={'expenditure_category': expenditure_category_id,
                             'budget_type': self.budget_type(),
-                            "period": self.get_period(),
+                            "period": self.period,
                             }
 
                 )
@@ -159,7 +159,7 @@ class GroupExpenditureDetailsView(
                     kwargs={'group_code': self.group().group_code,
                             'expenditure_category': expenditure_category_id,
                             'budget_type': self.budget_type(),
-                            "period": self.get_period(),
+                            "period": self.period,
                             }
                 )
             )
@@ -194,7 +194,7 @@ class DirectorateExpenditureDetailsView(
                     kwargs={'directorate_code': self.directorate().directorate_code,
                             'expenditure_category': expenditure_category_id,
                             'budget_type': self.budget_type(),
-                            "period": self.get_period(),
+                            "period": self.period,
                             }
                 )
             )
@@ -229,7 +229,7 @@ class CostCentreExpenditureDetailsView(
                     kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
                             'expenditure_category': expenditure_category_id,
                             'budget_type': self.budget_type(),
-                            "period": self.get_period(),
+                            "period": self.period,
                             }
                 )
             )
