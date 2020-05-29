@@ -46,7 +46,6 @@ class GiftAndHospitalityReceivedForm(forms.ModelForm):
             self.fields[f].required = True
         self.fields['classification'].widget.attrs.update({'class': 'govuk-select'})
         self.fields['category'].widget.attrs.update({'class': 'govuk-select'})
-        self.fields['date_offered']
         self.fields['action_taken'].widget.attrs.update({'class': 'govuk-select'})
         self.fields['venue'].widget.attrs.update({'class': 'govuk-input'})
         self.fields['reason'].widget.attrs.update({'class': 'govuk-input'})
@@ -116,7 +115,6 @@ class GiftAndHospitalityOfferedForm(GiftAndHospitalityReceivedForm):
 
         self.fields['classification'].widget.attrs.update({'class': 'govuk-select'})
         self.fields['category'].widget.attrs.update({'class': 'govuk-select'})
-        self.fields['date_offered']
         self.fields['action_taken'].widget.attrs.update({'class': 'govuk-select'})
         self.fields['venue'].widget.attrs.update({'class': 'govuk-input'})
         self.fields['reason'].widget.attrs.update({'class': 'govuk-input'})

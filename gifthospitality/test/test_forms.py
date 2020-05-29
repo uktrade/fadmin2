@@ -83,6 +83,7 @@ class GiftHospitalityFormTest(TestCase, RequestFactoryBase):
             'group': group_filter,
             'company_rep': 'Someone from a company',
             'company': self.company.pk,
+            'company_other': '',
         }
 
         self.assertContains(response, "govuk-button")
@@ -121,6 +122,7 @@ class GiftHospitalityFormTest(TestCase, RequestFactoryBase):
             'group': group_filter,
             'company_rep': 'Someone from a company',
             'company': self.company.pk,
+            'company_other': '',
         }
 
         self.assertContains(response, "govuk-button")
