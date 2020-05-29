@@ -91,7 +91,10 @@ class GiftHospitalityFilter(MyFilterSet):
                 "showClose": True,
                 "showClear": True,
                 "showTodayButton": True,
-            }
+            },
+            attrs={
+                "placeholder":"DD/MM/YYYY",
+            },
         ),
     )
 
@@ -105,7 +108,10 @@ class GiftHospitalityFilter(MyFilterSet):
                 "showClose": True,
                 "showClear": True,
                 "showTodayButton": True,
-            }
+            },
+            attrs={
+                "placeholder": "DD/MM/YYYY",
+            },
         ),
     )
     value = NumberFilter(lookup_expr="lte", label="Max value of offer (£)")

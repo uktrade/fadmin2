@@ -164,6 +164,7 @@ class GiftAndHospitalityAdmin(AdminImportExport):
     def import_info(self):
         return import_gh_class
 
+
 admin.site.register(GiftAndHospitality, GiftAndHospitalityAdmin)
 admin.site.register(GiftAndHospitalityCompany, GiftAndHospitalityCompanyAdmin)
 admin.site.register(GiftAndHospitalityCategory, GiftAndHospitalityCategoryAdmin)

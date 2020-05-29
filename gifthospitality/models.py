@@ -126,7 +126,7 @@ class GiftAndHospitality(BaseModel):
         verbose_name="company",
     )
     company_other = models.CharField(
-        "Please enter company", max_length=200, null=True, blank=True)
+        "Other company", max_length=200, blank=True, default='')
     ACTION_TYPE = (
         ("Action1", "Rejected"),
         ("Action2", "Accepted (difference paid to Department)"),
