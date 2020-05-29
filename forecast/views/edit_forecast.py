@@ -43,6 +43,7 @@ from forecast.utils.edit_helpers import (
     BadFormatException,
     CannotFindForecastMonthlyFigureException,
     CannotFindMonthlyFigureException,
+    IncorrectDecimalFormatException,
     NoFinancialCodeForEditedValue,
     NotEnoughColumnsException,
     NotEnoughMatchException,
@@ -305,6 +306,7 @@ class PasteForecastRowsView(
                 RowMatchException,
                 CannotFindMonthlyFigureException,
                 CannotFindForecastMonthlyFigureException,
+                IncorrectDecimalFormatException,
             ) as ex:
                 return JsonResponse({"error": str(ex)}, status=400,)
 
