@@ -80,13 +80,6 @@ LOGGING = {
     },
 }
 
-ELASTIC_APM = {
-    'SERVICE_NAME': '<APP-NAME>',
-    'SECRET_TOKEN': '<APM secret token>',
-    'SERVER_URL': 'https://apm.elk.uktrade.digital',
-    'ENVIRONMENT': '<App environment, e.g. development, staging, production>'
-}
-
 # Use anti virus check on uploaded files
 IGNORE_ANTI_VIRUS = False
 
