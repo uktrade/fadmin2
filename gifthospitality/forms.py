@@ -55,7 +55,8 @@ class GiftAndHospitalityReceivedForm(forms.ModelForm):
         self.fields['grade'].widget.attrs.update({'class': 'govuk-select'})
         self.fields['group'].widget.attrs.update({'class': 'govuk-select'})
         self.fields['company_rep'].widget.attrs.update({'class': 'govuk-input'})
-        self.fields['company'].widget.attrs.update({'class': 'govuk-select', 'onChange': 'checkOther()'})
+        self.fields['company'].widget.attrs.update({'class': 'govuk-select',
+                                                    'onChange': 'checkOther()'})
         self.fields['company_other'].widget.attrs.update({'class': 'govuk-input'})
         self.fields['company_other'].required = False
 
@@ -124,7 +125,8 @@ class GiftAndHospitalityOfferedForm(GiftAndHospitalityReceivedForm):
         self.fields['grade'].widget.attrs.update({'class': 'govuk-select'})
         self.fields['group'].widget.attrs.update({'class': 'govuk-select'})
         self.fields['company_rep'].widget.attrs.update({'class': 'govuk-input'})
-        self.fields['company'].widget.attrs.update({'class': 'govuk-select', 'onChange': 'checkOther()'})
+        self.fields['company'].widget.attrs.update({'class': 'govuk-select',
+                                                    'onChange': 'checkOther()'})
         self.fields['company_other'].widget.attrs.update({'class': 'govuk-input'})
 
     class Meta(GiftAndHospitalityReceivedForm.Meta):

@@ -95,7 +95,7 @@ class GiftAndHospitality(BaseModel):
     )
 
     group_name = models.CharField("Group", max_length=200, blank=True, null=True)
-    date_offered = models.DateField("Date of event /  gift received", help_text="Please use the following format: <em>YYYY-MM-DD</em>.")
+    date_offered = models.DateField("Date of event /  gift received",)
     venue = models.CharField(max_length=1000)
     reason = models.CharField("Description of offer and reason", max_length=1000)
     value = models.IntegerField("Estimated value of offer (£)")

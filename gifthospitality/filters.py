@@ -93,7 +93,7 @@ class GiftHospitalityFilter(MyFilterSet):
                 "showTodayButton": True,
             },
             attrs={
-                "placeholder":"DD/MM/YYYY",
+                "placeholder": "DD/MM/YYYY",
             },
         ),
     )
