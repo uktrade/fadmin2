@@ -343,3 +343,8 @@ table, td, th {
 .govuk-table {
   font-size: 16px;
 }
+
+// Gifts and Hospitality Form show/hide company
+#id_company_other {
+  display: none;
+}

@@ -95,7 +95,7 @@ class GiftAndHospitality(BaseModel):
     )
 
     group_name = models.CharField("Group", max_length=200, blank=True, null=True)
-    date_offered = models.DateField("Date of event /  gift offered")
+    date_offered = models.DateField("Date of event /  gift received", help_text="Please use the following format: <em>YYYY-MM-DD</em>.")
     venue = models.CharField(max_length=1000)
     reason = models.CharField("Description of offer and reason", max_length=1000)
     value = models.IntegerField("Estimated value of offer (£)")
@@ -125,7 +125,8 @@ class GiftAndHospitality(BaseModel):
         blank=True,
         verbose_name="company",
     )
-    # company = models.CharField("Company offered to/from", max_length=200)
+    company_other = models.CharField(
+        "Please enter company", max_length=200, null=True, blank=True)
     ACTION_TYPE = (
         ("Action1", "Rejected"),
         ("Action2", "Accepted (difference paid to Department)"),

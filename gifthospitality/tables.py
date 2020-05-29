@@ -23,6 +23,7 @@ class GiftHospitalityTable(FadminTable):
             "offer",
             "company_rep",
             "company",
+            "company_other",
             "action_taken",
             "entered_date_stamp",
             "entered_by",

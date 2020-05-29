@@ -86,6 +86,7 @@ GH_KEY = {
         GiftAndHospitality.offer.field_name: "Offer",
         GiftAndHospitality.company_rep.field_name: "Company representative offered to/from",  # noqa
         # GiftAndHospitality.company.field_name: "Company offered to/from",
+        # GiftAndHospitality.company_other.field_name: "Other Company",
         GiftAndHospitality.action_taken.field_name: "Action taken",
         GiftAndHospitality.entered_by.field_name: "Entered By",
         GiftAndHospitality.entered_date_stamp.field_name: "Date Entered",

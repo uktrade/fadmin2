@@ -118,6 +118,7 @@ class GiftAndHospitalityAdmin(AdminImportExport):
         "offer",
         "company_rep",
         "company",
+        "company_other",
         "action_taken",
         "entered_date_stamp",
         "entered_by",
@@ -142,6 +143,7 @@ class GiftAndHospitalityAdmin(AdminImportExport):
             "offer",
             "company_rep",
             "company",
+            "company_other",
             "action_taken",
             "entered_by",
             "entered_date_stamp",
@@ -161,7 +163,6 @@ class GiftAndHospitalityAdmin(AdminImportExport):
     @property
     def import_info(self):
         return import_gh_class
-
 
 admin.site.register(GiftAndHospitality, GiftAndHospitalityAdmin)
 admin.site.register(GiftAndHospitalityCompany, GiftAndHospitalityCompanyAdmin)
