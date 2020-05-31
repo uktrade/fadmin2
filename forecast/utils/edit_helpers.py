@@ -52,7 +52,7 @@ class IncorrectDecimalFormatException(Exception):
 logger = logging.getLogger(__name__)
 
 
-def set_monthly_figure_amount(cost_centre_code, cell_data):
+def set_monthly_figure_amount(cost_centre_code, cell_data):  # noqa C901
     start_period = FinancialPeriod.financial_period_info.actual_month() + 1
 
     period_max = FinancialPeriod.objects.filter(
