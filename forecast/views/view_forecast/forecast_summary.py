@@ -213,11 +213,6 @@ class DirectorateView(
             directorate_code=self.kwargs["directorate_code"], active=True,
         )
 
-    def cost_centres_form(self):
-        return DirectorateCostCentresForm(
-            directorate_code=self.kwargs["directorate_code"]
-        )
-
 
 class CostCentreView(
     ForecastViewPermissionMixin, ForecastMultiTableMixin, TemplateView

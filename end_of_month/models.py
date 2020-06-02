@@ -11,6 +11,26 @@ from forecast.models import (
     ForecastingDataViewAbstract,
 )
 
+class ArchivedPeriodManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super().get_queryset()
+                .filter(archived=True)
+                .values(
+                "archived_period__financial_period_code",
+                "archived_period__period_long_name"
+            ).order_by("archived_period__financial_period_code")
+        )
+    def archived_list(self):
+        return (
+            super().get_queryset()
+                .filter(archived=True)
+                .values_list(
+                "archived_period__financial_period_code",
+                "archived_period__period_long_name"
+            ).order_by("archived_period__financial_period_code")
+        )
+
 
 class EndOfMonthStatus(BaseModel):
     archived = models.BooleanField(default=False)
@@ -24,13 +44,15 @@ class EndOfMonthStatus(BaseModel):
     )
     archived_date = models.DateTimeField(blank=True, null=True,)
 
+    objects = models.Manager()  # The default manager.
+    archived_period_objects = ArchivedPeriodManager()
     class Meta:
         verbose_name = "End of Month Archive Status"
         verbose_name_plural = "End of Month Archive Statuses"
         ordering = ["archived_period"]
 
     def __str__(self):
-        return str(self.archived_period.period_long_name)
+        return f"{str(self.archived_period.period_long_name)} - {self.archived}"
 
 
 class MonthlyTotalBudget(BaseModel):

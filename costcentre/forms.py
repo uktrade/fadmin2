@@ -162,3 +162,26 @@ class RemovePermissionAdminForm(forms.Form):
         self.fields['users'].queryset = User.objects.filter(
             pk__in=id_list
         ).exclude(pk=administering_user.id)
+
+
+class ViewPeriodForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        directorate_code = kwargs.pop('directorate_code')
+
+        super(DirectorateCostCentresForm, self).__init__(
+            *args,
+            **kwargs,
+        )
+
+        self.fields['cost_centre'] = forms.ChoiceField(
+            queryset=CostCentre.objects.filter(
+                directorate__directorate_code=directorate_code,
+                active=True,
+            ),
+            widget=Select(),
+        )
+        self.fields["cost_centre"].widget.attrs.update(
+            {
+                "class": "govuk-select",
+            }
+        )

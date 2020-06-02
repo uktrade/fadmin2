@@ -18,6 +18,26 @@
     <div class="action-bar-wrapper">
         <div class="action-bar">
             <a class="govuk-button govuk-button" href="{% url 'export_forecast_data_cost_centre' view.cost_centre.cost_centre_code %} ">Download raw data</a>
+            <form method="post" action="" class="cost-centre-choice-form">
+                {% csrf_token %}
+                {% for field in view.cost_centres_form  %}
+                    <label class="govuk-label" for="{{ field.name }}">
+                    {{ field.label }}{% if field.field.required == False %} (optional){% endif %}
+                    </label>
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <span id="{{ field.name }}-issued-error" class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span>
+                                {{ error|escape }}
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+                    {{ field }}
+                {% endfor %}
+                <input type="submit" value="Change" class="govuk-button govuk-button--secondary" data-module="govuk-button"/>
+            </form>
+
+
             {% is_forecast_user user as is_forecast_user %}
             {% if is_forecast_user == True %}
                 {% can_edit_cost_centre user view.cost_centre.cost_centre_code as can_edit_cost_centre %}
