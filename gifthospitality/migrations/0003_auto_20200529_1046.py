@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='simplehistorygiftandhospitality',
-            name='date_offered',
+            name='date_received',
             field=models.DateField(verbose_name='Date of event /  gift received'),
         ),
     ]
