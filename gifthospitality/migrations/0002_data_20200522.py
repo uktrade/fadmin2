@@ -1,6 +1,6 @@
 from django.apps import apps
 from django.contrib.auth.management import create_permissions
-from django.db import migrations, models
+from django.db import migrations
 
 Permission = apps.get_model('auth', 'Permission')
 Group = apps.get_model('auth', 'Group')
@@ -39,26 +39,4 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(create_gift_hospitality_groups),
-
-        migrations.AddField(
-            model_name='giftandhospitality',
-            name='company_name',
-            field=models.CharField(blank=True, default='', max_length=200, verbose_name='Other company'),
-        ),
-        migrations.AddField(
-            model_name='simplehistorygiftandhospitality',
-            name='company_name',
-            field=models.CharField(blank=True, default='', max_length=200, verbose_name='Other company'),
-        ),
-
-        migrations.AlterField(
-            model_name='giftandhospitality',
-            name='date_agreed',
-            field=models.DateField(verbose_name='Date of event /  gift received'),
-        ),
-        migrations.AlterField(
-            model_name='simplehistorygiftandhospitality',
-            name='date_agreed',
-            field=models.DateField(verbose_name='Date of event /  gift received'),
-        ),
     ]
