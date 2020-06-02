@@ -12,22 +12,22 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='giftandhospitality',
-            name='company_other',
+            name='company_name',
             field=models.CharField(blank=True, default='', max_length=200, verbose_name='Other company'),
         ),
         migrations.AddField(
             model_name='simplehistorygiftandhospitality',
-            name='company_other',
+            name='company_name',
             field=models.CharField(blank=True, default='', max_length=200, verbose_name='Other company'),
         ),
         migrations.AlterField(
             model_name='giftandhospitality',
-            name='date_offered',
+            name='date_agreed',
             field=models.DateField(verbose_name='Date of event /  gift received'),
         ),
         migrations.AlterField(
             model_name='simplehistorygiftandhospitality',
-            name='date_received',
+            name='date_agreed',
             field=models.DateField(verbose_name='Date of event /  gift received'),
         ),
     ]

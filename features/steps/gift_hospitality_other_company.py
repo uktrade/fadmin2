@@ -54,7 +54,7 @@
 #     #     ec.presence_of_element_located((By.CSS_SELECTOR, ))
 #     # )
 #
-#     other_company_field = context.browser.find_element_by_id('id_company_other')
+#     other_company_field = context.browser.find_element_by_id('id_company_name')
 #     parent = other_company_field.find_element_by_xpath('..')
 #     print(parent)
 #     import time

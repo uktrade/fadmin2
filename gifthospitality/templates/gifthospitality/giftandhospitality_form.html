@@ -6,7 +6,7 @@
 <script>
 var body = document.getElementsByTagName("body")[0]
 body.onload=function(){
-    var otherCompany = document.getElementById('id_company_other').parentNode
+    var otherCompany = document.getElementById('id_company_name').parentNode
     otherCompany.style.display = 'none'
 }
 function checkOther(){
@@ -14,7 +14,7 @@ function checkOther(){
     var selected = select.options[select.selectedIndex]
     console.log(selected)
 
-    var otherCompany = document.getElementById('id_company_other').parentNode
+    var otherCompany = document.getElementById('id_company_name').parentNode
 
     if(selected.text === "Other") {
         otherCompany.style.display = 'block'

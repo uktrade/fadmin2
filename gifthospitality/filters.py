@@ -65,7 +65,7 @@ class GiftHospitalityFilter(MyFilterSet):
             {"class": "govuk-select", }
         )
 
-        self.form.fields["company_other"].widget.attrs.update(
+        self.form.fields["company_name"].widget.attrs.update(
             {"class": "govuk-input", }
         )
 
@@ -131,7 +131,7 @@ class GiftHospitalityFilter(MyFilterSet):
             "group",
             "offer",
             "company",
-            "company_other",
+            "company_name",
             "action_taken",
             "entered_date_stamp_from",
             "entered_date_stamp_to",
