@@ -275,6 +275,7 @@ class UnlockedForecastEditorForm(forms.ModelForm):
 
 class ForecastPeriodForm(forms.Form):
     def __init__(self, *args, **kwargs):
+        selected_period = kwargs.pop('selected_period', 0)
         super(ForecastPeriodForm, self).__init__(
             *args,
             **kwargs,
@@ -282,10 +283,15 @@ class ForecastPeriodForm(forms.Form):
         period_list = EndOfMonthStatus.archived_period_objects.archived_list()
         period_list.insert(0, (0, 'Current'))
         self.fields['selected_period'] = forms.ChoiceField(
-            choices=period_list,
+            choices=period_list, initial=selected_period
         )
         self.fields["selected_period"].widget.attrs.update(
             {
                 "class": "govuk-select",
             }
         )
+
+
+
+
+

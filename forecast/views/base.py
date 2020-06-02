@@ -1,20 +1,21 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.views.generic.edit import FormView
 
 from django_tables2 import MultiTableMixin
 
 
+from forecast.forms import ForecastPeriodForm
 from forecast.models import (
     FinancialPeriod,
-    ForecastingDataView,
-)
-
+ )
 from forecast.utils.access_helpers import (
     can_edit_cost_centre,
     can_forecast_be_edited,
     can_view_forecasts,
 )
+
 
 from end_of_month.models import forecast_budget_view_model
 
@@ -124,3 +125,11 @@ class ForecastViewTableMixin(MultiTableMixin):
                 self._table_tag = ""
         return self._table_tag
 
+
+class PeriodView(FormView):
+    form_class = ForecastPeriodForm
+    # https://gist.github.com/vero4karu/ec0f82bb3d302961503d
+    def get_form_kwargs(self):
+        kwargs = super(PeriodView, self).get_form_kwargs()
+        kwargs.update({'selected_period': self.period})
+        return kwargs

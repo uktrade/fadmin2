@@ -2,7 +2,6 @@ from django.http import Http404
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import FormView
 
 from costcentre.forms import (
     DirectorateCostCentresForm,
@@ -13,7 +12,6 @@ from costcentre.models import (
 )
 from costcentre.models import DepartmentalGroup
 
-from forecast.forms import ForecastPeriodForm
 from forecast.tables import (
     ForecastSubTotalTable,
     ForecastWithLinkTable,
@@ -56,7 +54,11 @@ from forecast.utils.query_fields import (
     project_order_list,
     project_sub_total,
 )
-from forecast.views.base import ForecastViewPermissionMixin, ForecastViewTableMixin
+from forecast.views.base import (
+    ForecastViewPermissionMixin,
+    ForecastViewTableMixin,
+    PeriodView,
+)
 
 
 
@@ -186,12 +188,11 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
 
 
 class DITView(
-    ForecastViewPermissionMixin, ForecastMultiTableMixin, FormView
+    ForecastViewPermissionMixin, ForecastMultiTableMixin, PeriodView
 ):
     template_name = "forecast/view/dit.html"
     table_pagination = False
     hierarchy_type = SHOW_DIT
-    form_class = ForecastPeriodForm
 
     def form_valid(self, form):
         new_period = int(form.cleaned_data['selected_period'])
