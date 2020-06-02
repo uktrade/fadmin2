@@ -13,7 +13,7 @@ class GiftHospitalityTable(FadminTable):
             "category",
             "classification",
             "group_name",
-            "date_offered",
+            "date_received",
             "venue",
             "reason",
             "value",

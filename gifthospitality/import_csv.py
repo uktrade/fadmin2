@@ -77,7 +77,7 @@ GH_KEY = {
         GiftAndHospitality.old_id.field_name: "HospID",
         GiftAndHospitality.classification.field.name: GH_CLASS_FK_KEY,
         GiftAndHospitality.group_name.field_name: "Group",
-        GiftAndHospitality.date_offered.field_name: "Date of event/gift offered",
+        GiftAndHospitality.date_received.field_name: "Date of event/gift offered",
         GiftAndHospitality.venue.field_name: "Venue",
         GiftAndHospitality.reason.field_name: "Description of offer & reason",
         GiftAndHospitality.value.field_name: "Estimate value of offer",

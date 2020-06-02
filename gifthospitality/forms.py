@@ -76,7 +76,7 @@ class GiftAndHospitalityReceivedForm(forms.ModelForm):
         fields = [
             "classification",
             "category",
-            "date_offered",
+            "date_received",
             "action_taken",
             "venue",
             "reason",
@@ -98,13 +98,13 @@ class GiftAndHospitalityReceivedForm(forms.ModelForm):
         }
 
         widgets = {
-            "date_offered": DateSelectorWidget(
+            "date_received": DateSelectorWidget(
 
             ),
         }
 
         help_texts = {
-            "date_offered": _("Please use the following format: <em>YYYY-MM-DD</em>."),
+            "date_received": _("Please use the following format: <em>YYYY-MM-DD</em>."),
         }
 
 
@@ -134,5 +134,5 @@ class GiftAndHospitalityOfferedForm(GiftAndHospitalityReceivedForm):
             "company_rep": _("Company Representative offered to"),
             "group": _("DIT Group received from"),
             "rep": _("DIT Representative received from"),
-            "date_offered": _("Date of event / gift offered"),
+            "date_received": _("Date of event / gift offered"),
         }

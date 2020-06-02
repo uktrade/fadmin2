@@ -33,7 +33,7 @@ def _export_gh_iterator(queryset):
             get_fk_value(obj.classification, "gift_type"),
             get_fk_value(obj.classification, "gif_hospitality_classification"),
             obj.group_name,
-            obj.date_offered,
+            obj.date_received,
             obj.venue,
             obj.reason,
             obj.value,

@@ -95,7 +95,7 @@ class GiftAndHospitality(BaseModel):
     )
 
     group_name = models.CharField("Group", max_length=200, blank=True, null=True)
-    date_offered = models.DateField("Date of event /  gift received",)
+    date_received = models.DateField("Date of event /  gift received",)
     venue = models.CharField(max_length=1000)
     reason = models.CharField("Description of offer and reason", max_length=1000)
     value = models.IntegerField("Estimated value of offer (£)")
@@ -153,7 +153,7 @@ class GiftAndHospitality(BaseModel):
         ordering = ["-id"]
 
     def __str__(self):
-        return str(self.date_offered)
+        return str(self.date_received)
 
 
 class GiftHospitalityPermissions(models.Model):
