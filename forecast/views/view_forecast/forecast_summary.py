@@ -3,13 +3,16 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.views.generic.base import TemplateView
 
-from costcentre.forms import DirectorateCostCentresForm
+from costcentre.forms import (
+    DirectorateCostCentresForm,
+)
 from costcentre.models import (
     CostCentre,
     Directorate,
 )
 from costcentre.models import DepartmentalGroup
 
+from forecast.forms import ForecastPeriodForm
 from forecast.tables import (
     ForecastSubTotalTable,
     ForecastWithLinkTable,
@@ -53,6 +56,7 @@ from forecast.utils.query_fields import (
     project_sub_total,
 )
 from forecast.views.base import ForecastViewPermissionMixin, ForecastViewTableMixin
+
 
 
 class ForecastMultiTableMixin(ForecastViewTableMixin):
@@ -186,6 +190,9 @@ class DITView(
     template_name = "forecast/view/dit.html"
     table_pagination = False
     hierarchy_type = SHOW_DIT
+
+    def period_form(self):
+        return ForecastPeriodForm()
 
 
 class GroupView(

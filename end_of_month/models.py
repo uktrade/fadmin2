@@ -23,12 +23,12 @@ class ArchivedPeriodManager(models.Manager):
         )
     def archived_list(self):
         return (
-            super().get_queryset()
+            list(super().get_queryset()
                 .filter(archived=True)
                 .values_list(
                 "archived_period__financial_period_code",
                 "archived_period__period_long_name"
-            ).order_by("archived_period__financial_period_code")
+            ).order_by("archived_period__financial_period_code"))
         )
 
 
