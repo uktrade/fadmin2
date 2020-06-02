@@ -2,6 +2,7 @@ from django.http import Http404
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.views.generic.base import TemplateView
+from django.views.generic.edit import FormView
 
 from costcentre.forms import (
     DirectorateCostCentresForm,
@@ -185,15 +186,18 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
 
 
 class DITView(
-    ForecastViewPermissionMixin, ForecastMultiTableMixin, TemplateView
+    ForecastViewPermissionMixin, ForecastMultiTableMixin, FormView
 ):
     template_name = "forecast/view/dit.html"
     table_pagination = False
     hierarchy_type = SHOW_DIT
+    form_class = ForecastPeriodForm
 
-    def period_form(self):
-        return ForecastPeriodForm()
-
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        form.send_email()
+        return super().form_valid(form)
 
 class GroupView(
     ForecastViewPermissionMixin, ForecastMultiTableMixin, TemplateView,
