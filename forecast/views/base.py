@@ -101,7 +101,7 @@ class ForecastViewTableMixin(MultiTableMixin):
             if period:
                 # We are displaying historical forecast
                 self._month_list = FinancialPeriod.financial_period_info.month_sublist(
-                    period)
+                    period-1)
             else:
                 self._month_list = FinancialPeriod.financial_period_info.actual_month_list()
         return self._month_list

@@ -145,8 +145,6 @@ class ForecastSubTotalTable(tables.Table):
                                        column_dict.items()]
 
         actual_month_list = kwargs.pop('actual_month_list', [])
-        if not actual_month_list:
-            actual_month_list = FinancialPeriod.financial_period_info.actual_month_list()
 
         self.num_meta_cols = len(column_list)
         self.num_actuals = len(actual_month_list)

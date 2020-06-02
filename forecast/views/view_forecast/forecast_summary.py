@@ -194,10 +194,16 @@ class DITView(
     form_class = ForecastPeriodForm
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        form.send_email()
-        return super().form_valid(form)
+        new_period = int(form.cleaned_data['selected_period'])
+        return HttpResponseRedirect(
+            reverse(
+                "forecast_dit",
+                kwargs={
+                    "period": new_period,
+                },
+            )
+        )
+
 
 class GroupView(
     ForecastViewPermissionMixin, ForecastMultiTableMixin, TemplateView,

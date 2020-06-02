@@ -283,7 +283,6 @@ class ForecastPeriodForm(forms.Form):
         period_list.insert(0, (0, 'Current'))
         self.fields['selected_period'] = forms.ChoiceField(
             choices=period_list,
-            # widget=Select(),
         )
         self.fields["selected_period"].widget.attrs.update(
             {
