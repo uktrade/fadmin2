@@ -207,7 +207,7 @@ class DITView(
 
 
 class GroupView(
-    ForecastViewPermissionMixin, ForecastMultiTableMixin, TemplateView,
+    ForecastViewPermissionMixin, ForecastMultiTableMixin, PeriodView,
 ):
     template_name = "forecast/view/group.html"
     table_pagination = False
@@ -220,7 +220,7 @@ class GroupView(
 
 
 class DirectorateView(
-    ForecastViewPermissionMixin, ForecastMultiTableMixin, TemplateView,
+    ForecastViewPermissionMixin, ForecastMultiTableMixin, PeriodView,
 ):
     template_name = "forecast/view/directorate.html"
     table_pagination = False
