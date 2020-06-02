@@ -15,10 +15,15 @@ function checkOther(){
     console.log(selected)
 
     var otherCompany = document.getElementById('id_company_name').parentNode
+    var otherCompanyInfo = document.getElementById('id_company_name').value
 
     if(selected.text === "Other") {
         otherCompany.style.display = 'block'
     } else {
+        if (otherCompanyInfo === ""){
+        } else {
+            document.getElementById('id_company_name').value = ''
+        }
         otherCompany.style.display = 'none'
     }
 
