@@ -37,8 +37,12 @@ def step_impl(context):
         'id_company'
     )
 
-    options_list = company_field.find_elements_by_xpath('//option[@selected="other"]')
-    for other_company in options_list:
+    options_list = company_field.find_element_by_xpath("//option[@text='Other']").click()
+    # options_real_list = company_field.find_element_by_value(22)
+    # options_real_list.click()
+    # options_real_list.save()
+    print (options_list)
+    for other_company in company_field.find_elements_by_tag("option"):
         print(other_company.text)
         if other_company.id == 'Other':
             other_company.click()
@@ -50,7 +54,6 @@ def step_impl(context):
     #     ec.presence_of_element_located((By.CSS_SELECTOR, ))
     # )
 
-    print("Hello")
     other_company_field = context.browser.find_element_by_id('id_company_other')
     parent = other_company_field.find_element_by_xpath('..')
     print(parent)
