@@ -1,6 +1,4 @@
-{% extends "wide_content.html" %}
-{% load render_table from django_tables2 %}
-{% load django_bootstrap_breadcrumbs %}
+{% extends "forecast/view/hierarchy_base.html" %}
 
 {% block breadcrumbs %}
     {{ block.super }}
@@ -11,48 +9,6 @@
 
 {% block title %}Directorate - {{ view.directorate.directorate_name }}{% endblock %}
 
-{% block content %}
-    <h1 class="govuk-heading-l">{{ view.directorate.directorate_name }} - {{ view.directorate.directorate_code }}</h1>
-    <div class="action-bar-wrapper">
-        <div class="action-bar">
-            <a class="govuk-button govuk-button" href="{% url 'export_forecast_data_directorate' view.directorate.directorate_code %} ">Download raw data</a>
-        </div>
-        <form method="post" action="" class="cost-centre-choice-form">
-                {% csrf_token %}
-                {% for field in form  %}
-                    <label class="govuk-label" for="{{ field.name }}">
-                    {{ field.label }}{% if field.field.required == False %} (optional){% endif %}
-                    </label>
-                    {% if field.errors %}
-                        {% for error in field.errors %}
-                            <span id="{{ field.name }}-issued-error" class="govuk-error-message">
-                                <span class="govuk-visually-hidden">Error:</span>
-                                {{ error|escape }}
-                            </span>
-                        {% endfor %}
-                    {% endif %}
-                    {{ field }}
-                {% endfor %}
-                <input type="submit" value="View" class="govuk-button govuk-button--secondary" data-module="govuk-button"/>
-            </form>
-    </div>
-
-        <div class="govuk-tabs" data-module="govuk-tabs">
-            <h2 class="govuk-tabs__title">Forecast</h2>
-            <ul class="govuk-tabs__list">
-                {% for table in tables %}
-                    <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" href="#tab-{{ forloop.counter }}">{{ table.attrs.caption }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-            {% for table in tables %}
-                <div class="govuk-tabs__panel" id="tab-{{ forloop.counter }}">
-                    <h2 class="govuk-heading-l">{{ table.attrs.caption }}</h2>
-                    <div class="tables-container forecast-table-{{ forloop.counter }}">
-                        {% render_table table %}
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+{% block download_link %}
+    <a class="govuk-button govuk-button" href="{% url 'export_forecast_data_directorate' view.directorate.directorate_code %} ">Download raw data</a>
 {% endblock %}
