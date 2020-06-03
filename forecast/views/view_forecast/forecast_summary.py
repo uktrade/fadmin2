@@ -189,14 +189,16 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
 
 
 class DITView(
-    ForecastViewPermissionMixin, ForecastMultiTableMixin, PeriodView
+    ForecastViewPermissionMixin,
+    ForecastMultiTableMixin,
+    PeriodView
 ):
     template_name = "forecast/view/dit.html"
     table_pagination = False
     hierarchy_type = SHOW_DIT
 
-    def form_valid(self, form):
-        new_period = int(form.cleaned_data['selected_period'])
+    def post(self, request, *args, **kwargs):
+        new_period = request.POST.get("selected_period", None,)
         return HttpResponseRedirect(
             reverse(
                 "forecast_dit",
@@ -219,9 +221,23 @@ class GroupView(
             group_code=self.kwargs["group_code"], active=True,
         )
 
+    def post(self, request, *args, **kwargs):
+        new_period = request.POST.get("selected_period", None,)
+        return HttpResponseRedirect(
+            reverse(
+                "forecast_group",
+                kwargs={
+                    "group_code": self.kwargs["group_code"],
+                    "period": new_period,
+                },
+            )
+        )
+
 
 class DirectorateView(
-    ForecastViewPermissionMixin, ForecastMultiTableMixin, PeriodView,
+    ForecastViewPermissionMixin,
+    ForecastMultiTableMixin,
+    PeriodView,
 ):
     template_name = "forecast/view/directorate.html"
     table_pagination = False
@@ -231,6 +247,19 @@ class DirectorateView(
         return Directorate.objects.get(
             directorate_code=self.kwargs["directorate_code"], active=True,
         )
+
+    def post(self, request, *args, **kwargs):
+        new_period = request.POST.get("selected_period", None,)
+        return HttpResponseRedirect(
+            reverse(
+                "forecast_directorate",
+                kwargs={
+                    "directorate_code": self.kwargs["directorate_code"],
+                    "period": new_period,
+                },
+            )
+        )
+
 
 
 class CostCentreView(
