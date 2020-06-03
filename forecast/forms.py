@@ -2,7 +2,8 @@ import json
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.forms import Select
+
+from end_of_month.models import EndOfMonthStatus
 
 from chartofaccountDIT.models import (
     Analysis1,
@@ -19,8 +20,6 @@ from forecast.models import (
     FinancialPeriod,
     UnlockedForecastEditor,
 )
-
-from end_of_month.models import EndOfMonthStatus
 
 User = get_user_model()
 
@@ -291,8 +290,3 @@ class ForecastPeriodForm(forms.Form):
                 "class": "govuk-select",
             }
         )
-
-
-
-
-

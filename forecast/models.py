@@ -695,7 +695,6 @@ class ForecastingDataViewAbstract(models.Model):
         abstract = True
 
 
-
 class ForecastingDataView(ForecastingDataViewAbstract):
     class Meta:
         managed = False
