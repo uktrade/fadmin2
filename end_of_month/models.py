@@ -11,24 +11,30 @@ from forecast.models import (
     ForecastingDataViewAbstract,
 )
 
+
 class ArchivedPeriodManager(models.Manager):
     def get_queryset(self):
         return (
-            super().get_queryset()
-                .filter(archived=True)
-                .values(
+            super()
+            .get_queryset()
+            .filter(archived=True)
+            .values(
                 "archived_period__financial_period_code",
-                "archived_period__period_long_name"
-            ).order_by("archived_period__financial_period_code")
+                "archived_period__period_long_name",
+            )
+            .order_by("archived_period__financial_period_code")
         )
+
     def archived_list(self):
-        return (
-            list(super().get_queryset()
-                .filter(archived=True)
-                .values_list(
+        return list(
+            super()
+            .get_queryset()
+            .filter(archived=True)
+            .values_list(
                 "archived_period__financial_period_code",
-                "archived_period__period_long_name"
-            ).order_by("archived_period__financial_period_code"))
+                "archived_period__period_long_name",
+            )
+            .order_by("archived_period__financial_period_code")
         )
 
 
@@ -46,6 +52,7 @@ class EndOfMonthStatus(BaseModel):
 
     objects = models.Manager()  # The default manager.
     archived_period_objects = ArchivedPeriodManager()
+
     class Meta:
         verbose_name = "End of Month Archive Status"
         verbose_name_plural = "End of Month Archive Statuses"
@@ -76,6 +83,7 @@ class MonthlyTotalBudget(BaseModel):
         on_delete=models.PROTECT,
         related_name="%(app_label)s_%(class)ss",
     )
+
     class Meta:
         verbose_name = "Archived total budget"
         verbose_name_plural = "Archived total budget"
@@ -85,6 +93,7 @@ class MonthlyTotalBudget(BaseModel):
 
 class PreviousMonthForecast(ForecastingDataViewAbstract):
     archived_period = models.ForeignKey(FinancialPeriod, on_delete=models.PROTECT,)
+
     class Meta:
         abstract = True
 

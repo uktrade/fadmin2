@@ -1,6 +1,4 @@
-from django.db import (
-    connection,
-)
+from django.db import connection
 from django.utils import timezone
 
 from core.myutils import get_current_financial_year
@@ -23,15 +21,17 @@ def insert_query(table_name, archived_status_id):
         f"WHERE archived_status_id = {archived_status_id}"
     )
 
+
 def insert_total_budget_query(archived_status_id, archived_period_id):
     return (
-        f"INSERT INTO public.end_of_month_monthlytotalbudget (" \
-        f"created, updated, amount, archived_period_id, " \
-        f"financial_code_id, financial_year_id, archived_status_id)" \
-        f"SELECT now(), now(), budget, {archived_period_id}," \
-        f"financial_code_id, financial_year_id, {archived_status_id}" \
+        f"INSERT INTO public.end_of_month_monthlytotalbudget ("
+        f"created, updated, amount, archived_period_id, "
+        f"financial_code_id, financial_year_id, archived_status_id)"
+        f"SELECT now(), now(), budget, {archived_period_id},"
+        f"financial_code_id, financial_year_id, {archived_status_id}"
         f"FROM public.yearly_budget;"
     )
+
 
 # TODO add transaction
 def end_of_month_archive(end_of_month_info):
@@ -53,9 +53,7 @@ def end_of_month_archive(end_of_month_info):
     # Simple history does not get updated, but it recovers
     #  when changes are done to the record.
     # Note that initial amount is updated to be the current amount.
-    forecast_sql = insert_query(
-        "forecast_forecastmonthlyfigure", end_of_month_info.id
-    )
+    forecast_sql = insert_query("forecast_forecastmonthlyfigure", end_of_month_info.id)
     with connection.cursor() as cursor:
         cursor.execute(forecast_sql)
 
@@ -65,9 +63,7 @@ def end_of_month_archive(end_of_month_info):
         archived_status__isnull=True,
     )
     budget_periods.update(archived_status=end_of_month_info)
-    budget_sql = insert_query(
-        "forecast_budgetmonthlyfigure", end_of_month_info.id
-    )
+    budget_sql = insert_query("forecast_budgetmonthlyfigure", end_of_month_info.id)
 
     with connection.cursor() as cursor:
         cursor.execute(budget_sql)
