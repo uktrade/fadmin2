@@ -10,6 +10,10 @@
 
 {% block title %}Directorate - {{ view.directorate.directorate_name }}{% endblock %}
 
+{% block hierarchy_title %}
+   {{ view.directorate.directorate_name }} - {{ view.directorate.directorate_code }}
+{% endblock %}
+
 {% block download_link %}
     <a class="govuk-button govuk-button" href="{% url 'export_forecast_data_directorate' view.directorate.directorate_code %} ">Download raw data</a>
 {% endblock %}

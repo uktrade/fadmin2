@@ -9,7 +9,9 @@
 
 
 {% block content %}
-    <h1 class="govuk-heading-l">DIT</h1>
+    <h1 class="govuk-heading-l">
+    {% block hierarchy_title %}{% endblock %}
+    </h1>
     <div class="action-bar-wrapper">
         <div class="action-bar">
             {% block download_link %}{% endblock %}

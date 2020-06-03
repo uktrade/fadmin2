@@ -8,6 +8,10 @@
 
 {% block title %}Group - {{ view.group.group_name }}{% endblock %}
 
+{% block hierarchy_title %}
+   {{ view.group.group_name }} - {{ view.group.group_code }}
+{% endblock %}
+
 {% block download_link %}
     <a class="govuk-button govuk-button" href="{% url 'export_forecast_data_group' view.group.group_code %} ">Download raw data</a>
 {% endblock %}
