@@ -283,7 +283,8 @@ class ForecastPeriodForm(forms.Form):
         period_list = EndOfMonthStatus.archived_period_objects.archived_list()
         period_list.insert(0, (0, 'Current'))
         self.fields['selected_period'] = forms.ChoiceField(
-            choices=period_list, initial=selected_period
+            choices=period_list,
+            initial=selected_period
         )
         self.fields["selected_period"].widget.attrs.update(
             {

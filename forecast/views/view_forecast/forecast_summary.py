@@ -12,6 +12,7 @@ from costcentre.models import (
 )
 from costcentre.models import DepartmentalGroup
 
+from forecast.forms import ForecastPeriodForm
 from forecast.tables import (
     ForecastSubTotalTable,
     ForecastWithLinkTable,
@@ -246,22 +247,40 @@ class CostCentreView(
 
     def cost_centres_form(self):
         cost_centre = self.cost_centre()
-
         return DirectorateCostCentresForm(
-            directorate_code=cost_centre.directorate.directorate_code
+            cost_centre_code=cost_centre.cost_centre_code,
+            directorate_code=cost_centre.directorate.directorate_code,
+        )
+
+    def period_form(self):
+         return ForecastPeriodForm(
+            selected_period=self.period
         )
 
     def post(self, request, *args, **kwargs):
-        cost_centre_code = request.POST.get("cost_centre", None,)
-        if cost_centre_code:
-            return HttpResponseRedirect(
-                reverse(
-                    "forecast_cost_centre",
-                    kwargs={
-                            "cost_centre_code": cost_centre_code,
-                            "period": self.period,
-                    },
+        selected_period = request.POST.get("selected_period", None,)
+        if selected_period == None:
+            cost_centre_code = request.POST.get("cost_centre", None,)
+            if cost_centre_code:
+                return HttpResponseRedirect(
+                    reverse(
+                        "forecast_cost_centre",
+                        kwargs={
+                                "cost_centre_code": cost_centre_code,
+                                "period": self.period,
+                        },
+                    )
                 )
-            )
+            else:
+                raise Http404("Cost Centre not found")
         else:
-            raise Http404("Cost Centre not found")
+            if selected_period != self.period:
+                return HttpResponseRedirect(
+                    reverse(
+                        "forecast_cost_centre",
+                        kwargs={
+                                "cost_centre_code": self.cost_centre().cost_centre_code,
+                                "period": selected_period,
+                        },
+                    )
+                )
