@@ -3,9 +3,7 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.views.generic.base import TemplateView
 
-from costcentre.forms import (
-    DirectorateCostCentresForm,
-)
+from costcentre.forms import DirectorateCostCentresForm
 from costcentre.models import (
     CostCentre,
     Directorate,
@@ -62,7 +60,6 @@ from forecast.views.base import (
 )
 
 
-
 class ForecastMultiTableMixin(ForecastViewTableMixin):
     hierarchy_type = -1
 
@@ -116,9 +113,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
 
         if self.hierarchy_type == SHOW_COSTCENTRE:
             programme_table = ForecastSubTotalTable(
-                programme_columns,
-                programme_data,
-                actual_month_list=self.month_list,
+                programme_columns, programme_data, actual_month_list=self.month_list,
             )
         else:
             programme_table = ForecastWithLinkTable(
@@ -131,7 +126,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
                 actual_month_list=self.month_list,
             )
 
-        programme_table.attrs['caption'] = "Control total report"
+        programme_table.attrs["caption"] = "Control total report"
         programme_table.tag = self.table_tag
 
         expenditure_table = ForecastWithLinkTable(
@@ -143,7 +138,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             expenditure_data,
             actual_month_list=self.month_list,
         )
-        expenditure_table.attrs['caption'] = "Expenditure report"
+        expenditure_table.attrs["caption"] = "Expenditure report"
         expenditure_table.tag = self.table_tag
 
         project_table = ForecastWithLinkTable(
@@ -155,7 +150,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             project_data,
             actual_month_list=self.month_list,
         )
-        project_table.attrs['caption'] = "Project report"
+        project_table.attrs["caption"] = "Project report"
         project_table.tag = self.table_tag
 
         if self.hierarchy_type == SHOW_COSTCENTRE:
@@ -175,7 +170,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
                 actual_month_list=self.month_list,
             )
 
-        hierarchy_table.attrs['caption'] = "Forecast hierarchy report"
+        hierarchy_table.attrs["caption"] = "Forecast hierarchy report"
         hierarchy_table.tag = self.table_tag
 
         self.tables = [
@@ -188,11 +183,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
         return self.tables
 
 
-class DITView(
-    ForecastViewPermissionMixin,
-    ForecastMultiTableMixin,
-    PeriodView
-):
+class DITView(ForecastViewPermissionMixin, ForecastMultiTableMixin, PeriodView):
     template_name = "forecast/view/dit.html"
     table_pagination = False
     hierarchy_type = SHOW_DIT
@@ -200,12 +191,7 @@ class DITView(
     def post(self, request, *args, **kwargs):
         new_period = request.POST.get("selected_period", None,)
         return HttpResponseRedirect(
-            reverse(
-                "forecast_dit",
-                kwargs={
-                    "period": new_period,
-                },
-            )
+            reverse("forecast_dit", kwargs={"period": new_period})
         )
 
 
@@ -235,9 +221,7 @@ class GroupView(
 
 
 class DirectorateView(
-    ForecastViewPermissionMixin,
-    ForecastMultiTableMixin,
-    PeriodView,
+    ForecastViewPermissionMixin, ForecastMultiTableMixin, PeriodView,
 ):
     template_name = "forecast/view/directorate.html"
     table_pagination = False
@@ -261,7 +245,6 @@ class DirectorateView(
         )
 
 
-
 class CostCentreView(
     ForecastViewPermissionMixin, ForecastMultiTableMixin, TemplateView
 ):
@@ -282,21 +265,19 @@ class CostCentreView(
         )
 
     def period_form(self):
-         return ForecastPeriodForm(
-            selected_period=self.period
-        )
+        return ForecastPeriodForm(selected_period=self.period)
 
     def post(self, request, *args, **kwargs):
         selected_period = request.POST.get("selected_period", None,)
-        if selected_period == None:
+        if selected_period is None:
             cost_centre_code = request.POST.get("cost_centre", None,)
             if cost_centre_code:
                 return HttpResponseRedirect(
                     reverse(
                         "forecast_cost_centre",
                         kwargs={
-                                "cost_centre_code": cost_centre_code,
-                                "period": self.period,
+                            "cost_centre_code": cost_centre_code,
+                            "period": self.period,
                         },
                     )
                 )
@@ -308,8 +289,8 @@ class CostCentreView(
                     reverse(
                         "forecast_cost_centre",
                         kwargs={
-                                "cost_centre_code": self.cost_centre().cost_centre_code,
-                                "period": selected_period,
+                            "cost_centre_code": self.cost_centre().cost_centre_code,
+                            "period": selected_period,
                         },
                     )
                 )
