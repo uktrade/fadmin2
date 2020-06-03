@@ -1,17 +1,9 @@
 from django.http import Http404
 from django.http.response import HttpResponseRedirect
-from django.shortcuts import (
-    reverse,
-)
+from django.shortcuts import reverse
 from django.views.generic.base import TemplateView
 
-from django_tables2 import (
-    MultiTableMixin,
-)
-
-from chartofaccountDIT.forms import (
-    ProgrammeForm,
-)
+from chartofaccountDIT.forms import ProgrammeForm
 from chartofaccountDIT.models import ProgrammeCode
 
 from costcentre.models import (
@@ -19,13 +11,7 @@ from costcentre.models import (
     Directorate,
 )
 
-from forecast.models import (
-    FinancialPeriod,
-    ForecastingDataView,
-)
-from forecast.tables import (
-    ForecastSubTotalTable,
-)
+from forecast.tables import ForecastSubTotalTable
 from forecast.utils.query_fields import (
     FORECAST_EXPENDITURE_TYPE_NAME,
     PROGRAMME_CODE,
@@ -50,12 +36,10 @@ class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
         return "wide-table"
 
     def programme_code(self):
-        return ProgrammeCode.objects.get(
-            pk=self.kwargs['programme_code'],
-        )
+        return ProgrammeCode.objects.get(pk=self.kwargs["programme_code"],)
 
     def forecast_expenditure_type(self):
-        return self.kwargs['forecast_expenditure_type']
+        return self.kwargs["forecast_expenditure_type"]
 
     def programme_code_form(self):
         return ProgrammeForm()
@@ -64,8 +48,8 @@ class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
         """
          Return an array of table instances containing data.
         """
-        forecast_expenditure_type_name = self.kwargs['forecast_expenditure_type']
-        programme_code_id = self.kwargs['programme_code']
+        forecast_expenditure_type_name = self.kwargs["forecast_expenditure_type"]
+        programme_code_id = self.kwargs["programme_code"]
         pivot_filter = {
             PROGRAMME_CODE: f"{programme_code_id}",
             FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
@@ -82,29 +66,24 @@ class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
             columns.keys(),
             pivot_filter,
             order_list=programme_details_hierarchy_order_list[self.hierarchy_type],
-            show_grand_total=False
+            show_grand_total=False,
         )
 
         programme_details_table = ForecastSubTotalTable(
-            columns,
-            programme_details_data,
-            actual_month_list=self.month_list,
+            columns, programme_details_data, actual_month_list=self.month_list,
         )
-        programme_details_table.attrs['caption'] = "Programme Report"
+        programme_details_table.attrs["caption"] = "Programme Report"
         programme_details_table.tag = self.table_tag
 
         self.tables = [
             programme_details_table,
-
         ]
 
         return self.tables
 
 
 class DITProgrammeDetailsView(
-    ForecastViewPermissionMixin,
-    ForecastProgrammeDetailsMixin,
-    TemplateView,
+    ForecastViewPermissionMixin, ForecastProgrammeDetailsMixin, TemplateView,
 ):
     template_name = "forecast/view/programme_details/dit.html"
     hierarchy_type = SHOW_DIT
@@ -113,20 +92,17 @@ class DITProgrammeDetailsView(
         return "wide-table"
 
     def post(self, request, *args, **kwargs):
-        programme_code_id = request.POST.get(
-            'programme_code',
-            None,
-        )
+        programme_code_id = request.POST.get("programme_code", None,)
 
         if programme_code_id:
             return HttpResponseRedirect(
                 reverse(
                     "programme_details_dit",
                     kwargs={
-                        'programme_code': programme_code_id,
-                        'forecast_expenditure_type': self.forecast_expenditure_type(),
-                        "period":self.period,
-                            }
+                        "programme_code": programme_code_id,
+                        "forecast_expenditure_type": self.forecast_expenditure_type(),
+                        "period": self.period,
+                    },
                 )
             )
         else:
@@ -134,34 +110,29 @@ class DITProgrammeDetailsView(
 
 
 class GroupProgrammeDetailsView(
-    ForecastViewPermissionMixin,
-    ForecastProgrammeDetailsMixin,
-    TemplateView,
+    ForecastViewPermissionMixin, ForecastProgrammeDetailsMixin, TemplateView,
 ):
     template_name = "forecast/view/programme_details/group.html"
     hierarchy_type = SHOW_GROUP
 
     def group(self):
         return DepartmentalGroup.objects.get(
-            group_code=self.kwargs['group_code'],
-            active=True,
+            group_code=self.kwargs["group_code"], active=True,
         )
 
     def post(self, request, *args, **kwargs):
-        programme_code_id = request.POST.get(
-            'programme_code',
-            None,
-        )
+        programme_code_id = request.POST.get("programme_code", None,)
 
         if programme_code_id:
             return HttpResponseRedirect(
                 reverse(
                     "programme_details_group",
-                    kwargs={'group_code': self.group().group_code,
-                            'programme_code': programme_code_id,
-                            'forecast_expenditure_type': self.forecast_expenditure_type(),  # noqa
-                            "period": self.period,
-                            }
+                    kwargs={
+                        "group_code": self.group().group_code,
+                        "programme_code": programme_code_id,
+                        "forecast_expenditure_type": self.forecast_expenditure_type(),  # noqa
+                        "period": self.period,
+                    },
                 )
             )
         else:
@@ -169,34 +140,29 @@ class GroupProgrammeDetailsView(
 
 
 class DirectorateProgrammeDetailsView(
-    ForecastViewPermissionMixin,
-    ForecastProgrammeDetailsMixin,
-    TemplateView,
+    ForecastViewPermissionMixin, ForecastProgrammeDetailsMixin, TemplateView,
 ):
     template_name = "forecast/view/programme_details/directorate.html"
     hierarchy_type = SHOW_DIRECTORATE
 
     def directorate(self):
         return Directorate.objects.get(
-            directorate_code=self.kwargs['directorate_code'],
-            active=True,
+            directorate_code=self.kwargs["directorate_code"], active=True,
         )
 
     def post(self, request, *args, **kwargs):
-        programme_code_id = request.POST.get(
-            'programme_code',
-            None,
-        )
+        programme_code_id = request.POST.get("programme_code", None,)
 
         if programme_code_id:
             return HttpResponseRedirect(
                 reverse(
                     "programme_details_directorate",
-                    kwargs={'directorate_code': self.directorate().directorate_code,
-                            'programme_code': programme_code_id,
-                            'forecast_expenditure_type': self.forecast_expenditure_type(),  # noqa
-                            "period": self.period,
-                            }
+                    kwargs={
+                        "directorate_code": self.directorate().directorate_code,
+                        "programme_code": programme_code_id,
+                        "forecast_expenditure_type": self.forecast_expenditure_type(),  # noqa
+                        "period": self.period,
+                    },
                 )
             )
         else:

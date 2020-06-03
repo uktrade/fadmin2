@@ -96,7 +96,6 @@ class DITProjectDetailsView(
     template_name = "forecast/view/project_details/dit.html"
     hierarchy_type = SHOW_DIT
 
-
     def post(self, request, *args, **kwargs):
         project_code_id = request.POST.get(
             'project_code',

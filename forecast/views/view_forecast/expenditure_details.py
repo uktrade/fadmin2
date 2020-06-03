@@ -5,10 +5,6 @@ from django.shortcuts import (
 )
 from django.views.generic.base import TemplateView
 
-from django_tables2 import (
-    MultiTableMixin,
-)
-
 from chartofaccountDIT.forms import (
     ExpenditureTypeForm,
 )
@@ -20,10 +16,6 @@ from costcentre.models import (
 )
 from costcentre.models import DepartmentalGroup
 
-from forecast.models import (
-    FinancialPeriod,
-    ForecastingDataView,
-)
 from forecast.tables import (
     ForecastSubTotalTable,
 )
