@@ -975,12 +975,15 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
                     'cost_centre_code': self.cost_centre_code,
                     'expenditure_category': self.expenditure_id,
                     'budget_type': self.budget_type,
+                    'period': 0,
                 },
             ),
             CostCentreExpenditureDetailsView,
             cost_centre_code=self.cost_centre_code,
             expenditure_category=self.expenditure_id,
-            budget_type=self.budget_type
+            budget_type=self.budget_type,
+            period=0,
+
         )
         self.check_response(resp)
 
@@ -992,12 +995,14 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
                     'directorate_code': self.directorate.directorate_code,
                     'expenditure_category': self.expenditure_id,
                     'budget_type': self.budget_type,
+                    'period': 0,
                 },
             ),
             DirectorateExpenditureDetailsView,
             directorate_code=self.directorate.directorate_code,
             expenditure_category=self.nac1_obj.expenditure_category_id,
-            budget_type=self.budget_type
+            budget_type=self.budget_type,
+            period = 0,
         )
         self.check_response(resp)
 
@@ -1009,12 +1014,14 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
                     'group_code': self.group.group_code,
                     'expenditure_category': self.expenditure_id,
                     'budget_type': self.budget_type,
+                    'period': 0,
                 },
             ),
             GroupExpenditureDetailsView,
             group_code=self.group.group_code,
             expenditure_category=self.nac1_obj.expenditure_category_id,
-            budget_type=self.budget_type
+            budget_type=self.budget_type,
+            period=0,
         )
 
         self.check_response(resp)
@@ -1026,11 +1033,13 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
                 kwargs={
                     'expenditure_category': self.expenditure_id,
                     'budget_type': self.budget_type,
+                    'period': 0,
                 },
             ),
             DITExpenditureDetailsView,
             expenditure_category=self.nac1_obj.expenditure_category_id,
-            budget_type=self.budget_type
+            budget_type=self.budget_type,
+            period=0,
         )
 
         self.check_response(resp)
