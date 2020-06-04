@@ -185,6 +185,7 @@ class ViewForecastProjectDetailsTest(TestCase, RequestFactoryBase):
             CostCentreProjectDetailsView,
             cost_centre_code=self.cost_centre_code,
             project_code=self.project_code,
+            period=0,
         )
         self.check_response(resp)
 
@@ -201,6 +202,7 @@ class ViewForecastProjectDetailsTest(TestCase, RequestFactoryBase):
             DirectorateProjectDetailsView,
             directorate_code=self.directorate.directorate_code,
             project_code=self.project_code,
+            period=0,
         )
         self.check_response(resp)
 
@@ -217,6 +219,7 @@ class ViewForecastProjectDetailsTest(TestCase, RequestFactoryBase):
             GroupProjectDetailsView,
             group_code=self.group.group_code,
             project_code=self.project_code,
+            period=0,
         )
 
         self.check_response(resp)
@@ -232,6 +235,7 @@ class ViewForecastProjectDetailsTest(TestCase, RequestFactoryBase):
             ),
             DITProjectDetailsView,
             project_code=self.project_code,
+            period=0,
         )
 
         self.check_response(resp)
