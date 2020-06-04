@@ -58,7 +58,10 @@ class CostCentrePermissionTest(UserPassesTestMixin):
             return redirect(
                 reverse(
                     "forecast_cost_centre",
-                    kwargs={"cost_centre_code": self.cost_centre_code},
+                    kwargs={
+                        "cost_centre_code": self.cost_centre_code,
+                        "period": 0,
+                    },
                 )
             )
 
