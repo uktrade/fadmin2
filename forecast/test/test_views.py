@@ -537,7 +537,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
                 "forecast_directorate",
                 kwargs={
                     'directorate_code': self.directorate.directorate_code,
-                    'period':0,
+                    'period': 0,
                 },
             ),
             DirectorateView,
@@ -701,7 +701,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
                 "forecast_directorate",
                 kwargs={
                     'directorate_code': self.directorate.directorate_code,
-                    'period':0,
+                    'period': 0,
                 },
             ),
             DirectorateView,
@@ -743,7 +743,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
                 "forecast_group",
                 kwargs={
                     'group_code': self.group.group_code,
-                    'period':0,
+                    'period': 0,
                 },
             ),
             GroupView,
@@ -1002,7 +1002,7 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
             directorate_code=self.directorate.directorate_code,
             expenditure_category=self.nac1_obj.expenditure_category_id,
             budget_type=self.budget_type,
-            period = 0,
+            period=0,
         )
         self.check_response(resp)
 
@@ -1177,7 +1177,7 @@ class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
                     'directorate_code': self.directorate.directorate_code,
                     'programme_code': self.programme_obj.programme_code,
                     'forecast_expenditure_type': self.forecast_expenditure_type_id,
-                    'period':0,
+                    'period': 0,
                 },
             ),
             DirectorateProgrammeDetailsView,
@@ -1196,7 +1196,7 @@ class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
                     'group_code': self.group_code,
                     'programme_code': self.programme_obj.programme_code,
                     'forecast_expenditure_type': self.forecast_expenditure_type_id,
-                    'period':0,
+                    'period': 0,
                 },
             ),
             GroupProgrammeDetailsView,
@@ -1215,7 +1215,7 @@ class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
                 kwargs={
                     'programme_code': self.programme_obj.programme_code,
                     'forecast_expenditure_type': self.forecast_expenditure_type_id,
-                    'period':0,
+                    'period': 0,
                 },
             ),
             DITProgrammeDetailsView,
@@ -1447,7 +1447,7 @@ class ViewEditTest(TestCase, RequestFactoryBase):
             "forecast_group",
             kwargs={
                 'group_code': self.group.group_code,
-                'period':0,
+                'period': 0,
             }
         )
 
@@ -1461,7 +1461,7 @@ class ViewEditTest(TestCase, RequestFactoryBase):
             "forecast_directorate",
             kwargs={
                 'directorate_code': self.directorate.directorate_code,
-                'period':0,
+                'period': 0,
             }
         )
 
@@ -1694,7 +1694,7 @@ class ViewForecastHierarchyZeroProjectTest(TestCase, RequestFactoryBase):
                 "forecast_directorate",
                 kwargs={
                     'directorate_code': self.directorate.directorate_code,
-                    'period':0,
+                    'period': 0,
                 },
             ),
             DirectorateView,
