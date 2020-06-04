@@ -782,9 +782,9 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
         response = self.factory_get(
             reverse(
                 "forecast_dit",
-                    kwargs={
-                        'period': 0,
-                    },
+                kwargs={
+                    'period': 0,
+                },
             ),
             DITView,
             period=0,
