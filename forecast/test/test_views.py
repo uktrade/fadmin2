@@ -92,7 +92,7 @@ class ViewPermissionsTest(TestCase, RequestFactoryBase):
         edit_forecast_url = reverse(
             "edit_forecast",
             kwargs={
-                'cost_centre_code': self.cost_centre_code
+                'cost_centre_code': self.cost_centre_code,
             }
         )
 
@@ -100,13 +100,15 @@ class ViewPermissionsTest(TestCase, RequestFactoryBase):
             edit_forecast_url,
             EditForecastView,
             cost_centre_code=self.cost_centre_code,
+            period=0,
         )
 
         assert resp.status_code == 302
         assert resp.url == reverse(
             "forecast_cost_centre",
             kwargs={
-                "cost_centre_code": self.cost_centre_code
+                "cost_centre_code": self.cost_centre_code,
+                "period": 0,
             }
         )
 
@@ -496,8 +498,14 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
 
     def test_dit_view(self):
         response = self.factory_get(
-            reverse("forecast_dit"),
+            reverse(
+                "forecast_dit",
+                kwargs={
+                    'period': 0,
+                },
+            ),
             DITView,
+            period=0,
         )
 
         self.assertEqual(response.status_code, 200)
@@ -510,11 +518,13 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
             reverse(
                 "forecast_group",
                 kwargs={
-                    'group_code': self.group.group_code
+                    'group_code': self.group.group_code,
+                    'period': 0,
                 },
             ),
             GroupView,
             group_code=self.group.group_code,
+            period=0,
         )
         self.assertEqual(response.status_code, 200)
 
@@ -531,6 +541,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
             ),
             DirectorateView,
             directorate_code=self.directorate.directorate_code,
+            period=0,
         )
         self.assertEqual(response.status_code, 200)
 
@@ -542,11 +553,13 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
             reverse(
                 "forecast_cost_centre",
                 kwargs={
-                    'cost_centre_code': self.cost_centre_code
+                    'cost_centre_code': self.cost_centre_code,
+                    "period": 0,
                 },
             ),
             CostCentreView,
             cost_centre_code=self.cost_centre.cost_centre_code,
+            period=0,
         )
         self.assertEqual(response.status_code, 200)
 
@@ -644,11 +657,13 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
             reverse(
                 "forecast_cost_centre",
                 kwargs={
-                    'cost_centre_code': self.cost_centre_code
+                    'cost_centre_code': self.cost_centre_code,
+                    "period": 0,
                 },
             ),
             CostCentreView,
             cost_centre_code=self.cost_centre_code,
+            period=0,
         )
 
         self.assertEqual(resp.status_code, 200)
@@ -1142,12 +1157,14 @@ class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
                     'directorate_code': self.directorate.directorate_code,
                     'programme_code': self.programme_obj.programme_code,
                     'forecast_expenditure_type': self.forecast_expenditure_type_id,
+                    'period':0,
                 },
             ),
             DirectorateProgrammeDetailsView,
             directorate_code=self.directorate.directorate_code,
             programme_code=self.programme_obj.programme_code,
-            forecast_expenditure_type=self.forecast_expenditure_type_id
+            forecast_expenditure_type=self.forecast_expenditure_type_id,
+            period=0,
         )
         self.check_response(resp)
 
@@ -1159,12 +1176,14 @@ class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
                     'group_code': self.group_code,
                     'programme_code': self.programme_obj.programme_code,
                     'forecast_expenditure_type': self.forecast_expenditure_type_id,
+                    'period':0,
                 },
             ),
             GroupProgrammeDetailsView,
             group_code=self.group_code,
             programme_code=self.programme_obj.programme_code,
-            forecast_expenditure_type=self.forecast_expenditure_type_id
+            forecast_expenditure_type=self.forecast_expenditure_type_id,
+            period=0,
         )
 
         self.check_response(resp)
@@ -1176,11 +1195,13 @@ class ViewProgrammeDetailsTest(TestCase, RequestFactoryBase):
                 kwargs={
                     'programme_code': self.programme_obj.programme_code,
                     'forecast_expenditure_type': self.forecast_expenditure_type_id,
+                    'period':0,
                 },
             ),
             DITProgrammeDetailsView,
             programme_code=self.programme_obj.programme_code,
-            forecast_expenditure_type=self.forecast_expenditure_type_id
+            forecast_expenditure_type=self.forecast_expenditure_type_id,
+            period=0,
         )
         self.check_response(resp)
 
@@ -1388,7 +1409,8 @@ class ViewEditTest(TestCase, RequestFactoryBase):
         view_forecast_url = reverse(
             "forecast_cost_centre",
             kwargs={
-                'cost_centre_code': self.cost_centre_code
+                'cost_centre_code': self.cost_centre_code,
+                "period": 0,
             }
         )
 
@@ -1466,7 +1488,8 @@ class ViewEditButtonTest(TestCase, RequestFactoryBase):
         view_forecast_url = reverse(
             "forecast_cost_centre",
             kwargs={
-                'cost_centre_code': self.cost_centre_code
+                'cost_centre_code': self.cost_centre_code,
+                "period": 0,
             }
         )
 
@@ -1489,7 +1512,8 @@ class ViewEditButtonTest(TestCase, RequestFactoryBase):
         view_forecast_url = reverse(
             "forecast_cost_centre",
             kwargs={
-                'cost_centre_code': self.cost_centre_code
+                'cost_centre_code': self.cost_centre_code,
+                "period": 0,
             }
         )
 
@@ -1523,7 +1547,8 @@ class ViewEditButtonTest(TestCase, RequestFactoryBase):
         view_forecast_url = reverse(
             "forecast_cost_centre",
             kwargs={
-                'cost_centre_code': self.cost_centre_code
+                'cost_centre_code': self.cost_centre_code,
+                "period": 0,
             }
         )
         response = self.client.get(view_forecast_url)

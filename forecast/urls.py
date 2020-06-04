@@ -93,6 +93,11 @@ urlpatterns = [
         name="forecast_directorate",
     ),
     path(
+        "view/cost-centre/<cost_centre_code>/",
+        CostCentreView.as_view(),
+        name="forecast_cost_centre",
+    ),
+    path(
         "view/cost-centre/<cost_centre_code>/<int:period>/",
         CostCentreView.as_view(),
         name="forecast_cost_centre",
