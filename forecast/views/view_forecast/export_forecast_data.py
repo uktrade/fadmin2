@@ -249,5 +249,5 @@ def export_edit_forecast_data(request, cost_centre):
             kwargs={
                 'period': 0,
             },
-            )
+        )
         )
