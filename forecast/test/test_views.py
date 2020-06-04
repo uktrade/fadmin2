@@ -1684,11 +1684,13 @@ class ViewForecastHierarchyZeroProjectTest(TestCase, RequestFactoryBase):
             reverse(
                 "forecast_directorate",
                 kwargs={
-                    'directorate_code': self.directorate.directorate_code
+                    'directorate_code': self.directorate.directorate_code,
+                    'period':0,
                 },
             ),
             DirectorateView,
             directorate_code=self.directorate.directorate_code,
+            period=0,
         )
 
         self.assertEqual(resp.status_code, 200)
@@ -1708,11 +1710,13 @@ class ViewForecastHierarchyZeroProjectTest(TestCase, RequestFactoryBase):
             reverse(
                 "forecast_group",
                 kwargs={
-                    'group_code': self.group.group_code
+                    'group_code': self.group.group_code,
+                    'period': 0,
                 },
             ),
             GroupView,
             group_code=self.group.group_code,
+            period=0
         )
 
         self.assertEqual(response.status_code, 200)
@@ -1728,8 +1732,14 @@ class ViewForecastHierarchyZeroProjectTest(TestCase, RequestFactoryBase):
 
     def test_view_dit_summary(self):
         response = self.factory_get(
-            reverse("forecast_dit"),
+            reverse(
+                "forecast_dit",
+                kwargs={
+                    'period': 0,
+                },
+            ),
             DITView,
+            period=0,
         )
 
         self.assertEqual(response.status_code, 200)
