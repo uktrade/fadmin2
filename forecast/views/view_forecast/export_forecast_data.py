@@ -244,4 +244,10 @@ def export_edit_forecast_data(request, cost_centre):
             q, EDIT_KEYS_DOWNLOAD, EDIT_FORECAST_DOWNLOAD_COLUMNS, title
         )
     else:
-        return redirect(reverse("forecast_dit"))
+        return redirect(reverse(
+            "forecast_dit",
+            kwargs={
+                'period': 0,
+            },
+            )
+        )
