@@ -8,7 +8,8 @@ class PermissionShortcutsTest(
 ):
     def setUp(self):
         self.test_user, created = get_user_model().objects.get_or_create(
-            email='test@test.com')
+            email='test@test.com'
+        )
 
     def test_finance_admin_perm(self):
         self.group, created = Group.objects.get_or_create(name='Finance Administrator')
@@ -32,13 +33,48 @@ class PermissionShortcutsTest(
 
         assert self.test_user.has_perm("costcentre.change_costcentre")
 
-        self.assertFalse(self.test_user.has_perm(
-            "costcentre.edit_forecast_all_cost_centres"))
-        self.assertFalse(self.test_user.has_perm("costcentre.change_directorate"))
-        self.assertFalse(self.test_user.has_perm("costcentre.add_directorate"))
-        self.assertFalse(self.test_user.has_perm("costcentre.change_departmentalgroup"))
-        self.assertFalse(self.test_user.has_perm("costcentre.add_departmentalgroup"))
-        self.assertFalse(self.test_user.has_perm("costcentre.change_bsceemail"))
-        self.assertFalse(self.test_user.has_perm("costcentre.add_bsceemail"))
-        self.assertFalse(self.test_user.has_perm("costcentre.change_businesspartner"))
-        self.assertFalse(self.test_user.has_perm("costcentre.add_businesspartner"))
+        self.assertFalse(
+            self.test_user.has_perm(
+                "costcentre.edit_forecast_all_cost_centres",
+            )
+        )
+        self.assertFalse(
+            self.test_user.has_perm(
+                "costcentre.change_directorate",
+            )
+        )
+        self.assertFalse(
+            self.test_user.has_perm(
+                "costcentre.add_directorate",
+            )
+        )
+        self.assertFalse(
+            self.test_user.has_perm(
+                "costcentre.change_departmentalgroup",
+            )
+        )
+        self.assertFalse(
+            self.test_user.has_perm(
+                "costcentre.add_departmentalgroup",
+            )
+        )
+        self.assertFalse(
+            self.test_user.has_perm(
+                "costcentre.change_bsceemail",
+            )
+        )
+        self.assertFalse(
+            self.test_user.has_perm(
+                "costcentre.add_bsceemail",
+            )
+        )
+        self.assertFalse(
+            self.test_user.has_perm(
+                "costcentre.change_businesspartner",
+            )
+        )
+        self.assertFalse(
+            self.test_user.has_perm(
+                "costcentre.add_businesspartner",
+            )
+        )

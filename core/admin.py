@@ -9,6 +9,7 @@ from django.contrib.admin.models import (
     LogEntry,
 )
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.files.uploadhandler import (
     MemoryFileUploadHandler,
     TemporaryFileUploadHandler,
@@ -420,6 +421,6 @@ class UserAdmin(UserAdmin):
 
 
 admin.site.unregister(User)
-# admin.site.unregister(Group)
+admin.site.unregister(Group)
 
 admin.site.register(User, UserAdmin)
