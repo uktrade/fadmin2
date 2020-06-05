@@ -50,5 +50,5 @@ class Migration(migrations.Migration):
     dependencies = [("core", "0002_data_20200522")]
 
     operations = [
-        migrations.RunPython(create_groups),
+        migrations.RunPython(add_finance_admin_permissions),
     ]
