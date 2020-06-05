@@ -23,7 +23,7 @@ def assign_permissions(group, permission_codenames):
         )
 
 
-def create_groups(apps, schema_editor):
+def add_finance_admin_permissions(apps, schema_editor):
     add_all_permissions()
 
     # Finance admins
