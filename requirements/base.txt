@@ -10,7 +10,7 @@ git+https://github.com/uktrade/django-staff-sso-usermodel.git@c8d0c0ed17c2b39464
 decorator==4.2.1
 diff-match-patch==20121119
 dj-database-url==0.5.0
-Django==2.2.10
+Django==2.2.13
 django-admin-list-filter-dropdown==1.0.1
 django-autocomplete-light==3.3.2
 django-bootstrap-datepicker-plus==3.0.5
