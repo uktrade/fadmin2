@@ -35,7 +35,6 @@ from forecast.utils.query_fields import (
 )
 from forecast.views.base import ForecastViewPermissionMixin, ForecastViewTableMixin
 
-
 class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
     hierarchy_type = -1
     table_pagination = False
@@ -52,7 +51,32 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
         return self.kwargs['budget_type']
 
     def expenditure_type_form(self):
-        return ExpenditureTypeForm()
+        return ExpenditureTypeForm(
+            expenditure_category=self.kwargs['expenditure_category']
+        )
+
+    def post(self, request, *args, **kwargs):
+        selected_period = request.POST.get("selected_period", None, )
+        if selected_period is None:
+            selected_period = self.period
+            # Check that an expenditure category was selected
+            expenditure_category_id = request.POST.get(
+                'expenditure_category',
+                None,
+            )
+            if expenditure_category_id is None:
+                raise Http404("Budget Type not found")
+        else:
+            expenditure_category_id = self.kwargs['expenditure_category']
+        return HttpResponseRedirect(
+            reverse(
+                self.url_name,
+                kwargs={'expenditure_category': expenditure_category_id,
+                        'budget_type': self.budget_type(),
+                        "period": selected_period,
+                        }
+            )
+        )
 
     def get_tables(self):
         """
@@ -98,26 +122,9 @@ class DITExpenditureDetailsView(
 ):
     template_name = "forecast/view/expenditure_details/dit.html"
     hierarchy_type = SHOW_DIT
+    url_name = "expenditure_details_dit"
 
-    def post(self, request, *args, **kwargs):
-        expenditure_category_id = request.POST.get(
-            'expenditure_category',
-            None,
-        )
 
-        if expenditure_category_id:
-            return HttpResponseRedirect(
-                reverse(
-                    "expenditure_details_dit",
-                    kwargs={'expenditure_category': expenditure_category_id,
-                            'budget_type': self.budget_type(),
-                            "period": self.period,
-                            }
-
-                )
-            )
-        else:
-            raise Http404("Budget Type not found")
 
 
 class GroupExpenditureDetailsView(
@@ -127,32 +134,13 @@ class GroupExpenditureDetailsView(
 ):
     template_name = "forecast/view/expenditure_details/group.html"
     hierarchy_type = SHOW_GROUP
+    url_name = "expenditure_details_group"
 
     def group(self):
         return DepartmentalGroup.objects.get(
             group_code=self.kwargs['group_code'],
             active=True,
         )
-
-    def post(self, request, *args, **kwargs):
-        expenditure_category_id = request.POST.get(
-            'expenditure_category',
-            None,
-        )
-
-        if expenditure_category_id:
-            return HttpResponseRedirect(
-                reverse(
-                    "expenditure_details_group",
-                    kwargs={'group_code': self.group().group_code,
-                            'expenditure_category': expenditure_category_id,
-                            'budget_type': self.budget_type(),
-                            "period": self.period,
-                            }
-                )
-            )
-        else:
-            raise Http404("Budget Type not found")
 
 
 class DirectorateExpenditureDetailsView(
@@ -162,32 +150,13 @@ class DirectorateExpenditureDetailsView(
 ):
     template_name = "forecast/view/expenditure_details/directorate.html"
     hierarchy_type = SHOW_DIRECTORATE
+    url_name = "expenditure_details_directorate"
 
     def directorate(self):
         return Directorate.objects.get(
             directorate_code=self.kwargs['directorate_code'],
             active=True,
         )
-
-    def post(self, request, *args, **kwargs):
-        expenditure_category_id = request.POST.get(
-            'expenditure_category',
-            None,
-        )
-
-        if expenditure_category_id:
-            return HttpResponseRedirect(
-                reverse(
-                    "expenditure_details_directorate",
-                    kwargs={'directorate_code': self.directorate().directorate_code,
-                            'expenditure_category': expenditure_category_id,
-                            'budget_type': self.budget_type(),
-                            "period": self.period,
-                            }
-                )
-            )
-        else:
-            raise Http404("Budget Type not found")
 
 
 class CostCentreExpenditureDetailsView(
@@ -198,28 +167,9 @@ class CostCentreExpenditureDetailsView(
     template_name = "forecast/view/expenditure_details/cost_centre.html"
     table_pagination = False
     hierarchy_type = SHOW_COSTCENTRE
+    url_name = "expenditure_details_cost_centre"
 
     def cost_centre(self):
         return CostCentre.objects.get(
             cost_centre_code=self.kwargs['cost_centre_code'],
         )
-
-    def post(self, request, *args, **kwargs):
-        expenditure_category_id = request.POST.get(
-            'expenditure_category',
-            None,
-        )
-
-        if expenditure_category_id:
-            return HttpResponseRedirect(
-                reverse(
-                    "expenditure_details_cost_centre",
-                    kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
-                            'expenditure_category': expenditure_category_id,
-                            'budget_type': self.budget_type(),
-                            "period": self.period,
-                            }
-                )
-            )
-        else:
-            raise Http404("Budget Type not found")

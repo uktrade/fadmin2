@@ -10,15 +10,23 @@ from chartofaccountDIT.models import (
 
 
 class ExpenditureTypeForm(forms.Form):
-    expenditure_category = forms.ModelChoiceField(
-        queryset=ExpenditureCategory.objects.all(),
-        widget=Select(),
-    )
-    expenditure_category.widget.attrs.update(
-        {
-            "class": "govuk-select",
-        }
-    )
+    def __init__(self, *args, **kwargs):
+        expenditure_category = kwargs.pop('expenditure_category')
+
+        super(ExpenditureTypeForm, self).__init__(
+            *args,
+            **kwargs,
+        )
+        self.fields['expenditure_category'] = forms.ModelChoiceField(
+            queryset=ExpenditureCategory.objects.all(),
+            widget=Select(),
+            initial=expenditure_category
+        )
+        self.fields['expenditure_category'].widget.attrs.update(
+            {
+                "class": "govuk-select",
+            }
+        )
 
 
 class ProgrammeForm(forms.Form):
