@@ -34,7 +34,9 @@ from forecast.utils.query_fields import (
 
 @user_passes_test(can_view_forecasts, login_url="index")
 def export_forecast_data_dit(request, period):
-    q = forecast_budget_view_model[period].view_data.raw_data_annotated(VIEW_FORECAST_DOWNLOAD_COLUMNS)
+    q = forecast_budget_view_model[period].view_data.raw_data_annotated(
+        VIEW_FORECAST_DOWNLOAD_COLUMNS
+    )
     return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, "DIT")
 
 
@@ -133,7 +135,7 @@ def export_forecast_data_expenditure_dit(
     q = forecast_budget_view_model[period].view_data.raw_data_annotated(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
-    title = f"DIT  Expenditure"
+    title = "DIT  Expenditure"
     return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
@@ -255,4 +257,4 @@ def export_edit_forecast_data(request, cost_centre):
             q, EDIT_KEYS_DOWNLOAD, EDIT_FORECAST_DOWNLOAD_COLUMNS, title
         )
     else:
-        return redirect(reverse("forecast_dit", kwargs={"period": 0,},))
+        return redirect(reverse("forecast_dit", kwargs={"period": 0, },))

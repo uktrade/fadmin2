@@ -205,7 +205,7 @@ urlpatterns = [
     ),
     path("download_mi_budget/", export_mi_budget_report, name="download_mi_budget"),
     path(
-        "export-expenditure-details/dit/<expenditure_category_id>/<budget_type_id>/<int:period>",
+        "export-expenditure-details/dit/<expenditure_category_id>/<budget_type_id>/<int:period>", # noqa
         export_forecast_data_expenditure_dit,
         name="export_expenditure_details_dit",
     ),
@@ -225,12 +225,12 @@ urlpatterns = [
         name="export_expenditure_details_cost_centre",
     ),
     path(
-        "export-project-details/cost-centre/<cost_centre>/<project_code_id>/<int:period>",
+        "export-project-details/cost-centre/<cost_centre>/<project_code_id>/<int:period>", # noqa
         export_forecast_data_project_detail_cost_centre,
         name="export_forecast_data_project_detail_cost_centre",
     ),
     path(
-        "export-project-details/directorate/<directorate_code>/<project_code_id>/<int:period>",
+        "export-project-details/directorate/<directorate_code>/<project_code_id>/<int:period>", # noqa
         export_forecast_data_project_detail_directorate,
         name="export_forecast_data_project_detail_directorate",
     ),
@@ -245,7 +245,7 @@ urlpatterns = [
         name="export_forecast_data_project_detail_dit",
     ),
     path(
-        "export-dit-programme/<programme_code_id>/<forecast_expenditure_type_name>/<int:period>",
+        "export-dit-programme/<programme_code_id>/<forecast_expenditure_type_name>/<int:period>", # noqa
         export_forecast_data_programme_detail_dit,
         name="export_programme_details_dit",
     ),

@@ -115,14 +115,11 @@ class DownloadProjectDetailyTest(TestCase, RequestFactoryBase):
         response = self.factory_get(
             reverse(
                 "export_forecast_data_project_detail_dit",
-                kwargs={
-                    "project_code_id": self.project_code,
-                        "period": 0
-                },
+                kwargs={"project_code_id": self.project_code, "period": 0},
             ),
             export_forecast_data_project_detail_dit,
             project_code_id=self.project_code,
-            period=0
+            period=0,
         )
 
         self.assertEqual(response.status_code, 200)

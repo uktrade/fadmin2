@@ -114,7 +114,7 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
     def test_dit_download(self):
         dit_url = self.factory_get(
             reverse("export_forecast_data_dit",
-                    kwargs= {"period": 0}),
+                    kwargs={"period": 0}),
             export_forecast_data_dit,
             period=0,
         )
@@ -136,7 +136,7 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
 
         dit_url = self.factory_get(
             reverse("export_forecast_data_dit",
-                    kwargs= {'period': 0,}),
+                    kwargs={'period': 0}),
             export_forecast_data_dit,
             period=0,
         )
