@@ -205,57 +205,57 @@ urlpatterns = [
     ),
     path("download_mi_budget/", export_mi_budget_report, name="download_mi_budget"),
     path(
-        "export-expenditure-details/dit/<expenditure_category_id>/<budget_type_id>/",
+        "export-expenditure-details/dit/<expenditure_category_id>/<budget_type_id>/<int:period>",
         export_forecast_data_expenditure_dit,
         name="export_expenditure_details_dit",
     ),
     path(
-        "export-expenditure-details/group/<group_code>/<expenditure_category_id>/<budget_type_id>/",  # noqa
+        "export-expenditure-details/group/<group_code>/<expenditure_category_id>/<budget_type_id>/<int:period>",  # noqa
         export_forecast_data_expenditure_detail_group,
         name="export_expenditure_details_group",
     ),
     path(
-        "export-expenditure-details/directorate/<directorate_code>/<expenditure_category_id>/<budget_type_id>/",  # noqa
+        "export-expenditure-details/directorate/<directorate_code>/<expenditure_category_id>/<budget_type_id>/<int:period>",  # noqa
         export_forecast_data_expenditure_detail_directorate,
         name="export_expenditure_details_directorate",
     ),
     path(
-        "export-expenditure-details/cost-centre/<cost_centre>/<expenditure_category_id>/<budget_type_id>/",  # noqa
+        "export-expenditure-details/cost-centre/<cost_centre>/<expenditure_category_id>/<budget_type_id>/<int:period>",  # noqa
         export_forecast_data_expenditure_detail_cost_centre,
         name="export_expenditure_details_cost_centre",
     ),
     path(
-        "export-project-details/cost-centre/<cost_centre>/<project_code_id>/",
+        "export-project-details/cost-centre/<cost_centre>/<project_code_id>/<int:period>",
         export_forecast_data_project_detail_cost_centre,
         name="export_forecast_data_project_detail_cost_centre",
     ),
     path(
-        "export-project-details/directorate/<directorate_code>/<project_code_id>/",
+        "export-project-details/directorate/<directorate_code>/<project_code_id>/<int:period>",
         export_forecast_data_project_detail_directorate,
         name="export_forecast_data_project_detail_directorate",
     ),
     path(
-        "export-project-details/group/<group_code>/<project_code_id>/",
+        "export-project-details/group/<group_code>/<project_code_id>/<int:period>",
         export_forecast_data_project_detail_group,
         name="export_forecast_data_project_detail_group",
     ),
     path(
-        "export-project-details/<project_code_id>/",
+        "export-project-details/<project_code_id>/<int:period>",
         export_forecast_data_project_detail_dit,
         name="export_forecast_data_project_detail_dit",
     ),
     path(
-        "export-dit-programme/<programme_code_id>/<forecast_expenditure_type_name>/",
+        "export-dit-programme/<programme_code_id>/<forecast_expenditure_type_name>/<int:period>",
         export_forecast_data_programme_detail_dit,
         name="export_programme_details_dit",
     ),
     path(
-        "export-group-programme/<group_code>/<programme_code_id>/<forecast_expenditure_type_name>/",  # noqa
+        "export-group-programme/<group_code>/<programme_code_id>/<forecast_expenditure_type_name>/<int:period>",  # noqa
         export_forecast_data_programme_detail_group,
         name="export_programme_details_group",
     ),
     path(
-        "export-directorate-programme/<directorate_code>/<programme_code_id>/<forecast_expenditure_type_name>/",  # noqa
+        "export-directorate-programme/<directorate_code>/<programme_code_id>/<forecast_expenditure_type_name>/<int:period>",  # noqa
         export_forecast_data_programme_detail_directorate,
         name="export_programme_details_directorate",
     ),

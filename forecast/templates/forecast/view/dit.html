@@ -4,5 +4,5 @@
 {% block hierarchy_title %}DIT{% endblock %}
 
 {% block download_link %}
-    <a class="govuk-button govuk-button" href="{% url 'export_forecast_data_dit' %} ">Download raw data</a>
+    <a class="govuk-button govuk-button" href="{% url 'export_forecast_data_dit' view.period %} ">Download raw data</a>
 {% endblock %}
