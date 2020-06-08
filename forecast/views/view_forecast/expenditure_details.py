@@ -3,7 +3,6 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import (
     reverse,
 )
-from django.views.generic.base import TemplateView
 
 from chartofaccountDIT.forms import (
     ExpenditureTypeForm,
@@ -33,7 +32,11 @@ from forecast.utils.query_fields import (
     nac_order_list,
     nac_sub_total,
 )
-from forecast.views.base import ForecastViewPermissionMixin, ForecastViewTableMixin
+from forecast.views.base import (
+    ForecastViewPermissionMixin,
+    ForecastViewTableMixin,
+    PeriodView,
+)
 
 class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
     hierarchy_type = -1
@@ -118,19 +121,17 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
 class DITExpenditureDetailsView(
     ForecastViewPermissionMixin,
     ForecastExpenditureDetailsMixin,
-    TemplateView,
+    PeriodView,
 ):
     template_name = "forecast/view/expenditure_details/dit.html"
     hierarchy_type = SHOW_DIT
     url_name = "expenditure_details_dit"
 
 
-
-
 class GroupExpenditureDetailsView(
     ForecastViewPermissionMixin,
     ForecastExpenditureDetailsMixin,
-    TemplateView,
+    PeriodView,
 ):
     template_name = "forecast/view/expenditure_details/group.html"
     hierarchy_type = SHOW_GROUP
@@ -146,7 +147,7 @@ class GroupExpenditureDetailsView(
 class DirectorateExpenditureDetailsView(
     ForecastViewPermissionMixin,
     ForecastExpenditureDetailsMixin,
-    TemplateView,
+    PeriodView,
 ):
     template_name = "forecast/view/expenditure_details/directorate.html"
     hierarchy_type = SHOW_DIRECTORATE
@@ -162,7 +163,7 @@ class DirectorateExpenditureDetailsView(
 class CostCentreExpenditureDetailsView(
     ForecastViewPermissionMixin,
     ForecastExpenditureDetailsMixin,
-    TemplateView,
+    PeriodView,
 ):
     template_name = "forecast/view/expenditure_details/cost_centre.html"
     table_pagination = False
