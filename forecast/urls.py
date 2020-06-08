@@ -175,22 +175,22 @@ urlpatterns = [
         name="update_forecast_figure",
     ),
     path(
-        "export-forecast-data/dit/",
+        "export-forecast-data/dit/<int:period>",
         export_forecast_data_dit,
         name="export_forecast_data_dit",
     ),
     path(
-        "export-forecast-data/group/<group_code>",
+        "export-forecast-data/group/<group_code>/<int:period>",
         export_forecast_data_group,
         name="export_forecast_data_group",
     ),
     path(
-        "export-forecast-data/directorate/<directorate_code>",
+        "export-forecast-data/directorate/<directorate_code>/<int:period>",
         export_forecast_data_directorate,
         name="export_forecast_data_directorate",
     ),
     path(
-        "export-forecast-data/cost-centre/<cost_centre>",
+        "export-forecast-data/cost-centre/<cost_centre>/<int:period>",
         export_forecast_data_cost_centre,
         name="export_forecast_data_cost_centre",
     ),

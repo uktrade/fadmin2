@@ -4,7 +4,14 @@ from django.urls import reverse
 
 from end_of_month.models import forecast_budget_view_model
 
-from forecast.utils.access_helpers import can_edit_cost_centre, can_view_forecasts
+from forecast.models import (
+    ForecastingDataView,
+)
+
+from forecast.utils.access_helpers import (
+    can_edit_cost_centre,
+    can_view_forecasts,
+)
 from forecast.utils.export_helpers import (
     export_edit_to_excel,
     export_query_to_excel,
@@ -234,10 +241,10 @@ def export_forecast_data_project_detail_dit(request, project_code_id, period):
     return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
-def export_edit_forecast_data(request, cost_centre, period):
+def export_edit_forecast_data(request, cost_centre):
     if can_edit_cost_centre(request.user, cost_centre):
         filter = {COST_CENTRE_CODE: cost_centre}
-        q = forecast_budget_view_model[period].view_data.raw_data_annotated(
+        q = ForecastingDataView.view_data.raw_data_annotated(
             {**EDIT_KEYS_DOWNLOAD, **EDIT_FORECAST_DOWNLOAD_COLUMNS},
             filter,
             order_list=EDIT_FORECAST_DOWNLOAD_ORDER,

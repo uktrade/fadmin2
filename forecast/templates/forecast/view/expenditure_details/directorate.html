@@ -15,5 +15,5 @@
 {% endblock %}
 
 {% block download_link %}
-    <a class="govuk-button govuk-button" href="{% url 'export_expenditure_details_directorate' view.directorate.directorate_code view.expenditure_category.id  view.budget_type %} ">Download raw data</a>
+    <a class="govuk-button govuk-button" href="{% url 'export_expenditure_details_directorate' view.directorate.directorate_code view.expenditure_category.id  view.budget_type  view.period %} ">Download raw data</a>
 {% endblock %}
