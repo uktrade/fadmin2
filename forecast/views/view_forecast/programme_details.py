@@ -48,23 +48,17 @@ class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
         return ProgrammeForm(programme_code=self.kwargs["programme_code"])
 
     def post(self, request, *args, **kwargs):
-        self.selected_period = request.POST.get("selected_period", None, )
+        self.selected_period = request.POST.get("selected_period", None,)
         if self.selected_period is None:
             self.selected_period = self.period
             # Check that an expenditure category was selected
-            self.selected_programme_code_id = request.POST.get(
-                'programme_code',
-                None,
-            )
+            self.selected_programme_code_id = request.POST.get("programme_code", None,)
             if self.selected_programme_code_id is None:
                 raise Http404("Budget Type not found")
         else:
-            self.selected_programme_code_id = self.kwargs['programme_code']
+            self.selected_programme_code_id = self.kwargs["programme_code"]
         return HttpResponseRedirect(
-            reverse(
-                self.url_name,
-                kwargs=self.selection_kwargs(),
-            )
+            reverse(self.url_name, kwargs=self.selection_kwargs(),)
         )
 
     def get_tables(self):
@@ -116,9 +110,9 @@ class DITProgrammeDetailsView(
 
     def selection_kwargs(self):
         return {
-                "programme_code": self.selected_programme_code_id,
-                "forecast_expenditure_type": self.forecast_expenditure_type(),
-                "period": self.selected_period,
+            "programme_code": self.selected_programme_code_id,
+            "forecast_expenditure_type": self.forecast_expenditure_type(),
+            "period": self.selected_period,
         }
 
 
@@ -136,12 +130,11 @@ class GroupProgrammeDetailsView(
 
     def selection_kwargs(self):
         return {
-                     "group_code": self.group().group_code,
-                     "programme_code": self.selected_programme_code_id,
-                     "forecast_expenditure_type": self.forecast_expenditure_type(),
-                     "period": self.selected_period,
-                 }
-
+            "group_code": self.group().group_code,
+            "programme_code": self.selected_programme_code_id,
+            "forecast_expenditure_type": self.forecast_expenditure_type(),
+            "period": self.selected_period,
+        }
 
 
 class DirectorateProgrammeDetailsView(
@@ -158,9 +151,8 @@ class DirectorateProgrammeDetailsView(
 
     def selection_kwargs(self):
         return {
-                     "directorate_code": self.kwargs["directorate_code"],
-                     "programme_code": self.selected_programme_code_id,
-                     "forecast_expenditure_type": self.forecast_expenditure_type(),
-                     "period": self.selected_period,
-                 }
-
+            "directorate_code": self.kwargs["directorate_code"],
+            "programme_code": self.selected_programme_code_id,
+            "forecast_expenditure_type": self.forecast_expenditure_type(),
+            "period": self.selected_period,
+        }
