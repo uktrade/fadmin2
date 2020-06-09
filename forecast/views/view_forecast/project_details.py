@@ -3,7 +3,6 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import (
     reverse,
 )
-from django.views.generic.base import TemplateView
 
 from chartofaccountDIT.forms import (
     ProjectForm,
@@ -32,7 +31,11 @@ from forecast.utils.query_fields import (
     project_details_hierarchy_sub_total_column,
     project_details_sub_total,
 )
-from forecast.views.base import ForecastViewPermissionMixin, ForecastViewTableMixin
+from forecast.views.base import (
+    ForecastViewPermissionMixin,
+    ForecastViewTableMixin,
+    PeriodView,
+)
 
 
 class ForecastProjectDetailsMixin(ForecastViewTableMixin):
@@ -48,7 +51,29 @@ class ForecastProjectDetailsMixin(ForecastViewTableMixin):
         )
 
     def project_code_form(self):
-        return ProjectForm()
+        return ProjectForm(project_code=self.kwargs["project_code"])
+
+
+    def post(self, request, *args, **kwargs):
+        self.selected_period = request.POST.get("selected_period", None, )
+        if self.selected_period is None:
+            self.selected_period = self.period
+            # Check that an expenditure category was selected
+            self.selected_project_code_id = request.POST.get(
+                'project_code',
+                None,
+            )
+            if self.selected_project_code_id is None:
+                raise Http404("Project not found")
+        else:
+            self.selected_project_code_id = self.kwargs['project_code']
+        return HttpResponseRedirect(
+            reverse(
+                self.url_name,
+                kwargs=self.selection_kwargs(),
+            )
+        )
+
 
     def get_tables(self):
         """
@@ -91,37 +116,34 @@ class ForecastProjectDetailsMixin(ForecastViewTableMixin):
 class DITProjectDetailsView(
     ForecastViewPermissionMixin,
     ForecastProjectDetailsMixin,
-    TemplateView,
+    PeriodView,
 ):
     template_name = "forecast/view/project_details/dit.html"
     hierarchy_type = SHOW_DIT
+    url_name = "project_details_dit"
 
-    def post(self, request, *args, **kwargs):
-        project_code_id = request.POST.get(
-            'project_code',
-            None,
-        )
-
-        if project_code_id:
-            return HttpResponseRedirect(
-                reverse(
-                    "project_details_dit",
-                    kwargs={'project_code': project_code_id,
-                            "period": self.period,
-                            }
-                )
-            )
-        else:
-            raise Http404("Project not found")
+    def selection_kwargs(self):
+        return {
+                "project_code": self.selected_project_code_id,
+                "period": self.selected_period,
+        }
 
 
 class GroupProjectDetailsView(
     ForecastViewPermissionMixin,
     ForecastProjectDetailsMixin,
-    TemplateView,
+    PeriodView,
 ):
     template_name = "forecast/view/project_details/group.html"
     hierarchy_type = SHOW_GROUP
+    url_name = "project_details_group"
+
+    def selection_kwargs(self):
+        return {
+            'group_code': self.group().group_code,
+            "project_code": self.selected_project_code_id,
+            "period": self.selected_period,
+        }
 
     def group(self):
         return DepartmentalGroup.objects.get(
@@ -129,32 +151,23 @@ class GroupProjectDetailsView(
             active=True,
         )
 
-    def post(self, request, *args, **kwargs):
-        project_code_id = request.POST.get(
-            'project_code',
-            None,
-        )
-        if project_code_id:
-            return HttpResponseRedirect(
-                reverse(
-                    "project_details_group",
-                    kwargs={'group_code': self.group().group_code,
-                            'project_code': project_code_id,
-                            "period": self.period,
-                            }
-                )
-            )
-        else:
-            raise Http404("Project not found")
-
 
 class DirectorateProjectDetailsView(
     ForecastViewPermissionMixin,
     ForecastProjectDetailsMixin,
-    TemplateView,
+    PeriodView,
 ):
     template_name = "forecast/view/project_details/directorate.html"
     hierarchy_type = SHOW_DIRECTORATE
+    url_name = "project_details_directorate"
+
+    def selection_kwargs(self):
+        return {
+            'directorate_code': self.directorate().directorate_code,
+            "project_code": self.selected_project_code_id,
+            "period": self.selected_period,
+        }
+
 
     def directorate(self):
         return Directorate.objects.get(
@@ -162,55 +175,25 @@ class DirectorateProjectDetailsView(
             active=True,
         )
 
-    def post(self, request, *args, **kwargs):
-        project_code_id = request.POST.get(
-            'project_code',
-            None,
-        )
-
-        if project_code_id:
-            return HttpResponseRedirect(
-                reverse(
-                    "project_details_directorate",
-                    kwargs={'directorate_code': self.directorate().directorate_code,
-                            'project_code': project_code_id,
-                            "period": self.period,
-                            }
-                )
-            )
-        else:
-            raise Http404("Project not found")
-
 
 class CostCentreProjectDetailsView(
     ForecastViewPermissionMixin,
     ForecastProjectDetailsMixin,
-    TemplateView,
+    PeriodView,
 ):
     template_name = "forecast/view/project_details/cost_centre.html"
     table_pagination = False
     hierarchy_type = SHOW_COSTCENTRE
+    url_name = "project_details_costcentre"
+
+    def selection_kwargs(self):
+        return {
+            'cost_centre_code': self.cost_centre().cost_centre_code,
+            "project_code": self.selected_project_code_id,
+            "period": self.selected_period,
+        }
 
     def cost_centre(self):
         return CostCentre.objects.get(
             cost_centre_code=self.kwargs['cost_centre_code'],
         )
-
-    def post(self, request, *args, **kwargs):
-        project_code_id = request.POST.get(
-            'project_code',
-            None,
-        )
-
-        if project_code_id:
-            return HttpResponseRedirect(
-                reverse(
-                    "project_details_costcentre",
-                    kwargs={'cost_centre_code': self.cost_centre().cost_centre_code,
-                            'project_code': project_code_id,
-                            "period": self.period,
-                            }
-                )
-            )
-        else:
-            raise Http404("Project not found")
