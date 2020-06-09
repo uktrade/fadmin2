@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
+
 from core.admin import (
     AdminEditOnly,
     AdminImportExport,
@@ -43,6 +45,21 @@ class EstimateRowAdmin(AdminReadOnly):
 
 
 class SubSegmentAdmin(AdminEditOnly, AdminImportExport):
+    search_fields = [
+        "sub_segment_code",
+        "sub_segment_long_name",
+        "Segment_code__segment_code",
+        "Segment_code__segment_long_name",
+        "control_budget_detail_code",
+        "dit_budget_type__budget_type",
+        "accounting_authority_DetailCode",
+    ]
+
+    list_filter = (
+        "control_budget_detail_code",
+        "dit_budget_type",
+    )
+
     list_display = (
         "sub_segment_code",
         "sub_segment_long_name",
