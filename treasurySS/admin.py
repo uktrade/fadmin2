@@ -1,7 +1,5 @@
 from django.contrib import admin
 
-from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
-
 from core.admin import (
     AdminEditOnly,
     AdminImportExport,

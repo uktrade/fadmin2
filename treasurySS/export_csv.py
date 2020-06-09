@@ -1,6 +1,3 @@
-from core.exportutils import get_fk_value
-
-
 def _export_sub_segment_iterator(queryset):
     yield [
         "Segment Grand Parent Code",
@@ -20,8 +17,8 @@ def _export_sub_segment_iterator(queryset):
     ]
     for obj in queryset:
         yield [
-            obj.Segment_code.segment_parent_code.segment_grand_parent_code.segment_grand_parent_code,
-            obj.Segment_code.segment_parent_code.segment_grand_parent_code.segment_grand_parent_long_name,
+            obj.Segment_code.segment_parent_code.segment_grand_parent_code.segment_grand_parent_code, # noqa
+            obj.Segment_code.segment_parent_code.segment_grand_parent_code.segment_grand_parent_long_name, # noqa
             obj.Segment_code.segment_parent_code.segment_parent_code,
             obj.Segment_code.segment_parent_code.segment_parent_long_name,
             obj.Segment_code.segment_code,
