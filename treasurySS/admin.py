@@ -6,6 +6,7 @@ from core.admin import (
     AdminReadOnly,
 )
 
+from treasurySS.export_csv import _export_sub_segment_iterator
 from treasurySS.import_csv import import_SS_class
 from treasurySS.models import (
     EstimateRow,
@@ -47,6 +48,7 @@ class SubSegmentAdmin(AdminEditOnly, AdminImportExport):
         "sub_segment_long_name",
         "Segment_code",
         "control_budget_detail_code",
+        "dit_budget_type",
         "accounting_authority_DetailCode",
     )
 
@@ -76,6 +78,10 @@ class SubSegmentAdmin(AdminEditOnly, AdminImportExport):
     @property
     def import_info(self):
         return import_SS_class
+
+    @property
+    def export_func(self):
+        return _export_sub_segment_iterator
 
 
 admin.site.register(Segment, SegmentAdmin)
