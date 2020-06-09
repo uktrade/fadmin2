@@ -49,7 +49,7 @@ class SubSegmentFactory(factory.DjangoModelFactory):
     """
     Define SubSegment Factory
     """
-    NAC_category = factory.SubFactory(NACCategoryFactory)
+    Segment_code = factory.SubFactory(SegmentFactory)
 
     class Meta:
         model = SubSegment
