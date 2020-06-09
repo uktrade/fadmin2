@@ -59,25 +59,22 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
         )
 
     def post(self, request, *args, **kwargs):
-        selected_period = request.POST.get("selected_period", None, )
-        if selected_period is None:
-            selected_period = self.period
+        self.selected_period = request.POST.get("selected_period", None, )
+        if self.selected_period is None:
+            self.selected_period = self.period
             # Check that an expenditure category was selected
-            expenditure_category_id = request.POST.get(
+            self.selected_expenditure_category_id = request.POST.get(
                 'expenditure_category',
                 None,
             )
-            if expenditure_category_id is None:
+            if self.selected_expenditure_category_id is None:
                 raise Http404("Budget Type not found")
         else:
-            expenditure_category_id = self.kwargs['expenditure_category']
+            self.selected_expenditure_category_id = self.kwargs['expenditure_category']
         return HttpResponseRedirect(
             reverse(
                 self.url_name,
-                kwargs={'expenditure_category': expenditure_category_id,
-                        'budget_type': self.budget_type(),
-                        "period": selected_period,
-                        }
+                kwargs=self.selection_kwargs(),
             )
         )
 
@@ -127,6 +124,13 @@ class DITExpenditureDetailsView(
     hierarchy_type = SHOW_DIT
     url_name = "expenditure_details_dit"
 
+    def selection_kwargs(self):
+        return {
+            'expenditure_category': self.selected_expenditure_category_id,
+            'budget_type': self.budget_type(),
+            "period": self.selected_period,
+        }
+
 
 class GroupExpenditureDetailsView(
     ForecastViewPermissionMixin,
@@ -143,6 +147,13 @@ class GroupExpenditureDetailsView(
             active=True,
         )
 
+    def selection_kwargs(self):
+        return {
+            "group_code": self.group().group_code,
+            'expenditure_category': self.selected_expenditure_category_id,
+            'budget_type': self.budget_type(),
+            "period": self.selected_period,
+        }
 
 class DirectorateExpenditureDetailsView(
     ForecastViewPermissionMixin,
@@ -159,6 +170,14 @@ class DirectorateExpenditureDetailsView(
             active=True,
         )
 
+    def selection_kwargs(self):
+        return {
+            "directorate_code": self.kwargs['directorate_code'],
+            'expenditure_category': self.selected_expenditure_category_id,
+            'budget_type': self.budget_type(),
+            "period": self.selected_period,
+        }
+
 
 class CostCentreExpenditureDetailsView(
     ForecastViewPermissionMixin,
@@ -174,3 +193,11 @@ class CostCentreExpenditureDetailsView(
         return CostCentre.objects.get(
             cost_centre_code=self.kwargs['cost_centre_code'],
         )
+
+    def selection_kwargs(self):
+        return {
+            "cost_centre_code": self.kwargs['cost_centre_code'],
+            'expenditure_category': self.selected_expenditure_category_id,
+            'budget_type': self.budget_type(),
+            "period": self.selected_period,
+        }
