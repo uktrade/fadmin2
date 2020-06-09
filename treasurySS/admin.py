@@ -1,4 +1,11 @@
-from django.contrib import admin
+from django.contrib import (
+    admin,
+    messages,
+)
+
+from django.db import IntegrityError
+
+from django.http import HttpResponseRedirect
 
 from core.admin import (
     AdminEditOnly,
@@ -89,6 +96,18 @@ class SubSegmentAdmin(AdminEditOnly, AdminImportExport):
             "accounting_authority_code",
             "estimates_row_code",
         ]
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        try:
+            return super(SubSegmentAdmin, self).change_view(
+                request,
+                object_id,
+                form_url,
+                extra_context
+            )
+        except IntegrityError as err:
+            messages.error(request, err)
+            return HttpResponseRedirect(request.path)
 
     @property
     def import_info(self):

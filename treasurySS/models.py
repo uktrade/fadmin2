@@ -140,5 +140,6 @@ class SubSegment(IsActiveModel):
 
     class Meta:
         unique_together = ("Segment_code", "dit_budget_type")
+
     def __str__(self):
         return "{} - {}".format(self.sub_segment_code, self.sub_segment_long_name)
