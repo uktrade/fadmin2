@@ -2,9 +2,7 @@ from django.contrib import (
     admin,
     messages,
 )
-
 from django.db import IntegrityError
-
 from django.http import HttpResponseRedirect
 
 from core.admin import (
