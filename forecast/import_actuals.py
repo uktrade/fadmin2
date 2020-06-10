@@ -122,8 +122,11 @@ def check_trial_balance_format(worksheet, period, year):
             raise UploadFileFormatError(
                 "This file appears to be corrupt (title is incorrect)"
             )
-    except TypeError as ex:
-        logger.error(f'{ex.message} ({type(ex)})', exc_info=True)
+    except TypeError:
+        logger.error(
+            "This file appears to be corrupt and it cannot be read",
+            exc_info=True
+        )
         # wrong file
         raise UploadFileFormatError(
             "This file appears to be corrupt and it cannot be read"
@@ -134,8 +137,11 @@ def check_trial_balance_format(worksheet, period, year):
         if report_date.year != year:
             # wrong date
             raise UploadFileFormatError("File is for wrong year")
-    except TypeError as ex:
-        logger.error(f'{ex.message} ({type(ex)})', exc_info=True)
+    except TypeError:
+        logger.error(
+            "This file appears to be corrupt and it cannot be read",
+            exc_info=True
+        )
         # wrong file
         raise UploadFileFormatError(
             "This file appears to be corrupt and it cannot be read"
