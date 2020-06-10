@@ -5,6 +5,7 @@ from django.urls import reverse
 from end_of_month.models import forecast_budget_view_model
 
 from forecast.models import (
+    FinancialPeriod,
     ForecastingDataView,
 )
 
@@ -32,6 +33,13 @@ from forecast.utils.query_fields import (
 )
 
 
+def get_period_for_title(period):
+    if period:
+
+    else:
+        title = 'Current'
+
+    return title
 @user_passes_test(can_view_forecasts, login_url="index")
 def export_forecast_data_dit(request, period):
     q = forecast_budget_view_model[period].view_data.raw_data_annotated(
@@ -239,7 +247,7 @@ def export_forecast_data_project_detail_dit(request, project_code_id, period):
     q = forecast_budget_view_model[period].view_data.raw_data_annotated(
         VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
-    title = f"DIT {project_code_id}"
+    title = f"DIT {project_code_id} - Period {period}"
     return export_query_to_excel(q, VIEW_FORECAST_DOWNLOAD_COLUMNS, title)
 
 
