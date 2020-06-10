@@ -8,7 +8,6 @@ from forecast.models import (
     FinancialPeriod,
     ForecastingDataView,
 )
-
 from forecast.utils.access_helpers import (
     can_edit_cost_centre,
     can_view_forecasts,
