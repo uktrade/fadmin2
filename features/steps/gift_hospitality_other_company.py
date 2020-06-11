@@ -64,5 +64,3 @@ def step_impl(context):
     assert parent.get_attribute("style") == 'display: none;'
 
     # assert other_company_field.is_displayed() == True
-
-    # assert 1==2
