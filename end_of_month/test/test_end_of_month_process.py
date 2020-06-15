@@ -1,7 +1,12 @@
 from django.db.models import F
-from django.test import (
-    TestCase,
+from django.test import TestCase
+
+from end_of_month.end_of_month_actions import end_of_month_archive
+from end_of_month.models import (
+    EndOfMonthStatus,
+    forecast_budget_view_model,
 )
+
 from chartofaccountDIT.test.factories import (
     NaturalCodeFactory,
     ProgrammeCodeFactory,
@@ -24,36 +29,24 @@ from forecast.models import (
     ForecastMonthlyFigure,
 )
 
-from end_of_month.end_of_month_actions import end_of_month_archive
-from end_of_month.models import (
-    EndOfMonthStatus,
-    forecast_budget_view_model,
-)
 
-
-class MonthlyFigureSetup():
-
+class MonthlyFigureSetup:
     def monthly_figure_update(self, period, amount):
         month_figure = ForecastMonthlyFigure.objects.get(
-            financial_period=FinancialPeriod.objects.get(
-                financial_period_code=period
-            ),
+            financial_period=FinancialPeriod.objects.get(financial_period_code=period),
             financial_code=self.financial_code_obj,
             financial_year=self.year_obj,
-            archived_status=None
+            archived_status=None,
         )
         month_figure.amount += amount
         month_figure.save()
 
-
     def monthly_figure_create(self, period, amount):
         month_figure = ForecastMonthlyFigure.objects.create(
-            financial_period=FinancialPeriod.objects.get(
-                financial_period_code=period
-            ),
+            financial_period=FinancialPeriod.objects.get(financial_period_code=period),
             financial_code=self.financial_code_obj,
             financial_year=self.year_obj,
-            amount=amount
+            amount=amount,
         )
         month_figure.save()
 
@@ -65,8 +58,7 @@ class MonthlyFigureSetup():
         cost_centre_code_test = 109076
 
         group = DepartmentalGroupFactory(
-            group_code=group_code_test,
-            group_name=group_name_test,
+            group_code=group_code_test, group_name=group_name_test,
         )
         directorate = DirectorateFactory(
             directorate_code=directorate_code_test,
@@ -74,26 +66,23 @@ class MonthlyFigureSetup():
             group=group,
         )
         cost_centre = CostCentreFactory(
-            directorate=directorate,
-            cost_centre_code=cost_centre_code_test,
+            directorate=directorate, cost_centre_code=cost_centre_code_test,
         )
         current_year = get_current_financial_year()
         programme_obj = ProgrammeCodeFactory()
         nac_obj = NaturalCodeFactory()
         project_obj = ProjectCodeFactory()
-        self. year_obj = FinancialYear.objects.get(
-            financial_year=current_year
-        )
+        self.year_obj = FinancialYear.objects.get(financial_year=current_year)
 
         self.financial_code_obj = FinancialCode.objects.create(
             programme=programme_obj,
             cost_centre=cost_centre,
             natural_account_code=nac_obj,
-            project_code=project_obj
+            project_code=project_obj,
         )
         self.financial_code_obj.save
-        for period in range(1,16):
-            self.monthly_figure_create(period, period*100000)
+        for period in range(1, 16):
+            self.monthly_figure_create(period, period * 100000)
 
 
 class EndOfMonthTest(TestCase, RequestFactoryBase):
@@ -149,7 +138,6 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         count = ForecastMonthlyFigure.objects.all().count()
         self.assertEqual(count, 80)
 
-
     def test_end_of_month_sep(self):
         self.test_end_of_month_aug()
         end_of_month_info = EndOfMonthStatus.objects.get(
@@ -158,7 +146,6 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
         self.assertEqual(count, 90)
-
 
     def test_end_of_month_oct(self):
         self.test_end_of_month_sep()
@@ -217,6 +204,7 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
 
 class ReadArchivedTest(TestCase, RequestFactoryBase):
     archived_figure = []
+
     def setUp(self):
         RequestFactoryBase.__init__(self)
         self.setup = MonthlyFigureSetup()
@@ -225,22 +213,23 @@ class ReadArchivedTest(TestCase, RequestFactoryBase):
 
     def get_period_total(self, period):
         data_model = forecast_budget_view_model[period]
-        tot_q = data_model.objects.annotate(total=F('apr')
-                                          + F('may')
-                                          + F('jun')
-                                          + F('jul')
-                                          + F('aug')
-                                          + F('sep')
-                                          + F('oct')
-                                          + F('nov')
-                                          + F('dec')
-                                          + F('jan')
-                                          + F('feb')
-                                                  + F('mar')
-                                                  + F('adj1')
-                                                  + F('adj2')
-                                                  + F('adj3')
-                                            )
+        tot_q = data_model.objects.annotate(
+            total=F("apr")
+            + F("may")
+            + F("jun")
+            + F("jul")
+            + F("aug")
+            + F("sep")
+            + F("oct")
+            + F("nov")
+            + F("dec")
+            + F("jan")
+            + F("feb")
+            + F("mar")
+            + F("adj1")
+            + F("adj2")
+            + F("adj3")
+        )
         return tot_q[0].total
 
     def get_current_total(self):
@@ -262,8 +251,9 @@ class ReadArchivedTest(TestCase, RequestFactoryBase):
         self.assertNotEqual(current_total, archived_total)
         self.assertEqual(current_total, (archived_total + change_amount))
         for period in range(1, tested_period + 1):
-            self.assertEqual(self.archived_figure[period],
-                             self.get_period_total(period))
+            self.assertEqual(
+                self.archived_figure[period], self.get_period_total(period)
+            )
 
     # The following tests check that the archived figures are not changed by
     # changing the current figures.
@@ -325,4 +315,3 @@ class ReadArchivedTest(TestCase, RequestFactoryBase):
         tested_period = 12
         self.test_read_archived_figure_feb()
         self.set_archive_period(tested_period)
-
