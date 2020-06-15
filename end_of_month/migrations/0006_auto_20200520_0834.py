@@ -36,6 +36,7 @@ def generate_create_query(archived_period_name, archived_period_id):
             f'and b.financial_year_id = f.financial_year_id ' \
             f'and b.archived_period_id = f.archived_period_id ' \
             f'WHERE coalesce(f.archived_period_id, b.archived_period_id) = {archived_period_id};'
+
     return f'{drop_query} {query}'
 
 
