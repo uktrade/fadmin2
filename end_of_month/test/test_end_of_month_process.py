@@ -78,9 +78,22 @@ from end_of_month.models import (
 )
 
 
-class Monthly_figure_setup():
+class MonthlyFigureSetup():
 
-    def monthly_figure_save(self, period, amount):
+    def monthly_figure_update(self, period, amount):
+        month_figure = ForecastMonthlyFigure.objects.get(
+            financial_period=FinancialPeriod.objects.get(
+                financial_period_code=period
+            ),
+            financial_code=self.financial_code_obj,
+            financial_year=self.year_obj,
+            archived_status=None
+        )
+        month_figure.amount += amount
+        month_figure.save()
+
+
+    def monthly_figure_create(self, period, amount):
         month_figure = ForecastMonthlyFigure.objects.create(
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=period
@@ -89,7 +102,7 @@ class Monthly_figure_setup():
             financial_year=self.year_obj,
             amount=amount
         )
-        month_figure.save
+        month_figure.save()
 
     def __init__(self):
         group_name_test = "Test Group"
@@ -112,7 +125,6 @@ class Monthly_figure_setup():
             cost_centre_code=cost_centre_code_test,
         )
         current_year = get_current_financial_year()
-        amount_apr = 100000
         programme_obj = ProgrammeCodeFactory()
         nac_obj = NaturalCodeFactory()
         project_obj = ProjectCodeFactory()
@@ -128,22 +140,16 @@ class Monthly_figure_setup():
         )
         self.financial_code_obj.save
         for period in range(1,13):
-            self.monthly_figure_save(period, period*100000)
+            self.monthly_figure_create(period, period*100000)
 
 
 class EndOfMonthTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
+        self.setup = MonthlyFigureSetup()
 
-        # Assign forecast view permission
-        can_view_forecasts = Permission.objects.get(
-            codename='can_view_forecasts'
-        )
-        self.test_user.user_permissions.add(can_view_forecasts)
-        self.test_user.save()
-        Monthly_figure_setup()
-
-
+    # The following tests test_end_of_month_xxx checkes that only forecast is saved,
+    # not actuals. This is tested by counting the records saved in the period tested.
     def test_end_of_month_apr(self):
         end_of_month_info = EndOfMonthStatus.objects.get(
             archived_period__financial_period_code=1
@@ -153,23 +159,6 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
         self.assertEqual(count, 24)
-
-    def get_total(self, data_model):
-        tot_q = data_model.objects.annotate(total=F('apr')
-                                          + F('may')
-                                          + F('jun')
-                                          + F('jul')
-                                          + F('aug')
-                                          + F('sep')
-                                          + F('oct')
-                                          + F('nov')
-                                          + F('dec')
-                                          + F('jan')
-                                          + F('mar')
-                                    )
-        return tot_q[0].total
-
-
 
     def test_end_of_month_may(self):
         self.test_end_of_month_apr()
@@ -270,9 +259,46 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         count = ForecastMonthlyFigure.objects.all().count()
         self.assertEqual(count, 90)
 
+
+class ReadArchivedTest(TestCase, RequestFactoryBase):
+    def setUp(self):
+        RequestFactoryBase.__init__(self)
+        self.setup = MonthlyFigureSetup()
+
+    def get_period_total(self, period):
+        data_model = forecast_budget_view_model[period]
+        tot_q = data_model.objects.annotate(total=F('apr')
+                                          + F('may')
+                                          + F('jun')
+                                          + F('jul')
+                                          + F('aug')
+                                          + F('sep')
+                                          + F('oct')
+                                          + F('nov')
+                                          + F('dec')
+                                          + F('jan')
+                                          + F('mar')
+                                    )
+        return tot_q[0].total
+
+    def get_current_total(self):
+        return self.get_period_total(0)
+
+
+    # The following tests check that the archived figures are not changed by
+    # changing the current figures.
     def test_read_archived_figure_apr(self):
-        self.test_end_of_month_apr()
+        total_before = self.get_current_total()
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=1
+        )
+        end_of_month_archive(end_of_month_info)
         # run a query giving the full total
-        total = self.get_total(forecast_budget_view_model[1])
-        print(total)
+        apr_total = self.get_period_total(1)
+        self.assertEqual(total_before, apr_total)
+        self.setup.monthly_figure_update(3, 1000)
+        current_total = self.get_current_total()
+        apr_total1 = self.get_period_total(1)
+        self.assertEqual(apr_total1, apr_total)
+        self.assertNotEqual(current_total, apr_total1)
 
