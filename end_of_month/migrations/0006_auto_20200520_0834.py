@@ -9,7 +9,9 @@ def generate_drop_query(archived_period_name):
 def generate_create_query(archived_period_name, archived_period_id):
     drop_query = generate_drop_query(archived_period_name)
     query = f'Create view budget_forecast_{archived_period_name}_view as '\
-        f'SELECT coalesce(b.financial_code_id, f.financial_code_id) as financial_code_id,' \
+        f'SELECT ROW_NUMBER () ' \
+            f'OVER (ORDER BY coalesce(b.financial_code_id, f.financial_code_id)) as id,' \
+            f'coalesce(b.financial_code_id, f.financial_code_id) as financial_code_id,' \
             f'coalesce(b.financial_year_id, f.financial_year_id) as financial_year, ' \
             f'coalesce(f.archived_period_id, b.archived_period_id) as archived_period_id, ' \
             f'coalesce(amount, 0) as budget, ' \

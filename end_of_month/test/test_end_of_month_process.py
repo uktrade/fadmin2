@@ -10,6 +10,7 @@ from django.contrib.auth.models import (
     Permission,
 )
 from django.core.exceptions import PermissionDenied
+from django.db.models import F
 from django.test import (
     TestCase,
 )
@@ -70,44 +71,23 @@ from forecast.views.view_forecast.programme_details import (
 )
 
 from end_of_month.end_of_month_actions import end_of_month_archive
-from end_of_month.models import EndOfMonthStatus
-
-
-TOTAL_COLUMN = -5
-SPEND_TO_DATE_COLUMN = -2
-UNDERSPEND_COLUMN = -4
-
-HIERARCHY_TABLE_INDEX = 0
-PROGRAMME_TABLE_INDEX = 1
-EXPENDITURE_TABLE_INDEX = 2
-PROJECT_TABLE_INDEX = 3
-
-
-def format_forecast_figure(value):
-    return f'{round(value):,d}'
-
-def monthly_figure_save(year_obj, financial_code_obj, period):
-    month_figure = ForecastMonthlyFigure.objects.create(
-        financial_period=FinancialPeriod.objects.get(
-            financial_period_code=period
-        ),
-        financial_code=financial_code_obj,
-        financial_year=year_obj,
-        amount=period*100000
-    )
-    month_figure.save
+from end_of_month.models import (
+    EndOfMonthStatus,
+    forecast_budget_view_model,
+    PreviousAprForecast
+)
 
 
 class Monthly_figure_setup():
 
-    def monthly_figure_save(self, period):
+    def monthly_figure_save(self, period, amount):
         month_figure = ForecastMonthlyFigure.objects.create(
             financial_period=FinancialPeriod.objects.get(
                 financial_period_code=period
             ),
             financial_code=self.financial_code_obj,
             financial_year=self.year_obj,
-            amount=period * 100000
+            amount=amount
         )
         month_figure.save
 
@@ -147,8 +127,8 @@ class Monthly_figure_setup():
             project_code=project_obj
         )
         self.financial_code_obj.save
-        for month in range(1,13):
-            self.monthly_figure_save(month)
+        for period in range(1,13):
+            self.monthly_figure_save(period, period*100000)
 
 
 class EndOfMonthTest(TestCase, RequestFactoryBase):
@@ -163,6 +143,7 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         self.test_user.save()
         Monthly_figure_setup()
 
+
     def test_end_of_month_apr(self):
         end_of_month_info = EndOfMonthStatus.objects.get(
             archived_period__financial_period_code=1
@@ -172,6 +153,23 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
         self.assertEqual(count, 24)
+
+    def get_total(self, data_model):
+        tot_q = data_model.objects.annotate(total=F('apr')
+                                          + F('may')
+                                          + F('jun')
+                                          + F('jul')
+                                          + F('aug')
+                                          + F('sep')
+                                          + F('oct')
+                                          + F('nov')
+                                          + F('dec')
+                                          + F('jan')
+                                          + F('mar')
+                                    )
+        return tot_q[0].total
+
+
 
     def test_end_of_month_may(self):
         self.test_end_of_month_apr()
@@ -271,3 +269,10 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
         self.assertEqual(count, 90)
+
+    def test_read_archived_figure_apr(self):
+        self.test_end_of_month_apr()
+        # run a query giving the full total
+        total = self.get_total(forecast_budget_view_model[1])
+        print(total)
+
