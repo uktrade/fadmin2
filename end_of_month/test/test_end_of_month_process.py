@@ -1,25 +1,8 @@
-from datetime import datetime
-
-from bs4 import BeautifulSoup
-
-
-from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import (
-    Group,
-    Permission,
-)
-from django.core.exceptions import PermissionDenied
 from django.db.models import F
 from django.test import (
     TestCase,
 )
-from django.urls import reverse
-
 from chartofaccountDIT.test.factories import (
-    Analysis1Factory,
-    Analysis2Factory,
-    ExpenditureCategoryFactory,
     NaturalCodeFactory,
     ProgrammeCodeFactory,
     ProjectCodeFactory,
@@ -38,43 +21,13 @@ from costcentre.test.factories import (
 from forecast.models import (
     FinancialCode,
     FinancialPeriod,
-    ForecastEditState,
     ForecastMonthlyFigure,
-)
-from forecast.permission_shortcuts import assign_perm
-from forecast.test.factories import (
-    FinancialCodeFactory,
-)
-from forecast.test.test_utils import create_budget
-from forecast.views.edit_forecast import (
-    AddRowView,
-    ChooseCostCentreView,
-    EditForecastFigureView,
-    EditForecastView,
-)
-from forecast.views.view_forecast.expenditure_details import (
-    CostCentreExpenditureDetailsView,
-    DITExpenditureDetailsView,
-    DirectorateExpenditureDetailsView,
-    GroupExpenditureDetailsView,
-)
-from forecast.views.view_forecast.forecast_summary import (
-    CostCentreView,
-    DITView,
-    DirectorateView,
-    GroupView,
-)
-from forecast.views.view_forecast.programme_details import (
-    DITProgrammeDetailsView,
-    DirectorateProgrammeDetailsView,
-    GroupProgrammeDetailsView,
 )
 
 from end_of_month.end_of_month_actions import end_of_month_archive
 from end_of_month.models import (
     EndOfMonthStatus,
     forecast_budget_view_model,
-    PreviousAprForecast
 )
 
 
@@ -155,10 +108,10 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
             archived_period__financial_period_code=1
         )
         count = ForecastMonthlyFigure.objects.all().count()
-        self.assertEqual(count, 12)
+        self.assertEqual(count, 15)
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
-        self.assertEqual(count, 24)
+        self.assertEqual(count, 30)
 
     def test_end_of_month_may(self):
         self.test_end_of_month_apr()
@@ -167,7 +120,7 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         )
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
-        self.assertEqual(count, 35)
+        self.assertEqual(count, 44)
 
     def test_end_of_month_jun(self):
         self.test_end_of_month_may()
@@ -176,7 +129,7 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         )
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
-        self.assertEqual(count, 45)
+        self.assertEqual(count, 57)
 
     def test_end_of_month_jul(self):
         self.test_end_of_month_jun()
@@ -185,7 +138,7 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         )
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
-        self.assertEqual(count, 54)
+        self.assertEqual(count, 69)
 
     def test_end_of_month_aug(self):
         self.test_end_of_month_jul()
@@ -194,7 +147,8 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         )
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
-        self.assertEqual(count, 62)
+        self.assertEqual(count, 80)
+
 
     def test_end_of_month_sep(self):
         self.test_end_of_month_aug()
@@ -203,7 +157,8 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         )
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
-        self.assertEqual(count, 69)
+        self.assertEqual(count, 90)
+
 
     def test_end_of_month_oct(self):
         self.test_end_of_month_sep()
@@ -212,7 +167,7 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         )
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
-        self.assertEqual(count, 75)
+        self.assertEqual(count, 99)
 
     def test_end_of_month_nov(self):
         self.test_end_of_month_oct()
@@ -221,7 +176,7 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         )
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
-        self.assertEqual(count, 80)
+        self.assertEqual(count, 107)
 
     def test_end_of_month_dec(self):
         self.test_end_of_month_nov()
@@ -230,7 +185,7 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         )
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
-        self.assertEqual(count, 84)
+        self.assertEqual(count, 114)
 
     def test_end_of_month_jan(self):
         self.test_end_of_month_dec()
@@ -239,7 +194,7 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         )
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
-        self.assertEqual(count, 87)
+        self.assertEqual(count, 120)
 
     def test_end_of_month_feb(self):
         self.test_end_of_month_jan()
@@ -248,7 +203,7 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         )
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
-        self.assertEqual(count, 89)
+        self.assertEqual(count, 125)
 
     def test_end_of_month_mar(self):
         self.test_end_of_month_feb()
@@ -257,7 +212,7 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         )
         end_of_month_archive(end_of_month_info)
         count = ForecastMonthlyFigure.objects.all().count()
-        self.assertEqual(count, 90)
+        self.assertEqual(count, 129)
 
 
 class ReadArchivedTest(TestCase, RequestFactoryBase):
