@@ -59,7 +59,7 @@ def end_of_month_archive(end_of_month_info):
 
     # Archive the budget. Use the same logic used for Forecast.
     budget_periods = BudgetMonthlyFigure.objects.filter(
-        financial_period__financial_period_code__gt=period_id,
+        financial_period__financial_period_code__gte=period_id,
         archived_status__isnull=True,
     )
     budget_periods.update(archived_status=end_of_month_info)

@@ -24,6 +24,7 @@ from costcentre.test.factories import (
 )
 
 from forecast.models import (
+    BudgetMonthlyFigure,
     FinancialCode,
     FinancialPeriod,
     ForecastMonthlyFigure,
@@ -31,8 +32,12 @@ from forecast.models import (
 
 
 class MonthlyFigureSetup:
-    def monthly_figure_update(self, period, amount):
-        month_figure = ForecastMonthlyFigure.objects.get(
+    def monthly_figure_update(self, period, amount, what='Forecast'):
+        if what == 'Forecast':
+            data_model = ForecastMonthlyFigure
+        else:
+            data_model = BudgetMonthlyFigure
+        month_figure = data_model.objects.get(
             financial_period=FinancialPeriod.objects.get(financial_period_code=period),
             financial_code=self.financial_code_obj,
             financial_year=self.year_obj,
@@ -41,8 +46,12 @@ class MonthlyFigureSetup:
         month_figure.amount += amount
         month_figure.save()
 
-    def monthly_figure_create(self, period, amount):
-        month_figure = ForecastMonthlyFigure.objects.create(
+    def monthly_figure_create(self, period, amount, what='Forecast'):
+        if what == 'Forecast':
+            data_model = ForecastMonthlyFigure
+        else:
+            data_model = BudgetMonthlyFigure
+        month_figure = data_model.objects.create(
             financial_period=FinancialPeriod.objects.get(financial_period_code=period),
             financial_code=self.financial_code_obj,
             financial_year=self.year_obj,
@@ -81,14 +90,23 @@ class MonthlyFigureSetup:
             project_code=project_obj,
         )
         self.financial_code_obj.save
+
+
+    def setup_forecast(self):
         for period in range(1, 16):
             self.monthly_figure_create(period, period * 100000)
 
 
-class EndOfMonthTest(TestCase, RequestFactoryBase):
+    def setup_budget(self):
+        for period in range(1, 16):
+            self.monthly_figure_create(period, period * 100000, 'Budget')
+
+
+class EndOfMonthForecastTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
-        self.setup = MonthlyFigureSetup()
+        self.init_data = MonthlyFigureSetup()
+        self.init_data.setup_forecast()
 
     # The following tests test_end_of_month_xxx checkes that only forecast is saved,
     # not actuals. This is tested by counting the records saved in the period tested.
@@ -202,12 +220,13 @@ class EndOfMonthTest(TestCase, RequestFactoryBase):
         self.assertEqual(count, 129)
 
 
-class ReadArchivedTest(TestCase, RequestFactoryBase):
+class ReadArchivedForecastTest(TestCase, RequestFactoryBase):
     archived_figure = []
 
     def setUp(self):
         RequestFactoryBase.__init__(self)
-        self.setup = MonthlyFigureSetup()
+        self.init_data = MonthlyFigureSetup()
+        self.init_data.setup_forecast()
         for period in range(0, 16):
             self.archived_figure.append(0)
 
@@ -245,7 +264,7 @@ class ReadArchivedTest(TestCase, RequestFactoryBase):
         archived_total = self.get_period_total(tested_period)
         self.assertEqual(total_before, archived_total)
         change_amount = tested_period * 10000
-        self.setup.monthly_figure_update(tested_period + 1, change_amount)
+        self.init_data.monthly_figure_update(tested_period + 1, change_amount)
         current_total = self.get_current_total()
         self.archived_figure[tested_period] = archived_total
         self.assertNotEqual(current_total, archived_total)
@@ -315,3 +334,124 @@ class ReadArchivedTest(TestCase, RequestFactoryBase):
         tested_period = 12
         self.test_read_archived_figure_feb()
         self.set_archive_period(tested_period)
+
+
+class EndOfMonthBudgetTest(TestCase, RequestFactoryBase):
+    def setUp(self):
+        RequestFactoryBase.__init__(self)
+        self.init_data = MonthlyFigureSetup()
+        self.init_data.setup_budget()
+
+    # The following tests test_end_of_month_xxx checkes that only forecast is saved,
+    # not actuals. This is tested by counting the records saved in the period tested.
+    def test_end_of_month_apr(self):
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=1
+        )
+        count = BudgetMonthlyFigure.objects.all().count()
+        self.assertEqual(count, 15)
+        end_of_month_archive(end_of_month_info)
+        count = BudgetMonthlyFigure.objects.all().count()
+        self.assertEqual(count, 30)
+
+    def test_end_of_month_may(self):
+        self.test_end_of_month_apr()
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=2
+        )
+        end_of_month_archive(end_of_month_info)
+        count = BudgetMonthlyFigure.objects.all().count()
+        self.assertEqual(count, 44)
+
+    def test_end_of_month_jun(self):
+        self.test_end_of_month_may()
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=3
+        )
+        end_of_month_archive(end_of_month_info)
+        count = BudgetMonthlyFigure.objects.all().count()
+        self.assertEqual(count, 57)
+
+    def test_end_of_month_jul(self):
+        self.test_end_of_month_jun()
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=4
+        )
+        end_of_month_archive(end_of_month_info)
+        count = BudgetMonthlyFigure.objects.all().count()
+        self.assertEqual(count, 69)
+
+    def test_end_of_month_aug(self):
+        self.test_end_of_month_jul()
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=5
+        )
+        end_of_month_archive(end_of_month_info)
+        count = BudgetMonthlyFigure.objects.all().count()
+        self.assertEqual(count, 80)
+
+    def test_end_of_month_sep(self):
+        self.test_end_of_month_aug()
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=6
+        )
+        end_of_month_archive(end_of_month_info)
+        count = BudgetMonthlyFigure.objects.all().count()
+        self.assertEqual(count, 90)
+
+    def test_end_of_month_oct(self):
+        self.test_end_of_month_sep()
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=7
+        )
+        end_of_month_archive(end_of_month_info)
+        count = BudgetMonthlyFigure.objects.all().count()
+        self.assertEqual(count, 99)
+
+    def test_end_of_month_nov(self):
+        self.test_end_of_month_oct()
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=8
+        )
+        end_of_month_archive(end_of_month_info)
+        count = BudgetMonthlyFigure.objects.all().count()
+        self.assertEqual(count, 107)
+
+    def test_end_of_month_dec(self):
+        self.test_end_of_month_nov()
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=9
+        )
+        end_of_month_archive(end_of_month_info)
+        count = BudgetMonthlyFigure.objects.all().count()
+        self.assertEqual(count, 114)
+
+    def test_end_of_month_jan(self):
+        self.test_end_of_month_dec()
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=10
+        )
+        end_of_month_archive(end_of_month_info)
+        count = BudgetMonthlyFigure.objects.all().count()
+        self.assertEqual(count, 120)
+
+    def test_end_of_month_feb(self):
+        self.test_end_of_month_jan()
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=11
+        )
+        end_of_month_archive(end_of_month_info)
+        count = BudgetMonthlyFigure.objects.all().count()
+        self.assertEqual(count, 125)
+
+    def test_end_of_month_mar(self):
+        self.test_end_of_month_feb()
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=12
+        )
+        end_of_month_archive(end_of_month_info)
+        count = BudgetMonthlyFigure.objects.all().count()
+        self.assertEqual(count, 129)
+
+
+
