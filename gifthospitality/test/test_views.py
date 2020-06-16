@@ -43,9 +43,9 @@ class ViewGiftandHospitalityRegisterTest(TestCase, RequestFactoryBase):
 
         assert len(gifts_hospitality_links) == 1
 
-    def test_user_cannot_see_g_h_tab(self):
+    def test_user_can_see_g_h_tab(self):
         """
-        Test basic user cannot view the Gifts and Hospitality tab on the homepage
+        Test basic user can view the Gifts and Hospitality tab on the homepage
         """
 
         view_gifts_hospitality_tab = reverse(
@@ -61,4 +61,4 @@ class ViewGiftandHospitalityRegisterTest(TestCase, RequestFactoryBase):
 
         gifts_hospitality_links = soup.find_all("a", class_="hospitality")
 
-        assert len(gifts_hospitality_links) == 0
+        assert len(gifts_hospitality_links) == 1
