@@ -1,5 +1,9 @@
 from core.exportutils import get_fk_value
 
+"""
+Commented code below may be required at a later date subject to client's request
+"""
+
 
 def _export_gh_iterator(queryset):
     yield [

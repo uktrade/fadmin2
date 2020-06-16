@@ -71,6 +71,9 @@ GH_GRADE_KEY = {
 
 import_grade_class = ImportInfo(GH_GRADE_KEY)
 
+"""
+Commented code below may be required at a later date subject to client's request
+"""
 GH_KEY = {
     IMPORT_CSV_MODEL_KEY: GiftAndHospitality,
     IMPORT_CSV_FIELDLIST_KEY: {
