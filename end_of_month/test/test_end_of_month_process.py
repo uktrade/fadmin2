@@ -307,7 +307,7 @@ class ReadArchivedForecastTest(TestCase, RequestFactoryBase):
     def get_current_total(self):
         return self.get_period_total(0)
 
-    def set_archive_period(self, tested_period):
+    def check_archive_period(self, tested_period):
         total_before = self.get_current_total()
         end_of_month_info = EndOfMonthStatus.objects.get(
             archived_period__financial_period_code=tested_period
@@ -331,62 +331,62 @@ class ReadArchivedForecastTest(TestCase, RequestFactoryBase):
     # changing the current figures.
     def test_read_archived_figure_apr(self):
         tested_period = 1
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_may(self):
         tested_period = 2
         self.test_read_archived_figure_apr()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_jun(self):
         tested_period = 3
         self.test_read_archived_figure_may()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_jul(self):
         tested_period = 4
         self.test_read_archived_figure_jun()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_aug(self):
         tested_period = 5
         self.test_read_archived_figure_jul()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_sep(self):
         tested_period = 6
         self.test_read_archived_figure_aug()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_oct(self):
         tested_period = 7
         self.test_read_archived_figure_sep()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_nov(self):
         tested_period = 8
         self.test_read_archived_figure_oct()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_dec(self):
         tested_period = 9
         self.test_read_archived_figure_nov()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_jan(self):
         tested_period = 10
         self.test_read_archived_figure_dec()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_feb(self):
         tested_period = 11
         self.test_read_archived_figure_jan()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_mar(self):
         tested_period = 12
         self.test_read_archived_figure_feb()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
 
 class EndOfMonthBudgetTest(TestCase, RequestFactoryBase):
@@ -551,7 +551,7 @@ class ReadArchivedBudgetTest(TestCase, RequestFactoryBase):
     def get_current_total(self):
         return self.get_period_total(0)
 
-    def set_archive_period(self, tested_period):
+    def check_archive_period(self, tested_period):
         total_before = self.get_current_total()
         end_of_month_info = EndOfMonthStatus.objects.get(
             archived_period__financial_period_code=tested_period
@@ -565,8 +565,17 @@ class ReadArchivedBudgetTest(TestCase, RequestFactoryBase):
         current_total = self.get_current_total()
         self.archived_figure[tested_period] = archived_total
         self.assertNotEqual(current_total, archived_total)
+        self.assertNotEqual(current_total, archived_total)
         self.assertEqual(current_total, (archived_total + change_amount))
+        # Check the full total. It is saved in a different table, for convenience
+
         for period in range(1, tested_period + 1):
+            monthly_budget = MonthlyTotalBudget.objects.get(
+                archived_period=period)
+            self.assertEqual(
+                self.archived_figure[period], monthly_budget.amount
+            )
+
             self.assertEqual(
                 self.archived_figure[period], self.get_period_total(period)
             )
@@ -575,59 +584,59 @@ class ReadArchivedBudgetTest(TestCase, RequestFactoryBase):
     # changing the current figures.
     def test_read_archived_figure_apr(self):
         tested_period = 1
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_may(self):
         tested_period = 2
         self.test_read_archived_figure_apr()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_jun(self):
         tested_period = 3
         self.test_read_archived_figure_may()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_jul(self):
         tested_period = 4
         self.test_read_archived_figure_jun()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_aug(self):
         tested_period = 5
         self.test_read_archived_figure_jul()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_sep(self):
         tested_period = 6
         self.test_read_archived_figure_aug()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_oct(self):
         tested_period = 7
         self.test_read_archived_figure_sep()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_nov(self):
         tested_period = 8
         self.test_read_archived_figure_oct()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_dec(self):
         tested_period = 9
         self.test_read_archived_figure_nov()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_jan(self):
         tested_period = 10
         self.test_read_archived_figure_dec()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_feb(self):
         tested_period = 11
         self.test_read_archived_figure_jan()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
 
     def test_read_archived_figure_mar(self):
         tested_period = 12
         self.test_read_archived_figure_feb()
-        self.set_archive_period(tested_period)
+        self.check_archive_period(tested_period)
