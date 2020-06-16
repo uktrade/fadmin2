@@ -32,8 +32,8 @@ from forecast.models import (
 
 
 class MonthlyFigureSetup:
-    def monthly_figure_update(self, period, amount, what='Forecast'):
-        if what == 'Forecast':
+    def monthly_figure_update(self, period, amount, what="Forecast"):
+        if what == "Forecast":
             data_model = ForecastMonthlyFigure
         else:
             data_model = BudgetMonthlyFigure
@@ -46,8 +46,8 @@ class MonthlyFigureSetup:
         month_figure.amount += amount
         month_figure.save()
 
-    def monthly_figure_create(self, period, amount, what='Forecast'):
-        if what == 'Forecast':
+    def monthly_figure_create(self, period, amount, what="Forecast"):
+        if what == "Forecast":
             data_model = ForecastMonthlyFigure
         else:
             data_model = BudgetMonthlyFigure
@@ -97,7 +97,61 @@ class MonthlyFigureSetup:
 
     def setup_budget(self):
         for period in range(1, 16):
-            self.monthly_figure_create(period, period * 100000, 'Budget')
+            self.monthly_figure_create(period, period * 100000, "Budget")
+
+
+class SetFullYearArchive:
+    def set_period_totals(self, period):
+        data_model = forecast_budget_view_model[period]
+        tot_q = data_model.objects.all()
+        self.archived_forecast[period] = (
+            tot_q[0].apr
+            + tot_q[0].apr
+            + tot_q[0].may
+            + tot_q[0].jun
+            + tot_q[0].jul
+            + tot_q[0].aug
+            + tot_q[0].sep
+            + tot_q[0].oct
+            + tot_q[0].nov
+            + tot_q[0].dec
+            + tot_q[0].jan
+            + tot_q[0].feb
+            + tot_q[0].mar
+            + tot_q[0].adj1
+            + tot_q[0].adj2
+            + tot_q[0].adj3
+        )
+
+        self.archived_budget[period] = tot_q[0].budget
+
+    def set_archive_period(self):
+        self.get_current_total()
+
+        for tested_period in range(1, 13):
+            end_of_month_info = EndOfMonthStatus.objects.get(
+                archived_period__financial_period_code=tested_period
+            )
+            end_of_month_archive(end_of_month_info)
+            # save the full total
+            self.set_period_total(tested_period)
+            change_amount = tested_period * 10000
+            self.init_data.monthly_figure_update(
+                tested_period + 1, change_amount, "Forecast"
+            )
+            change_amount = tested_period * 1000
+            self.init_data.monthly_figure_update(
+                tested_period + 1, change_amount, "Budget"
+            )
+
+    def __init__(self):
+        self.init_data = MonthlyFigureSetup()
+        self.init_data.setup_forecast()
+        self.init_data.setup_budget()
+        for period in range(0, 16):
+            self.archived_forecast.append(0)
+            self.archived_budget.append(0)
+        self.set_archive_period()
 
 
 class EndOfMonthForecastTest(TestCase, RequestFactoryBase):
@@ -480,7 +534,7 @@ class ReadArchivedBudgetTest(TestCase, RequestFactoryBase):
         archived_total = self.get_period_total(tested_period)
         self.assertEqual(total_before, archived_total)
         change_amount = tested_period * 10000
-        self.init_data.monthly_figure_update(tested_period + 1, change_amount, 'budget')
+        self.init_data.monthly_figure_update(tested_period + 1, change_amount, "budget")
         current_total = self.get_current_total()
         self.archived_figure[tested_period] = archived_total
         self.assertNotEqual(current_total, archived_total)
