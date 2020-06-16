@@ -55,29 +55,29 @@ class MonthlyFigureSetup:
         month_figure.save()
 
     def __init__(self):
-        group_name_test = "Test Group"
-        self.group_code_test = "TestGG"
-        directorate_name_test = "Test Directorate"
-        self.directorate_code_test = "TestDD"
-        self.cost_centre_code_test = 109076
+        group_name = "Test Group"
+        self.group_code = "TestGG"
+        directorate_name = "Test Directorate"
+        self.directorate_code = "TestDD"
+        self.cost_centre_code = 109076
 
         group_obj = DepartmentalGroupFactory(
-            group_code=self.group_code_test, group_name=group_name_test,
+            group_code=self.group_code, group_name=group_name,
         )
         directorate_obj = DirectorateFactory(
-            directorate_code=self.directorate_code_test,
-            directorate_name=directorate_name_test,
+            directorate_code=self.directorate_code,
+            directorate_name=directorate_name,
             group=group_obj,
         )
         cost_centre_obj = CostCentreFactory(
             directorate=directorate_obj,
-            cost_centre_code=self.cost_centre_code_test,
+            cost_centre_code=self.cost_centre_code,
         )
         current_year = get_current_financial_year()
         programme_obj = ProgrammeCodeFactory()
         nac_obj = NaturalCodeFactory()
         project_obj = ProjectCodeFactory()
-        self.project_code_test = project_obj.project_code
+        self.project_code = project_obj.project_code
         self.year_obj = FinancialYear.objects.get(financial_year=current_year)
 
         self.financial_code_obj = FinancialCode.objects.create(
@@ -97,13 +97,15 @@ class MonthlyFigureSetup:
             self.monthly_figure_create(period, period * 100000, "Budget")
 
 
-class SetFullYearArchive:
-    def set_period_totals(self, period):
+class SetFullYearArchive(MonthlyFigureSetup):
+    archived_forecast = []
+    archived_budget = []
+
+    def set_period_total(self, period):
         data_model = forecast_budget_view_model[period]
         tot_q = data_model.objects.all()
         self.archived_forecast[period] = (
             tot_q[0].apr
-            + tot_q[0].apr
             + tot_q[0].may
             + tot_q[0].jun
             + tot_q[0].jul
@@ -119,11 +121,9 @@ class SetFullYearArchive:
             + tot_q[0].adj2
             + tot_q[0].adj3
         )
-
         self.archived_budget[period] = tot_q[0].budget
 
     def set_archive_period(self):
-        self.get_current_total()
 
         for tested_period in range(1, 13):
             end_of_month_info = EndOfMonthStatus.objects.get(
@@ -133,18 +133,21 @@ class SetFullYearArchive:
             # save the full total
             self.set_period_total(tested_period)
             change_amount = tested_period * 10000
-            self.init_data.monthly_figure_update(
+            self.monthly_figure_update(
                 tested_period + 1, change_amount, "Forecast"
             )
             change_amount = tested_period * 1000
-            self.init_data.monthly_figure_update(
+            self.monthly_figure_update(
                 tested_period + 1, change_amount, "Budget"
             )
+        self.set_period_total(0)
+
+
 
     def __init__(self):
-        self.init_data = MonthlyFigureSetup()
-        self.init_data.setup_forecast()
-        self.init_data.setup_budget()
+        super().__init__()
+        self.setup_forecast()
+        self.setup_budget()
         for period in range(0, 16):
             self.archived_forecast.append(0)
             self.archived_budget.append(0)

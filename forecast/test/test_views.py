@@ -781,6 +781,7 @@ class ViewForecastHierarchyTest(TestCase, RequestFactoryBase):
 
         self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
                                    self.cost_centre.cost_centre_name, 0)
+
         # Check that the second table displays the programme and the correct totals
         # The programme table in the cost centre does not show the 'View'
         # so the programme is displayed in a different column
