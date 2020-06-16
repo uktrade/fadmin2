@@ -44,7 +44,10 @@ from forecast.permission_shortcuts import assign_perm
 from forecast.test.factories import (
     FinancialCodeFactory,
 )
-from forecast.test.test_utils import create_budget
+from forecast.test.test_utils import (
+    create_budget,
+    format_forecast_figure,
+)
 from forecast.views.edit_forecast import (
     AddRowView,
     ChooseCostCentreView,
@@ -77,10 +80,6 @@ HIERARCHY_TABLE_INDEX = 0
 PROGRAMME_TABLE_INDEX = 1
 EXPENDITURE_TABLE_INDEX = 2
 PROJECT_TABLE_INDEX = 3
-
-
-def format_forecast_figure(value):
-    return f'{round(value):,d}'
 
 
 class ViewPermissionsTest(TestCase, RequestFactoryBase):
