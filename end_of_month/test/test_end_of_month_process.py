@@ -91,11 +91,9 @@ class MonthlyFigureSetup:
         )
         self.financial_code_obj.save
 
-
     def setup_forecast(self):
         for period in range(1, 16):
             self.monthly_figure_create(period, period * 100000)
-
 
     def setup_budget(self):
         for period in range(1, 16):
@@ -552,5 +550,3 @@ class ReadArchivedBudgetTest(TestCase, RequestFactoryBase):
         tested_period = 12
         self.test_read_archived_figure_feb()
         self.set_archive_period(tested_period)
-
-
