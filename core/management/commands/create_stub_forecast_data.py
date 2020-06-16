@@ -7,6 +7,7 @@ from core.models import FinancialYear
 from costcentre.models import CostCentre
 
 from forecast.models import (
+    BudgetMonthlyFigure,
     FinancialCode,
     FinancialPeriod,
     ForecastMonthlyFigure,
@@ -15,6 +16,7 @@ from forecast.models import (
 
 def monthly_figures_clear():
     ForecastMonthlyFigure.objects.all().delete()
+    BudgetMonthlyFigure.objects.all().delete()
     FinancialCode.objects.all().delete()
 
 
@@ -29,6 +31,7 @@ def monthly_figures_create():
         period_long_name__icontains="adj"
     )
     monthly_amount = 0
+    budget_amount = 1
     for project_code in project_list:
         for programme_fk in programme_list:
             monthly_amount += 10
@@ -48,8 +51,14 @@ def monthly_figures_create():
                         financial_code=financial_code,
                         amount=monthly_amount,
                     )
-
-                    monthly_amount += 1
+                    monthly_amount += 10
+                    BudgetMonthlyFigure.objects.create(
+                        financial_year=current_financial_year,
+                        financial_period=period,
+                        financial_code=financial_code,
+                        amount=budget_amount,
+                    )
+                    budget_amount += 1
 
         for i in range(1, 3):
             actual = FinancialPeriod.objects.get(financial_period_code=i)
