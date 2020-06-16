@@ -1,9 +1,5 @@
 from core.exportutils import get_fk_value
 
-"""
-Commented code below may be required at a later date subject to client's request
-"""
-
 
 def _export_gh_iterator(queryset):
     yield [
@@ -23,7 +19,7 @@ def _export_gh_iterator(queryset):
         "Offer",
         "Company Representative Offered To/From",
         "Company Offered To/From",
-        # "Unspecified Company",
+        # NB: Field - "Unspecified Company", may be required at a later date
         "Action Taken",
         "Date Entered",
         "Entered By",
