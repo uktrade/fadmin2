@@ -454,4 +454,103 @@ class EndOfMonthBudgetTest(TestCase, RequestFactoryBase):
         self.assertEqual(count, 129)
 
 
+class ReadArchivedBudgetTest(TestCase, RequestFactoryBase):
+    archived_figure = []
+
+    def setUp(self):
+        RequestFactoryBase.__init__(self)
+        self.init_data = MonthlyFigureSetup()
+        self.init_data.setup_budget()
+        for period in range(0, 16):
+            self.archived_figure.append(0)
+
+    def get_period_total(self, period):
+        data_model = forecast_budget_view_model[period]
+        tot_q = data_model.objects.all()
+        return tot_q[0].budget
+
+    def get_current_total(self):
+        return self.get_period_total(0)
+
+    def set_archive_period(self, tested_period):
+        total_before = self.get_current_total()
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=tested_period
+        )
+        end_of_month_archive(end_of_month_info)
+        # run a query giving the full total
+        archived_total = self.get_period_total(tested_period)
+        self.assertEqual(total_before, archived_total)
+        change_amount = tested_period * 10000
+        self.init_data.monthly_figure_update(tested_period + 1, change_amount, 'budget')
+        current_total = self.get_current_total()
+        self.archived_figure[tested_period] = archived_total
+        self.assertNotEqual(current_total, archived_total)
+        self.assertEqual(current_total, (archived_total + change_amount))
+        for period in range(1, tested_period + 1):
+            self.assertEqual(
+                self.archived_figure[period], self.get_period_total(period)
+            )
+
+    # The following tests check that the archived figures are not changed by
+    # changing the current figures.
+    def test_read_archived_figure_apr(self):
+        tested_period = 1
+        self.set_archive_period(tested_period)
+
+    def test_read_archived_figure_may(self):
+        tested_period = 2
+        self.test_read_archived_figure_apr()
+        self.set_archive_period(tested_period)
+
+    def test_read_archived_figure_jun(self):
+        tested_period = 3
+        self.test_read_archived_figure_may()
+        self.set_archive_period(tested_period)
+
+    def test_read_archived_figure_jul(self):
+        tested_period = 4
+        self.test_read_archived_figure_jun()
+        self.set_archive_period(tested_period)
+
+    def test_read_archived_figure_aug(self):
+        tested_period = 5
+        self.test_read_archived_figure_jul()
+        self.set_archive_period(tested_period)
+
+    def test_read_archived_figure_sep(self):
+        tested_period = 6
+        self.test_read_archived_figure_aug()
+        self.set_archive_period(tested_period)
+
+    def test_read_archived_figure_oct(self):
+        tested_period = 7
+        self.test_read_archived_figure_sep()
+        self.set_archive_period(tested_period)
+
+    def test_read_archived_figure_nov(self):
+        tested_period = 8
+        self.test_read_archived_figure_oct()
+        self.set_archive_period(tested_period)
+
+    def test_read_archived_figure_dec(self):
+        tested_period = 9
+        self.test_read_archived_figure_nov()
+        self.set_archive_period(tested_period)
+
+    def test_read_archived_figure_jan(self):
+        tested_period = 10
+        self.test_read_archived_figure_dec()
+        self.set_archive_period(tested_period)
+
+    def test_read_archived_figure_feb(self):
+        tested_period = 11
+        self.test_read_archived_figure_jan()
+        self.set_archive_period(tested_period)
+
+    def test_read_archived_figure_mar(self):
+        tested_period = 12
+        self.test_read_archived_figure_feb()
+        self.set_archive_period(tested_period)
+
 
