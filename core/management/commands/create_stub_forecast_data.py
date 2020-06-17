@@ -1,5 +1,10 @@
 from django.core.management.base import BaseCommand
 
+from end_of_month.models import (
+    EndOfMonthStatus,
+    MonthlyTotalBudget,
+)
+
 from chartofaccountDIT.models import NaturalCode, ProgrammeCode, ProjectCode
 
 from core.models import FinancialYear
@@ -17,7 +22,17 @@ from forecast.models import (
 def monthly_figures_clear():
     ForecastMonthlyFigure.objects.all().delete()
     BudgetMonthlyFigure.objects.all().delete()
+    MonthlyTotalBudget.objects.all().delete()
     FinancialCode.objects.all().delete()
+    actual_q = FinancialPeriod.objects.get(actual_loaded=True)
+    for actual in actual_q:
+        actual.actual_loaded = False
+        actual.save()
+
+    month_status_q = EndOfMonthStatus.objects.get(archived=True)
+    for month_status in month_status_q:
+        month_status.archived = False
+        month_status.save()
 
 
 def monthly_figures_create():

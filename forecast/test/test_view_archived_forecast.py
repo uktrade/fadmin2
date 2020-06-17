@@ -168,6 +168,7 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, "govuk-table")
         soup = BeautifulSoup(resp.content, features="html.parser")
+        print(soup.prettify())
         # self.assertContains(resp.content, f'<option value="{test_period}" selected>')
 
         # Check that there are 4 tables on the page

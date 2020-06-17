@@ -1,12 +1,24 @@
 from django.db import connection
 from django.utils import timezone
 
+from end_of_month.models import (EndOfMonthStatus,)
+
 from core.myutils import get_current_financial_year
 
 from forecast.models import (
     BudgetMonthlyFigure,
     ForecastMonthlyFigure,
 )
+
+
+class ArchiveMonthInvalidPeriodError(Exception):
+    pass
+
+class ArchiveMonthAlreadyArchivedError(Exception):
+    pass
+
+class ArchiveMonthArchivedPastError(Exception):
+    pass
 
 
 def insert_query(table_name, archived_status_id):
@@ -33,9 +45,36 @@ def insert_total_budget_query(archived_status_id, archived_period_id):
     )
 
 
+def get_end_of_month(period_code):
+    if period_code > 15 or period_code < 1:
+        raise ArchiveMonthInvalidPeriodError(
+            f'Invalid period {period_code}: Valid Period is between 1 and 15.'
+        )
+
+    end_of_month_info = EndOfMonthStatus.objects.get(
+        archived_period__financial_period_code=period_code
+    )
+    if end_of_month_info.archived:
+        raise ArchiveMonthAlreadyArchivedError(
+            f'"The selected period {period_code} has already been archived."'
+        )
+
+    highest_archived = EndOfMonthStatus.objects.filter(
+        archived=True, archived_period__financial_period_code=period_code
+    )
+
+    if highest_archived.count():
+        raise ArchiveMonthArchivedPastError(
+            "A later period has already been archived."
+        )
+
+    return end_of_month_info
+
 # TODO add transaction
-def end_of_month_archive(end_of_month_info):
-    period_id = end_of_month_info.archived_period.financial_period_code
+
+def end_of_month_archive(period_id):
+    end_of_month_info = get_end_of_month(period_id)
+
     current_year = get_current_financial_year()
 
     # Add archive period to all the active forecast.

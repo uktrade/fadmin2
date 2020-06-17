@@ -126,10 +126,7 @@ class SetFullYearArchive(MonthlyFigureSetup):
     def set_archive_period(self):
 
         for tested_period in range(1, 13):
-            end_of_month_info = EndOfMonthStatus.objects.get(
-                archived_period__financial_period_code=tested_period
-            )
-            end_of_month_archive(end_of_month_info)
+            end_of_month_archive(tested_period)
             # save the full total
             self.set_period_total(tested_period)
             change_amount = tested_period * 10000
