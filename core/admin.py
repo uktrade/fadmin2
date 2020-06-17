@@ -5,7 +5,6 @@ from custom_usermodel.admin import UserAdmin
 from django import forms
 from django.contrib import admin, messages
 from django.contrib.admin.models import (
-    DELETION,
     LogEntry,
 )
 from django.contrib.auth import get_user_model
@@ -15,8 +14,7 @@ from django.core.files.uploadhandler import (
     TemporaryFileUploadHandler,
 )
 from django.shortcuts import redirect, render
-from django.urls import path, reverse
-from django.utils.html import escape
+from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 
 
