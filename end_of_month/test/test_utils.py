@@ -1,6 +1,5 @@
 from end_of_month.end_of_month_actions import end_of_month_archive
 from end_of_month.models import (
-    EndOfMonthStatus,
     forecast_budget_view_model,
 )
 
@@ -25,6 +24,7 @@ from forecast.models import (
     FinancialPeriod,
     ForecastMonthlyFigure,
 )
+
 
 class MonthlyFigureSetup:
     def monthly_figure_update(self, period, amount, what="Forecast"):
@@ -139,8 +139,6 @@ class SetFullYearArchive(MonthlyFigureSetup):
             )
         self.set_period_total(0)
 
-
-
     def __init__(self):
         super().__init__()
         self.setup_forecast()
@@ -149,5 +147,3 @@ class SetFullYearArchive(MonthlyFigureSetup):
             self.archived_forecast.append(0)
             self.archived_budget.append(0)
         self.set_archive_period()
-
-

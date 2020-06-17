@@ -17,6 +17,7 @@ from forecast.models import (
     ForecastMonthlyFigure,
 )
 
+
 class EndOfMonthForecastTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)

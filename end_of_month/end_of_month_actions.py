@@ -14,8 +14,10 @@ from forecast.models import (
 class ArchiveMonthInvalidPeriodError(Exception):
     pass
 
+
 class ArchiveMonthAlreadyArchivedError(Exception):
     pass
+
 
 class ArchiveMonthArchivedPastError(Exception):
     pass

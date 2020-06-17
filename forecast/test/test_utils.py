@@ -42,5 +42,3 @@ def create_budget(financial_code_obj, year_obj):
 
 def format_forecast_figure(value):
     return f'{round(value):,d}'
-
-
