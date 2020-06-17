@@ -82,43 +82,47 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
 
         self.archive = SetFullYearArchive()
 
-    def check_programme_table(self, table, prog_index=1, period=0):
+    def check_programme_table(self, table, prog_index, period=0):
         programme_rows = table.find_all("tr")
         first_prog_cols = programme_rows[2].find_all("td")
 
-        assert first_prog_cols[prog_index + 2].get_text().strip() == \
-            format_forecast_figure(self.archive.archived_budget[period] / 100)
+        self.assertEqual( first_prog_cols[prog_index + 2].get_text().strip(),
+            format_forecast_figure(self.archive.archived_budget[period] / 100))
 
         last_programme_cols = programme_rows[-1].find_all("td")
         # Check the total for the year
-        assert last_programme_cols[TOTAL_COLUMN].get_text().strip() == \
-            format_forecast_figure(self.archive.archived_forecast[period]/ 100)
+        self.assertEqual( last_programme_cols[TOTAL_COLUMN].get_text().strip() ,
+            format_forecast_figure(self.archive.archived_forecast[period]/ 100))
 
     def check_expenditure_table(self, table, period):
         expenditure_rows = table.find_all("tr")
         first_expenditure_cols = expenditure_rows[2].find_all("td")
-        assert first_expenditure_cols[2].get_text().strip() == format_forecast_figure(
-            self.archive.archived_budget[period] / 100
-        )
+        self.assertEqual( first_expenditure_cols[2].get_text().strip(),
+                          format_forecast_figure(
+                              self.archive.archived_budget[period] / 100
+                            )
+                          )
 
         last_expenditure_cols = expenditure_rows[-1].find_all("td")
         # Check the total for the year
-        assert last_expenditure_cols[TOTAL_COLUMN].get_text().strip() == \
-            format_forecast_figure(self.archive.archived_forecast[period]/ 100)
+        self.assertEqual( last_expenditure_cols[TOTAL_COLUMN].get_text().strip(),
+            format_forecast_figure(self.archive.archived_forecast[period]/ 100))
 
     def check_project_table(self, table, period):
         project_rows = table.find_all("tr")
         first_project_cols = project_rows[2].find_all("td")
 
-        assert first_project_cols[1].get_text().strip() == self.archive.project_code
-        assert first_project_cols[3].get_text().strip() == format_forecast_figure(
+        self.assertEqual( first_project_cols[1].get_text().strip() ,
+                          self.archive.project_code)
+        self.assertEqual( first_project_cols[3].get_text().strip() ,
+                          format_forecast_figure(
             self.archive.archived_budget[period] / 100
-        )
+        ))
 
         last_project_cols = project_rows[-1].find_all("td")
         # Check the total for the year
-        assert last_project_cols[TOTAL_COLUMN].get_text().strip() == \
-            format_forecast_figure(self.archive.archived_forecast[period]/ 100)
+        self.assertEqual( last_project_cols[TOTAL_COLUMN].get_text().strip(),
+            format_forecast_figure(self.archive.archived_forecast[period]/ 100))
 
 
     def check_hierarchy_table(self, table, hierarchy_element, offset, period):
@@ -137,7 +141,6 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
             format_forecast_figure(self.archive.archived_forecast[period] / 100))
 
     def view_cost_centre_summary(self, test_period ):
-        test_period = 1
         resp = self.factory_get(
             reverse(
                 "forecast_cost_centre",
@@ -227,125 +230,148 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
     def test_view_cost_centre_summary_current(self):
         self.view_cost_centre_summary(0)
 
-    # def test_view_directorate_summary(self):
-    #     resp = self.factory_get(
-    #         reverse(
-    #             "forecast_directorate",
-    #             kwargs={
-    #                 'directorate_code': self.directorate.directorate_code,
-    #                 'period': 0,
-    #             },
-    #         ),
-    #         DirectorateView,
-    #         directorate_code=self.directorate.directorate_code,
-    #         period=0,
-    #     )
-    #
-    #     self.assertEqual(resp.status_code, 200)
-    #     self.assertContains(resp, "govuk-table")
-    #     soup = BeautifulSoup(resp.content, features="html.parser")
-    #
-    #     # Check that there are 4 tables on the page
-    #     tables = soup.find_all("table", class_="govuk-table")
-    #     assert len(tables) == 4
-    #
-    #     # Check that the first table displays the cost centre code
-    #
-    #     # Check that all the subtotal hierachy_rows exist
-    #     table_rows = soup.find_all("tr", class_="govuk-table__row")
-    #     assert len(table_rows) == 18
-    #
-    #     self.check_negative_value_formatted(soup)
-    #
-    #     self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
-    #                                self.cost_centre.cost_centre_name, 0)
-    #
-    #     # Check that the second table displays the programme and the correct totals
-    #     self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
-    #
-    #     # Check that the third table displays the expenditure and the correct totals
-    #     self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX])
-    #
-    #     # Check that the second table displays the project and the correct totals
-    #     self.check_project_table(tables[PROJECT_TABLE_INDEX])
-    #
-    # def test_view_group_summary(self):
-    #     response = self.factory_get(
-    #         reverse(
-    #             "forecast_group",
-    #             kwargs={
-    #                 'group_code': self.group.group_code,
-    #                 'period': 0,
-    #             },
-    #         ),
-    #         GroupView,
-    #         group_code=self.group.group_code,
-    #         period=0,
-    #     )
-    #
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertContains(response, "govuk-table")
-    #     soup = BeautifulSoup(response.content, features="html.parser")
-    #
-    #     # Check that there are 4 tables on the page
-    #     tables = soup.find_all("table", class_="govuk-table")
-    #     assert len(tables) == 4
-    #
-    #     # Check that the first table displays the cost centre code
-    #
-    #     # Check that all the subtotal hierachy_rows exist
-    #     table_rows = soup.find_all("tr", class_="govuk-table__row")
-    #     assert len(table_rows) == 18
-    #
-    #     self.check_negative_value_formatted(soup)
-    #
-    #     self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
-    #                                self.directorate.directorate_name, 0)
-    #     # Check that the second table displays the programme and the correct totals
-    #     self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
-    #
-    #     # Check that the third table displays the expenditure and the correct totals
-    #     self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX])
-    #
-    #     # Check that the second table displays the project and the correct totals
-    #     self.check_project_table(tables[PROJECT_TABLE_INDEX])
-    #
-    # def test_view_dit_summary(self):
-    #     response = self.factory_get(
-    #         reverse(
-    #             "forecast_dit",
-    #             kwargs={
-    #                 'period': 0,
-    #             },
-    #         ),
-    #         DITView,
-    #         period=0,
-    #     )
-    #
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertContains(response, "govuk-table")
-    #     soup = BeautifulSoup(response.content, features="html.parser")
-    #
-    #     # Check that there are 4 tables on the page
-    #     tables = soup.find_all("table", class_="govuk-table")
-    #     assert len(tables) == 4
-    #
-    #     # Check that the first table displays the cost centre code
-    #
-    #     # Check that all the subtotal hierarchy_rows exist
-    #     table_rows = soup.find_all("tr", class_="govuk-table__row")
-    #     assert len(table_rows) == 18
-    #
-    #     self.check_negative_value_formatted(soup)
-    #
-    #     self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
-    #                                self.group_name, 0)
-    #     # Check that the second table displays the programme and the correct totals
-    #     self.check_programme_table(tables[PROGRAMME_TABLE_INDEX])
-    #
-    #     # Check that the third table displays the expenditure and the correct totals
-    #     self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX])
-    #
-    #     # Check that the second table displays the project and the correct totals
-    #     self.check_project_table(tables[PROJECT_TABLE_INDEX])
+    def test_view_directorate_summary(self):
+        test_period = 1
+        resp = self.factory_get(
+            reverse(
+                "forecast_directorate",
+                kwargs={
+                    'directorate_code': self.archive.directorate_code,
+                    'period': test_period,
+                },
+            ),
+            DirectorateView,
+            directorate_code=self.archive.directorate_code,
+            period=test_period,
+        )
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "govuk-table")
+        soup = BeautifulSoup(resp.content, features="html.parser")
+
+        # Check that the month dropdown exists.
+        self.assertContains(resp, f'value="{test_period}"')
+
+        # Check that the selected period is in the view
+        select_period = soup.find(id='id_selected_period')
+
+        # Check that all the months are in the dropdown.
+        assert len(select_period) == 27
+
+        # Check that there are 4 tables on the page
+        tables = soup.find_all("table", class_="govuk-table")
+        assert len(tables) == 4
+
+        # Check that the first table displays the cost centre code
+
+        # Check that all the subtotal hierachy_rows exist
+        table_rows = soup.find_all("tr", class_="govuk-table__row")
+        assert len(table_rows) == 18
+
+        self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
+                                   self.archive.cost_centre_code,
+                                   0,
+                                   test_period)
+
+        # Check that the second table displays the programme and the correct totals
+        self.check_programme_table(tables[PROGRAMME_TABLE_INDEX], 1, test_period)
+
+        # Check that the third table displays the expenditure and the correct totals
+        self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX], test_period)
+
+        # Check that the second table displays the project and the correct totals
+        self.check_project_table(tables[PROJECT_TABLE_INDEX], test_period)
+
+    def test_view_group_summary(self):
+        test_period = 1
+        response = self.factory_get(
+            reverse(
+                "forecast_group",
+                kwargs={
+                    'group_code': self.archive.group_code,
+                    'period': test_period,
+                },
+            ),
+            GroupView,
+            group_code=self.archive.group_code,
+            period=test_period,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "govuk-table")
+        soup = BeautifulSoup(response.content, features="html.parser")
+
+        # Check that the month dropdown exists.
+        self.assertContains(response, f'value="{test_period}"')
+
+        # Check that the selected period is in the view
+        select_period = soup.find(id='id_selected_period')
+
+        # Check that all the months are in the dropdown.
+        assert len(select_period) == 27
+
+        # Check that there are 4 tables on the page
+        tables = soup.find_all("table", class_="govuk-table")
+        assert len(tables) == 4
+
+        # Check that all the subtotal hierachy_rows exist
+        table_rows = soup.find_all("tr", class_="govuk-table__row")
+        assert len(table_rows) == 18
+
+        self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
+                                   self.archive.directorate_code, 0, test_period)
+        # Check that the second table displays the programme and the correct totals
+        self.check_programme_table(tables[PROGRAMME_TABLE_INDEX], 1, test_period)
+
+        # Check that the third table displays the expenditure and the correct totals
+        self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX], test_period)
+
+        # Check that the second table displays the project and the correct totals
+        self.check_project_table(tables[PROJECT_TABLE_INDEX], test_period)
+
+    def test_view_dit_summary(self):
+        test_period = 1
+        response = self.factory_get(
+            reverse(
+                "forecast_dit",
+                kwargs={
+                    'period': test_period,
+                },
+            ),
+            DITView,
+            period=test_period,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "govuk-table")
+        soup = BeautifulSoup(response.content, features="html.parser")
+
+        # Check that there are 4 tables on the page
+        tables = soup.find_all("table", class_="govuk-table")
+        assert len(tables) == 4
+
+        # Check that all the subtotal hierarchy_rows exist
+        table_rows = soup.find_all("tr", class_="govuk-table__row")
+        assert len(table_rows) == 18
+
+        # Check that the month dropdown exists.
+        self.assertContains(response, f'value="{test_period}"')
+
+        # Check that the selected period is in the view
+        select_period = soup.find(id='id_selected_period')
+
+        # Check that all the months are in the dropdown.
+        assert len(select_period) == 27
+
+
+        self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
+                                   self.archive.group_code, 0, test_period)
+        # Check that the second table displays the programme and the correct totals
+        self.check_programme_table(tables[PROGRAMME_TABLE_INDEX], 1, test_period)
+
+        # Check that the third table displays the expenditure and the correct totals
+        self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX], test_period)
+
+        # Check that the second table displays the project and the correct totals
+        self.check_project_table(tables[PROJECT_TABLE_INDEX],  test_period)
 
