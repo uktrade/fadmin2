@@ -50,7 +50,6 @@ class LogEntryAdmin(admin.ModelAdmin):
         "action_time",
         "user",
         "content_type",
-        # "object_link",
         "action_flag_",
         "change_message",
     ]
@@ -67,25 +66,6 @@ class LogEntryAdmin(admin.ModelAdmin):
     def action_flag_(self, obj):
         flags = {1: "Addition", 2: "Changed", 3: "Deleted"}
         return flags[obj.action_flag]
-
-    def object_link(self, obj):
-        print("hello")
-        if obj.action_flag == DELETION:
-            link = escape(obj.object_repr)
-        else:
-            ct = obj.content_type
-            link = u'<a href="%s">%s</a>' % (
-                reverse(
-                    "admin:%s_%s_change" % (ct.app_label, ct.model),
-                    args=[obj.object_id],
-                ),
-                escape(obj.object_repr),
-            )
-        return link
-
-    object_link.allow_tags = True
-    object_link.admin_order_field = "object_repr"
-    object_link.short_description = u"object"
 
 
 admin.site.register(LogEntry, LogEntryAdmin)
