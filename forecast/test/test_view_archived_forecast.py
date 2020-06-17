@@ -1,54 +1,20 @@
-from datetime import datetime
-
 from bs4 import BeautifulSoup
 
-
-from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import (
     Group,
     Permission,
 )
-from django.core.exceptions import PermissionDenied
 from django.test import (
     TestCase,
 )
 from django.urls import reverse
 
 from end_of_month.test.test_utils import (
-    MonthlyFigureSetup,
     SetFullYearArchive,
 )
 
-from chartofaccountDIT.test.factories import (
-    Analysis1Factory,
-    Analysis2Factory,
-    ExpenditureCategoryFactory,
-    NaturalCodeFactory,
-    ProgrammeCodeFactory,
-    ProjectCodeFactory,
-)
-
-from core.models import FinancialYear
-from core.myutils import get_current_financial_year
 from core.test.test_base import RequestFactoryBase
 
-from costcentre.test.factories import (
-    CostCentreFactory,
-    DepartmentalGroupFactory,
-    DirectorateFactory,
-)
-
-from forecast.models import (
-    FinancialCode,
-    FinancialPeriod,
-    ForecastEditState,
-    ForecastMonthlyFigure,
-)
-from forecast.permission_shortcuts import assign_perm
-from forecast.test.factories import (
-    FinancialCodeFactory,
-)
 from forecast.test.test_utils import (
     create_budget,
     format_forecast_figure,
@@ -61,8 +27,6 @@ from forecast.views.view_forecast.forecast_summary import (
 )
 
 TOTAL_COLUMN = -5
-SPEND_TO_DATE_COLUMN = -2
-UNDERSPEND_COLUMN = -4
 
 HIERARCHY_TABLE_INDEX = 0
 PROGRAMME_TABLE_INDEX = 1
@@ -230,8 +194,7 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
     def test_view_cost_centre_summary_current(self):
         self.view_cost_centre_summary(0)
 
-    def test_view_directorate_summary(self):
-        test_period = 1
+    def view_directorate_summary(self, test_period):
         resp = self.factory_get(
             reverse(
                 "forecast_directorate",
@@ -282,8 +245,46 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
         # Check that the second table displays the project and the correct totals
         self.check_project_table(tables[PROJECT_TABLE_INDEX], test_period)
 
-    def test_view_group_summary(self):
-        test_period = 1
+    def test_view_directorate_summary_apr(self):
+        self.view_directorate_summary(1)
+
+    def test_view_directorate_summary_may(self):
+        self.view_directorate_summary(2)
+
+    def test_view_directorate_summary_jun(self):
+        self.view_directorate_summary(3)
+
+    def test_view_directorate_summary_jul(self):
+        self.view_directorate_summary(4)
+
+    def test_view_directorate_summary_aug(self):
+        self.view_directorate_summary(5)
+
+    def test_view_directorate_summary_sep(self):
+        self.view_directorate_summary(6)
+
+    def test_view_directorate_summary_oct(self):
+        self.view_directorate_summary(7)
+
+    def test_view_directorate_summary_nov(self):
+        self.view_directorate_summary(8)
+
+    def test_view_directorate_summary_dec(self):
+        self.view_directorate_summary(9)
+
+    def test_view_directorate_summary_jan(self):
+        self.view_directorate_summary(10)
+
+    def test_view_directorate_summary_feb(self):
+        self.view_directorate_summary(11)
+
+    def test_view_directorate_summary_mar(self):
+        self.view_directorate_summary(12)
+
+    def test_view_directorate_summary_current(self):
+        self.view_directorate_summary(0)
+
+    def view_group_summary(self, test_period):
         response = self.factory_get(
             reverse(
                 "forecast_group",
@@ -329,8 +330,46 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
         # Check that the second table displays the project and the correct totals
         self.check_project_table(tables[PROJECT_TABLE_INDEX], test_period)
 
-    def test_view_dit_summary(self):
-        test_period = 1
+    def test_view_group_summary_apr(self):
+        self.view_group_summary(1)
+
+    def test_view_group_summary_may(self):
+        self.view_group_summary(2)
+
+    def test_view_group_summary_jun(self):
+        self.view_group_summary(3)
+
+    def test_view_group_summary_jul(self):
+        self.view_group_summary(4)
+
+    def test_view_group_summary_aug(self):
+        self.view_group_summary(5)
+
+    def test_view_group_summary_sep(self):
+        self.view_group_summary(6)
+
+    def test_view_group_summary_oct(self):
+        self.view_group_summary(7)
+
+    def test_view_group_summary_nov(self):
+        self.view_group_summary(8)
+
+    def test_view_group_summary_dec(self):
+        self.view_group_summary(9)
+
+    def test_view_group_summary_jan(self):
+        self.view_group_summary(10)
+
+    def test_view_group_summary_feb(self):
+        self.view_group_summary(11)
+
+    def test_view_group_summary_mar(self):
+        self.view_group_summary(12)
+
+    def test_view_group_summary_current(self):
+        self.view_group_summary(0)
+
+    def view_dit_summary(self, test_period):
         response = self.factory_get(
             reverse(
                 "forecast_dit",
@@ -375,3 +414,41 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
         # Check that the second table displays the project and the correct totals
         self.check_project_table(tables[PROJECT_TABLE_INDEX],  test_period)
 
+    def test_view_dit_summary_apr(self):
+        self.view_dit_summary(1)
+
+    def test_view_dit_summary_may(self):
+        self.view_dit_summary(2)
+
+    def test_view_dit_summary_jun(self):
+        self.view_dit_summary(3)
+
+    def test_view_dit_summary_jul(self):
+        self.view_dit_summary(4)
+
+    def test_view_dit_summary_aug(self):
+        self.view_dit_summary(5)
+
+    def test_view_dit_summary_sep(self):
+        self.view_dit_summary(6)
+
+    def test_view_dit_summary_oct(self):
+        self.view_dit_summary(7)
+
+    def test_view_dit_summary_nov(self):
+        self.view_dit_summary(8)
+
+    def test_view_dit_summary_dec(self):
+        self.view_dit_summary(9)
+
+    def test_view_dit_summary_jan(self):
+        self.view_dit_summary(10)
+
+    def test_view_dit_summary_feb(self):
+        self.view_dit_summary(11)
+
+    def test_view_dit_summary_mar(self):
+        self.view_dit_summary(12)
+
+    def test_view_dit_summary_current(self):
+        self.view_dit_summary(0)
