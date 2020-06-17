@@ -120,8 +120,6 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
         assert last_project_cols[TOTAL_COLUMN].get_text().strip() == \
             format_forecast_figure(self.archive.archived_forecast[period]/ 100)
 
-    def myassertEqual(self, p1, p2):
-        print(f'{p1} compared to {p2}')
 
     def check_hierarchy_table(self, table, hierarchy_element, offset, period):
         hierarchy_rows = table.find_all("tr")
@@ -138,7 +136,7 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.assertEqual(last_hierarchy_cols[TOTAL_COLUMN].get_text().strip(),
             format_forecast_figure(self.archive.archived_forecast[period] / 100))
 
-    def test_view_cost_centre_summary(self):
+    def view_cost_centre_summary(self, test_period ):
         test_period = 1
         resp = self.factory_get(
             reverse(
@@ -189,6 +187,45 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
 
         # Check that the last table displays the project and the correct totals
         self.check_project_table(tables[PROJECT_TABLE_INDEX], test_period)
+
+    def test_view_cost_centre_summary_apr(self):
+        self.view_cost_centre_summary(1)
+
+    def test_view_cost_centre_summary_may(self):
+        self.view_cost_centre_summary(2)
+
+    def test_view_cost_centre_summary_jun(self):
+        self.view_cost_centre_summary(3)
+
+    def test_view_cost_centre_summary_jul(self):
+        self.view_cost_centre_summary(4)
+
+    def test_view_cost_centre_summary_aug(self):
+        self.view_cost_centre_summary(5)
+
+    def test_view_cost_centre_summary_sep(self):
+        self.view_cost_centre_summary(6)
+
+    def test_view_cost_centre_summary_oct(self):
+        self.view_cost_centre_summary(7)
+
+    def test_view_cost_centre_summary_nov(self):
+        self.view_cost_centre_summary(8)
+
+    def test_view_cost_centre_summary_dec(self):
+        self.view_cost_centre_summary(9)
+
+    def test_view_cost_centre_summary_jan(self):
+        self.view_cost_centre_summary(10)
+
+    def test_view_cost_centre_summary_feb(self):
+        self.view_cost_centre_summary(11)
+
+    def test_view_cost_centre_summary_mar(self):
+        self.view_cost_centre_summary(12)
+
+    def test_view_cost_centre_summary_current(self):
+        self.view_cost_centre_summary(0)
 
     # def test_view_directorate_summary(self):
     #     resp = self.factory_get(
