@@ -94,39 +94,32 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
         assert last_programme_cols[TOTAL_COLUMN].get_text().strip() == \
             format_forecast_figure(self.archive.archived_forecast[period]/ 100)
 
-    # def check_expenditure_table(self, table):
-    #     expenditure_rows = table.find_all("tr")
-    #     first_expenditure_cols = expenditure_rows[2].find_all("td")
-    #     assert (first_expenditure_cols[1].get_text().strip() == '—')
-    #     assert first_expenditure_cols[2].get_text().strip() == format_forecast_figure(
-    #         self.budget / 100
-    #     )
-    #
-    #     last_expenditure_cols = expenditure_rows[-1].find_all("td")
-    #     # Check the total for the year
-    #     assert last_expenditure_cols[TOTAL_COLUMN].get_text().strip() == \
-    #         format_forecast_figure(self.archive.archived_forecast[period]/ 100)
-    #     # Check the difference between budget and year total
-    #     assert last_expenditure_cols[UNDERSPEND_COLUMN].get_text().strip() == \
-    #         format_forecast_figure(self.underspend_total / 100)
-    #     # Check the spend to date
-    #     assert last_expenditure_cols[SPEND_TO_DATE_COLUMN].get_text().strip() == \
-    #         format_forecast_figure(self.spend_to_date_total / 100)
-    #
-    # def check_project_table(self, table):
-    #     project_rows = table.find_all("tr")
-    #     first_project_cols = project_rows[2].find_all("td")
-    #
-    #     assert first_project_cols[1].get_text().strip() == self.project_obj.project_code
-    #     assert first_project_cols[3].get_text().strip() == format_forecast_figure(
-    #         self.budget / 100
-    #     )
-    #
-    #     last_project_cols = project_rows[-1].find_all("td")
-    #     # Check the total for the year
-    #     assert last_project_cols[TOTAL_COLUMN].get_text().strip() == \
-    #         format_forecast_figure(self.archive.archived_forecast[period]/ 100)
-    #
+    def check_expenditure_table(self, table, period):
+        expenditure_rows = table.find_all("tr")
+        first_expenditure_cols = expenditure_rows[2].find_all("td")
+        assert first_expenditure_cols[2].get_text().strip() == format_forecast_figure(
+            self.archive.archived_budget[period] / 100
+        )
+
+        last_expenditure_cols = expenditure_rows[-1].find_all("td")
+        # Check the total for the year
+        assert last_expenditure_cols[TOTAL_COLUMN].get_text().strip() == \
+            format_forecast_figure(self.archive.archived_forecast[period]/ 100)
+
+    def check_project_table(self, table, period):
+        project_rows = table.find_all("tr")
+        first_project_cols = project_rows[2].find_all("td")
+
+        assert first_project_cols[1].get_text().strip() == self.archive.project_code
+        assert first_project_cols[3].get_text().strip() == format_forecast_figure(
+            self.archive.archived_budget[period] / 100
+        )
+
+        last_project_cols = project_rows[-1].find_all("td")
+        # Check the total for the year
+        assert last_project_cols[TOTAL_COLUMN].get_text().strip() == \
+            format_forecast_figure(self.archive.archived_forecast[period]/ 100)
+
     def myassertEqual(self, p1, p2):
         print(f'{p1} compared to {p2}')
 
@@ -165,6 +158,7 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
         soup = BeautifulSoup(resp.content, features="html.parser")
 
         self.assertContains(resp, "govuk-table")
+        # Check that the month dropdown exists.
         self.assertContains(resp, f'value="{test_period}"')
 
         # Check that the selected period is in the view
@@ -180,7 +174,7 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
         assert len(table_rows) == 18
 
 
-        # Check that the first table displays the cost centre code
+        # Check that the first table displays the cost centre code and correct values
         self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
                                    self.archive.cost_centre_code, 0, test_period)
 
@@ -189,13 +183,13 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
         # The programme table in the cost centre does not show the 'View'
         # so the programme is displayed in a different column
         self.check_programme_table(tables[PROGRAMME_TABLE_INDEX], 1, test_period)
-    #
-    #     # Check that the third table displays the expenditure and the correct totals
-    #     self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX])
-    #
-    #     # Check that the second table displays the project and the correct totals
-    #     self.check_project_table(tables[PROJECT_TABLE_INDEX])
-    #
+
+        # Check that the third table displays the expenditure and the correct totals
+        self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX], test_period)
+
+        # Check that the last table displays the project and the correct totals
+        self.check_project_table(tables[PROJECT_TABLE_INDEX], test_period)
+
     # def test_view_directorate_summary(self):
     #     resp = self.factory_get(
     #         reverse(
