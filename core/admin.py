@@ -69,6 +69,7 @@ class LogEntryAdmin(admin.ModelAdmin):
         return flags[obj.action_flag]
 
     def object_link(self, obj):
+        print("hello")
         if obj.action_flag == DELETION:
             link = escape(obj.object_repr)
         else:
