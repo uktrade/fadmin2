@@ -168,10 +168,15 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, "govuk-table")
         soup = BeautifulSoup(resp.content, features="html.parser")
-        print(soup.prettify())
-        # self.assertContains(resp.content, f'<option value="{test_period}" selected>')
 
-        # Check that there are 4 tables on the page
+        self.assertContains(resp, "govuk-table")
+        self.assertContains(resp, f'value="{test_period}"')
+
+        # Check that the selected period is in the view
+        select_period = soup.find(id='id_selected_period')
+
+        # Check that all the months are in the dropdown.
+        assert len(select_period) == 27
         tables = soup.find_all("table", class_="govuk-table")
         assert len(tables) == 4
 
@@ -181,9 +186,9 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
 
 
         # Check that the first table displays the cost centre code
-        # self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
-        #                            self.archive.cost_centre_code, 0, test_period)
-        #
+        self.check_hierarchy_table(tables[HIERARCHY_TABLE_INDEX],
+                                   self.archive.cost_centre_code, 0, test_period)
+
 
     #     # Check that the second table displays the programme and the correct totals
     #     # The programme table in the cost centre does not show the 'View'

@@ -670,7 +670,7 @@ class ForecastingDataViewAbstract(models.Model):
 
     id = models.IntegerField(primary_key=True,)
     # The view is created by a migration. Its code is at the bottom of this file.
-    financial_code = models.ForeignKey(FinancialCode, on_delete=models.PROTECT,)
+    financial_code = models.ForeignKey(FinancialCode, on_delete=models.DO_NOTHING,)
     financial_year = models.IntegerField()
     budget = models.BigIntegerField(default=0)
     apr = models.BigIntegerField(default=0)

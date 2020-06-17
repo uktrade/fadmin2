@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 
+from end_of_month.end_of_month_actions import end_of_month_archive
 from end_of_month.models import (
     EndOfMonthStatus,
     MonthlyTotalBudget,
@@ -23,16 +24,17 @@ def monthly_figures_clear():
     ForecastMonthlyFigure.objects.all().delete()
     BudgetMonthlyFigure.objects.all().delete()
     MonthlyTotalBudget.objects.all().delete()
-    FinancialCode.objects.all().delete()
-    actual_q = FinancialPeriod.objects.get(actual_loaded=True)
+
+    actual_q = FinancialPeriod.objects.all()
     for actual in actual_q:
         actual.actual_loaded = False
         actual.save()
 
-    month_status_q = EndOfMonthStatus.objects.get(archived=True)
+    month_status_q = EndOfMonthStatus.objects.all()
     for month_status in month_status_q:
         month_status.archived = False
         month_status.save()
+    FinancialCode.objects.all().delete()
 
 
 def monthly_figures_create():
@@ -75,10 +77,11 @@ def monthly_figures_create():
                     )
                     budget_amount += 1
 
-        for i in range(1, 3):
-            actual = FinancialPeriod.objects.get(financial_period_code=i)
-            actual.actual_loaded = True
-            actual.save()
+    for period_id in range(1, 3):
+        end_of_month_archive(period_id)
+        actual = FinancialPeriod.objects.get(financial_period_code=period_id)
+        actual.actual_loaded = True
+        actual.save()
 
 
 class Command(BaseCommand):

@@ -70,8 +70,8 @@ def get_end_of_month(period_code):
 
     return end_of_month_info
 
-# TODO add transaction
 
+# TODO add transaction
 def end_of_month_archive(period_id):
     end_of_month_info = get_end_of_month(period_id)
 
