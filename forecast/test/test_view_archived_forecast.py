@@ -82,23 +82,18 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
 
         self.archive = SetFullYearArchive()
 
-    # def check_programme_table(self, table, prog_index=1):
-    #     programme_rows = table.find_all("tr")
-    #     first_prog_cols = programme_rows[2].find_all("td")
-    #     assert first_prog_cols[prog_index + 1].get_text().strip() == \
-    #         self.archive.programme_code_test
-    #
-    #     last_programme_cols = programme_rows[-1].find_all("td")
-    #     # Check the total for the year
-    #     assert last_programme_cols[TOTAL_COLUMN].get_text().strip() == \
-    #         format_forecast_figure(self.year_total / 100)
-    #     # Check the difference between budget and year total
-    #     assert last_programme_cols[UNDERSPEND_COLUMN].get_text().strip() == \
-    #         format_forecast_figure(self.underspend_total / 100)
-    #     # Check the spend to date
-    #     assert last_programme_cols[SPEND_TO_DATE_COLUMN].get_text().strip() == \
-    #         format_forecast_figure(self.spend_to_date_total / 100)
-    #
+    def check_programme_table(self, table, prog_index=1, period=0):
+        programme_rows = table.find_all("tr")
+        first_prog_cols = programme_rows[2].find_all("td")
+
+        assert first_prog_cols[prog_index + 2].get_text().strip() == \
+            format_forecast_figure(self.archive.archived_budget[period] / 100)
+
+        last_programme_cols = programme_rows[-1].find_all("td")
+        # Check the total for the year
+        assert last_programme_cols[TOTAL_COLUMN].get_text().strip() == \
+            format_forecast_figure(self.archive.archived_forecast[period]/ 100)
+
     # def check_expenditure_table(self, table):
     #     expenditure_rows = table.find_all("tr")
     #     first_expenditure_cols = expenditure_rows[2].find_all("td")
@@ -110,7 +105,7 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
     #     last_expenditure_cols = expenditure_rows[-1].find_all("td")
     #     # Check the total for the year
     #     assert last_expenditure_cols[TOTAL_COLUMN].get_text().strip() == \
-    #         format_forecast_figure(self.year_total / 100)
+    #         format_forecast_figure(self.archive.archived_forecast[period]/ 100)
     #     # Check the difference between budget and year total
     #     assert last_expenditure_cols[UNDERSPEND_COLUMN].get_text().strip() == \
     #         format_forecast_figure(self.underspend_total / 100)
@@ -130,7 +125,7 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
     #     last_project_cols = project_rows[-1].find_all("td")
     #     # Check the total for the year
     #     assert last_project_cols[TOTAL_COLUMN].get_text().strip() == \
-    #         format_forecast_figure(self.year_total / 100)
+    #         format_forecast_figure(self.archive.archived_forecast[period]/ 100)
     #
     def myassertEqual(self, p1, p2):
         print(f'{p1} compared to {p2}')
@@ -190,10 +185,10 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
                                    self.archive.cost_centre_code, 0, test_period)
 
 
-    #     # Check that the second table displays the programme and the correct totals
-    #     # The programme table in the cost centre does not show the 'View'
-    #     # so the programme is displayed in a different column
-    #     self.check_programme_table(tables[PROGRAMME_TABLE_INDEX], 1)
+        # Check that the second table displays the programme and the correct totals
+        # The programme table in the cost centre does not show the 'View'
+        # so the programme is displayed in a different column
+        self.check_programme_table(tables[PROGRAMME_TABLE_INDEX], 1, test_period)
     #
     #     # Check that the third table displays the expenditure and the correct totals
     #     self.check_expenditure_table(tables[EXPENDITURE_TABLE_INDEX])
