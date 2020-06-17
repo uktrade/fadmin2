@@ -50,7 +50,7 @@ class LogEntryAdmin(admin.ModelAdmin):
         "action_time",
         "user",
         "content_type",
-        "object_link",
+        # "object_link",
         "action_flag_",
         "change_message",
     ]
