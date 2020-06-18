@@ -73,7 +73,7 @@ class ForecastProjectDetailsMixin(ForecastViewTableMixin):
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
         columns = project_details_hierarchy_columns[self.hierarchy_type]
-        project_details_data = self.datamodel.view_data.subtotal_data(
+        project_details_data = self.data_model.view_data.subtotal_data(
             project_details_hierarchy_sub_total_column[self.hierarchy_type],
             project_details_sub_total,
             columns.keys(),

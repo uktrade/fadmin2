@@ -82,7 +82,7 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
-        nac_data = self.datamodel.view_data.subtotal_data(
+        nac_data = self.data_model.view_data.subtotal_data(
             nac_display_sub_total_column,
             nac_sub_total,
             nac_columns.keys(),

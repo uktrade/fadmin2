@@ -25,10 +25,10 @@ def monthly_figures_clear():
     BudgetMonthlyFigure.objects.all().delete()
     MonthlyTotalBudget.objects.all().delete()
 
-    actual_q = FinancialPeriod.objects.all()
-    for actual in actual_q:
-        actual.actual_loaded = False
-        actual.save()
+    financial_period_queryset = FinancialPeriod.objects.all()
+    for financial_period in financial_period_queryset:
+        financial_period.actual_loaded = False
+        financial_period.save()
 
     month_status_q = EndOfMonthStatus.objects.all()
     for month_status in month_status_q:
@@ -49,6 +49,7 @@ def monthly_figures_create():
     )
     monthly_amount = 0
     budget_amount = 1
+    # Several nested loops, to create a reasonable quantity of data.
     for project_code in project_list:
         for programme_fk in programme_list:
             monthly_amount += 10

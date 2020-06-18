@@ -99,7 +99,7 @@ class ForecastViewTableMixin(MultiTableMixin):
         return self._month_list
 
     @property
-    def datamodel(self):
+    def data_model(self):
         if self._datamodel is None:
             self._datamodel = forecast_budget_view_model[self.period]
         return self._datamodel
