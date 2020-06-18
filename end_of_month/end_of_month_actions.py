@@ -1,3 +1,5 @@
+import logging
+
 from django.db import connection
 from django.utils import timezone
 
@@ -9,6 +11,8 @@ from forecast.models import (
     BudgetMonthlyFigure,
     ForecastMonthlyFigure,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class ArchiveMonthInvalidPeriodError(Exception):
@@ -49,25 +53,25 @@ def insert_total_budget_query(archived_status_id, archived_period_id):
 
 def get_end_of_month(period_code):
     if period_code > 15 or period_code < 1:
-        raise ArchiveMonthInvalidPeriodError(
-            f'Invalid period {period_code}: Valid Period is between 1 and 15.'
-        )
+        error_msg = f'Invalid period {period_code}: Valid Period is between 1 and 15.'
+        logger.error(error_msg, exc_info=True)
+        raise ArchiveMonthInvalidPeriodError(error_msg)
 
     end_of_month_info = EndOfMonthStatus.objects.get(
         archived_period__financial_period_code=period_code
     )
     if end_of_month_info.archived:
-        raise ArchiveMonthAlreadyArchivedError(
-            f'"The selected period {period_code} has already been archived."'
-        )
+        error_msg = f'"The selected period {period_code} has already been archived."'
+        logger.error(error_msg, exc_info=True)
+        raise ArchiveMonthAlreadyArchivedError(error_msg)
 
     highest_archived = EndOfMonthStatus.objects.filter(
         archived=True, archived_period__financial_period_code__gt=period_code
     )
     if highest_archived.count():
-        raise ArchiveMonthArchivedPastError(
-            "A later period has already been archived."
-        )
+        error_msg = "A later period has already been archived."
+        logger.error(error_msg, exc_info=True)
+        raise ArchiveMonthArchivedPastError(error_msg)
 
     return end_of_month_info
 
