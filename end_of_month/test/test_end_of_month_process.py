@@ -3,11 +3,10 @@ from django.test import TestCase
 
 from end_of_month.end_of_month_actions import (
     ArchiveMonthAlreadyArchivedError,
-    ArchiveMonthInvalidPeriodError,
     ArchiveMonthArchivedPastError,
+    ArchiveMonthInvalidPeriodError,
     end_of_month_archive,
 )
-
 from end_of_month.models import (
     MonthlyTotalBudget,
     forecast_budget_view_model,
@@ -24,7 +23,6 @@ from forecast.models import (
 )
 
 
-
 class EndOfMonthForecastTest(TestCase, RequestFactoryBase):
     def setUp(self):
         RequestFactoryBase.__init__(self)
@@ -37,20 +35,17 @@ class EndOfMonthForecastTest(TestCase, RequestFactoryBase):
         with self.assertRaises(ArchiveMonthInvalidPeriodError):
             end_of_month_archive(0)
 
-
     def test_error_already_archived_period(self):
         period = 5
         end_of_month_archive(period)
         with self.assertRaises(ArchiveMonthAlreadyArchivedError):
             end_of_month_archive(period)
 
-
     def test_error_early_archived_period(self):
         period = 5
         end_of_month_archive(period)
         with self.assertRaises(ArchiveMonthArchivedPastError):
-            end_of_month_archive(period-1)
-
+            end_of_month_archive(period - 1)
 
     # The following tests test_end_of_month_xxx checkes that only forecast is saved,
     # not actuals. This is tested by counting the records saved in the period tested.
