@@ -62,9 +62,8 @@ def get_end_of_month(period_code):
         )
 
     highest_archived = EndOfMonthStatus.objects.filter(
-        archived=True, archived_period__financial_period_code=period_code
+        archived=True, archived_period__financial_period_code__gt=period_code
     )
-
     if highest_archived.count():
         raise ArchiveMonthArchivedPastError(
             "A later period has already been archived."
