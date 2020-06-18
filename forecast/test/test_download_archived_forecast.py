@@ -4,33 +4,12 @@ from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
-from openpyxl import load_workbook
-
 from end_of_month.test.test_utils import SetFullYearArchive
 
-from chartofaccountDIT.test.factories import (
-    NaturalCodeFactory,
-    ProgrammeCodeFactory,
-    ProjectCodeFactory,
-)
+from openpyxl import load_workbook
 
-from core.models import FinancialYear
-from core.myutils import get_current_financial_year
 from core.test.test_base import RequestFactoryBase
 
-from costcentre.test.factories import (
-    CostCentreFactory,
-    DepartmentalGroupFactory,
-    DirectorateFactory,
-)
-
-from forecast.models import (
-    FinancialCode,
-    FinancialPeriod,
-    ForecastMonthlyFigure,
-)
-from forecast.permission_shortcuts import assign_perm
-from forecast.test.test_utils import create_budget
 from forecast.views.view_forecast.export_forecast_data import (
     export_forecast_data_cost_centre,
     export_forecast_data_directorate,
@@ -43,6 +22,7 @@ GROUP_HEADING_CELL = "A1"
 GROUP_CODE_CELL = "B2"
 APR_COL = 26
 ADJ3_COL = 40
+
 
 class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
     def setUp(self):
@@ -63,7 +43,7 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
         year_total = 0
         # Read the forecast/actual values to calculate the year total
         # The total is in the workbook, but reading it returns None
-        for col in range(APR_COL, ADJ3_COL+1):
+        for col in range(APR_COL, ADJ3_COL + 1):
             year_total += ws.cell(column=col, row=2,).value
 
         # Check group
@@ -124,7 +104,6 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
 
     def test_dit_download_current(self):
         self.dit_download(0)
-
 
     def group_download(self, test_period):
         response = self.factory_get(
