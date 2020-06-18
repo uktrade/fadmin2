@@ -39,9 +39,10 @@ from forecast.views.view_forecast.export_forecast_data import (
 )
 
 BUDGET_CELL = "Y2"
-TOTAL_CELL = "AO2"
 GROUP_HEADING_CELL = "A1"
 GROUP_CODE_CELL = "B2"
+APR_COL = 26
+ADJ3_COL = 40
 
 class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
     def setUp(self):
@@ -55,37 +56,75 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.test_user.save()
         self.archive = SetFullYearArchive()
 
-    def test_dit_download(self):
-        test_period = 2
-        dit_url = self.factory_get(
-            reverse("export_forecast_data_dit",
-                    kwargs={"period": test_period}),
-            export_forecast_data_dit,
-            period=test_period,
-        )
-
-        self.assertEqual(dit_url.status_code, 200)
-
-        file = io.BytesIO(dit_url.content)
-        wb = load_workbook(filename=file)
+    def check_workbook(self, content, period):
+        file = io.BytesIO(content)
+        wb = load_workbook(filename=file, read_only=True, data_only=True)
         ws = wb.active
         year_total = 0
-        for col in range(26, 41):
+        # Read the forecast/actual values to calculate the year total
+        # The total is in the workbook, but reading it returns None
+        for col in range(APR_COL, ADJ3_COL+1):
             year_total += ws.cell(column=col, row=2,).value
 
-        print(year_total)
-        # for col in range(1, 50):
-        #     print(f'{col}: {ws.cell(column=col, row=1,).coordinate} '
-        #           f'{ws.cell(column=col, row=1,).value} {ws.cell(column=col, row=2,).value}')
         # Check group
         self.assertEqual(ws[GROUP_HEADING_CELL].value, "Group name")
         self.assertEqual(ws[GROUP_CODE_CELL].value, self.archive.group_code)
 
         self.assertEqual(ws[BUDGET_CELL].value,
-                         self.archive.archived_budget[test_period] / 100)
+                         self.archive.archived_budget[period] / 100)
 
         self.assertEqual(year_total,
-                         self.archive.archived_forecast[test_period] / 100)
+                         self.archive.archived_forecast[period] / 100)
+
+    def dit_download(self, test_period):
+        response = self.factory_get(
+            reverse("export_forecast_data_dit",
+                    kwargs={"period": test_period}),
+            export_forecast_data_dit,
+            period=test_period,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.check_workbook(response.content, test_period)
+
+    def test_dit_download_apr(self):
+        self.dit_download(1)
+
+    def test_dit_download_may(self):
+        self.dit_download(2)
+
+    def test_dit_download_jun(self):
+        self.dit_download(3)
+
+    def test_dit_download_jul(self):
+        self.dit_download(4)
+
+    def test_dit_download_aug(self):
+        self.dit_download(5)
+
+    def test_dit_download_sep(self):
+        self.dit_download(6)
+
+    def test_dit_download_oct(self):
+        self.dit_download(7)
+
+    def test_dit_download_nov(self):
+        self.dit_download(8)
+
+    def test_dit_download_dec(self):
+        self.dit_download(9)
+
+    def test_dit_download_jan(self):
+        self.dit_download(10)
+
+    def test_dit_download_feb(self):
+        self.dit_download(11)
+
+    def test_dit_download_mar(self):
+        self.dit_download(12)
+
+    def test_dit_download_current(self):
+        self.dit_download(0)
+
 
     def test_group_download(self):
         test_period = 2
