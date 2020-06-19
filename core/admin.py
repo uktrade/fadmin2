@@ -26,6 +26,7 @@ from core.exportutils import export_to_csv
 from core.models import FinancialYear
 from core.utils import log_object_change
 
+from core.export_csv import export_logentry_iterator
 
 class LogEntryAdmin(admin.ModelAdmin):
     """ Display the Admin log in the Admin interface"""
@@ -65,6 +66,9 @@ class LogEntryAdmin(admin.ModelAdmin):
         flags = {1: "Addition", 2: "Changed", 3: "Deleted"}
         return flags[obj.action_flag]
 
+    @property
+    def export_func(self):
+        return export_logentry_iterator
 
 admin.site.register(LogEntry, LogEntryAdmin)
 admin.site.register(FinancialYear)
