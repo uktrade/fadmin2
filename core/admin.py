@@ -17,7 +17,7 @@ from django.shortcuts import redirect, render
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 
-
+from core.export_data import export_logentry_iterator
 from core.exportutils import (
     export_csv_from_import,
     export_to_excel,
@@ -25,8 +25,6 @@ from core.exportutils import (
 from core.exportutils import export_to_csv
 from core.models import FinancialYear
 from core.utils import log_object_change
-
-from core.export_data import export_logentry_iterator
 
 
 class AdminActiveField(admin.ModelAdmin):
@@ -400,7 +398,7 @@ class LogEntryAdmin(AdminReadOnly, AdminExport):
         flags = {1: "Addition", 2: "Changed", 3: "Deleted"}
         return flags[obj.action_flag]
 
-# admin.site.unregister(LogEntry)
+
 admin.site.register(LogEntry, LogEntryAdmin)
 admin.site.register(FinancialYear)
 
