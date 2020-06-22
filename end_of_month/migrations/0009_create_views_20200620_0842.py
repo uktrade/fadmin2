@@ -67,27 +67,25 @@ class Migration(migrations.Migration):
 
            CREATE VIEW monthly_forecast_apr as
                 SELECT 1 as archived_period_id, financial_code_id, financial_year_id,
-                       SUM(CASE WHEN financial_period_id = 1 THEN amount ELSE NULL END) AS apr,
-                       SUM(CASE WHEN financial_period_id = 2 THEN amount ELSE NULL END) AS may,
-                       SUM(CASE WHEN financial_period_id = 3 THEN amount ELSE NULL END) AS jun,
-                       SUM(CASE WHEN financial_period_id = 4 THEN amount ELSE NULL END) AS jul,
-                       SUM(CASE WHEN financial_period_id = 5 THEN amount ELSE NULL END) AS aug,
-                       SUM(CASE WHEN financial_period_id = 6 THEN amount ELSE NULL END) AS sep,
-                       SUM(CASE WHEN financial_period_id = 7 THEN amount ELSE NULL END) AS oct,
-                       SUM(CASE WHEN financial_period_id = 8 THEN amount ELSE NULL END) AS nov,
-                       SUM(CASE WHEN financial_period_id = 9 THEN amount ELSE NULL END) AS "dec",
-                       SUM(CASE WHEN financial_period_id = 10 THEN amount ELSE NULL END) AS jan,
-                       SUM(CASE WHEN financial_period_id = 11 THEN amount ELSE NULL END) AS feb,
-                       SUM(CASE WHEN financial_period_id = 12 THEN amount ELSE NULL END) AS mar,
-                       SUM(CASE WHEN financial_period_id = 13 THEN amount ELSE NULL END) AS adj1 ,
-                       SUM(CASE WHEN financial_period_id = 14 THEN amount ELSE NULL END) AS adj2 ,
-                       SUM(CASE WHEN financial_period_id = 15 THEN amount ELSE NULL END) AS adj3
+                       SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id IS NULL THEN amount ELSE NULL END) AS apr,
+                       SUM(CASE WHEN financial_period_id = 2 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS may,
+                       SUM(CASE WHEN financial_period_id = 3 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS jun,
+                       SUM(CASE WHEN financial_period_id = 4 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS jul,
+                       SUM(CASE WHEN financial_period_id = 5 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS aug,
+                       SUM(CASE WHEN financial_period_id = 6 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS sep,
+                       SUM(CASE WHEN financial_period_id = 7 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS oct,
+                       SUM(CASE WHEN financial_period_id = 8 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS nov,
+                       SUM(CASE WHEN financial_period_id = 9 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS "dec",
+                       SUM(CASE WHEN financial_period_id = 10 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS jan,
+                       SUM(CASE WHEN financial_period_id = 11 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS feb,
+                       SUM(CASE WHEN financial_period_id = 12 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS mar,
+                       SUM(CASE WHEN financial_period_id = 13 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS adj1 ,
+                       SUM(CASE WHEN financial_period_id = 14 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS adj2 ,
+                       SUM(CASE WHEN financial_period_id = 15 and a.archived_period_id = 2 THEN amount ELSE NULL END) AS adj3
                 FROM forecast_forecastmonthlyfigure left outer join public.end_of_month_endofmonthstatus a
                 on forecast_forecastmonthlyfigure.archived_status_id = a.id
-                    WHERE a.archived_period_id = 1
                 GROUP BY financial_code_id,  financial_year_id;
-
-
+ 
            CREATE VIEW monthly_forecast_may as
                 SELECT 2 as archived_period_id, financial_code_id, financial_year_id,
                        SUM(CASE WHEN financial_period_id = 1 and a.archived_period_id IS NULL THEN amount ELSE NULL END) AS apr,
