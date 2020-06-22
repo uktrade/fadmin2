@@ -1,18 +1,11 @@
-from django.db.models import F
 from django.test import TestCase
 
 from end_of_month.end_of_month_actions import (
-    ArchiveMonthAlreadyArchivedError,
-    ArchiveMonthArchivedPastError,
     ArchiveMonthInvalidPeriodError,
     DeleteNonExistingArchiveError,
     delete_end_of_month_archive,
     delete_last_end_of_month_archive,
     end_of_month_archive,
-)
-from end_of_month.models import (
-    MonthlyTotalBudget,
-    forecast_budget_view_model,
 )
 from end_of_month.test.test_utils import (
     MonthlyFigureSetup,
@@ -21,7 +14,7 @@ from end_of_month.test.test_utils import (
 from core.test.test_base import RequestFactoryBase
 
 from forecast.models import (
-    BudgetMonthlyFigure,
+
     ForecastMonthlyFigure,
 )
 
@@ -32,14 +25,14 @@ class DeleteEndOfMonthArchiveTest(TestCase, RequestFactoryBase):
         self.init_data = MonthlyFigureSetup()
         self.init_data.setup_forecast()
 
-    # def test_error_invalid_period(self):
-    #     with self.assertRaises(DeleteNonExistingArchiveError):
-    #         delete_last_end_of_month_archive()
-    #     with self.assertRaises(ArchiveMonthInvalidPeriodError):
-    #         delete_end_of_month_archive(0)
-    #     with self.assertRaises(DeleteNonExistingArchiveError):
-    #         delete_end_of_month_archive(1)
-    #
+    def test_error_invalid_period(self):
+        with self.assertRaises(DeleteNonExistingArchiveError):
+            delete_last_end_of_month_archive()
+        with self.assertRaises(ArchiveMonthInvalidPeriodError):
+            delete_end_of_month_archive(0)
+        with self.assertRaises(DeleteNonExistingArchiveError):
+            delete_end_of_month_archive(1)
+
     def test_delete_latest_period(self):
         initial_count = ForecastMonthlyFigure.objects.all().count()
         self.assertEqual(initial_count, 15)

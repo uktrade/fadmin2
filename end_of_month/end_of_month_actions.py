@@ -29,6 +29,7 @@ class ArchiveMonthAlreadyArchivedError(Exception):
 class ArchiveMonthArchivedPastError(Exception):
     pass
 
+
 class DeleteNonExistingArchiveError(Exception):
     pass
 
@@ -149,9 +150,7 @@ def delete_end_of_month_archive(period_id):
         financial_year_id=current_year,
         archived_status=end_of_month_info,
     )
-    print(f"Queryset before delete {forecast_queryset.count()}")
     forecast_queryset.delete()
-    print(f"Queryset after delete {forecast_queryset.count()}")
 
     BudgetMonthlyFigure.objects.filter(
         financial_year_id=current_year,

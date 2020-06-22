@@ -5,11 +5,11 @@ from end_of_month.end_of_month_actions import (
     delete_last_end_of_month_archive,
 )
 
-from end_of_month.models import EndOfMonthStatus
 
 class Command(BaseCommand):
     help = (
-        "Delete archived forecast and budget for a specific period: 1 to 15 starting from April. 0 will delete the latest archive."
+        "Delete archived forecast and budget for a specific period: "
+        "1 to 15 starting from April. 0 will delete the latest archive."
     )
 
     def add_arguments(self, parser):
