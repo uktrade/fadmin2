@@ -130,21 +130,34 @@ def end_of_month_archive(period_id):
 
 
 def delete_end_of_month_archive(period_id):
-    end_of_month_info = get_end_of_month(period_id)
+    if period_id > 15 or period_id < 1:
+        error_msg = f'Invalid period {period_id}: Valid Period is between 1 and 15.'
+        logger.error(error_msg, exc_info=True)
+        raise ArchiveMonthInvalidPeriodError(error_msg)
+
+    end_of_month_info = EndOfMonthStatus.objects.get(
+        archived_period__financial_period_code=period_id
+    )
+
     if not end_of_month_info.archived:
-        error_msg = f"The archive for  {period_id} does not exist."
+        error_msg = f"The archive for {period_id} does not exist."
         logger.error(error_msg, exc_info=True)
         raise DeleteNonExistingArchiveError(error_msg)
 
     current_year = get_current_financial_year()
-    ForecastMonthlyFigure.objects.filter(
+    forecast_queryset = ForecastMonthlyFigure.objects.filter(
         financial_year_id=current_year,
         archived_status=end_of_month_info,
-    ).delete()
+    )
+    print(f"Queryset before delete {forecast_queryset.count()}")
+    forecast_queryset.delete()
+    print(f"Queryset after delete {forecast_queryset.count()}")
+
     BudgetMonthlyFigure.objects.filter(
         financial_year_id=current_year,
         archived_status=end_of_month_info,
     ).delete()
+
     MonthlyTotalBudget.objects.filter(
         archived_status=end_of_month_info
     ).delete()
@@ -161,5 +174,6 @@ def delete_last_end_of_month_archive():
         error_msg = f"No archive monthly period exists."
         logger.error(error_msg, exc_info=True)
         raise DeleteNonExistingArchiveError(error_msg)
-    period_id = end_of_month_queryset.first().archived_period
+    latest_end_of_month = end_of_month_queryset.first()
+    period_id = latest_end_of_month.archived_period_id
     delete_end_of_month_archive(period_id)
