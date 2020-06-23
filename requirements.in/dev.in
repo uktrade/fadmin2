@@ -1,4 +1,4 @@
--c requirements.txt
+-c base.in
 
 Faker
 factory-boy
