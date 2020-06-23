@@ -52,9 +52,9 @@ bash:
 	docker-compose run fido bash
 
 dev-requirements:
-	pip-compile --output-file requirements/base.txt requirements.in/base.in
-	pip-compile --output-file requirements/dev.txt requirements.in/dev.in
+	pip-compile --output-file requirements/base.txt requirements.in
+	pip-compile --output-file requirements/dev.txt requirements-dev.in
 
 production-requirements:
-	pip-compile --output-file requirements/base.txt requirements.in/base.in
-	pip-compile --output-file requirements/production.txt requirements.in/production.in
+	pip-compile --output-file requirements/base.txt requirements.in
+	pip-compile --output-file requirements/production.txt requirements.in
