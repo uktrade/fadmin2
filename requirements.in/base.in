@@ -1,5 +1,3 @@
-django
-
 amqp
 appnope
 atomicwrites
@@ -14,6 +12,7 @@ custom-usermodel @ git+https://github.com/uktrade/django-staff-sso-usermodel.git
 decorator
 diff-match-patch
 dj-database-url
+Django
 django-admin-list-filter-dropdown
 django-adv-cache-tag
 django-appconf
