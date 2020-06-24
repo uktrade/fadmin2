@@ -17,7 +17,7 @@ from gifthospitality.models import (
 
 GH_CLASSIF_KEY = {
     IMPORT_CSV_MODEL_KEY: GiftAndHospitalityClassification,
-    IMPORT_CSV_PK_NAME_KEY: GiftAndHospitalityClassification.gif_hospitality_classification.field_name,  # noqa
+    IMPORT_CSV_PK_NAME_KEY: GiftAndHospitalityClassification.gif_hospitality_classification,  # noqa
     IMPORT_CSV_PK_KEY: "Classification",
     IMPORT_CSV_FIELDLIST_KEY: {
         GiftAndHospitalityClassification.gift_type.field_name: "Type",
