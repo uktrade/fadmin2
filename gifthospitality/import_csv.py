@@ -20,8 +20,8 @@ GH_CLASSIF_KEY = {
     IMPORT_CSV_PK_NAME_KEY: GiftAndHospitalityClassification.gif_hospitality_classification,  # noqa
     IMPORT_CSV_PK_KEY: "Classification",
     IMPORT_CSV_FIELDLIST_KEY: {
-        GiftAndHospitalityClassification.gift_type.field_name: "Type",
-        GiftAndHospitalityClassification.sequence_no.field_name: "sequence_no",
+        GiftAndHospitalityClassification.gift_type,
+        GiftAndHospitalityClassification.sequence_no,
     },
 }
 
@@ -30,9 +30,9 @@ import_gh_classification_class = ImportInfo(GH_CLASSIF_KEY)
 GH_COMPANY_KEY = {
     IMPORT_CSV_MODEL_KEY: GiftAndHospitalityCompany,
     IMPORT_CSV_PK_KEY: "Company",
-    IMPORT_CSV_PK_NAME_KEY: GiftAndHospitalityCompany.gif_hospitality_company.field_name,  # noqa
+    IMPORT_CSV_PK_NAME_KEY: GiftAndHospitalityCompany.gif_hospitality_company,  # noqa
     IMPORT_CSV_FIELDLIST_KEY: {
-        GiftAndHospitalityCompany.sequence_no.field_name: "sequence_no"
+        GiftAndHospitalityCompany.sequence_no: "sequence_no"
     },
 }
 
@@ -41,9 +41,9 @@ import_gh_company_class = ImportInfo(GH_COMPANY_KEY)
 GH_CATEGORY_KEY = {
     IMPORT_CSV_MODEL_KEY: GiftAndHospitalityCategory,
     IMPORT_CSV_PK_KEY: "Category",
-    IMPORT_CSV_PK_NAME_KEY: GiftAndHospitalityCategory.gif_hospitality_category.field_name,  # noqa
+    IMPORT_CSV_PK_NAME_KEY: GiftAndHospitalityCategory.gif_hospitality_category,  # noqa
     IMPORT_CSV_FIELDLIST_KEY: {
-        GiftAndHospitalityCategory.sequence_no.field_name: "sequence_no"
+        GiftAndHospitalityCategory.sequence_no: "sequence_no"
     },
 }
 
@@ -53,14 +53,14 @@ GH_CAT_FK_KEY = {
     IMPORT_CSV_MODEL_KEY: GiftAndHospitalityCategory,
     IMPORT_CSV_IS_FK: "",
     IMPORT_CSV_PK_KEY: "Category",
-    IMPORT_CSV_PK_NAME_KEY: GiftAndHospitalityCategory.gif_hospitality_category.field_name,  # noqa
+    IMPORT_CSV_PK_NAME_KEY: GiftAndHospitalityCategory.gif_hospitality_category,  # noqa
 }
 
 GH_CLASS_FK_KEY = {
     IMPORT_CSV_MODEL_KEY: GiftAndHospitalityClassification,
     IMPORT_CSV_IS_FK: "",
     IMPORT_CSV_PK_KEY: "Type",
-    IMPORT_CSV_PK_NAME_KEY: GiftAndHospitalityClassification.gif_hospitality_classification.field_name,  # noqa
+    IMPORT_CSV_PK_NAME_KEY: GiftAndHospitalityClassification.gif_hospitality_classification,  # noqa
 }
 
 GH_GRADE_KEY = {
@@ -77,24 +77,24 @@ NB: Commented code below may be required at a later date subject to client's req
 GH_KEY = {
     IMPORT_CSV_MODEL_KEY: GiftAndHospitality,
     IMPORT_CSV_FIELDLIST_KEY: {
-        GiftAndHospitality.old_id.field_name: "HospID",
-        GiftAndHospitality.classification.field.name: GH_CLASS_FK_KEY,
-        GiftAndHospitality.group_name.field_name: "Group",
-        GiftAndHospitality.date_agreed.field_name: "Date of event/gift offered",
-        GiftAndHospitality.venue.field_name: "Venue",
-        GiftAndHospitality.reason.field_name: "Description of offer & reason",
-        GiftAndHospitality.value.field_name: "Estimate value of offer",
+        GiftAndHospitality.old_id: "HospID",
+        GiftAndHospitality.classification: GH_CLASS_FK_KEY,
+        GiftAndHospitality.group_name: "Group",
+        GiftAndHospitality.date_agreed: "Date of event/gift offered",
+        GiftAndHospitality.venue: "Venue",
+        GiftAndHospitality.reason: "Description of offer & reason",
+        GiftAndHospitality.value: "Estimate value of offer",
         # GiftAndHospitality.group.field_name: "DIT group offered to/from",
-        GiftAndHospitality.rep.field_name: "DIT representative offered to/from",
-        GiftAndHospitality.offer.field_name: "Offer",
-        GiftAndHospitality.company_rep.field_name: "Company representative offered to/from",  # noqa
+        GiftAndHospitality.rep: "DIT representative offered to/from",
+        GiftAndHospitality.offer: "Offer",
+        GiftAndHospitality.company_rep: "Company representative offered to/from",  # noqa
         # GiftAndHospitality.company.field_name: "Company offered to/from",
         # GiftAndHospitality.company_name.field_name: "Other Company",
-        GiftAndHospitality.action_taken.field_name: "Action taken",
-        GiftAndHospitality.entered_by.field_name: "Entered By",
-        GiftAndHospitality.entered_date_stamp.field_name: "Date Entered",
-        GiftAndHospitality.category.field.name: GH_CAT_FK_KEY,
-        GiftAndHospitality.grade.field.name: GH_GRADE_KEY,
+        GiftAndHospitality.action_taken: "Action taken",
+        GiftAndHospitality.entered_by: "Entered By",
+        GiftAndHospitality.entered_date_stamp: "Date Entered",
+        GiftAndHospitality.category: GH_CAT_FK_KEY,
+        GiftAndHospitality.grade: GH_GRADE_KEY,
     },
 }
 
