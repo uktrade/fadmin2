@@ -82,7 +82,6 @@ def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
         for i in period_budget:
             if i == '-':
                 i == 0
-                i == int(i)
             else:
                 i == i
         if period_budget:
