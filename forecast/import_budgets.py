@@ -79,6 +79,12 @@ def copy_uploaded_budget(year, month_dict):
 def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
     for month_idx, period_obj in month_dict.items():
         period_budget = budget_row[month_idx].value
+        for i in period_budget:
+            if i == '-':
+                i == 0
+                i == int(i)
+            else:
+                i == i
         if period_budget:
             (budget_obj, created,) = BudgetUploadMonthlyFigure.objects.get_or_create(
                 financial_year=year_obj,
