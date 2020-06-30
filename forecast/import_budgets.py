@@ -82,7 +82,7 @@ def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
         for i in range(period_budget):
             if i == '-':
                 i == 0
-            elif i != int:
+            elif type(i) != int:
                 raise UploadFileFormatError(f"Data contains non numeric value")
             else:
                 i == i
