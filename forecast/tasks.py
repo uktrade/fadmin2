@@ -44,5 +44,4 @@ def process_uploaded_file(*args):
             if latest_unprocessed.document_type == FileUpload.BUDGET:
                 upload_budget_from_file(latest_unprocessed, *args)
 
-
         set_file_upload_finished(latest_unprocessed)
