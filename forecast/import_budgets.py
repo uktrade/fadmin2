@@ -137,19 +137,19 @@ def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
 
                     return validate_info_tuple(info_tuple)
 
-    if period_budget:
-        (budget_obj, created,) = BudgetUploadMonthlyFigure.objects.get_or_create(
-            financial_year=year_obj,
-            financial_code=financialcode_obj,
-            financial_period=period_obj,
-        )
-        # to avoid problems with precision,
-        # we store the figures in pence
-        if created:
-            budget_obj.amount = period_budget * 100
-        else:
-            budget_obj.amount += period_budget * 100
-        budget_obj.save()
+        if period_budget:
+            (budget_obj, created,) = BudgetUploadMonthlyFigure.objects.get_or_create(
+                financial_year=year_obj,
+                financial_code=financialcode_obj,
+                financial_period=period_obj,
+            )
+            # to avoid problems with precision,
+            # we store the figures in pence
+            if created:
+                budget_obj.amount = period_budget * 100
+            else:
+                budget_obj.amount += period_budget * 100
+            budget_obj.save()
 
 
 def upload_budget(worksheet, year, header_dict, file_upload):
