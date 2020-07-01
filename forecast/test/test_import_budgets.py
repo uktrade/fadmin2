@@ -21,6 +21,7 @@ from costcentre.test.factories import (
 )
 
 from forecast.import_budgets import upload_budget_from_file
+
 from forecast.models import (
     BudgetMonthlyFigure,
     FinancialPeriod,
@@ -59,6 +60,7 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
         self.not_valid_natural_account_code = TEST_NOT_VALID_NATURAL_ACCOUNT_CODE
         self.programme_code = TEST_PROGRAMME_CODE
         self.test_amount = 100
+        self.test_string_amount = '-'
         self.directorate_obj = DirectorateFactory.create(directorate_code="T123")
         CostCentreFactory.create(
             cost_centre_code=self.cost_centre_code, directorate=self.directorate_obj
@@ -92,7 +94,7 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
         bad_file_type_upload.save()
         with self.assertRaises(BadZipFile):
             upload_budget_from_file(
-                bad_file_type_upload, self.test_year,
+                self, file_upload=bad_file_type_upload, year=self.test_year,
             )
 
         bad_header_file_upload = FileUpload(
