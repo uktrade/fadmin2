@@ -16,12 +16,6 @@ from forecast.utils.import_helpers import (
     validate_excel_file,
 )
 
-from core.import_csv import (
-    get_fk,
-    get_fk_from_field,
-    get_pk_verbose_name,
-)
-
 from upload_file.models import FileUpload
 from upload_file.utils import (
     set_file_upload_fatal_error,
@@ -81,6 +75,7 @@ def copy_uploaded_budget(year, month_dict):
         ).delete()
     BudgetUploadMonthlyFigure.objects.filter(financial_year=year).delete()
 
+
 # This is where you un-indented it
 CODE_OK = 1
 CODE_ERROR = 2
@@ -89,27 +84,6 @@ IGNORE = 4
 
 obj_index = 0
 status_index = 1
-message_index = 2
-
-VALID_ECONOMIC_CODE_LIST = ["RESOURCE", "CAPITAL"]
-
-# class CheckUploadBudgetFigures:
-display_error = ""
-display_warning = ""
-financial_code_obj = None
-error_found = False
-warning_found = False
-ignore_row = False
-# Dictionary of tuples
-# Each tuple contains : (obj, status, error_code, message)
-# The objects of codes already used are kept in the dictionary,
-# to reduce the number of database accesses
-nac_dict = {}
-cc_dict = {}
-prog_dict = {}
-analysis1_dict = {}
-analysis2_dict = {}
-project_dict = {}
 
 error_row = 0
 
@@ -125,9 +99,7 @@ def validate_info_tuple(info_tuple):
 def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
     for month_idx, period_obj in month_dict.items():
         period_budget = budget_row[month_idx].value
-        # print(period_budget)
         for i in range(period_budget):
-            # print(period_budget)
             if i == '-':
                 i == 0
             elif type(i) != int:
