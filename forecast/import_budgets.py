@@ -22,6 +22,8 @@ from upload_file.utils import (
     set_file_upload_feedback,
 )
 
+
+
 EXPECTED_BUDGET_HEADERS = [
     "cost centre",
     "natural account",
@@ -76,38 +78,13 @@ def copy_uploaded_budget(year, month_dict):
     BudgetUploadMonthlyFigure.objects.filter(financial_year=year).delete()
 
 
-# This is where you un-indented it
-CODE_OK = 1
-CODE_ERROR = 2
-CODE_WARNING = 3
-IGNORE = 4
-
-obj_index = 0
-status_index = 1
-
-error_row = 0
-
-
-def validate_info_tuple(info_tuple):
-    status = info_tuple[status_index]
-    obj = info_tuple[obj_index]
-
-    if status == CODE_WARNING:
-        return obj
-
-
 def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
     for month_idx, period_obj in month_dict.items():
         period_budget = budget_row[month_idx].value
-        for i in range(period_budget):
-            if i == '-':
-                i == 0
-            elif type(i) != int:
-                    status = CODE_WARNING
-                    msg = f'Budget figure "{period_budget}" is not a number.\n'
-                    info_tuple = (period_obj, status, msg)
-
-                    return validate_info_tuple(info_tuple)
+        if period_budget == '-':
+            period_budget = 0
+        if type(period_budget) != int:
+            raise UploadFileFormatError(f"Non-numeric error {period_budget}")
 
         if period_budget:
             (budget_obj, created,) = BudgetUploadMonthlyFigure.objects.get_or_create(
@@ -146,7 +123,7 @@ def upload_budget(worksheet, year, header_dict, file_upload):
     a1_index = header_dict["analysis"]
     a2_index = header_dict["analysis2"]
     proj_index = header_dict["project"]
-    row = 0
+    row_number = 0
     # There is a terrible performance hit accessing the individual cells:
     # The cell is found starting from cell A0, and continuing until the
     # required cell is found
@@ -155,15 +132,15 @@ def upload_budget(worksheet, year, header_dict, file_upload):
     # A typical files took over 2 hours to read using the cell access method
     # and 10 minutes with the row access.
     for budget_row in worksheet.rows:
-        row += 1
-        if row == 1:
+        row_number += 1
+        if row_number == 1:
             # There is no way to start reading rows from a specific place.
             # Ignore first row, the headers have been processed already
             continue
-        if not row % 100:
+        if not row_number % 100:
             # Display the number of rows processed every 100 rows
             set_file_upload_feedback(
-                file_upload, f"Processing row {row} of {rows_to_process}."
+                file_upload, f"Processing row {row_number} of {rows_to_process}."
             )
         cost_centre = budget_row[cc_index].value
         if not cost_centre:
@@ -175,12 +152,16 @@ def upload_budget(worksheet, year, header_dict, file_upload):
         analysis2 = budget_row[a2_index].value
         project_code = budget_row[proj_index].value
         check_financial_code.validate(
-            cost_centre, nac, programme_code, analysis1, analysis2, project_code, row
+            cost_centre, nac, programme_code, analysis1, analysis2, project_code, row_number
         )
 
         if not check_financial_code.error_found:
             financialcode_obj = check_financial_code.get_financial_code()
             upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict)
+            try:
+                upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict)
+            except UploadFileFormatError as ex:
+                check_financial_code.display_error(row_number, str(ex))
 
     final_status = FileUpload.PROCESSED
     if check_financial_code.error_found:
