@@ -58,3 +58,6 @@ dev-requirements:
 production-requirements:
 	pip-compile --output-file requirements/base.txt requirements.in/base.in
 	pip-compile --output-file requirements/production.txt requirements.in/production.in
+
+pytest:
+	pytest . -v --ignore=venv --cov=. $(pytest_args)
