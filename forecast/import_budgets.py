@@ -22,7 +22,6 @@ from upload_file.utils import (
     set_file_upload_feedback,
 )
 
-
 EXPECTED_BUDGET_HEADERS = [
     "cost centre",
     "natural account",
@@ -84,7 +83,6 @@ def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
             period_budget = 0
         if type(period_budget) != int:
             raise UploadFileFormatError(f"Non-numeric error {period_budget}")
-
         if period_budget:
             (budget_obj, created,) = BudgetUploadMonthlyFigure.objects.get_or_create(
                 financial_year=year_obj,
@@ -145,7 +143,6 @@ def upload_budget(worksheet, year, header_dict, file_upload): # noqa
         if not cost_centre:
             # protection against empty rows
             break
-
         nac = budget_row[nac_index].value
         programme_code = budget_row[prog_index].value
         analysis1 = budget_row[a1_index].value
@@ -155,7 +152,6 @@ def upload_budget(worksheet, year, header_dict, file_upload): # noqa
             cost_centre, nac, programme_code,
             analysis1, analysis2, project_code, row_number
         )
-
         if not check_financial_code.error_found:
             financialcode_obj = check_financial_code.get_financial_code()
             try:
