@@ -192,12 +192,16 @@ class CheckFinancialCode:
 
     error_row = 0
 
-    def get_info_tuple(self, model, pk):
+    def get_info_tuple(self, model, pk, make_active = True):
+        status = IGNORE
         obj, msg = get_fk(model, pk)
         if not obj:
             status = CODE_ERROR
         else:
-            if not obj.active:
+            if obj.active:
+                status = CODE_OK
+                msg = ""
+            else:
                 if self.upload_type == FileUpload.BUDGET:
                     status = CODE_ERROR
                     msg = (
@@ -205,7 +209,7 @@ class CheckFinancialCode:
                         f"is not in the approved list. \n"
                     )
                     obj = None
-                else:
+                elif make_active:
                     obj.active
                     obj.save
                     status = CODE_WARNING
@@ -213,9 +217,6 @@ class CheckFinancialCode:
                         f'{get_pk_verbose_name(model)} "{pk}" '
                         f"added to the approved list. \n"
                     )
-            else:
-                status = CODE_OK
-                msg = ""
         info_tuple = (obj, status, msg)
         return info_tuple
 
@@ -277,7 +278,7 @@ class CheckFinancialCode:
         return self.validate_info_tuple(info_tuple)
 
     def validate_nac_for_actual(self, nac):
-        info_tuple = self.nac_dict.get(nac, None)
+        info_tuple = self.nac_dict.get(nac, None, False)
         if not info_tuple:
             info_tuple = self.get_info_tuple(NaturalCode, nac)
             if info_tuple[status_index] != CODE_ERROR:
@@ -355,6 +356,15 @@ class CheckFinancialCode:
                     "Upload aborted: Data error.",
                 )
         return self.error_found
+
+    def record_error(self, row_number, error_message):
+        self.error_found = True
+        if self.file_upload:
+            set_file_upload_error(
+                self.file_upload,
+                f"Row {row_number} error: {error_message}",
+                "Upload aborted: Data error.",
+            )
 
     def get_financial_code(self):
         if self.error_found:
