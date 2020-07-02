@@ -23,7 +23,6 @@ from upload_file.utils import (
 )
 
 
-
 EXPECTED_BUDGET_HEADERS = [
     "cost centre",
     "natural account",
@@ -101,7 +100,7 @@ def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
             budget_obj.save()
 
 
-def upload_budget(worksheet, year, header_dict, file_upload):
+def upload_budget(worksheet, year, header_dict, file_upload): # noqa
     year_obj, created = FinancialYear.objects.get_or_create(financial_year=year)
     if created:
         year_obj.financial_year_display = f"{year}/{year - 1999}"
@@ -146,20 +145,22 @@ def upload_budget(worksheet, year, header_dict, file_upload):
         if not cost_centre:
             # protection against empty rows
             break
+
         nac = budget_row[nac_index].value
         programme_code = budget_row[prog_index].value
         analysis1 = budget_row[a1_index].value
         analysis2 = budget_row[a2_index].value
         project_code = budget_row[proj_index].value
         check_financial_code.validate(
-            cost_centre, nac, programme_code, analysis1, analysis2, project_code, row_number
+            cost_centre, nac, programme_code,
+            analysis1, analysis2, project_code, row_number
         )
 
         if not check_financial_code.error_found:
             financialcode_obj = check_financial_code.get_financial_code()
-            upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict)
             try:
-                upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict)
+                upload_budget_figures(budget_row, year_obj,
+                                      financialcode_obj, month_dict)
             except UploadFileFormatError as ex:
                 check_financial_code.display_error(row_number, str(ex))
 
