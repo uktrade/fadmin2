@@ -192,7 +192,7 @@ class CheckFinancialCode:
 
     error_row = 0
 
-    def get_info_tuple(self, model, pk, make_active = True):
+    def get_info_tuple(self, model, pk, make_active=True):
         status = IGNORE
         obj, msg = get_fk(model, pk)
         if not obj:
