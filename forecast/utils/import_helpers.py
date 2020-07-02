@@ -278,6 +278,8 @@ class CheckFinancialCode:
         return self.validate_info_tuple(info_tuple)
 
     def validate_nac_for_actual(self, nac):
+        # don't make active the nac. If it is not resource/capital
+        # we ignore it.
         info_tuple = self.nac_dict.get(nac, None, False)
         if not info_tuple:
             info_tuple = self.get_info_tuple(NaturalCode, nac)
@@ -292,7 +294,16 @@ class CheckFinancialCode:
                     status = IGNORE
                     msg = ""
                     info_tuple = (None, status, msg)
-
+                elif not obj.active:
+                    # check if it is active. If not. make it active.
+                    obj.active
+                    obj.save
+                    status = CODE_WARNING
+                    msg = (
+                        f'Natural account code "{nac}" '
+                        f"added to the approved list. \n"
+                    )
+                    info_tuple = (obj, status, msg)
             self.nac_dict[nac] = info_tuple
         if info_tuple[status_index] == IGNORE:
             self.ignore_row = True
@@ -356,15 +367,6 @@ class CheckFinancialCode:
                     "Upload aborted: Data error.",
                 )
         return self.error_found
-
-    def record_error(self, row_number, error_message):
-        self.error_found = True
-        if self.file_upload:
-            set_file_upload_error(
-                self.file_upload,
-                f"Row {row_number} error: {error_message}",
-                "Upload aborted: Data error.",
-            )
 
     def get_financial_code(self):
         if self.error_found:
