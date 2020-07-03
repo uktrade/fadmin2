@@ -280,9 +280,9 @@ class CheckFinancialCode:
     def validate_nac_for_actual(self, nac):
         # don't make active the nac. If it is not resource/capital
         # we ignore it.
-        info_tuple = self.nac_dict.get(nac, None, False)
+        info_tuple = self.nac_dict.get(nac, None)
         if not info_tuple:
-            info_tuple = self.get_info_tuple(NaturalCode, nac)
+            info_tuple = self.get_info_tuple(NaturalCode, nac, False)
             if info_tuple[status_index] != CODE_ERROR:
                 obj = info_tuple[obj_index]
                 #  Check that the NAC is resource or capital
