@@ -210,8 +210,8 @@ class CheckFinancialCode:
                     )
                     obj = None
                 elif make_active:
-                    obj.active
-                    obj.save
+                    obj.active = True
+                    obj.save()
                     status = CODE_WARNING
                     msg = (
                         f'{get_pk_verbose_name(model)} "{pk}" '
@@ -296,8 +296,8 @@ class CheckFinancialCode:
                     info_tuple = (None, status, msg)
                 elif not obj.active:
                     # check if it is active. If not. make it active.
-                    obj.active
-                    obj.save
+                    obj.active = True
+                    obj.save()
                     status = CODE_WARNING
                     msg = (
                         f'Natural account code "{nac}" '
