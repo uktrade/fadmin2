@@ -295,7 +295,9 @@ class CheckFinancialCode:
                     msg = ""
                     info_tuple = (None, status, msg)
                 elif not obj.active:
-                    # check if it is active. If not. make it active.
+                    # it is made active here, when we know is Resource or Capital
+                    # this is to avoid making active NACs that are not used in FFT
+                    # but are present in the Trial Balance
                     obj.active = True
                     obj.save()
                     status = CODE_WARNING
