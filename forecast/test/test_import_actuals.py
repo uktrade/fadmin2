@@ -118,7 +118,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
         NaturalCodeFactory.create(
             natural_account_code=self.valid_natural_account_code,
             economic_budget_code=VALID_ECONOMIC_CODE_LIST[0],
-            active = False,
+            active=False,
         )
         NaturalCodeFactory.create(
             natural_account_code=18162001,
@@ -131,7 +131,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
         )
         ProgrammeCodeFactory.create(
             programme_code=self.programme_code,
-            active = False,
+            active=False,
         )
         ProgrammeCodeFactory.create(
             programme_code='310540'
@@ -303,6 +303,21 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             ).count(),
             0,
         )
+        self.assertEqual(
+            NaturalCode.objects.get(
+                natural_account_code=self.not_valid_natural_account_code
+            ).active,
+            False
+        )
+        self.assertEqual(
+            CostCentre.objects.get(cost_centre_code=self.cost_centre_code).active,
+            False
+        )
+        self.assertEqual(
+            ProgrammeCode.objects.get(programme_code=self.programme_code).active,
+            False
+        )
+
         save_trial_balance_row(
             '3000-30000-{}-{}-{}-00000-00000-0000-0000-0000'.format(
                 self.cost_centre_code,
@@ -314,6 +329,22 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             self.year_obj,
             self.check_financial_code,
             1
+        )
+        # The chart of account fields are still non active
+        # because the row was ignored
+        self.assertEqual(
+            NaturalCode.objects.get(
+                natural_account_code=self.not_valid_natural_account_code
+            ).active,
+            False
+        )
+        self.assertEqual(
+            CostCentre.objects.get(cost_centre_code=self.cost_centre_code).active,
+            False
+        )
+        self.assertEqual(
+            ProgrammeCode.objects.get(programme_code=self.programme_code).active,
+            False
         )
         self.assertEqual(
             FinancialCode.objects.filter(
