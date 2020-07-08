@@ -415,6 +415,8 @@ class ProgrammeAdmin(AdminActiveField, AdminImportExtraExport):
         if request.user.is_superuser:
             if obj:
                 return["created", "updated"]
+            else:
+                return ["created", "updated"]
         elif request.user.groups.filter(name="Finance Administrator"):
             if obj:
                 return [
@@ -425,6 +427,8 @@ class ProgrammeAdmin(AdminActiveField, AdminImportExtraExport):
                 ]  # don't allow to edit the code
             else:
                 return ["created", "updated"]
+        else:
+            return self.get_fields(request, obj)
 
     def get_fields(self, request, obj=None):
         return [
