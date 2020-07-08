@@ -413,10 +413,7 @@ class ProgrammeAdmin(AdminActiveField, AdminImportExtraExport):
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser:
-            if obj:
-                return["created", "updated"]
-            else:
-                return ["created", "updated"]
+            return["created", "updated"]
         elif request.user.groups.filter(name="Finance Administrator"):
             if obj:
                 return [
