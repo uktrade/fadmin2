@@ -60,4 +60,4 @@ production-requirements:
 	pip-compile --output-file requirements/production.txt requirements.in/production.in
 
 pytest:
-	docker-compose run fido pytest
+	docker-compose run fido tool:pytest
