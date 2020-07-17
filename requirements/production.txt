@@ -5,13 +5,12 @@
 #    pip-compile --output-file=requirements/production.txt requirements.in/production.in
 #
 amqp==2.6.0               # via -r requirements.in/base.in, kombu
-apipkg==1.5               # via execnet
 appnope==0.1.0            # via -r requirements.in/base.in, ipython
 atomicwrites==1.2.1       # via -r requirements.in/base.in
-attrs==18.1.0             # via -r requirements.in/base.in, pytest
+attrs==18.1.0             # via -r requirements.in/base.in
 billiard==3.6.3.0         # via -r requirements.in/base.in, celery
-boto3==1.14.9             # via -r requirements.in/base.in, s3chunkuploader
-botocore==1.17.9          # via -r requirements.in/base.in, boto3, s3transfer
+boto3==1.14.22            # via -r requirements.in/base.in, s3chunkuploader
+botocore==1.17.22         # via -r requirements.in/base.in, boto3, s3transfer
 celery==4.4.4             # via -r requirements.in/base.in
 certifi==2018.8.24        # via -r requirements.in/base.in, elastic-apm, requests, sentry-sdk
 chardet==3.0.4            # via -r requirements.in/base.in, requests
@@ -51,14 +50,14 @@ djangorestframework==3.11.0  # via -r requirements.in/base.in
 docutils==0.14            # via -r requirements.in/base.in, botocore
 elastic-apm==5.6.0        # via -r requirements.in/base.in
 et-xmlfile==1.0.1         # via -r requirements.in/base.in, openpyxl
-execnet==1.7.1            # via pytest-xdist
 flake8-import-order==0.18  # via -r requirements.in/base.in
 flake8==3.5.0             # via -r requirements.in/base.in
 future==0.18.2            # via -r requirements.in/base.in
-get==1.0.3                # via -r requirements.in/base.in, request
+gevent==20.6.2            # via -r requirements.in/production.in
+greenlet==0.4.16          # via gevent
 gunicorn==19.9.0          # via -r requirements.in/base.in
 idna==2.7                 # via -r requirements.in/base.in, requests
-importlib-metadata==1.6.0  # via -r requirements.in/base.in, kombu, pluggy, pytest
+importlib-metadata==1.6.0  # via -r requirements.in/base.in, kombu, pluggy
 ipython-genutils==0.2.0   # via -r requirements.in/base.in, traitlets
 ipython==6.2.1            # via -r requirements.in/base.in
 jdcal==1.3                # via -r requirements.in/base.in, openpyxl
@@ -69,39 +68,34 @@ kubi-ecs-logger==0.0.6    # via -r requirements.in/base.in, django-log-formatter
 libsass==0.20.0           # via -r requirements.in/base.in
 marshmallow==2.19.2       # via -r requirements.in/base.in, kubi-ecs-logger
 mccabe==0.6.1             # via -r requirements.in/base.in, flake8
-more-itertools==4.3.0     # via -r requirements.in/base.in, pytest
+more-itertools==4.3.0     # via -r requirements.in/base.in
 oauthlib==2.1.0           # via -r requirements.in/base.in, requests-oauthlib
 odfpy==1.3.6              # via -r requirements.in/base.in, tablib
 openpyxl==2.4.9           # via -r requirements.in/base.in, tablib
-packaging==20.4           # via pytest
 parso==0.1.1              # via -r requirements.in/base.in, jedi
 pexpect==4.4.0            # via -r requirements.in/base.in, ipython
 pickleshare==0.7.4        # via -r requirements.in/base.in, ipython
-pluggy==0.13.1            # via -r requirements.in/base.in, pytest
-post==1.0.2               # via -r requirements.in/base.in, request
+pluggy==0.13.1            # via -r requirements.in/base.in
 prompt-toolkit==1.0.15    # via -r requirements.in/base.in, ipython
+psycogreen==1.0.2         # via -r requirements.in/production.in
 psycopg2-binary==2.7.4    # via -r requirements.in/base.in
 psycopg2==2.7.4           # via -r requirements.in/base.in
 ptyprocess==0.5.2         # via -r requirements.in/base.in, pexpect
 public==1.0.3             # via -r requirements.in/base.in, query-string
-py==1.6.0                 # via -r requirements.in/base.in, pytest
+py==1.6.0                 # via -r requirements.in/base.in
 pycodestyle==2.3.1        # via -r requirements.in/base.in, flake8, flake8-import-order
 pydot==1.2.4              # via -r requirements.in/base.in
 pyflakes==1.6.0           # via -r requirements.in/base.in, flake8
 pygments==2.2.0           # via -r requirements.in/base.in, ipython
-pyparsing==2.2.0          # via -r requirements.in/base.in, packaging, pydot
-pytest-forked==1.2.0      # via pytest-xdist
-pytest-xdist==1.32.0      # via -r requirements.in/base.in
-pytest==5.4.3             # via -r requirements.in/base.in, pytest-forked, pytest-xdist
+pyparsing==2.2.0          # via -r requirements.in/base.in, pydot
 python-dateutil==2.7.3    # via -r requirements.in/base.in, botocore
 python-dotenv==0.9.1      # via -r requirements.in/base.in
 pytz==2018.3              # via -r requirements.in/base.in, celery, django
 pyyaml==5.1               # via -r requirements.in/base.in, tablib
-query-string==1.0.2       # via -r requirements.in/base.in, get
+query-string==1.0.2       # via -r requirements.in/base.in
 raven==6.9.0              # via -r requirements.in/base.in, custom-usermodel, django-staff-sso-client
 rcssmin==1.0.6            # via -r requirements.in/base.in, django-compressor
 redis==3.5.3              # via -r requirements.in/base.in, django-redis
-request==1.0.2            # via -r requirements.in/base.in
 requests-oauthlib==1.0.0  # via -r requirements.in/base.in, custom-usermodel, django-staff-sso-client
 requests==2.21.0          # via -r requirements.in/base.in, requests-oauthlib
 rjsmin==1.1.0             # via -r requirements.in/base.in, django-compressor
@@ -109,7 +103,7 @@ s3chunkuploader==0.12     # via -r requirements.in/base.in
 s3transfer==0.3.3         # via -r requirements.in/base.in, boto3
 sentry-sdk==0.10.2        # via -r requirements.in/base.in
 simplegeneric==0.8.1      # via -r requirements.in/base.in, ipython
-six==1.15.0               # via -r requirements.in/base.in, django-bootstrap-breadcrumbs, django-compressor, django-extensions, django-pivot, django-simple-history, django-tablib, libsass, more-itertools, packaging, prompt-toolkit, pytest-xdist, python-dateutil, traitlets
+six==1.15.0               # via -r requirements.in/base.in, django-bootstrap-breadcrumbs, django-compressor, django-extensions, django-pivot, django-simple-history, django-tablib, libsass, more-itertools, prompt-toolkit, python-dateutil, traitlets
 sqlparse==0.2.4           # via -r requirements.in/base.in, django
 tablib==0.12.1            # via -r requirements.in/base.in, django-import-export, django-tablib
 text-unidecode==1.3       # via -r requirements.in/base.in
@@ -117,11 +111,13 @@ traitlets==4.3.2          # via -r requirements.in/base.in, ipython
 unicodecsv==0.14.1        # via -r requirements.in/base.in, tablib
 urllib3==1.24.2           # via -r requirements.in/base.in, botocore, elastic-apm, requests, sentry-sdk
 vine==1.3.0               # via -r requirements.in/base.in, amqp, celery
-wcwidth==0.1.7            # via -r requirements.in/base.in, prompt-toolkit, pytest
+wcwidth==0.1.7            # via -r requirements.in/base.in, prompt-toolkit
 whitenoise==4.1           # via -r requirements.in/base.in
 xlrd==1.1.0               # via -r requirements.in/base.in, tablib
 xlwt==1.3.0               # via -r requirements.in/base.in, tablib
 zipp==3.1.0               # via -r requirements.in/base.in, importlib-metadata
+zope.event==4.4           # via gevent
+zope.interface==5.1.0     # via gevent
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
