@@ -5,7 +5,6 @@
 #    pip-compile --output-file=requirements/base.txt requirements.in/base.in
 #
 amqp==2.6.0               # via -r requirements.in/base.in, kombu
-apipkg==1.5               # via execnet
 appnope==0.1.0            # via -r requirements.in/base.in, ipython
 atomicwrites==1.2.1       # via -r requirements.in/base.in
 attrs==18.1.0             # via -r requirements.in/base.in, pytest
@@ -51,7 +50,6 @@ djangorestframework==3.11.0  # via -r requirements.in/base.in
 docutils==0.14            # via -r requirements.in/base.in, botocore
 elastic-apm==5.6.0        # via -r requirements.in/base.in
 et-xmlfile==1.0.1         # via -r requirements.in/base.in, openpyxl
-execnet==1.7.1            # via pytest-xdist
 flake8-import-order==0.18  # via -r requirements.in/base.in
 flake8==3.5.0             # via -r requirements.in/base.in
 future==0.18.2            # via -r requirements.in/base.in
@@ -90,9 +88,7 @@ pydot==1.2.4              # via -r requirements.in/base.in
 pyflakes==1.6.0           # via -r requirements.in/base.in, flake8
 pygments==2.2.0           # via -r requirements.in/base.in, ipython
 pyparsing==2.2.0          # via -r requirements.in/base.in, packaging, pydot
-pytest-forked==1.2.0      # via pytest-xdist
-pytest-xdist==1.32.0      # via -r requirements.in/base.in
-pytest==5.4.3             # via -r requirements.in/base.in, pytest-forked, pytest-xdist
+pytest==5.4.3             # via -r requirements.in/base.in
 python-dateutil==2.7.3    # via -r requirements.in/base.in, botocore
 python-dotenv==0.9.1      # via -r requirements.in/base.in
 pytz==2018.3              # via -r requirements.in/base.in, celery, django
@@ -109,7 +105,7 @@ s3chunkuploader==0.12     # via -r requirements.in/base.in
 s3transfer==0.3.3         # via -r requirements.in/base.in, boto3
 sentry-sdk==0.10.2        # via -r requirements.in/base.in
 simplegeneric==0.8.1      # via -r requirements.in/base.in, ipython
-six==1.15.0               # via -r requirements.in/base.in, django-bootstrap-breadcrumbs, django-compressor, django-extensions, django-pivot, django-simple-history, django-tablib, libsass, more-itertools, packaging, prompt-toolkit, pytest-xdist, python-dateutil, traitlets
+six==1.15.0               # via -r requirements.in/base.in, django-bootstrap-breadcrumbs, django-compressor, django-extensions, django-pivot, django-simple-history, django-tablib, libsass, more-itertools, packaging, prompt-toolkit, python-dateutil, traitlets
 sqlparse==0.2.4           # via -r requirements.in/base.in, django
 tablib==0.12.1            # via -r requirements.in/base.in, django-import-export, django-tablib
 text-unidecode==1.2       # via -r requirements.in/base.in

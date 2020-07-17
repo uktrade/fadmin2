@@ -83,7 +83,6 @@ pydot==1.2.4
 pyflakes==1.6.0
 Pygments==2.2.0
 pyparsing==2.2.0
-pytest-xdist
 python-dateutil==2.7.3
 python-dotenv==0.9.1
 pytz==2018.3

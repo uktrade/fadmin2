@@ -6,8 +6,9 @@ selenium
 beautifulsoup4
 black
 pytest
+pytest-cov
 pytest-django
-pytest-xdist
+pytest-parallel
 behave-django
 pyperclip
 webdriver-manager
