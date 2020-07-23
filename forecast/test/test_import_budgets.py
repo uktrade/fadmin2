@@ -248,17 +248,17 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
             actual_loaded=True
         )
 
-        dash_file_upload = FileUpload(
+        good_file_upload = FileUpload(
             document_file=os.path.join(
                 os.path.dirname(__file__), "test_assets/budget_upload_bad_dash.xlsx",
             ),
             uploading_user=self.test_user,
             document_type=FileUpload.BUDGET,
         )
-        dash_file_upload.save()
+        good_file_upload.save()
 
         upload_budget_from_file(
-            dash_file_upload, self.test_year,
+            good_file_upload, self.test_year,
         )
 
         self.assertEqual(
