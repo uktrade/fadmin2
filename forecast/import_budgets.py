@@ -1,5 +1,7 @@
 from django.db import connection
 
+import re
+
 from core.import_csv import xslx_header_to_dict
 from core.models import FinancialYear
 
@@ -80,9 +82,10 @@ def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
     for month_idx, period_obj in month_dict.items():
         period_budget = budget_row[month_idx].value
         if period_budget == '-':
+            # we accept the '-' as it is a recognised value in Finance for 0
             period_budget = 0
-        if type(period_budget) != int:
-            raise UploadFileFormatError(f"Non-numeric error {period_budget}")
+        if not str(period_budget).isnumeric():
+            raise UploadFileFormatError(f"Non-numeric value in {budget_row[month_idx].coordinate}: {period_budget}")
         if period_budget:
             (budget_obj, created,) = BudgetUploadMonthlyFigure.objects.get_or_create(
                 financial_year=year_obj,
@@ -130,6 +133,8 @@ def upload_budget(worksheet, year, header_dict, file_upload): # noqa
     # and 10 minutes with the row access.
     for budget_row in worksheet.rows:
         row_number += 1
+        if row_number == '-':
+            row_number = 0
         if row_number == 1:
             # There is no way to start reading rows from a specific place.
             # Ignore first row, the headers have been processed already
@@ -158,7 +163,10 @@ def upload_budget(worksheet, year, header_dict, file_upload): # noqa
                 upload_budget_figures(budget_row, year_obj,
                                       financialcode_obj, month_dict)
             except UploadFileFormatError as ex:
-                check_financial_code.display_error(row_number, str(ex))
+                set_file_upload_fatal_error(
+                    file_upload, str(ex), str(ex),
+                )
+                raise ex
 
     final_status = FileUpload.PROCESSED
     if check_financial_code.error_found:
