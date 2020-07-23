@@ -235,6 +235,7 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
             .amount,
             2200,
         )
+
     def test_budget_file_contains_dash(self):
         self.assertEqual(
             BudgetMonthlyFigure.objects.filter(
@@ -289,7 +290,7 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
                 financial_code__cost_centre=self.cost_centre_code,
                 financial_period=12,
             )
-                .first()
-                .amount,
+            .first()
+            .amount,
             2200,
         )

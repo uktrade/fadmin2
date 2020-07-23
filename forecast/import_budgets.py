@@ -1,7 +1,5 @@
 from django.db import connection
 
-import re
-
 from core.import_csv import xslx_header_to_dict
 from core.models import FinancialYear
 
@@ -88,7 +86,9 @@ def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
             # we accept the '-' as it is a recognised value in Finance for 0
             period_budget = 0
         if not str(period_budget).isnumeric():
-            raise UploadFileFormatError(f"Non-numeric value in {budget_row[month_idx].coordinate}: {period_budget}")
+            raise UploadFileFormatError(
+                f"Non-numeric value in {budget_row[month_idx].coordinate}:{period_budget}"# noqa
+            )
         if period_budget:
             (budget_obj, created,) = BudgetUploadMonthlyFigure.objects.get_or_create(
                 financial_year=year_obj,
@@ -104,7 +104,7 @@ def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
             budget_obj.save()
 
 
-def upload_budget(worksheet, year, header_dict, file_upload):
+def upload_budget(worksheet, year, header_dict, file_upload):# noqa
     year_obj, created = FinancialYear.objects.get_or_create(financial_year=year)
     if created:
         year_obj.financial_year_display = f"{year}/{year - 1999}"
