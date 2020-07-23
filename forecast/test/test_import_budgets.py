@@ -293,28 +293,3 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
                 .amount,
             2200,
         )
-
-    def test_budget_file_contains_text(self):
-        bad_text_file_upload = FileUpload(
-            document_file=os.path.join(
-                os.path.dirname(__file__), "test_assets/budget_upload_bad_text.xlsx",
-            ),
-            uploading_user=self.test_user,
-            document_type=FileUpload.BUDGET,
-        )
-        bad_text_file_upload.save()
-
-        self.assertEqual(
-            BudgetMonthlyFigure.objects.all().count(), 0,
-        )
-        upload_budget_from_file(
-            bad_text_file_upload, self.test_year,
-        )
-        self.assert_(bad_text_file_upload.status, FileUpload.PROCESSEDWITHERROR)
-        self.assertEqual(
-            BudgetMonthlyFigure.objects.all().count(), 0,
-        )
-        with self.assertRaises(UploadFileFormatError):
-            upload_budget_from_file(
-                bad_text_file_upload, self.test_year,
-            )

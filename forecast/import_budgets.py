@@ -104,7 +104,7 @@ def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
             budget_obj.save()
 
 
-def upload_budget(worksheet, year, header_dict, file_upload): # noqa
+def upload_budget(worksheet, year, header_dict, file_upload):
     year_obj, created = FinancialYear.objects.get_or_create(financial_year=year)
     if created:
         year_obj.financial_year_display = f"{year}/{year - 1999}"
@@ -136,8 +136,6 @@ def upload_budget(worksheet, year, header_dict, file_upload): # noqa
     # and 10 minutes with the row access.
     for budget_row in worksheet.rows:
         row_number += 1
-        if row_number == '-':
-            row_number = 0
         if row_number == 1:
             # There is no way to start reading rows from a specific place.
             # Ignore first row, the headers have been processed already
