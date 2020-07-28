@@ -8,12 +8,12 @@ from django.core.management.base import (
 )
 from django.db import connection
 
+from end_of_month.models import EndOfMonthStatus
+
 from core.import_csv import (
     csv_header_to_dict,
     get_fk,
 )
-
-from end_of_month.models import EndOfMonthStatus
 
 from forecast.import_csv import WrongChartOFAccountCodeException
 from forecast.models import (
@@ -35,64 +35,29 @@ class WrongArchivePeriodException(Exception):
 def sql_for_single_month_copy(
     financial_period_id, archived_period_id, financial_year_id,
 ):
-    if archived_period_id != 0:
-        archived_filter = "= {archived_period_id}"
-        archived_value = f"{archived_period_id}"
-    else:
-        archived_filter = "IS NULL"
-        archived_value = "NULL"
-
-    sql_update = (
-        f"UPDATE forecast_forecastmonthlyfigure t "
-        f"SET  updated=now(), amount=u.amount, starting_amount=u.starting_amount, "
-        f"archived_status_id = {archived_value}"
-        f"FROM forecast_budgetuploadmonthlyfigure u "
-        f"WHERE  "
-        f"t.financial_code_id = u.financial_code_id and "
-        f"t.financial_period_id = u.financial_period_id and "
-        f"t.financial_year_id = u.financial_year_id and "
-        f"t.financial_period_id = {financial_period_id} and "
-        f"t.archived_status_id {archived_filter} and "
-        f"t.financial_year_id = {financial_year_id};"
-    )
-
     sql_insert = (
         f"INSERT INTO forecast_forecastmonthlyfigure (created, "
         f"updated, amount, starting_amount, financial_code_id, "
         f"financial_period_id, financial_year_id, archived_status_id) "
         f"SELECT now(), now(), amount, amount, financial_code_id, "
-        f"financial_period_id, financial_year_id, {archived_value} "
+        f"financial_period_id, financial_year_id, {archived_period_id} "
         f"FROM forecast_actualuploadmonthlyfigure "
         f"WHERE "
         f"financial_period_id = {financial_period_id} and "
-        f"financial_year_id = {financial_year_id}  and "
-        f" financial_code_id "
-        f"not in (select financial_code_id "
-        f"from forecast_forecastmonthlyfigure where "
-        f"financial_period_id = {financial_period_id} and "
-        f"archived_status_id {archived_filter}  and "
-        f"financial_year_id = {financial_year_id});"
+        f"financial_year_id = {financial_year_id} ; "
     )
-
-    print(sql_update)
-    print("---")
-    print(sql_insert)
-    return sql_update, sql_insert
+    return sql_insert
 
 
-def import_single_archived_period(csvfile,
-                                  month_to_upload,
-                                  archive_period,
-                                  fin_year):
+def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_year):
 
     if month_to_upload <= archive_period:
         raise WrongArchivePeriodException(
-             "You are trying to amend Actuals. Only forecast can be amended."
+            "You are trying to amend Actuals. Only forecast can be amended."
         )
 
     end_of_month_info = EndOfMonthStatus.objects.get(
-        archived_period__financial_period_code=archive_period,
-        archived=True
+        archived_period__financial_period_code=archive_period, archived=True
     )
     if not end_of_month_info:
         raise WrongArchivePeriodException(
@@ -157,13 +122,10 @@ def import_single_archived_period(csvfile,
         financial_year=fin_year,
         financial_period=period_obj,
         archived_status_id=archive_period_id,
-    ).update(amount=0, starting_amount=0)
-    sql_update, sql_insert = sql_for_single_month_copy(
-        month_to_upload, archive_period_id, fin_year
-    )
+    ).delete()
+    sql_insert = sql_for_single_month_copy(month_to_upload, archive_period_id, fin_year)
     with connection.cursor() as cursor:
         cursor.execute(sql_insert)
-        cursor.execute(sql_update)
     ForecastMonthlyFigure.objects.filter(
         financial_year=fin_year,
         financial_period=period_obj,
@@ -198,9 +160,9 @@ class Command(BaseCommand):
             return
 
         if archive_period > 15 or archive_period < 1:
-            self.stdout.write(self.style.ERROR(
-                "Valid archive Period is between 1 and 15."
-            ))
+            self.stdout.write(
+                self.style.ERROR("Valid archive Period is between 1 and 15.")
+            )
             return
 
         # Windows-1252 or CP-1252, used because of a back quote
