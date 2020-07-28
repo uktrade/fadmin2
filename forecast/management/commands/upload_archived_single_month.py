@@ -1,20 +1,16 @@
-from django.core.management.base import BaseCommand
-
-from django.db import connection
-
-from forecast.import_csv import (
-    WrongChartOFAccountCodeException,
-)
-
 import csv
 import logging
 from decimal import Decimal
+
+from django.core.management.base import BaseCommand
+from django.db import connection
 
 from core.import_csv import (
     csv_header_to_dict,
     get_fk,
 )
 
+from forecast.import_csv import WrongChartOFAccountCodeException
 from forecast.models import (
     ActualUploadMonthlyFigure,
     FinancialPeriod,
@@ -28,17 +24,14 @@ logger = logging.getLogger(__name__)
 
 
 def sql_for_single_month_copy(
-                      financial_period_id,
-                        archived_period_id,
-                      financial_year_id,
-                      ):
-    if archived_period_id !=0:
-        archived_filter = '= {archived_period_id}'
+    financial_period_id, archived_period_id, financial_year_id,
+):
+    if archived_period_id != 0:
+        archived_filter = "= {archived_period_id}"
         archived_value = f"{archived_period_id}"
     else:
-        archived_filter = 'IS NULL'
-        archived_value = 'NULL'
-
+        archived_filter = "IS NULL"
+        archived_value = "NULL"
 
     sql_update = (
         f"UPDATE forecast_forecastmonthlyfigure t "
@@ -75,17 +68,10 @@ def sql_for_single_month_copy(
     return sql_update, sql_insert
 
 
-
-def import_single_archived_period(
-        csvfile,
-        month_to_upload,
-        archive_period,
-        fin_year
-):
+def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_year):
     period_obj = FinancialPeriod.objects.get(pk=month_to_upload)
     ActualUploadMonthlyFigure.objects.filter(
-        financial_year=fin_year,
-        financial_period=period_obj
+        financial_year=fin_year, financial_period=period_obj
     ).delete()
 
     reader = csv.reader(csvfile)
@@ -118,16 +104,15 @@ def import_single_archived_period(
         financialcode_obj = check_financial_code.get_financial_code()
         period_amount = Decimal(row[month_col])
         if period_amount:
-            month_figure_obj, created = \
-                 ActualUploadMonthlyFigure.objects.get_or_create(
-                    financial_year=fin_obj,
-                    financial_period=period_obj,
-                    financial_code=financialcode_obj,
-                )
+            month_figure_obj, created = ActualUploadMonthlyFigure.objects.get_or_create(
+                financial_year=fin_obj,
+                financial_period=period_obj,
+                financial_code=financialcode_obj,
+            )
             if created:
                 month_figure_obj.amount = period_amount * 100
             else:
-                month_figure_obj.amount += (period_amount * 100)
+                month_figure_obj.amount += period_amount * 100
             month_figure_obj.current_amount = month_figure_obj.amount
             month_figure_obj.save()
 
@@ -141,9 +126,7 @@ def import_single_archived_period(
         archived_status_id=archive_period,
     ).update(amount=0, starting_amount=0)
     sql_update, sql_insert = sql_for_single_month_copy(
-        month_to_upload,
-        archive_period,
-        fin_year
+        month_to_upload, archive_period, fin_year
     )
     with connection.cursor() as cursor:
         cursor.execute(sql_insert)
@@ -179,9 +162,5 @@ class Command(BaseCommand):
 
         import_single_archived_period(path, period, archive_period, year)
         self.stdout.write(
-            self.style.SUCCESS(
-                "Actual for period {} added".format(
-                    period
-                )
-            )
+            self.style.SUCCESS("Actual for period {} added".format(period))
         )
