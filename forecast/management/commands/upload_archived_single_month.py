@@ -2,13 +2,18 @@ import csv
 import logging
 from decimal import Decimal
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import (
+    BaseCommand,
+    CommandError,
+)
 from django.db import connection
 
 from core.import_csv import (
     csv_header_to_dict,
     get_fk,
 )
+
+from end_of_month.models import EndOfMonthStatus
 
 from forecast.import_csv import WrongChartOFAccountCodeException
 from forecast.models import (
@@ -21,6 +26,10 @@ from forecast.utils.import_helpers import CheckFinancialCode
 
 
 logger = logging.getLogger(__name__)
+
+
+class WrongArchivePeriodException(Exception):
+    pass
 
 
 def sql_for_single_month_copy(
@@ -65,11 +74,34 @@ def sql_for_single_month_copy(
         f"financial_year_id = {financial_year_id});"
     )
 
+    print(sql_update)
+    print("---")
+    print(sql_insert)
     return sql_update, sql_insert
 
 
-def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_year):
+def import_single_archived_period(csvfile,
+                                  month_to_upload,
+                                  archive_period,
+                                  fin_year):
+
+    if month_to_upload <= archive_period:
+        raise WrongArchivePeriodException(
+             "You are trying to amend Actuals. Only forecast can be amended."
+        )
+
+    end_of_month_info = EndOfMonthStatus.objects.get(
+        archived_period__financial_period_code=archive_period,
+        archived=True
+    )
+    if not end_of_month_info:
+        raise WrongArchivePeriodException(
+            f"There is no archive for period {archive_period} "
+        )
+
     period_obj = FinancialPeriod.objects.get(pk=month_to_upload)
+
+    archive_period_id = end_of_month_info.id
     ActualUploadMonthlyFigure.objects.filter(
         financial_year=fin_year, financial_period=period_obj
     ).delete()
@@ -79,7 +111,8 @@ def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_
     line = 1
     fin_obj, msg = get_fk(FinancialYear, fin_year)
     period_obj = FinancialPeriod.objects.get(pk=month_to_upload)
-    month_col = col_key[period_obj.period_short_name.lower]
+
+    month_col = col_key[period_obj.period_short_name.lower()]
     check_financial_code = CheckFinancialCode(None)
 
     csv_reader = csv.reader(csvfile, delimiter=",", quotechar='"')
@@ -123,10 +156,10 @@ def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_
     ForecastMonthlyFigure.objects.filter(
         financial_year=fin_year,
         financial_period=period_obj,
-        archived_status_id=archive_period,
+        archived_status_id=archive_period_id,
     ).update(amount=0, starting_amount=0)
     sql_update, sql_insert = sql_for_single_month_copy(
-        month_to_upload, archive_period, fin_year
+        month_to_upload, archive_period_id, fin_year
     )
     with connection.cursor() as cursor:
         cursor.execute(sql_insert)
@@ -136,7 +169,7 @@ def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_
         financial_period=period_obj,
         amount=0,
         starting_amount=0,
-        archived_status_id=archive_period,
+        archived_status_id=archive_period_id,
     ).delete()
     ActualUploadMonthlyFigure.objects.filter(
         financial_year=fin_year, financial_period=period_obj
@@ -160,7 +193,30 @@ class Command(BaseCommand):
         archive_period = options["archive_period"]
         year = options["financial_year"]
 
-        import_single_archived_period(path, period, archive_period, year)
+        if period > 15 or period < 1:
+            self.stdout.write(self.style.ERROR("Valid Period is between 1 and 15."))
+            return
+
+        if archive_period > 15 or archive_period < 1:
+            self.stdout.write(self.style.ERROR(
+                "Valid archive Period is between 1 and 15."
+            ))
+            return
+
+        # Windows-1252 or CP-1252, used because of a back quote
+        csvfile = open(path, newline="", encoding="cp1252")
+
+        try:
+            import_single_archived_period(csvfile, period, archive_period, year)
+        except (WrongChartOFAccountCodeException, WrongArchivePeriodException) as ex:
+            raise CommandError(f"Failure uploading forecast period: {str(ex)}")
+            csvfile.close()
+            return
+
+        csvfile.close()
         self.stdout.write(
-            self.style.SUCCESS("Actual for period {} added".format(period))
+            self.style.SUCCESS(
+                f"Updated figures for period {period} "
+                f"in archive for period {archive_period}"
+            )
         )
