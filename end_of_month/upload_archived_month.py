@@ -69,7 +69,7 @@ def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_
 
     reader = csv.reader(csvfile)
     col_key = csv_header_to_dict(next(reader))
-    line = 1
+    row_number = 1
     fin_obj, msg = get_fk(FinancialYear, fin_year)
     period_obj = FinancialPeriod.objects.get(pk=month_to_upload)
 
@@ -78,20 +78,30 @@ def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_
 
     csv_reader = csv.reader(csvfile, delimiter=",", quotechar='"')
     for row in csv_reader:
-        line += 1
-        programme_code = row[col_key["programme"]].strip()
+        row_number += 1
+        # protection against empty rows
+        if len(row) == 0:
+            break
+
         cost_centre = row[col_key["cost centre"]].strip()
+        programme_code = row[col_key["programme"]].strip()
         nac = row[col_key["natural account"]].strip()
         analysis1 = row[col_key["analysis"]].strip()
         analysis2 = row[col_key["analysis2"]].strip()
         project_code = row[col_key["project"]].strip()
         check_financial_code.validate(
-            cost_centre, nac, programme_code, analysis1, analysis2, project_code, line
+            cost_centre,
+            nac,
+            programme_code,
+            analysis1,
+            analysis2,
+            project_code,
+            row_number,
         )
 
         if check_financial_code.error_found:
             raise WrongChartOFAccountCodeException(
-                f"Overwriting period, Row {line} error: "
+                f"Overwriting period, Row {row_number} error: "
                 f"{check_financial_code.display_error}"
             )
 
@@ -110,9 +120,10 @@ def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_
             month_figure_obj.current_amount = month_figure_obj.amount
             month_figure_obj.save()
 
-        if (line % 100) == 0:
-            logger.info(line)
+        if (row_number % 100) == 0:
+            logger.info(row_number)
 
+    logger.info(f"Completed processing  {row_number} rows.")
     # Now copy the newly uploaded figures to the monthly figure table
     ForecastMonthlyFigure.objects.filter(
         financial_year=fin_year,
@@ -132,5 +143,3 @@ def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_
     ActualUploadMonthlyFigure.objects.filter(
         financial_year=fin_year, financial_period=period_obj
     ).delete()
-
-
