@@ -42,7 +42,7 @@ class Command(BaseCommand):
         period = options["period_upload"]
         archive_period = options["archive_period"]
         year = options["financial_year"]
-        print("Test version")
+
         if period > 15 or period < 1:
             self.stdout.write(self.style.ERROR("Valid Period is between 1 and 15."))
             return
@@ -75,7 +75,7 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.SUCCESS(f"Using local file {path}.")
             )
-        return
+
         # Windows-1252 or CP-1252, used because of a back quote
         csvfile = open(file_name, newline="", encoding="cp1252")
 
