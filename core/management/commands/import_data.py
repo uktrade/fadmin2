@@ -69,24 +69,33 @@ class Command(BaseCommand):
     # importing actual is a special case, because we need to specify the month
     def handle(self, *args, **options):
         path = options.get("csv_path")
-        file_name = f"{uuid.uuid4()}.csv"
-
-        try:
-            s3.Bucket(settings.TEMP_FILE_AWS_STORAGE_BUCKET_NAME).download_file(
-                path,
-                file_name,
-            )
-        except botocore.exceptions.ClientError as e:
-            if e.response['Error']['Code'] == "404":
-                print("The object does not exist.")
-            else:
-                raise
-
-        self.stdout.write(
-            self.style.SUCCESS(f"Downloaded file {path} from S3, starting processing.")
-        )
-
         import_type = options.get("type")
+
+        if settings.TEMP_FILE_AWS_ACCESS_KEY_ID:
+            file_name = f"{uuid.uuid4()}.csv"
+
+            try:
+                s3.Bucket(settings.TEMP_FILE_AWS_STORAGE_BUCKET_NAME).download_file(
+                    path,
+                    file_name,
+                )
+            except botocore.exceptions.ClientError as e:
+                if e.response['Error']['Code'] == "404":
+                    print("The object does not exist.")
+                else:
+                    raise
+
+            self.stdout.write(
+                self.style.SUCCESS(f"Downloaded file {path} from S3, "
+                                   f"starting processing.")
+            )
+        else:
+            file_name = path
+            self.stdout.write(
+                self.style.SUCCESS(f"Using local file {path}.")
+            )
+
+
         # Windows-1252 or CP-1252, used because of a back quote
         csv_file = open(file_name, newline="", encoding="cp1252")
         try:

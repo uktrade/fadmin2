@@ -1,7 +1,13 @@
+import boto3
+import botocore
+import os
+import uuid
+
 from django.core.management.base import (
     BaseCommand,
     CommandError,
 )
+from django.conf import settings
 
 from end_of_month.upload_archived_month import (
     WrongArchivePeriodException,
@@ -9,6 +15,14 @@ from end_of_month.upload_archived_month import (
 )
 
 from forecast.import_csv import WrongChartOFAccountCodeException
+
+
+session = boto3.Session(
+    aws_access_key_id=settings.TEMP_FILE_AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.TEMP_FILE_AWS_SECRET_ACCESS_KEY,
+)
+
+s3 = session.resource('s3')
 
 
 class Command(BaseCommand):
@@ -35,9 +49,32 @@ class Command(BaseCommand):
                 self.style.ERROR("Valid archive Period is between 1 and 15.")
             )
             return
+        if settings.TEMP_FILE_AWS_ACCESS_KEY_ID:
+            file_name = f"{uuid.uuid4()}.csv"
+
+            try:
+                s3.Bucket(settings.TEMP_FILE_AWS_STORAGE_BUCKET_NAME).download_file(
+                    path,
+                    file_name,
+                )
+            except botocore.exceptions.ClientError as e:
+                if e.response['Error']['Code'] == "404":
+                    print("The object does not exist.")
+                else:
+                    raise
+
+            self.stdout.write(
+                self.style.SUCCESS(f"Downloaded file {path} from S3, "
+                                   f"starting processing.")
+            )
+        else:
+            file_name = path
+            self.stdout.write(
+                self.style.SUCCESS(f"Using local file {path}.")
+            )
 
         # Windows-1252 or CP-1252, used because of a back quote
-        csvfile = open(path, newline="", encoding="cp1252")
+        csvfile = open(file_name, newline="", encoding="cp1252")
 
         try:
             import_single_archived_period(csvfile, period, archive_period, year)
