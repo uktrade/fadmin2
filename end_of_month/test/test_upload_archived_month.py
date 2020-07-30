@@ -10,6 +10,12 @@ from end_of_month.upload_archived_month import (
 
 from core.test.test_base import RequestFactoryBase
 
+from forecast.import_csv import WrongChartOFAccountCodeException
+from forecast.models import (
+    ForecastMonthlyFigure,
+    FinancialCode,
+)
+
 
 class UploadSingleMonthTest(TestCase, RequestFactoryBase):
 
@@ -19,25 +25,44 @@ class UploadSingleMonthTest(TestCase, RequestFactoryBase):
         self.init_data = SetFullYearArchive(3)
 
     def test_correct_upload(self):
-        pass
-
-    def test_archive_period_errors(self):
-        in_mem_csv = StringIO(
-            "cost centre,programme,natural account,analysis,analysis2,project,July\n"
-            "1,3,4,5,6,7,8\n"
+        fin_code_obj = FinancialCode.objects.get(
+                programme=self.init_data.programme_code,
+                cost_centre = self.init_data.cost_centre_code,
+                natural_account_code = self.init_data.nac,
+                analysis1_code = None,
+                analysis2_code = None,
+                project_code = self.init_data.project_code,
+            )
+        original_amount_obj = ForecastMonthlyFigure.objects.get(
+            financial_code=fin_code_obj,
+            financial_period_id=4,
+            archived_status_id=2,
         )
-        with self.assertRaises(WrongArchivePeriodException):
-            import_single_archived_period(in_mem_csv, 2, 3, 2020)
-
-        with self.assertRaises(WrongArchivePeriodException):
-            import_single_archived_period(in_mem_csv, 10, 7, 2020)
-
-    def test_chart_of_account_error(self):
+        original_amount = original_amount_obj.amount
+        print(original_amount)
         in_mem_csv = StringIO(
-            "cost centre,programme,natural account,analysis,analysis2,project,July\n"
-            "1,3,4,5,6,7,8\n"
+            "cost centre,programme,natural account,analysis,analysis2,project,Jul\n"
+            f"{self.init_data.cost_centre_code},{self.init_data.programme_code},{self.init_data.nac},0,0,{self.init_data.project_code},80000\n"
         )
-        with self.assertRaises(WrongArchivePeriodException):
-            import_single_archived_period(in_mem_csv, 3, 2, 2020)
+        import_single_archived_period(in_mem_csv, 4, 2, 2020)
 
+    # def test_archive_period_errors(self):
+    #     in_mem_csv = StringIO(
+    #         "cost centre,programme,natural account,analysis,analysis2,project,Jul\n"
+    #         f"{self.init_data.cost_centre_code},{self.init_data.programme_code},{self.init_data.nac},0,0,{self.init_data.project_code},80000\n"
+    #     )
+    #     with self.assertRaises(WrongArchivePeriodException):
+    #         import_single_archived_period(in_mem_csv, 2, 3, 2020)
+    #
+    #     with self.assertRaises(WrongArchivePeriodException):
+    #         import_single_archived_period(in_mem_csv, 10, 7, 2020)
+    #
+    # def test_chart_of_account_error(self):
+    #     in_mem_csv = StringIO(
+    #         "cost centre,programme,natural account,analysis,analysis2,project,Jul\n"
+    #         "1,3,4,5,6,7,8\n"
+    #     )
+    #     with self.assertRaises(WrongChartOFAccountCodeException):
+    #         import_single_archived_period(in_mem_csv, 4, 2, 2020)
+    #
 
