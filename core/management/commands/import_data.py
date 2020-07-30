@@ -1,7 +1,13 @@
+import boto3
+import botocore
+import os
+import uuid
+
 from django.core.management.base import (
     BaseCommand,
     CommandError,
 )
+from django.conf import settings
 
 from chartofaccountDIT.import_csv import (
     import_Analysis1,
@@ -41,6 +47,13 @@ IMPORT_TYPE = {
     "ADI": import_adi_file,
 }
 
+session = boto3.Session(
+    aws_access_key_id=settings.TEMP_FILE_AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.TEMP_FILE_AWS_SECRET_ACCESS_KEY,
+)
+
+s3 = session.resource('s3')
+
 
 class Command(BaseCommand):
     help = "Import data from csv file"
@@ -56,21 +69,37 @@ class Command(BaseCommand):
     # importing actual is a special case, because we need to specify the month
     def handle(self, *args, **options):
         path = options.get("csv_path")
-        self.stdout.write(
-            self.style.SUCCESS(f"Processing file {path}.")
-        )
-        importtype = options.get("type")
-        # Windows-1252 or CP-1252, used because of a back quote
-        csvfile = open(path, newline="", encoding="cp1252")
+        file_name = f"{uuid.uuid4()}.csv"
+
         try:
-            success, msg = IMPORT_TYPE[importtype](csvfile)
+            s3.Bucket(settings.TEMP_FILE_AWS_STORAGE_BUCKET_NAME).download_file(
+                path,
+                file_name,
+            )
+        except botocore.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == "404":
+                print("The object does not exist.")
+            else:
+                raise
+
+        self.stdout.write(
+            self.style.SUCCESS(f"Downloaded file {path} from S3, starting processing.")
+        )
+
+        import_type = options.get("type")
+        # Windows-1252 or CP-1252, used because of a back quote
+        csv_file = open(file_name, newline="", encoding="cp1252")
+        try:
+            success, msg = IMPORT_TYPE[import_type](csv_file)
         except WrongChartOFAccountCodeException as ex:
-            csvfile.close()
-            raise CommandError(f"Failure import {importtype}: {str(ex)}")
-        csvfile.close()
+            csv_file.close()
+
+            raise CommandError(f"Failure import {import_type}: {str(ex)}")
+        csv_file.close()
         if success:
+            os.remove(file_name)
             self.stdout.write(
-                self.style.SUCCESS(f"Successfully completed import {importtype}.")
+                self.style.SUCCESS(f"Successfully completed import {import_type}.")
             )
         else:
-            raise CommandError(f"Failure import {importtype}: {msg}.")
+            raise CommandError(f"Failure import {import_type}: {msg}.")
