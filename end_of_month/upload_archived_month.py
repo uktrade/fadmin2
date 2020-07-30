@@ -46,16 +46,15 @@ def sql_for_single_month_copy(
 
 
 def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_year):
-
     if month_to_upload <= archive_period:
         raise WrongArchivePeriodException(
             "You are trying to amend Actuals. Only forecast can be amended."
         )
 
     end_of_month_info = EndOfMonthStatus.objects.get(
-        archived_period__financial_period_code=archive_period, archived=True
+        archived_period__financial_period_code=archive_period
     )
-    if not end_of_month_info:
+    if not end_of_month_info.archived:
         raise WrongArchivePeriodException(
             f"There is no archive for period {archive_period} "
         )

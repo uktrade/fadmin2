@@ -123,9 +123,10 @@ class SetFullYearArchive(MonthlyFigureSetup):
         )
         self.archived_budget[period] = tot_q[0].budget
 
-    def set_archive_period(self):
-
-        for tested_period in range(1, 13):
+    def set_archive_period(self, last_archived_period=13):
+        if last_archived_period > 13:
+            last_archived_period = 13
+        for tested_period in range(1, last_archived_period):
             end_of_month_archive(tested_period)
             # save the full total
             self.set_period_total(tested_period)
@@ -139,11 +140,12 @@ class SetFullYearArchive(MonthlyFigureSetup):
             )
         self.set_period_total(0)
 
-    def __init__(self):
+    def __init__(self, last_archived_period = 16):
         super().__init__()
         self.setup_forecast()
         self.setup_budget()
-        for period in range(0, 16):
+        # prepares the lists used to store the totals
+        for period in range(0, last_archived_period):
             self.archived_forecast.append(0)
             self.archived_budget.append(0)
-        self.set_archive_period()
+        self.set_archive_period(last_archived_period)
