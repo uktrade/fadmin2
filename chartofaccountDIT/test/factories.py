@@ -137,7 +137,6 @@ class NaturalCodeFactory(factory.DjangoModelFactory):
     active = True
     natural_account_code = 999999
     natural_account_code_description = "NAC description"
-    economic_budget_code = "RESOURCE"
     used_for_budget = False
 
 

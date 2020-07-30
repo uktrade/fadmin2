@@ -12,13 +12,12 @@ from core.test.test_base import RequestFactoryBase
 
 from forecast.import_csv import WrongChartOFAccountCodeException
 from forecast.models import (
-    ForecastMonthlyFigure,
     FinancialCode,
+    ForecastMonthlyFigure,
 )
 
 
 class UploadSingleMonthTest(TestCase, RequestFactoryBase):
-
     def setUp(self):
         RequestFactoryBase.__init__(self)
         # Archive April, May and June
@@ -26,18 +25,16 @@ class UploadSingleMonthTest(TestCase, RequestFactoryBase):
 
     def test_correct_upload(self):
         fin_code_obj = FinancialCode.objects.get(
-                programme=self.init_data.programme_code,
-                cost_centre = self.init_data.cost_centre_code,
-                natural_account_code = self.init_data.nac,
-                analysis1_code = None,
-                analysis2_code = None,
-                project_code = self.init_data.project_code,
-            )
+            programme=self.init_data.programme_code,
+            cost_centre=self.init_data.cost_centre_code,
+            natural_account_code=self.init_data.nac,
+            analysis1_code=None,
+            analysis2_code=None,
+            project_code=self.init_data.project_code,
+        )
 
         original_amount = ForecastMonthlyFigure.objects.get(
-            financial_code=fin_code_obj,
-            financial_period_id=4,
-            archived_status_id=2,
+            financial_code=fin_code_obj, financial_period_id=4, archived_status_id=2,
         ).amount
         new_amount = 800000
         in_mem_csv = StringIO(
@@ -50,18 +47,20 @@ class UploadSingleMonthTest(TestCase, RequestFactoryBase):
         )
         import_single_archived_period(in_mem_csv, 4, 2, 2020)
         new_amount_in_db = ForecastMonthlyFigure.objects.get(
-            financial_code=fin_code_obj,
-            financial_period_id=4,
-            archived_status_id=2,
+            financial_code=fin_code_obj, financial_period_id=4, archived_status_id=2,
         ).amount
 
-        self.assertEqual(new_amount*100, new_amount_in_db )
+        self.assertEqual(new_amount * 100, new_amount_in_db)
         self.assertNotEqual(new_amount_in_db, original_amount)
 
     def test_archive_period_errors(self):
         in_mem_csv = StringIO(
             "cost centre,programme,natural account,analysis,analysis2,project,Jul\n"
-            f"{self.init_data.cost_centre_code},{self.init_data.programme_code},{self.init_data.nac},0,0,{self.init_data.project_code},80000\n"
+            f"{self.init_data.cost_centre_code},"
+            f"{self.init_data.programme_code},"
+            f"{self.init_data.nac},0,0,"
+            f"{self.init_data.project_code},"
+            f"80000\n"
         )
         with self.assertRaises(WrongArchivePeriodException):
             import_single_archived_period(in_mem_csv, 2, 3, 2020)
@@ -76,5 +75,3 @@ class UploadSingleMonthTest(TestCase, RequestFactoryBase):
         )
         with self.assertRaises(WrongChartOFAccountCodeException):
             import_single_archived_period(in_mem_csv, 4, 2, 2020)
-
-

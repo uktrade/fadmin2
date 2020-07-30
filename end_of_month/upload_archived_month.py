@@ -69,7 +69,6 @@ def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_
     reader = csv.reader(csvfile)
     col_key = csv_header_to_dict(next(reader))
 
-    print(col_key)
     row_number = 1
     fin_obj, msg = get_fk(FinancialYear, fin_year)
     period_obj = FinancialPeriod.objects.get(pk=month_to_upload)
@@ -80,7 +79,6 @@ def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_
     csv_reader = csv.reader(csvfile, delimiter=",", quotechar='"')
     for row in csv_reader:
         row_number += 1
-        print(f"{row_number}: {row}")
         # protection against empty rows
         if len(row) == 0:
             break
@@ -92,7 +90,6 @@ def import_single_archived_period(csvfile, month_to_upload, archive_period, fin_
         analysis2 = row[col_key["analysis2"]].strip()
         project_code = row[col_key["project"]].strip()
 
-        print(programme_code)
         check_financial_code.validate(
             cost_centre,
             nac,

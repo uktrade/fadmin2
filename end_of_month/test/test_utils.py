@@ -73,7 +73,7 @@ class MonthlyFigureSetup:
         current_year = get_current_financial_year()
         programme_obj = ProgrammeCodeFactory()
         self.programme_code = programme_obj.programme_code
-        nac_obj = NaturalCodeFactory()
+        nac_obj = NaturalCodeFactory(economic_budget_code="RESOURCE")
         self.nac = nac_obj.natural_account_code
         project_obj = ProjectCodeFactory()
         self.project_code = project_obj.project_code
