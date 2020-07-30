@@ -37,4 +37,7 @@ class UploadSingleMonthTest(TestCase, RequestFactoryBase):
             "cost centre,programme,natural account,analysis,analysis2,project,July\n"
             "1,3,4,5,6,7,8\n"
         )
-        pass
+        with self.assertRaises(WrongArchivePeriodException):
+            import_single_archived_period(in_mem_csv, 3, 2, 2020)
+
+

@@ -1,7 +1,5 @@
 from end_of_month.end_of_month_actions import end_of_month_archive
-from end_of_month.models import (
-    forecast_budget_view_model,
-)
+from end_of_month.models import forecast_budget_view_model
 
 from chartofaccountDIT.test.factories import (
     NaturalCodeFactory,
@@ -70,8 +68,7 @@ class MonthlyFigureSetup:
             group=group_obj,
         )
         cost_centre_obj = CostCentreFactory(
-            directorate=directorate_obj,
-            cost_centre_code=self.cost_centre_code,
+            directorate=directorate_obj, cost_centre_code=self.cost_centre_code,
         )
         current_year = get_current_financial_year()
         programme_obj = ProgrammeCodeFactory()
@@ -131,16 +128,12 @@ class SetFullYearArchive(MonthlyFigureSetup):
             # save the full total
             self.set_period_total(tested_period)
             change_amount = tested_period * 10000
-            self.monthly_figure_update(
-                tested_period + 1, change_amount, "Forecast"
-            )
+            self.monthly_figure_update(tested_period + 1, change_amount, "Forecast")
             change_amount = tested_period * 1000
-            self.monthly_figure_update(
-                tested_period + 1, change_amount, "Budget"
-            )
+            self.monthly_figure_update(tested_period + 1, change_amount, "Budget")
         self.set_period_total(0)
 
-    def __init__(self, last_archived_period = 16):
+    def __init__(self, last_archived_period=16):
         super().__init__()
         self.setup_forecast()
         self.setup_budget()

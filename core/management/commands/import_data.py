@@ -1,13 +1,15 @@
-import boto3
-import botocore
 import os
 import uuid
 
+import boto3
+
+import botocore
+
+from django.conf import settings
 from django.core.management.base import (
     BaseCommand,
     CommandError,
 )
-from django.conf import settings
 
 from chartofaccountDIT.import_csv import (
     import_Analysis1,
@@ -52,7 +54,7 @@ session = boto3.Session(
     aws_secret_access_key=settings.TEMP_FILE_AWS_SECRET_ACCESS_KEY,
 )
 
-s3 = session.resource('s3')
+s3 = session.resource("s3")
 
 
 class Command(BaseCommand):
@@ -76,25 +78,22 @@ class Command(BaseCommand):
 
             try:
                 s3.Bucket(settings.TEMP_FILE_AWS_STORAGE_BUCKET_NAME).download_file(
-                    path,
-                    file_name,
+                    path, file_name,
                 )
             except botocore.exceptions.ClientError as e:
-                if e.response['Error']['Code'] == "404":
+                if e.response["Error"]["Code"] == "404":
                     print("The object does not exist.")
                 else:
                     raise
 
             self.stdout.write(
-                self.style.SUCCESS(f"Downloaded file {path} from S3, "
-                                   f"starting processing.")
+                self.style.SUCCESS(
+                    f"Downloaded file {path} from S3, " f"starting processing."
+                )
             )
         else:
             file_name = path
-            self.stdout.write(
-                self.style.SUCCESS(f"Using local file {path}.")
-            )
-
+            self.stdout.write(self.style.SUCCESS(f"Using local file {path}."))
 
         # Windows-1252 or CP-1252, used because of a back quote
         csv_file = open(file_name, newline="", encoding="cp1252")

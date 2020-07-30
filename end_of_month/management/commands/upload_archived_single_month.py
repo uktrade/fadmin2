@@ -1,13 +1,16 @@
-import boto3
-import botocore
-import os
+# import os
 import uuid
 
+import boto3
+
+import botocore
+
+
+from django.conf import settings
 from django.core.management.base import (
     BaseCommand,
     CommandError,
 )
-from django.conf import settings
 
 from end_of_month.upload_archived_month import (
     WrongArchivePeriodException,
