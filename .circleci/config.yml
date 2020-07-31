@@ -65,7 +65,7 @@ jobs:
           name: Run tests
           command: |
             . venv/bin/activate
-            pytest --ignore=node_modules --ignore=front_end --ignore=features --ignore=staticfiles -n 4
+            python manage.py test
       - run:
           name: Run BDD tests
           command: |

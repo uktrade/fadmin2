@@ -69,7 +69,7 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
 
     def test_upload_budget_report(self):
         result = import_adi_file(self.get_csv_data())
-        assert result
+        self.assert_(result, True)
         self.assertEqual(
             ForecastMonthlyFigure.objects.all().count(), 11,
         )
