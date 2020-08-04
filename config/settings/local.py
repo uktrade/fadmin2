@@ -24,10 +24,6 @@ AUTHENTICATION_BACKENDS += [
     "authbroker_client.backends.AuthbrokerBackend",
 ]
 
-MIDDLEWARE += [
-    "authbroker_client.middleware.ProtectAllViewsMiddleware",
-]
-
 ASYNC_FILE_UPLOAD = False
 
 IGNORE_ANTI_VIRUS = True
