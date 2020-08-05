@@ -16,6 +16,7 @@
 
             var helpTextLock = document.querySelector("form .aligned p.help, form .aligned div.help");
             var helpTextIcon = document.createElement("img");
+
             helpTextIcon.src = "/static/core/images/WarningLogo.png";
             helpTextIcon.width = '20';
 
@@ -24,8 +25,25 @@
                 helpTextLock.className = "govuk-label";
                 helpTextLock.insertBefore(helpTextIcon, helpTextLock.childNodes[0])
                 helpTextLock.style.position = 'relative';
-                helpTextLock.style.right = '155px';
+                helpTextLock.style.top = '50px';
+                helpTextLock.style.right = '175px';
+                helpTextLock.style.paddingBottom = '50px';
             }
+
+            var dateBox = document.getElementById("id_lock_date");
+
+            if (dateBox) {
+                dateBox.style.position = 'relative';
+                dateBox.style.top = '30px';
+                dateBox.style.right = '170px';
+            }
+
+            {#var dateIcon = document.getElementById("calendarlink0");#}
+            {#if (dateIcon) {#}
+            {#    dateBox.parentElement.style.position = 'relative';#}
+            {#    dateBox.parentElement.style.top = '50px';#}
+            {#    }#}
+
         });
     </script>
 {% endblock %}
