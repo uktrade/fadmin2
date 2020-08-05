@@ -42,7 +42,7 @@ class SubTotalFieldNotSpecifiedError(Exception):
 
 
 class ForecastEditState(BaseModel):
-    closed = models.BooleanField(default=False,)
+    closed = models.BooleanField(default=False, verbose_name="Lock Forecast")
     lock_date = models.DateField(
         null=True,
         blank=True,
