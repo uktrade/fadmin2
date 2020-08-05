@@ -42,13 +42,17 @@ class SubTotalFieldNotSpecifiedError(Exception):
 
 
 class ForecastEditState(BaseModel):
-    closed = models.BooleanField(default=False, verbose_name="Lock Forecast")
+    closed = models.BooleanField(default=False,
+                                 help_text="Ticking this option will close editing access to all non managers. "
+                                           "Forecast editing is still available to "
+                                           "Finance business partners/BSCEs and admin.")
     lock_date = models.DateField(
         null=True,
         blank=True,
-        help_text="If the lock date is set, after this date "
-                  "the system will remain locked until the "
-                  "date is removed"
+        verbose_name="Lock system",
+        help_text="The system is locked from the date entered. "
+                  "The system will remain locked to users without 'unlocked' user status, "
+                  "until the date is removed from the input field above.",
     )
 
     def __str__(self):
