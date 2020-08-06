@@ -1,9 +1,13 @@
-from django.core.management.base import BaseCommand
+import os
+
+from core.command_utils import (
+    CommandUpload,
+)
 
 from forecast.import_actuals import upload_trial_balance_report
 
 
-class Command(BaseCommand):
+class Command(CommandUpload):
     help = "Upload the Trial Balance for a specific month"
 
     def add_arguments(self, parser):
@@ -15,8 +19,11 @@ class Command(BaseCommand):
         path = options["path"]
         month = options["month"]
         year = options["financial_year"]
+        file_name = self.path_to_upload(path, 'xslx')
+        upload_trial_balance_report(file_name, month, year)
+        if self.upload_s3:
+            os.remove(file_name)
 
-        upload_trial_balance_report(path, month, year)
         self.stdout.write(
             self.style.SUCCESS(
                 "Actual for period {} added".format(
