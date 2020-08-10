@@ -16,6 +16,7 @@
 
             var helpTextLock = document.querySelector("form .aligned p.help, form .aligned div.help");
             var helpTextIcon = document.createElement("img");
+            var lineBreakItem = document.createElement("br");
 
             helpTextIcon.src = "/static/core/images/WarningLogo.png";
             helpTextIcon.width = '20';
@@ -26,7 +27,7 @@
                 helpTextLock.insertBefore(helpTextIcon, helpTextLock.childNodes[0])
                 helpTextLock.style.position = 'relative';
                 helpTextLock.style.top = '50px';
-                helpTextLock.style.right = '175px';
+                helpTextLock.style.right = '0px';
                 helpTextLock.style.paddingBottom = '50px';
             }
 
@@ -38,11 +39,23 @@
                 dateBox.style.right = '170px';
             }
 
-            {#var dateIcon = document.getElementById("calendarlink0");#}
-            {#if (dateIcon) {#}
-            {#    dateBox.parentElement.style.position = 'relative';#}
-            {#    dateBox.parentElement.style.top = '50px';#}
-            {#    }#}
+            var iconBox = document.querySelectorAll("div.form-row")[1]
+
+            if (iconBox) {
+                var calendarIcon = iconBox.querySelector("span.datetimeshortcuts");
+                calendarIcon.style.position = 'relative';
+                calendarIcon.style.top = '30px';
+                calendarIcon.style.right = '170px';
+
+                var lineBreakItem2 = iconBox.querySelector("br");
+                lineBreakItem2.remove();
+                var warningNote = iconBox.querySelector("span.timezonewarning");
+                helpTextLock.insertBefore(lineBreakItem, helpTextLock.childNodes[0])
+                helpTextLock.insertBefore(warningNote, helpTextLock.firstChild);
+                warningNote.style.position = 'relative';
+                warningNote.style.bottom = '15px';
+                warningNote.style.right = '170px';
+            }
 
         });
     </script>
