@@ -145,34 +145,16 @@ class HistoricalNaturalCodeAdmin(AdminReadOnly, AdminExport):
         "active",
     )
 
-    def get_readonly_fields(self, request, obj=None):
-        if obj:
-            return [
-                "natural_account_code",
-                "natural_account_code_description",
-                "account_L5_code",
-                "expenditure_category",
-                "account_L5_code_upload",
-                "commercial_category",
-                "used_for_budget",
-                "active",
-            ]
-        else:
-            return ["created", "updated"]
-
-    def get_fields(self, request, obj=None):
-        return [
-            "natural_account_code",
-            "natural_account_code_description",
-            "account_L5_code",
-            "expenditure_category",
-            "account_L5_code_upload",
-            "commercial_category",
-            "used_for_budget",
-            "active",
-            "created",
-            "updated",
-        ]
+    fields = [
+        "natural_account_code",
+        "natural_account_code_description",
+        "account_L5_code",
+        "expenditure_category",
+        "account_L5_code_upload",
+        "commercial_category",
+        "used_for_budget",
+        "active",
+    ]
 
     search_fields = ["natural_account_code", "natural_account_code_description"]
     list_filter = ("active", "used_for_budget")
@@ -297,7 +279,7 @@ class HistoricalAnalysis2Admin(AdminReadOnly, AdminExport):
     def export_func(self):
         return generic_table_iterator
 
-#EDIT THIS
+
 class ExpenditureCategoryAdmin(AdminImportExport):
     search_fields = ["grouping_description", "description"]
     list_display = [
@@ -315,21 +297,7 @@ class ExpenditureCategoryAdmin(AdminImportExport):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def get_readonly_fields(self, request, obj=None):
-        if request.user.is_superuser:
-            return ["created", "updated"]
-        elif request.user.groups.filter(name="Finance Administrator"):
-            if obj:
-                return [
-                    "grouping_description",
-                    "description",
-                    "NAC_category",
-                    "op_del_category",
-                    "linked_budget_code",
-                ]  # don't allow to edit the code
-            else:
-                return ["created", "updated"]
-        else:
-            return self.get_fields(request, obj)
+        return ["created", "updated"]
 
     def get_fields(self, request, obj=None):
         if obj:
@@ -677,7 +645,6 @@ admin.site.register(ArchivedAnalysis2, HistoricalAnalysis2Admin)
 admin.site.register(ArchivedExpenditureCategory, HistoricalExpenditureCategoryAdmin)
 admin.site.register(ArchivedCommercialCategory, HistoricalCommercialCategoryAdmin)
 admin.site.register(ArchivedNaturalCode, HistoricalNaturalCodeAdmin)
-# admin.site.unregister(ArchivedNaturalCode)
 admin.site.register(ArchivedProgrammeCode, HistoricalProgrammeAdmin)
 admin.site.register(ArchivedInterEntity, HistoricalInterEntityAdmin)
 admin.site.register(ArchivedProjectCode, HistoricalProjectCodeAdmin)
