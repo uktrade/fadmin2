@@ -156,8 +156,12 @@ def export_forecast_to_excel(
 
 
 def export_query_to_excel(queryset, columns_dict, title, period):
-    return export_forecast_to_excel(queryset, columns_dict, {}, False, title, False, period)
+    return export_forecast_to_excel(
+        queryset, columns_dict, {}, False, title, False, period
+    )
 
 
 def export_edit_to_excel(queryset, key_dict, columns_dict, title):
-    return export_forecast_to_excel(queryset, key_dict, columns_dict, True, title, True, 0)
+    return export_forecast_to_excel(
+        queryset, key_dict, columns_dict, True, title, True, 0
+    )
