@@ -4,13 +4,13 @@ from django.core.management.base import (
     CommandError,
 )
 
+from core.command_utils import (
+    CommandUpload,
+)
+
 from end_of_month.upload_archived_month import (
     WrongArchivePeriodException,
     import_single_archived_period,
-)
-
-from core.command_utils import (
-    CommandUpload,
 )
 
 from forecast.import_csv import WrongChartOFAccountCodeException
