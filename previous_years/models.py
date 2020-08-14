@@ -10,6 +10,7 @@ from chartofaccountDIT.models import (
     ArchivedNaturalCode,
     ArchivedProgrammeCode,
     ArchivedProjectCode,
+    BudgetType,
 )
 
 from core.metamodels import (
@@ -165,8 +166,8 @@ class ArchivedFinancialCode(ArchivedModel):
         if self.pk is None:
             # calculate the forecast_expenditure_type
             nac_economic_budget_code = self.archived_natural_account_code.economic_budget_code
-            programme_budget_type = self.programme.budget_type_fk
-
+            programme_budget_type = self.archived_programme_code.budget_type
+            programme_budget_type = BudgetType.filter(budget_type = programme_budget_type).first()
             forecast_type = ForecastExpenditureType.objects.filter(
                 programme_budget_type=programme_budget_type,
                 nac_economic_budget_code=nac_economic_budget_code,
@@ -177,7 +178,7 @@ class ArchivedFinancialCode(ArchivedModel):
         super(ArchivedFinancialCode, self).save(*args, **kwargs)
 
 
-class ArchivedForecastData(models.Model):
+class ArchivedForecastDataAbstract(models.Model):
     financial_code = models.ForeignKey(ArchivedFinancialCode, on_delete=models.PROTECT,)
     financial_year = models.ForeignKey(FinancialYear, on_delete=models.PROTECT,)
     budget = models.BigIntegerField(default=0)
@@ -196,5 +197,18 @@ class ArchivedForecastData(models.Model):
     adj1 = models.BigIntegerField(default=0)
     adj2 = models.BigIntegerField(default=0)
     adj3 = models.BigIntegerField(default=0)
+
+    class Meta:
+        abstract = True
+
+
+class ArchivedForecastDataUpload(ArchivedForecastDataAbstract):
+    pass
+
+class ArchivedForecastData(ArchivedForecastDataAbstract):
     objects = models.Manager()  # The default manager.
     view_data = DisplaySubTotalManager()
+
+
+
+
