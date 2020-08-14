@@ -1,0 +1,42 @@
+from django.views.generic.edit import FormView
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
+
+from end_of_month.end_of_month_actions import end_of_month_archive
+from end_of_month.forms import EndOfMonthProcessForm
+from forecast.models import FinancialPeriod
+from end_of_month.utils import user_has_archive_access
+from django.urls import reverse
+
+
+
+class EndOfMonthProcessView(
+    UserPassesTestMixin, FormView,
+):
+    template_name = "end_of_month/end_of_month_archive.html"
+    form_class = EndOfMonthProcessForm
+
+    def test_func(self):
+        can_edit = user_has_archive_access(
+            self.request.user
+        )
+
+        if not can_edit:
+            raise PermissionDenied()
+
+        return True
+
+    def get_success_url(self):
+        """
+        TODO add where you want user to go if archiving is successful
+        """
+        return reverse("index")
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        period_code = data["period_code"]
+        return super().form_valid(form)
+
+    def available_for_archiving(self):
+        return "message about whether you can archive"
+        # view.available_for_archiving

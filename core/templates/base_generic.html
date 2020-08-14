@@ -156,6 +156,14 @@
 
             {% if request.user.is_staff %}
                 <li class="internal-header__navigation__item">
+                    <a id="end_of_month" class="internal-header__navigation__item__link" href="{% url 'end_of_month' %}">
+                                Archive Monthly Forecast
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if request.user.is_staff %}
+                <li class="internal-header__navigation__item">
                     <a target="_blank" id="admin_page" class="internal-header__navigation__item__link" href="{% url 'admin:index' %}">
                                 Admin Site
                     </a>
