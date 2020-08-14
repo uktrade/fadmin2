@@ -160,6 +160,21 @@ class ArchivedFinancialCode(ArchivedModel):
         blank=True,
         null=True,
     )
+    def save(self, *args, **kwargs):
+        # Override save to calculate the forecast_expenditure_type.
+        if self.pk is None:
+            # calculate the forecast_expenditure_type
+            nac_economic_budget_code = self.archived_natural_account_code.economic_budget_code
+            programme_budget_type = self.programme.budget_type_fk
+
+            forecast_type = ForecastExpenditureType.objects.filter(
+                programme_budget_type=programme_budget_type,
+                nac_economic_budget_code=nac_economic_budget_code,
+            )
+
+            self.forecast_expenditure_type = forecast_type.first()
+
+        super(ArchivedFinancialCode, self).save(*args, **kwargs)
 
 
 class ArchivedForecastData(models.Model):
