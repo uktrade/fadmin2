@@ -26,6 +26,7 @@ from previous_years.models import (
     ArchivedForecastData,
     ArchivedForecastDataUpload,
 )
+
 from upload_file.models import FileUpload
 from upload_file.utils import (
     set_file_upload_fatal_error,
@@ -80,7 +81,7 @@ class CheckArchivedFinancialCode(CheckFinancialCode):
         msg = ""
         try:
             field_name = m.chart_of_account_code_name
-            obj = m.objects.get(field_name=value, financial_year_id = self.financial_year)
+            obj = m.objects.get(field_name=value, financial_year_id=self.financial_year)
         except m.DoesNotExist:
             msg = f'{field_name} "{value}" does not exist.\n'
             obj = None
@@ -120,19 +121,15 @@ class CheckArchivedFinancialCode(CheckFinancialCode):
             archived_analysis1_code=self.analysis1_obj,
             archived_analysis2_code=self.analysis2_obj,
             archived_project_code=self.project_obj,
-            financial_year_id = self.financial_year,
+            financial_year_id=self.financial_year,
         )
         financial_code_obj.save()
         return financial_code_obj
 
 
-
-
 def copy_uploaded_previous_year(year):
     # Now copy the newly uploaded previous_years to the monthly figure table
-    ArchivedForecastData.objects.filter(
-        financial_year=year,
-    ).delete()
+    ArchivedForecastData.objects.filter(financial_year=year,).delete()
     sql_insert = ""
 
     with connection.cursor() as cursor:
@@ -145,60 +142,62 @@ def upload_previous_year_figures(previous_year_row, year_obj, financialcode_obj)
 
     for month_name in MONTH_HEADERS:
         month_amount = previous_year_row[month_name].value
-        if month_amount == '-':
+        if month_amount == "-":
             # we accept the '-' as it is a recognised value in Finance for 0
             month_amount = 0
         if not str(month_amount).isnumeric():
             raise UploadFileFormatError(
-                f"Non-numeric value in {previous_year_row[month_name].coordinate}:{month_amount}"# noqa
+                f"Non-numeric value in {previous_year_row[month_name].coordinate}:{month_amount}"  # noqa
             )
         if month_amount:
             value_found = True
         new_values[month_name] = month_amount
 
     if value_found:
-        (previous_year_obj, created,) = ArchivedForecastDataUpload.objects.get_or_create(
-            financial_year=year_obj,
-            financial_code=financialcode_obj,
+        (
+            previous_year_obj,
+            created,
+        ) = ArchivedForecastDataUpload.objects.get_or_create(
+            financial_year=year_obj, financial_code=financialcode_obj,
         )
         # to avoid problems with precision,
         # we store the figures in pence
         if created:
-            previous_year_obj.apr = new_values['apr'] * 100
-            previous_year_obj.may = new_values['may'] * 100
-            previous_year_obj.jun = new_values['jun'] * 100
-            previous_year_obj.jul = new_values['jul'] * 100
-            previous_year_obj.aug = new_values['aug'] * 100
-            previous_year_obj.sep = new_values['sep'] * 100
-            previous_year_obj.oct = new_values['oct'] * 100
-            previous_year_obj.nov = new_values['nov'] * 100
-            previous_year_obj.dec = new_values['dec'] * 100
-            previous_year_obj.jan = new_values['jan'] * 100
-            previous_year_obj.feb = new_values['feb'] * 100
-            previous_year_obj.mar = new_values['mar'] * 100
-            previous_year_obj.adj1 = new_values['adj1'] * 100
-            previous_year_obj.adj2 = new_values['adj2'] * 100
-            previous_year_obj.adj13 = new_values['adj3'] * 100
+            previous_year_obj.apr = new_values["apr"] * 100
+            previous_year_obj.may = new_values["may"] * 100
+            previous_year_obj.jun = new_values["jun"] * 100
+            previous_year_obj.jul = new_values["jul"] * 100
+            previous_year_obj.aug = new_values["aug"] * 100
+            previous_year_obj.sep = new_values["sep"] * 100
+            previous_year_obj.oct = new_values["oct"] * 100
+            previous_year_obj.nov = new_values["nov"] * 100
+            previous_year_obj.dec = new_values["dec"] * 100
+            previous_year_obj.jan = new_values["jan"] * 100
+            previous_year_obj.feb = new_values["feb"] * 100
+            previous_year_obj.mar = new_values["mar"] * 100
+            previous_year_obj.adj1 = new_values["adj1"] * 100
+            previous_year_obj.adj2 = new_values["adj2"] * 100
+            previous_year_obj.adj13 = new_values["adj3"] * 100
         else:
-            previous_year_obj.apr += new_values['apr'] * 100
-            previous_year_obj.may += new_values['may'] * 100
-            previous_year_obj.jun += new_values['jun'] * 100
-            previous_year_obj.jul += new_values['jul'] * 100
-            previous_year_obj.aug += new_values['aug'] * 100
-            previous_year_obj.sep += new_values['sep'] * 100
-            previous_year_obj.oct += new_values['oct'] * 100
-            previous_year_obj.nov += new_values['nov'] * 100
-            previous_year_obj.dec += new_values['dec'] * 100
-            previous_year_obj.jan += new_values['jan'] * 100
-            previous_year_obj.feb += new_values['feb'] * 100
-            previous_year_obj.mar += new_values['mar'] * 100
-            previous_year_obj.adj1 += new_values['adj1'] * 100
-            previous_year_obj.adj2 += new_values['adj2'] * 100
-            previous_year_obj.adj13 += new_values['adj3'] * 100
+            previous_year_obj.apr += new_values["apr"] * 100
+            previous_year_obj.may += new_values["may"] * 100
+            previous_year_obj.jun += new_values["jun"] * 100
+            previous_year_obj.jul += new_values["jul"] * 100
+            previous_year_obj.aug += new_values["aug"] * 100
+            previous_year_obj.sep += new_values["sep"] * 100
+            previous_year_obj.oct += new_values["oct"] * 100
+            previous_year_obj.nov += new_values["nov"] * 100
+            previous_year_obj.dec += new_values["dec"] * 100
+            previous_year_obj.jan += new_values["jan"] * 100
+            previous_year_obj.feb += new_values["feb"] * 100
+            previous_year_obj.mar += new_values["mar"] * 100
+            previous_year_obj.adj1 += new_values["adj1"] * 100
+            previous_year_obj.adj2 += new_values["adj2"] * 100
+            previous_year_obj.adj13 += new_values["adj3"] * 100
         previous_year_obj.save()
 
 
-def upload_previous_year(worksheet, year, header_dict, file_upload):# noqa
+def upload_previous_year(worksheet, year, header_dict, file_upload):  # noqa
     year_obj, created = FinancialYear.objects.get_or_create(financial_year=year)
     if created:
         year_obj.financial_year_display = f"{year}/{year - 1999}"
@@ -247,14 +246,20 @@ def upload_previous_year(worksheet, year, header_dict, file_upload):# noqa
         analysis2 = previous_year_row[a2_index].value
         project_code = previous_year_row[proj_index].value
         check_financial_code.validate(
-            cost_centre, nac, programme_code,
-            analysis1, analysis2, project_code, row_number
+            cost_centre,
+            nac,
+            programme_code,
+            analysis1,
+            analysis2,
+            project_code,
+            row_number,
         )
         if not check_financial_code.error_found:
             financialcode_obj = check_financial_code.get_financial_code()
             try:
-                upload_previous_year_figures(previous_year_row, year_obj,
-                                      financialcode_obj)
+                upload_previous_year_figures(
+                    previous_year_row, year_obj, financialcode_obj
+                )
             except UploadFileFormatError as ex:
                 set_file_upload_fatal_error(
                     file_upload, str(ex), str(ex),
@@ -265,7 +270,8 @@ def upload_previous_year(worksheet, year, header_dict, file_upload):# noqa
     if check_financial_code.error_found:
         final_status = FileUpload.PROCESSEDWITHERROR
     else:
-        # No errors, so we can copy the figures from the temporary table to the previous_years
+        # No errors, so we can copy the figures
+        # from the temporary table to the previous_years
         copy_uploaded_previous_year(year)
         if check_financial_code.warning_found:
             final_status = FileUpload.PROCESSEDWITHWARNING

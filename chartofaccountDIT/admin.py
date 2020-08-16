@@ -672,6 +672,7 @@ class BudgetTypeAdmin(AdminImportExport):
     def import_info(self):
         return import_project_class
 
+
 admin.site.register(Analysis1, Analysis1Admin)
 admin.site.register(Analysis2, Analysis2Admin)
 admin.site.register(NaturalCode, NaturalCodeAdmin)

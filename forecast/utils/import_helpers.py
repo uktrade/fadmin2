@@ -101,7 +101,7 @@ def check_header(header_dict, correct_header):
         raise UploadFileFormatError(f"Error in the header: {error_msg}")
 
 
-def validate_excel_file(file_upload, worksheet_title_pattern=''):
+def validate_excel_file(file_upload, worksheet_title_pattern=""):
     try:
         # read_only=True makes the opening process much faster
         # data_only=True to read values from cells with formula.
@@ -178,7 +178,6 @@ def get_error_from_list(error_list):
     if error_message != "":
         error_message = error_message[:-1]
     return error_message
-
 
 
 obj_index = 0
@@ -342,26 +341,34 @@ class CheckFinancialCode:
         return self.get_obj_code(self.cc_dict, cost_centre, self.cost_centre_model)
 
     def validate_programme(self, programme_code):
-        return self.get_obj_code(self.prog_dict, programme_code, self.programme_code_model)
+        return self.get_obj_code(
+            self.prog_dict, programme_code, self.programme_code_model
+        )
 
     def validate_analysis1(self, analysis1):
         if analysis1 and int(analysis1):
             analysis1_code = get_id(analysis1, ANALYSIS1_CODE_LENGTH)
-            return self.get_obj_code(self.analysis1_dict, analysis1_code, self.analysis1_model)
+            return self.get_obj_code(
+                self.analysis1_dict, analysis1_code, self.analysis1_model
+            )
         else:
             return None
 
     def validate_analysis2(self, analysis2):
         if analysis2 and int(analysis2):
             analysis2_code = get_id(analysis2, ANALYSIS1_CODE_LENGTH)
-            return self.get_obj_code(self.analysis2_dict, analysis2_code, self.analysis2_model)
+            return self.get_obj_code(
+                self.analysis2_dict, analysis2_code, self.analysis2_model
+            )
         else:
             return None
 
     def validate_project(self, project):
         if project and int(project):
             project_code = get_id(project, PROJECT_CODE_LENGTH)
-            return self.get_obj_code(self.project_dict, project_code, self.project_code_model)
+            return self.get_obj_code(
+                self.project_dict, project_code, self.project_code_model
+            )
         else:
             return None
 

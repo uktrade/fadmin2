@@ -13,9 +13,7 @@ from chartofaccountDIT.models import (
     BudgetType,
 )
 
-from core.metamodels import (
-    ArchivedModel,
-)
+from core.metamodels import ArchivedModel
 from core.models import FinancialYear
 
 from costcentre.models import HistoricCostCentre
@@ -161,13 +159,18 @@ class ArchivedFinancialCode(ArchivedModel):
         blank=True,
         null=True,
     )
+
     def save(self, *args, **kwargs):
         # Override save to calculate the forecast_expenditure_type.
         if self.pk is None:
             # calculate the forecast_expenditure_type
-            nac_economic_budget_code = self.archived_natural_account_code.economic_budget_code
+            nac_economic_budget_code = (
+                self.archived_natural_account_code.economic_budget_code
+            )
             programme_budget_type = self.archived_programme_code.budget_type
-            programme_budget_type = BudgetType.filter(budget_type = programme_budget_type).first()
+            programme_budget_type = BudgetType.filter(
+                budget_type=programme_budget_type
+            ).first()
             forecast_type = ForecastExpenditureType.objects.filter(
                 programme_budget_type=programme_budget_type,
                 nac_economic_budget_code=nac_economic_budget_code,
@@ -205,10 +208,7 @@ class ArchivedForecastDataAbstract(models.Model):
 class ArchivedForecastDataUpload(ArchivedForecastDataAbstract):
     pass
 
+
 class ArchivedForecastData(ArchivedForecastDataAbstract):
     objects = models.Manager()  # The default manager.
     view_data = DisplaySubTotalManager()
-
-
-
-
