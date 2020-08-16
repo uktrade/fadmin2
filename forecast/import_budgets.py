@@ -11,6 +11,7 @@ from forecast.utils.import_helpers import (
     CheckFinancialCode,
     UploadFileDataError,
     UploadFileFormatError,
+    check_header,
     get_forecast_month_dict,
     sql_for_data_copy,
     validate_excel_file,
@@ -42,17 +43,6 @@ EXPECTED_BUDGET_HEADERS = [
     "feb",
     "mar",
 ]
-
-
-def check_budget_header(header_dict, correct_header):
-    error_msg = ""
-    correct = True
-    for elem in correct_header:
-        if elem not in header_dict:
-            correct = False
-            error_msg += f"'{elem}' not found. "
-    if not correct:
-        raise UploadFileFormatError(f"Error in the header: {error_msg}")
 
 
 def copy_uploaded_budget(year, month_dict):
@@ -195,7 +185,7 @@ def upload_budget_from_file(file_upload, year):
         raise ex
     header_dict = xslx_header_to_dict(worksheet[1])
     try:
-        check_budget_header(header_dict, EXPECTED_BUDGET_HEADERS)
+        check_header(header_dict, EXPECTED_BUDGET_HEADERS)
     except UploadFileFormatError as ex:
         set_file_upload_fatal_error(
             file_upload, str(ex), str(ex),

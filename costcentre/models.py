@@ -205,6 +205,7 @@ class HistoricCostCentre(ArchivedModel):
     disabled_with_actual = models.BooleanField(
         "Disabled (Actuals to be cleared)", default="False"
     )
+    chart_of_account_code_name = 'cost_centre_code'
 
     @classmethod
     def archive_year(cls, cc_obj, year_obj, suffix=""):

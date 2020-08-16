@@ -1,34 +1,43 @@
 from django.db import connection
 
+from chartofaccountDIT.models import (
+    ArchivedAnalysis1,
+    ArchivedAnalysis2,
+    ArchivedNaturalCode,
+    ArchivedProgrammeCode,
+    ArchivedProjectCode,
+)
+
 from core.import_csv import xslx_header_to_dict
 from core.models import FinancialYear
 
-from forecast.models import (
-    BudgetMonthlyFigure,
-    BudgetUploadMonthlyFigure,
-)
+from costcentre.models import HistoricCostCentre
+
 from forecast.utils.import_helpers import (
     CheckFinancialCode,
     UploadFileDataError,
     UploadFileFormatError,
-    get_forecast_month_dict,
-    sql_for_data_copy,
+    check_header,
     validate_excel_file,
 )
 
+from previous_years.models import (
+    ArchivedFinancialCode,
+    ArchivedForecastData,
+    ArchivedForecastDataUpload,
+)
 from upload_file.models import FileUpload
 from upload_file.utils import (
     set_file_upload_fatal_error,
     set_file_upload_feedback,
 )
 
-EXPECTED_BUDGET_HEADERS = [
-    "cost centre",
-    "natural account",
-    "programme",
-    "analysis",
-    "analysis2",
-    "project",
+
+# Make the adjustment columns compulsory. They can have just 0 in it.
+# Maybe only one adjustment column is needed, but it becomes too complex to find out
+# if it is required or not. This process will only happen 3 or 4 times a year,
+# so it is not a big deal to add the required columns to the Excel file
+MONTH_HEADERS = [
     "apr",
     "may",
     "jun",
@@ -41,82 +50,165 @@ EXPECTED_BUDGET_HEADERS = [
     "jan",
     "feb",
     "mar",
+    "adj1",
+    "adj2",
+    "adj3",
+]
+
+CHART_OF_ACCOUNT_HEADERS = [
+    "cost centre",
+    "natural account",
+    "programme",
+    "analysis",
+    "analysis2",
+    "project",
 ]
 
 
-def check_budget_header(header_dict, correct_header):
-    error_msg = ""
-    correct = True
-    for elem in correct_header:
-        if elem not in header_dict:
-            correct = False
-            error_msg += f"'{elem}' not found. "
-    if not correct:
-        raise UploadFileFormatError(f"Error in the header: {error_msg}")
+class CheckArchivedFinancialCode(CheckFinancialCode):
+    def __init__(self, financial_year):
+        self.cost_centre_model = HistoricCostCentre
+        self.programme_code_model = ArchivedProgrammeCode
+        self.analysis1_model = ArchivedAnalysis1
+        self.analysis2_model = ArchivedAnalysis2
+        self.project_code_model = ArchivedProjectCode
+        self.natural_code_model = ArchivedNaturalCode
+        self.financial_year = financial_year
+        super().__init__(self, "Forecast")
 
+    def get_chart_of_account_object(self, m, value):
+        msg = ""
+        try:
+            field_name = m.chart_of_account_code_name
+            obj = m.objects.get(field_name=value, financial_year_id = self.financial_year)
+        except m.DoesNotExist:
+            msg = f'{field_name} "{value}" does not exist.\n'
+            obj = None
+        except ValueError:
+            msg = f'{field_name} "{value}" is the wrong type.\n'
+            obj = None
+        return obj, msg
 
-def copy_uploaded_budget(year, month_dict):
-    for period_obj in month_dict.values():
-        # Now copy the newly uploaded budgets to the monthly figure table
-        BudgetMonthlyFigure.objects.filter(
-            financial_year=year,
-            financial_period=period_obj,
-            archived_status__isnull=True,
-        ).update(amount=0, starting_amount=0)
-        sql_update, sql_insert = sql_for_data_copy(
-            FileUpload.BUDGET, period_obj.pk, year
-        )
-        with connection.cursor() as cursor:
-            cursor.execute(sql_insert)
-            cursor.execute(sql_update)
-        BudgetMonthlyFigure.objects.filter(
-            financial_year=year,
-            financial_period=period_obj,
-            amount=0,
-            starting_amount=0,
-            archived_status__isnull=True,
-        ).delete()
-    BudgetUploadMonthlyFigure.objects.filter(financial_year=year).delete()
-
-
-def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
-    for month_idx, period_obj in month_dict.items():
-        period_budget = budget_row[month_idx].value
-        if period_budget == '-':
-            # we accept the '-' as it is a recognised value in Finance for 0
-            period_budget = 0
-        if not str(period_budget).isnumeric():
-            raise UploadFileFormatError(
-                f"Non-numeric value in {budget_row[month_idx].coordinate}:{period_budget}"# noqa
-            )
-        if period_budget:
-            (budget_obj, created,) = BudgetUploadMonthlyFigure.objects.get_or_create(
-                financial_year=year_obj,
-                financial_code=financialcode_obj,
-                financial_period=period_obj,
-            )
-            # to avoid problems with precision,
-            # we store the figures in pence
-            if created:
-                budget_obj.amount = period_budget * 100
+    def get_info_tuple(self, model, pk, make_active=True):
+        status = self.IGNORE
+        obj, msg = self.get_chart_of_account_object(model, pk)
+        if not obj:
+            status = self.CODE_ERROR
+        else:
+            if obj.active:
+                status = self.CODE_OK
+                msg = ""
             else:
-                budget_obj.amount += period_budget * 100
-            budget_obj.save()
+                if make_active:
+                    obj.active = True
+                    obj.save()
+                    status = self.CODE_WARNING
+                    msg = (
+                        f'{(model.chart_of_account_code_name)} "{pk}" '
+                        f"added to the approved list. \n"
+                    )
+        info_tuple = (obj, status, msg)
+        return info_tuple
+
+    def get_financial_code(self):
+        if self.error_found:
+            return None
+        financial_code_obj, created = ArchivedFinancialCode.objects.get_or_create(
+            archived_programme=self.programme_obj,
+            archived_cost_centre=self.cc_obj,
+            archived_natural_account_code=self.nac_obj,
+            archived_analysis1_code=self.analysis1_obj,
+            archived_analysis2_code=self.analysis2_obj,
+            archived_project_code=self.project_obj,
+            financial_year_id = self.financial_year,
+        )
+        financial_code_obj.save()
+        return financial_code_obj
 
 
-def upload_budget(worksheet, year, header_dict, file_upload):# noqa
+
+
+def copy_uploaded_previous_year(year):
+    # Now copy the newly uploaded previous_years to the monthly figure table
+    ArchivedForecastData.objects.filter(
+        financial_year=year,
+    ).delete()
+    sql_insert = ""
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql_insert)
+
+
+def upload_previous_year_figures(previous_year_row, year_obj, financialcode_obj):
+    new_values = {}
+    value_found = False
+
+    for month_name in MONTH_HEADERS:
+        month_amount = previous_year_row[month_name].value
+        if month_amount == '-':
+            # we accept the '-' as it is a recognised value in Finance for 0
+            month_amount = 0
+        if not str(month_amount).isnumeric():
+            raise UploadFileFormatError(
+                f"Non-numeric value in {previous_year_row[month_name].coordinate}:{month_amount}"# noqa
+            )
+        if month_amount:
+            value_found = True
+        new_values[month_name] = month_amount
+
+    if value_found:
+        (previous_year_obj, created,) = ArchivedForecastDataUpload.objects.get_or_create(
+            financial_year=year_obj,
+            financial_code=financialcode_obj,
+        )
+        # to avoid problems with precision,
+        # we store the figures in pence
+        if created:
+            previous_year_obj.apr = new_values['apr'] * 100
+            previous_year_obj.may = new_values['may'] * 100
+            previous_year_obj.jun = new_values['jun'] * 100
+            previous_year_obj.jul = new_values['jul'] * 100
+            previous_year_obj.aug = new_values['aug'] * 100
+            previous_year_obj.sep = new_values['sep'] * 100
+            previous_year_obj.oct = new_values['oct'] * 100
+            previous_year_obj.nov = new_values['nov'] * 100
+            previous_year_obj.dec = new_values['dec'] * 100
+            previous_year_obj.jan = new_values['jan'] * 100
+            previous_year_obj.feb = new_values['feb'] * 100
+            previous_year_obj.mar = new_values['mar'] * 100
+            previous_year_obj.adj1 = new_values['adj1'] * 100
+            previous_year_obj.adj2 = new_values['adj2'] * 100
+            previous_year_obj.adj13 = new_values['adj3'] * 100
+        else:
+            previous_year_obj.apr += new_values['apr'] * 100
+            previous_year_obj.may += new_values['may'] * 100
+            previous_year_obj.jun += new_values['jun'] * 100
+            previous_year_obj.jul += new_values['jul'] * 100
+            previous_year_obj.aug += new_values['aug'] * 100
+            previous_year_obj.sep += new_values['sep'] * 100
+            previous_year_obj.oct += new_values['oct'] * 100
+            previous_year_obj.nov += new_values['nov'] * 100
+            previous_year_obj.dec += new_values['dec'] * 100
+            previous_year_obj.jan += new_values['jan'] * 100
+            previous_year_obj.feb += new_values['feb'] * 100
+            previous_year_obj.mar += new_values['mar'] * 100
+            previous_year_obj.adj1 += new_values['adj1'] * 100
+            previous_year_obj.adj2 += new_values['adj2'] * 100
+            previous_year_obj.adj13 += new_values['adj3'] * 100
+        previous_year_obj.save()
+
+
+def upload_previous_year(worksheet, year, header_dict, file_upload):# noqa
     year_obj, created = FinancialYear.objects.get_or_create(financial_year=year)
     if created:
         year_obj.financial_year_display = f"{year}/{year - 1999}"
         year_obj.save()
 
-    forecast_months = get_forecast_month_dict()
-    month_dict = {header_dict[k]: v for (k, v) in forecast_months.items()}
-    # Clear the table used to upload the budgets.
-    # The budgets are uploaded to to a temporary storage, and copied
+    # Clear the table used to upload the previous_years.
+    # The previous_years are uploaded to to a temporary storage, and copied
     # when the upload is completed successfully.
     # This means that we always have a full upload.
-    BudgetUploadMonthlyFigure.objects.filter(financial_year=year,).delete()
+    ArchivedForecastDataUpload.objects.filter(financial_year=year,).delete()
     rows_to_process = worksheet.max_row + 1
 
     check_financial_code = CheckFinancialCode(file_upload)
@@ -134,7 +226,7 @@ def upload_budget(worksheet, year, header_dict, file_upload):# noqa
     # performance problem.
     # A typical files took over 2 hours to read using the cell access method
     # and 10 minutes with the row access.
-    for budget_row in worksheet.rows:
+    for previous_year_row in worksheet.rows:
         row_number += 1
         if row_number == 1:
             # There is no way to start reading rows from a specific place.
@@ -145,15 +237,15 @@ def upload_budget(worksheet, year, header_dict, file_upload):# noqa
             set_file_upload_feedback(
                 file_upload, f"Processing row {row_number} of {rows_to_process}."
             )
-        cost_centre = budget_row[cc_index].value
+        cost_centre = previous_year_row[cc_index].value
         if not cost_centre:
             # protection against empty rows
             break
-        nac = budget_row[nac_index].value
-        programme_code = budget_row[prog_index].value
-        analysis1 = budget_row[a1_index].value
-        analysis2 = budget_row[a2_index].value
-        project_code = budget_row[proj_index].value
+        nac = previous_year_row[nac_index].value
+        programme_code = previous_year_row[prog_index].value
+        analysis1 = previous_year_row[a1_index].value
+        analysis2 = previous_year_row[a2_index].value
+        project_code = previous_year_row[proj_index].value
         check_financial_code.validate(
             cost_centre, nac, programme_code,
             analysis1, analysis2, project_code, row_number
@@ -161,8 +253,8 @@ def upload_budget(worksheet, year, header_dict, file_upload):# noqa
         if not check_financial_code.error_found:
             financialcode_obj = check_financial_code.get_financial_code()
             try:
-                upload_budget_figures(budget_row, year_obj,
-                                      financialcode_obj, month_dict)
+                upload_previous_year_figures(previous_year_row, year_obj,
+                                      financialcode_obj)
             except UploadFileFormatError as ex:
                 set_file_upload_fatal_error(
                     file_upload, str(ex), str(ex),
@@ -173,8 +265,8 @@ def upload_budget(worksheet, year, header_dict, file_upload):# noqa
     if check_financial_code.error_found:
         final_status = FileUpload.PROCESSEDWITHERROR
     else:
-        # No errors, so we can copy the figures from the temporary table to the budgets
-        copy_uploaded_budget(year, month_dict)
+        # No errors, so we can copy the figures from the temporary table to the previous_years
+        copy_uploaded_previous_year(year)
         if check_financial_code.warning_found:
             final_status = FileUpload.PROCESSEDWITHWARNING
 
@@ -185,17 +277,18 @@ def upload_budget(worksheet, year, header_dict, file_upload):# noqa
     return not check_financial_code.error_found
 
 
-def upload_budget_from_file(file_upload, year):
+def upload_previous_year_from_file(file_upload, year):
     try:
-        workbook, worksheet = validate_excel_file(file_upload, "Budgets")
+        workbook, worksheet = validate_excel_file(file_upload, "previous_years")
     except UploadFileFormatError as ex:
         set_file_upload_fatal_error(
             file_upload, str(ex), str(ex),
         )
         raise ex
     header_dict = xslx_header_to_dict(worksheet[1])
+    expected_headers = CHART_OF_ACCOUNT_HEADERS.append(MONTH_HEADERS)
     try:
-        check_budget_header(header_dict, EXPECTED_BUDGET_HEADERS)
+        check_header(header_dict, expected_headers)
     except UploadFileFormatError as ex:
         set_file_upload_fatal_error(
             file_upload, str(ex), str(ex),
@@ -203,7 +296,7 @@ def upload_budget_from_file(file_upload, year):
         workbook.close
         raise ex
     try:
-        upload_budget(worksheet, year, header_dict, file_upload)
+        upload_previous_year(worksheet, year, header_dict, file_upload)
     except (UploadFileDataError) as ex:
         set_file_upload_fatal_error(
             file_upload, str(ex), str(ex),
