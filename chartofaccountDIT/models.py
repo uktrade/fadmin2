@@ -447,6 +447,14 @@ class ProgrammeCodeAbstract(models.Model):
         "Programme Code", primary_key=True, max_length=50,
     )
     programme_description = models.CharField("Programme Name", max_length=100,)
+    # TODO - remove "fk" add related name
+    budget_type_fk = models.ForeignKey(
+        BudgetType,
+        verbose_name="Budget Type",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return self.programme_code + " - " + self.programme_description
@@ -459,15 +467,7 @@ class ProgrammeCodeAbstract(models.Model):
 
 
 class ProgrammeCode(ProgrammeCodeAbstract, IsActiveModel):
-    # TODO - remove "fk" add related name
-    budget_type_fk = models.ForeignKey(
-        BudgetType,
-        verbose_name="Budget Type",
-        on_delete=models.PROTECT,
-        blank=True,
-        null=True,
-    )
-
+    pass
 
 class ArchivedProgrammeCode(ProgrammeCodeAbstract, ArchivedModel):
     programme_code = models.CharField("Programme Code", max_length=50)
@@ -485,6 +485,7 @@ class ArchivedProgrammeCode(ProgrammeCodeAbstract, ArchivedModel):
             programme_code=obj.programme_code,
             programme_description="{}{}".format(obj.programme_description, suffix,),
             budget_type=obj.budget_type_fk.budget_type,
+            budget_type_fk=obj.budget_type_fk,
             active=obj.active,
             financial_year=year_obj,
         )
