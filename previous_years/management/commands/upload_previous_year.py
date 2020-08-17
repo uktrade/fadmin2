@@ -16,6 +16,8 @@ from forecast.import_csv import WrongChartOFAccountCodeException
 
 from previous_years.import_previous_year import upload_previous_year_from_file
 
+from upload_file.models import FileUpload
+
 class Command(CommandUpload):
     help = "Upload a full year of actuals"
 
@@ -28,10 +30,15 @@ class Command(CommandUpload):
         year = options["financial_year"]
 
         file_name = self.path_to_upload(path, 'xlsx')
-        datafile = open(file_name, newline="", encoding="cp1252")
+        fileobj = FileUpload(
+            document_file_name=file_name,
+            document_type=FileUpload.PREVIOUSYEAR,
+            file_location=FileUpload.LOCALFILE,
+        )
+        fileobj.save()
 
         try:
-            upload_previous_year_from_file(datafile, year)
+            upload_previous_year_from_file(fileobj, year)
         except (WrongChartOFAccountCodeException, WrongArchivePeriodException) as ex:
             raise CommandError(f"Failure uploading historical actuals: {str(ex)}")
             datafile.close()

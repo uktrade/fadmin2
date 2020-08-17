@@ -6,6 +6,7 @@ from core.command_utils import (
 
 from forecast.import_actuals import upload_trial_balance_report
 
+from upload_file.models import FileUpload
 
 class Command(CommandUpload):
     help = "Upload the Trial Balance for a specific month"
@@ -20,7 +21,14 @@ class Command(CommandUpload):
         month = options["month"]
         year = options["financial_year"]
         file_name = self.path_to_upload(path, 'xslx')
-        upload_trial_balance_report(file_name, month, year)
+
+        fileobj = FileUpload(
+            document_file_name=file_name,
+            document_type=FileUpload.ACTUALS,
+            file_location=FileUpload.LOCALFILE,
+        )
+        fileobj.save()
+        upload_trial_balance_report(fileobj, month, year)
         if self.upload_s3:
             os.remove(file_name)
 

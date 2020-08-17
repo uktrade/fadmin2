@@ -51,23 +51,14 @@ MONTH_HEADERS = [
     "jan",
     "feb",
     "mar",
-    "adj1",
-    "adj2",
-    "adj3",
-]
-
-CHART_OF_ACCOUNT_HEADERS = [
-    "cost centre",
-    "natural account",
-    "programme",
-    "analysis",
-    "analysis2",
-    "project",
+    "adj01",
+    "adj02",
+    "adj03",
 ]
 
 
 class CheckArchivedFinancialCode(CheckFinancialCode):
-    def __init__(self, financial_year):
+    def __init__(self, financial_year, file_upload):
         self.cost_centre_model = HistoricCostCentre
         self.programme_code_model = ArchivedProgrammeCode
         self.analysis1_model = ArchivedAnalysis1
@@ -75,7 +66,7 @@ class CheckArchivedFinancialCode(CheckFinancialCode):
         self.project_code_model = ArchivedProjectCode
         self.natural_code_model = ArchivedNaturalCode
         self.financial_year = financial_year
-        super().__init__(self, "Forecast")
+        super().__init__(file_upload)
 
     def get_chart_of_account_object(self, m, value):
         msg = ""
@@ -115,12 +106,12 @@ class CheckArchivedFinancialCode(CheckFinancialCode):
         if self.error_found:
             return None
         financial_code_obj, created = ArchivedFinancialCode.objects.get_or_create(
-            archived_programme=self.programme_obj,
-            archived_cost_centre=self.cc_obj,
-            archived_natural_account_code=self.nac_obj,
-            archived_analysis1_code=self.analysis1_obj,
-            archived_analysis2_code=self.analysis2_obj,
-            archived_project_code=self.project_obj,
+            programme=self.programme_obj,
+            cost_centre=self.cc_obj,
+            natural_account_code=self.nac_obj,
+            analysis1_code=self.analysis1_obj,
+            analysis2_code=self.analysis2_obj,
+            project_code=self.project_obj,
             financial_year_id=self.financial_year,
         )
         financial_code_obj.save()
@@ -136,18 +127,21 @@ def copy_uploaded_previous_year(year):
         cursor.execute(sql_insert)
 
 
-def upload_previous_year_figures(previous_year_row, year_obj, financialcode_obj):
+def upload_previous_year_figures(previous_year_row, year_obj, financialcode_obj, header_dict):
     new_values = {}
     value_found = False
 
     for month_name in MONTH_HEADERS:
-        month_amount = previous_year_row[month_name].value
+        print(f"----------------- {month_name}")
+        month_amount = previous_year_row[header_dict[month_name]].value
+        print(f"------------{month_amount}")
+
         if month_amount == "-":
             # we accept the '-' as it is a recognised value in Finance for 0
             month_amount = 0
-        if not str(month_amount).isnumeric():
+        if not str(month_amount).strip('-').isnumeric():
             raise UploadFileFormatError(
-                f"Non-numeric value in {previous_year_row[month_name].coordinate}:{month_amount}"  # noqa
+                f"Non-numeric value in {month_name}:{month_amount}"  # noqa
             )
         if month_amount:
             value_found = True
@@ -175,9 +169,9 @@ def upload_previous_year_figures(previous_year_row, year_obj, financialcode_obj)
             previous_year_obj.jan = new_values["jan"] * 100
             previous_year_obj.feb = new_values["feb"] * 100
             previous_year_obj.mar = new_values["mar"] * 100
-            previous_year_obj.adj1 = new_values["adj1"] * 100
-            previous_year_obj.adj2 = new_values["adj2"] * 100
-            previous_year_obj.adj13 = new_values["adj3"] * 100
+            previous_year_obj.adj1 = new_values["adj01"] * 100
+            previous_year_obj.adj2 = new_values["adj02"] * 100
+            previous_year_obj.adj13 = new_values["adj03"] * 100
         else:
             previous_year_obj.apr += new_values["apr"] * 100
             previous_year_obj.may += new_values["may"] * 100
@@ -191,9 +185,9 @@ def upload_previous_year_figures(previous_year_row, year_obj, financialcode_obj)
             previous_year_obj.jan += new_values["jan"] * 100
             previous_year_obj.feb += new_values["feb"] * 100
             previous_year_obj.mar += new_values["mar"] * 100
-            previous_year_obj.adj1 += new_values["adj1"] * 100
-            previous_year_obj.adj2 += new_values["adj2"] * 100
-            previous_year_obj.adj13 += new_values["adj3"] * 100
+            previous_year_obj.adj1 += new_values["adj01"] * 100
+            previous_year_obj.adj2 += new_values["adj02"] * 100
+            previous_year_obj.adj13 += new_values["adj03"] * 100
         previous_year_obj.save()
 
 
@@ -210,7 +204,7 @@ def upload_previous_year(worksheet, year, header_dict, file_upload):  # noqa
     ArchivedForecastDataUpload.objects.filter(financial_year=year,).delete()
     rows_to_process = worksheet.max_row + 1
 
-    check_financial_code = CheckFinancialCode(file_upload)
+    check_financial_code = CheckArchivedFinancialCode(file_upload, year)
     cc_index = header_dict["cost centre"]
     nac_index = header_dict["natural account"]
     prog_index = header_dict["programme"]
@@ -258,7 +252,7 @@ def upload_previous_year(worksheet, year, header_dict, file_upload):  # noqa
             financialcode_obj = check_financial_code.get_financial_code()
             try:
                 upload_previous_year_figures(
-                    previous_year_row, year_obj, financialcode_obj
+                    previous_year_row, year_obj, financialcode_obj, header_dict,
                 )
             except UploadFileFormatError as ex:
                 set_file_upload_fatal_error(
@@ -292,7 +286,10 @@ def upload_previous_year_from_file(file_upload, year):
         )
         raise ex
     header_dict = xslx_header_to_dict(worksheet[1])
-    expected_headers = CHART_OF_ACCOUNT_HEADERS.append(MONTH_HEADERS)
+    expected_headers = ["cost centre", "natural account", "programme", "analysis",
+                        "analysis2", "project",]
+    expected_headers.extend(MONTH_HEADERS)
+    print(expected_headers)
     try:
         check_header(header_dict, expected_headers)
     except UploadFileFormatError as ex:

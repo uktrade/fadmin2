@@ -106,8 +106,13 @@ def validate_excel_file(file_upload, worksheet_title_pattern=""):
         # read_only=True makes the opening process much faster
         # data_only=True to read values from cells with formula.
         # otherwise the formula is returned instead of the value.
+        if file_upload.file_location == FileUpload.LOCALFILE:
+            excelname = file_upload.document_file_name
+        else:
+            excelname = file_upload.s3_document_file
+
         workbook = load_workbook(
-            file_upload.document_file, read_only=True, data_only=True,
+            excelname, read_only=True, data_only=True,
         )
     except BadZipFile as ex:
         set_file_upload_fatal_error(
