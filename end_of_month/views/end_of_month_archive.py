@@ -1,13 +1,10 @@
-from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
-
-from end_of_month.end_of_month_actions import end_of_month_archive
-from end_of_month.forms import EndOfMonthProcessForm
-from forecast.models import FinancialPeriod
-from end_of_month.utils import user_has_archive_access
 from django.urls import reverse
+from django.views.generic.edit import FormView
 
+from end_of_month.forms import EndOfMonthProcessForm
+from end_of_month.utils import user_has_archive_access
 
 
 class EndOfMonthProcessView(
@@ -34,9 +31,14 @@ class EndOfMonthProcessView(
 
     def form_valid(self, form):
         data = form.cleaned_data
-        period_code = data["period_code"]
-        return super().form_valid(form)
+        self.period_code = data["period_code"]
+        return super(self).form_valid(form)
 
-    def available_for_archiving(self):
+    def available_for_archiving(self, form, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        context["section_name"] = ""
+        context["section_description"] = (
+            f"Month to be archived: {self.period_code}"
+        )
         return "message about whether you can archive"
-        # view.available_for_archiving

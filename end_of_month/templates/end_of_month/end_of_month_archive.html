@@ -1,13 +1,6 @@
 {% extends "standard_content.html" %}
 {% load django_bootstrap_breadcrumbs %}
 
-{% block scripts %}
-<script>
-    var archive_button = document.getElementById("archive_button");
-    archive_button.onclick(end_of_month_process)
-
-    </script>
-{% endblock %}
 {% block breadcrumbs %}
     {{ block.super }}
     {% breadcrumb "Archive Monthly Forecast" "end_of_month" %}
@@ -19,7 +12,7 @@
 
     <h2 class="govuk-heading-l">Archive Monthly Forecast</h2>
     <h1 class="govuk-heading-l">{{ section_name }}</h1>
-    <h3 class="govuk-heading-m">Month to be archived: MONTH</h3>
+    <h3 class="govuk-heading-m">{{ section_description }}</h3>
     <p class="govuk-body">
         <input id="archive_button" type="submit" value="Archive" class="govuk-button govuk-button--secondary" data-module="govuk-button"/>
     <div class="container">

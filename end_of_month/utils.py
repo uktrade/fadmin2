@@ -1,6 +1,6 @@
-from django.conf import settings
 from end_of_month.models import (
     EndOfMonthStatus)
+
 
 class InvalidPeriodError(Exception):
     pass

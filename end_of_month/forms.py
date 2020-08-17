@@ -1,17 +1,24 @@
 from django import forms
 
+from end_of_month.utils import (
+    InvalidPeriodError, LaterPeriodAlreadyArchivedError,
+    SelectPeriodAlreadyArchivedError, validate_period_code)
+
+
 class EndOfMonthProcessForm(forms.Form):
     period_code = forms.CharField(
         required=True,
     )
+
     def clean_period_code(self):
         period_code = self.cleaned_data['period_code']
         try:
             validate_period_code(period_code)
         except InvalidPeriodError:
-            raise ValidationError("Valid Period is between 1 and 15.")
+            raise forms.ValidationError("Valid Period is between 1 and 15.")
         except SelectPeriodAlreadyArchivedError:
-            raise ValidationError("The selected period has already been archived.")
+            raise forms.ValidationError("The selected period has already "
+                                        "been archived.")
         except LaterPeriodAlreadyArchivedError:
-            raise ValidationError("A later period has already been archived.")
+            raise forms.ValidationError("A later period has already been archived.")
         return period_code
