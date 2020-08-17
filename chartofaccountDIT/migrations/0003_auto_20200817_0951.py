@@ -13,7 +13,6 @@ def insert_budget_type_fk(apps, schema_editor):
         programme.save()
 
 
-
 class Migration(migrations.Migration):
 
     dependencies = [

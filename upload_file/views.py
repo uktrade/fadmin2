@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.views.generic.base import TemplateView
 
 from upload_file.decorators import has_upload_permission
@@ -12,7 +13,10 @@ class UploadedView(TemplateView):
         return super(UploadedView, self).dispatch(request, *args, **kwargs)
 
     def uploaded_files(self):
-        uploaded_files = FileUpload.objects.all().order_by(
+        uploaded_files = FileUpload.objects.filter(Q(document_type=FileUpload.ACTUALS)
+                                                   | Q(document_type=FileUpload.BUDGET)
+
+        ).order_by(
             "-created"
         )
 
