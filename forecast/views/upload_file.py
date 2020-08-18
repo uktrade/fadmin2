@@ -40,7 +40,7 @@ class UploadActualsView(FormView):
             s3_file_name = request.FILES['file'].name
 
             file_upload = FileUpload(
-                document_file=s3_file_name,
+                s3_document_file=s3_file_name,
                 uploading_user=request.user,
                 document_type=FileUpload.ACTUALS,
             )
@@ -91,7 +91,7 @@ class UploadBudgetView(FormView):
             s3_file_name = request.FILES['file'].name
 
             file_upload = FileUpload(
-                document_file=s3_file_name,
+                s3_document_file=s3_file_name,
                 uploading_user=request.user,
                 document_type=FileUpload.BUDGET,
             )

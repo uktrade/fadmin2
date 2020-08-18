@@ -145,7 +145,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
         )
         self.year_obj = FinancialYear.objects.get(financial_year=2019)
         dummy_upload = FileUpload(
-            document_file='dummy.csv',
+            s3_document_file='dummy.csv',
             uploading_user=self.test_user,
             document_type=FileUpload.ACTUALS,
         )
@@ -375,7 +375,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
         # Check that BadZipFile is raised on
         # supply of incorrect file format
         bad_file_type_upload = FileUpload(
-            document_file=os.path.join(
+            s3_document_file=os.path.join(
                 os.path.dirname(__file__),
                 'test_assets/bad_file_type.csv',
             ),
@@ -391,7 +391,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             )
 
         bad_title_file_upload = FileUpload(
-            document_file=os.path.join(
+            s3_document_file=os.path.join(
                 os.path.dirname(__file__),
                 'test_assets/bad_title_upload_test.xlsx',
             ),
@@ -467,7 +467,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
             ).actual_loaded
         )
         bad_file_upload = FileUpload(
-            document_file=os.path.join(
+            s3_document_file=os.path.join(
                 os.path.dirname(__file__),
                 'test_assets/upload_bad_data.xlsx',
             ),
@@ -496,7 +496,7 @@ class ImportActualsTest(TestCase, RequestFactoryBase):
         )
 
         good_file_upload = FileUpload(
-            document_file=os.path.join(
+            s3_document_file=os.path.join(
                 os.path.dirname(__file__),
                 'test_assets/upload_test.xlsx',
             ),
