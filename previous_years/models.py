@@ -10,7 +10,6 @@ from chartofaccountDIT.models import (
 
 from core.metamodels import (
     ArchivedModel,
-    BaseModel,
 )
 from core.models import FinancialYear
 

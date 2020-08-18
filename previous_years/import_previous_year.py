@@ -127,51 +127,53 @@ class CheckArchivedFinancialCode(CheckFinancialCode):
 def copy_uploaded_previous_year(year):
     # Now copy the newly uploaded previous_years to the monthly figure table
     ArchivedForecastData.objects.filter(financial_year=year,).delete()
-    sql_insert = 'INSERT INTO previous_years_archivedforecastdata(' \
-                 'created, ' \
-                 'updated, ' \
-                 'archived, ' \
-                 'budget, ' \
-                 'apr, ' \
-                 'may, ' \
-                 'jun, ' \
-                 'jul, ' \
-                 'aug, ' \
-                 'sep, ' \
-                 'oct, ' \
-                 'nov, ' \
-                 '"dec", ' \
-                 'jan, ' \
-                 'feb, ' \
-                 'mar, ' \
-                 'adj1, ' \
-                 'adj2, ' \
-                 'adj3, ' \
-                 'financial_code_id, ' \
-                 'financial_year_id) ' \
-                 'SELECT ' \
-                 'created, ' \
-                 'updated, ' \
-                 'archived, ' \
-                 'budget, ' \
-                 'apr, ' \
-                 'may, ' \
-                 'jun, ' \
-                 'jul, ' \
-                 'aug, ' \
-                 'sep, ' \
-                 'oct, ' \
-                 'nov, ' \
-                 '"dec", ' \
-                 'jan, ' \
-                 'feb, ' \
-                 'mar, ' \
-                 'adj1, ' \
-                 'adj2, ' \
-                 'adj3, ' \
-                 'financial_code_id, ' \
-                 'financial_year_id ' \
-                 'FROM previous_years_archivedforecastdataupload;'
+    sql_insert = (
+        "INSERT INTO previous_years_archivedforecastdata("
+        "created, "
+        "updated, "
+        "archived, "
+        "budget, "
+        "apr, "
+        "may, "
+        "jun, "
+        "jul, "
+        "aug, "
+        "sep, "
+        "oct, "
+        "nov, "
+        '"dec", '
+        "jan, "
+        "feb, "
+        "mar, "
+        "adj1, "
+        "adj2, "
+        "adj3, "
+        "financial_code_id, "
+        "financial_year_id) "
+        "SELECT "
+        "created, "
+        "updated, "
+        "archived, "
+        "budget, "
+        "apr, "
+        "may, "
+        "jun, "
+        "jul, "
+        "aug, "
+        "sep, "
+        "oct, "
+        "nov, "
+        '"dec", '
+        "jan, "
+        "feb, "
+        "mar, "
+        "adj1, "
+        "adj2, "
+        "adj3, "
+        "financial_code_id, "
+        "financial_year_id "
+        "FROM previous_years_archivedforecastdataupload;"
+    )
 
     with connection.cursor() as cursor:
         cursor.execute(sql_insert)
@@ -193,9 +195,9 @@ def upload_previous_year_figures(
             try:
                 month_amount = month_amount * 100
             except ValueError:
-             raise UploadFileFormatError(
-                f"Non-numeric value in {month_name}:{month_amount}"
-            )
+                raise UploadFileFormatError(
+                    f"Non-numeric value in {month_name}:{month_amount}"
+                )
         if month_amount:
             value_found = True
         new_values[month_name] = month_amount
