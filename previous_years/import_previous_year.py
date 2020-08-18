@@ -58,6 +58,7 @@ MONTH_HEADERS = [
 
 
 class CheckArchivedFinancialCode(CheckFinancialCode):
+    """Uses the logic in CheckFinancialCode, but extract the chart of account from the archived tables"""
     def __init__(self, financial_year, file_upload):
         self.cost_centre_model = HistoricCostCentre
         self.programme_code_model = ArchivedProgrammeCode
@@ -72,7 +73,10 @@ class CheckArchivedFinancialCode(CheckFinancialCode):
         msg = ""
         try:
             field_name = m.chart_of_account_code_name
-            obj = m.objects.get(field_name=value, financial_year_id=self.financial_year)
+            kwargs = {}
+            kwargs[field_name]=value
+            kwargs["financial_year_id"]=self.financial_year
+            obj = m.objects.get(**kwargs)
         except m.DoesNotExist:
             msg = f'{field_name} "{value}" does not exist.\n'
             obj = None
@@ -127,14 +131,12 @@ def copy_uploaded_previous_year(year):
         cursor.execute(sql_insert)
 
 
-def upload_previous_year_figures(previous_year_row, year_obj, financialcode_obj, header_dict):
+def upload_previous_year_figures(previous_year_row, financial_year_obj, financialcode_obj, header_dict):
     new_values = {}
     value_found = False
 
     for month_name in MONTH_HEADERS:
-        print(f"----------------- {month_name}")
         month_amount = previous_year_row[header_dict[month_name]].value
-        print(f"------------{month_amount}")
 
         if month_amount == "-":
             # we accept the '-' as it is a recognised value in Finance for 0
@@ -152,7 +154,7 @@ def upload_previous_year_figures(previous_year_row, year_obj, financialcode_obj,
             previous_year_obj,
             created,
         ) = ArchivedForecastDataUpload.objects.get_or_create(
-            financial_year=year_obj, financial_code=financialcode_obj,
+            financial_year=financial_year_obj, financial_code=financialcode_obj,
         )
         # to avoid problems with precision,
         # we store the figures in pence
@@ -191,20 +193,23 @@ def upload_previous_year_figures(previous_year_row, year_obj, financialcode_obj,
         previous_year_obj.save()
 
 
-def upload_previous_year(worksheet, year, header_dict, file_upload):  # noqa
-    year_obj, created = FinancialYear.objects.get_or_create(financial_year=year)
+def upload_previous_year(worksheet, financial_year, header_dict, file_upload):  # noqa
+    financial_year_obj, created = FinancialYear.objects.get_or_create(
+        financial_year=financial_year
+    )
     if created:
-        year_obj.financial_year_display = f"{year}/{year - 1999}"
-        year_obj.save()
+        financial_year_obj.financial_year_display = f"{financial_year}/{financial_year - 1999}"
+        financial_year_obj.save()
+
 
     # Clear the table used to upload the previous_years.
     # The previous_years are uploaded to to a temporary storage, and copied
     # when the upload is completed successfully.
     # This means that we always have a full upload.
-    ArchivedForecastDataUpload.objects.filter(financial_year=year,).delete()
+    ArchivedForecastDataUpload.objects.filter(financial_year=financial_year, ).delete()
     rows_to_process = worksheet.max_row + 1
 
-    check_financial_code = CheckArchivedFinancialCode(file_upload, year)
+    check_financial_code = CheckArchivedFinancialCode(financial_year, file_upload)
     cc_index = header_dict["cost centre"]
     nac_index = header_dict["natural account"]
     prog_index = header_dict["programme"]
@@ -252,7 +257,10 @@ def upload_previous_year(worksheet, year, header_dict, file_upload):  # noqa
             financialcode_obj = check_financial_code.get_financial_code()
             try:
                 upload_previous_year_figures(
-                    previous_year_row, year_obj, financialcode_obj, header_dict,
+                    previous_year_row,
+                    financial_year_obj,
+                    financialcode_obj,
+                    header_dict,
                 )
             except UploadFileFormatError as ex:
                 set_file_upload_fatal_error(
@@ -266,7 +274,7 @@ def upload_previous_year(worksheet, year, header_dict, file_upload):  # noqa
     else:
         # No errors, so we can copy the figures
         # from the temporary table to the previous_years
-        copy_uploaded_previous_year(year)
+        copy_uploaded_previous_year(financial_year)
         if check_financial_code.warning_found:
             final_status = FileUpload.PROCESSEDWITHWARNING
 
@@ -289,7 +297,6 @@ def upload_previous_year_from_file(file_upload, year):
     expected_headers = ["cost centre", "natural account", "programme", "analysis",
                         "analysis2", "project",]
     expected_headers.extend(MONTH_HEADERS)
-    print(expected_headers)
     try:
         check_header(header_dict, expected_headers)
     except UploadFileFormatError as ex:

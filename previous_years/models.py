@@ -18,6 +18,7 @@ from core.models import FinancialYear
 from costcentre.models import HistoricCostCentre
 
 from forecast.models import (
+    DisplaySubTotalManager,
     FinancialCodeAbstract,
     ForecastExpenditureType,
     ForecastingDataViewAbstract,
@@ -55,14 +56,18 @@ class ArchivedFinancialCode(ArchivedModel, FinancialCodeAbstract):
 
 
 class ArchivedForecastDataAbstract(ForecastingDataViewAbstract, BaseModel):
+    id = models.AutoField(auto_created=True, primary_key=True)
     financial_code = models.ForeignKey(ArchivedFinancialCode, on_delete=models.PROTECT,)
+    financial_year = models.ForeignKey(FinancialYear, on_delete=models.PROTECT)
+
     class Meta:
         abstract = True
+        unique_together = ("financial_code", "financial_year")
+
 
 
 class ArchivedForecastDataUpload(ArchivedForecastDataAbstract):
     pass
-
 
 class ArchivedForecastData(ArchivedForecastDataAbstract):
     pass
