@@ -127,7 +127,51 @@ class CheckArchivedFinancialCode(CheckFinancialCode):
 def copy_uploaded_previous_year(year):
     # Now copy the newly uploaded previous_years to the monthly figure table
     ArchivedForecastData.objects.filter(financial_year=year,).delete()
-    sql_insert = ""
+    sql_insert = 'INSERT INTO previous_years_archivedforecastdata(' \
+                 'created, ' \
+                 'updated, ' \
+                 'archived, ' \
+                 'budget, ' \
+                 'apr, ' \
+                 'may, ' \
+                 'jun, ' \
+                 'jul, ' \
+                 'aug, ' \
+                 'sep, ' \
+                 'oct, ' \
+                 'nov, ' \
+                 '"dec", ' \
+                 'jan, ' \
+                 'feb, ' \
+                 'mar, ' \
+                 'adj1, ' \
+                 'adj2, ' \
+                 'adj3, ' \
+                 'financial_code_id, ' \
+                 'financial_year_id) ' \
+                 'SELECT ' \
+                 'created, ' \
+                 'updated, ' \
+                 'archived, ' \
+                 'budget, ' \
+                 'apr, ' \
+                 'may, ' \
+                 'jun, ' \
+                 'jul, ' \
+                 'aug, ' \
+                 'sep, ' \
+                 'oct, ' \
+                 'nov, ' \
+                 '"dec", ' \
+                 'jan, ' \
+                 'feb, ' \
+                 'mar, ' \
+                 'adj1, ' \
+                 'adj2, ' \
+                 'adj3, ' \
+                 'financial_code_id, ' \
+                 'financial_year_id ' \
+                 'FROM previous_years_archivedforecastdataupload;'
 
     with connection.cursor() as cursor:
         cursor.execute(sql_insert)
@@ -145,9 +189,12 @@ def upload_previous_year_figures(
         if month_amount == "-":
             # we accept the '-' as it is a recognised value in Finance for 0
             month_amount = 0
-        if not str(month_amount).strip("-").isnumeric():
-            raise UploadFileFormatError(
-                f"Non-numeric value in {month_name}:{month_amount}"  # noqa
+        else:
+            try:
+                month_amount = month_amount * 100
+            except ValueError:
+             raise UploadFileFormatError(
+                f"Non-numeric value in {month_name}:{month_amount}"
             )
         if month_amount:
             value_found = True
@@ -163,37 +210,37 @@ def upload_previous_year_figures(
         # to avoid problems with precision,
         # we store the figures in pence
         if created:
-            previous_year_obj.apr = new_values["apr"] * 100
-            previous_year_obj.may = new_values["may"] * 100
-            previous_year_obj.jun = new_values["jun"] * 100
-            previous_year_obj.jul = new_values["jul"] * 100
-            previous_year_obj.aug = new_values["aug"] * 100
-            previous_year_obj.sep = new_values["sep"] * 100
-            previous_year_obj.oct = new_values["oct"] * 100
-            previous_year_obj.nov = new_values["nov"] * 100
-            previous_year_obj.dec = new_values["dec"] * 100
-            previous_year_obj.jan = new_values["jan"] * 100
-            previous_year_obj.feb = new_values["feb"] * 100
-            previous_year_obj.mar = new_values["mar"] * 100
-            previous_year_obj.adj1 = new_values["adj01"] * 100
-            previous_year_obj.adj2 = new_values["adj02"] * 100
-            previous_year_obj.adj13 = new_values["adj03"] * 100
+            previous_year_obj.apr = new_values["apr"]
+            previous_year_obj.may = new_values["may"]
+            previous_year_obj.jun = new_values["jun"]
+            previous_year_obj.jul = new_values["jul"]
+            previous_year_obj.aug = new_values["aug"]
+            previous_year_obj.sep = new_values["sep"]
+            previous_year_obj.oct = new_values["oct"]
+            previous_year_obj.nov = new_values["nov"]
+            previous_year_obj.dec = new_values["dec"]
+            previous_year_obj.jan = new_values["jan"]
+            previous_year_obj.feb = new_values["feb"]
+            previous_year_obj.mar = new_values["mar"]
+            previous_year_obj.adj1 = new_values["adj01"]
+            previous_year_obj.adj2 = new_values["adj02"]
+            previous_year_obj.adj13 = new_values["adj03"]
         else:
-            previous_year_obj.apr += new_values["apr"] * 100
-            previous_year_obj.may += new_values["may"] * 100
-            previous_year_obj.jun += new_values["jun"] * 100
-            previous_year_obj.jul += new_values["jul"] * 100
-            previous_year_obj.aug += new_values["aug"] * 100
-            previous_year_obj.sep += new_values["sep"] * 100
-            previous_year_obj.oct += new_values["oct"] * 100
-            previous_year_obj.nov += new_values["nov"] * 100
-            previous_year_obj.dec += new_values["dec"] * 100
-            previous_year_obj.jan += new_values["jan"] * 100
-            previous_year_obj.feb += new_values["feb"] * 100
-            previous_year_obj.mar += new_values["mar"] * 100
-            previous_year_obj.adj1 += new_values["adj01"] * 100
-            previous_year_obj.adj2 += new_values["adj02"] * 100
-            previous_year_obj.adj13 += new_values["adj03"] * 100
+            previous_year_obj.apr += new_values["apr"]
+            previous_year_obj.may += new_values["may"]
+            previous_year_obj.jun += new_values["jun"]
+            previous_year_obj.jul += new_values["jul"]
+            previous_year_obj.aug += new_values["aug"]
+            previous_year_obj.sep += new_values["sep"]
+            previous_year_obj.oct += new_values["oct"]
+            previous_year_obj.nov += new_values["nov"]
+            previous_year_obj.dec += new_values["dec"]
+            previous_year_obj.jan += new_values["jan"]
+            previous_year_obj.feb += new_values["feb"]
+            previous_year_obj.mar += new_values["mar"]
+            previous_year_obj.adj1 += new_values["adj01"]
+            previous_year_obj.adj2 += new_values["adj02"]
+            previous_year_obj.adj13 += new_values["adj03"]
         previous_year_obj.save()
 
 

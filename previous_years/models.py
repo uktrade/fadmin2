@@ -50,7 +50,7 @@ class ArchivedFinancialCode(ArchivedModel, FinancialCodeAbstract):
     )
 
 
-class ArchivedForecastDataAbstract(ForecastingDataViewAbstract, BaseModel):
+class ArchivedForecastDataAbstract(ForecastingDataViewAbstract, ArchivedModel):
     id = models.AutoField(auto_created=True, primary_key=True)
     financial_code = models.ForeignKey(ArchivedFinancialCode, on_delete=models.PROTECT,)
     financial_year = models.ForeignKey(FinancialYear, on_delete=models.PROTECT)
