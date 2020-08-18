@@ -8,6 +8,7 @@ from forecast.import_actuals import upload_trial_balance_report
 
 from upload_file.models import FileUpload
 
+
 class Command(CommandUpload):
     help = "Upload the Trial Balance for a specific month"
 

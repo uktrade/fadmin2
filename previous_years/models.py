@@ -6,7 +6,6 @@ from chartofaccountDIT.models import (
     ArchivedNaturalCode,
     ArchivedProgrammeCode,
     ArchivedProjectCode,
-    BudgetType,
 )
 
 from core.metamodels import (
@@ -18,7 +17,6 @@ from core.models import FinancialYear
 from costcentre.models import HistoricCostCentre
 
 from forecast.models import (
-    DisplaySubTotalManager,
     FinancialCodeAbstract,
     ForecastExpenditureType,
     ForecastingDataViewAbstract,
@@ -27,12 +25,9 @@ from forecast.models import (
 
 class ArchivedFinancialCode(ArchivedModel, FinancialCodeAbstract):
     """Contains the members of Chart of Account needed to create a unique key"""
-    programme = models.ForeignKey(
-        ArchivedProgrammeCode, on_delete=models.PROTECT
-    )
-    cost_centre = models.ForeignKey(
-        HistoricCostCentre, on_delete=models.PROTECT
-    )
+
+    programme = models.ForeignKey(ArchivedProgrammeCode, on_delete=models.PROTECT)
+    cost_centre = models.ForeignKey(HistoricCostCentre, on_delete=models.PROTECT)
     natural_account_code = models.ForeignKey(
         ArchivedNaturalCode, on_delete=models.PROTECT
     )
@@ -65,9 +60,9 @@ class ArchivedForecastDataAbstract(ForecastingDataViewAbstract, BaseModel):
         unique_together = ("financial_code", "financial_year")
 
 
-
 class ArchivedForecastDataUpload(ArchivedForecastDataAbstract):
     pass
+
 
 class ArchivedForecastData(ArchivedForecastDataAbstract):
     pass

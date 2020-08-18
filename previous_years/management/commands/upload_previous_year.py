@@ -18,6 +18,7 @@ from previous_years.import_previous_year import upload_previous_year_from_file
 
 from upload_file.models import FileUpload
 
+
 class Command(CommandUpload):
     help = "Upload a full year of actuals"
 
@@ -41,10 +42,8 @@ class Command(CommandUpload):
             upload_previous_year_from_file(fileobj, year)
         except (WrongChartOFAccountCodeException, WrongArchivePeriodException) as ex:
             raise CommandError(f"Failure uploading historical actuals: {str(ex)}")
-            datafile.close()
             return
 
-        datafile.close()
         if self.upload_s3:
             os.remove(file_name)
 

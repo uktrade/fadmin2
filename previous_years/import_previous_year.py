@@ -58,7 +58,9 @@ MONTH_HEADERS = [
 
 
 class CheckArchivedFinancialCode(CheckFinancialCode):
-    """Uses the logic in CheckFinancialCode, but extract the chart of account from the archived tables"""
+    """Uses the logic in CheckFinancialCode, but extract
+    the chart of account from the archived tables"""
+
     def __init__(self, financial_year, file_upload):
         self.cost_centre_model = HistoricCostCentre
         self.programme_code_model = ArchivedProgrammeCode
@@ -74,8 +76,8 @@ class CheckArchivedFinancialCode(CheckFinancialCode):
         try:
             field_name = m.chart_of_account_code_name
             kwargs = {}
-            kwargs[field_name]=value
-            kwargs["financial_year_id"]=self.financial_year
+            kwargs[field_name] = value
+            kwargs["financial_year_id"] = self.financial_year
             obj = m.objects.get(**kwargs)
         except m.DoesNotExist:
             msg = f'{field_name} "{value}" does not exist.\n'
@@ -131,7 +133,9 @@ def copy_uploaded_previous_year(year):
         cursor.execute(sql_insert)
 
 
-def upload_previous_year_figures(previous_year_row, financial_year_obj, financialcode_obj, header_dict):
+def upload_previous_year_figures(
+    previous_year_row, financial_year_obj, financialcode_obj, header_dict
+):
     new_values = {}
     value_found = False
 
@@ -141,7 +145,7 @@ def upload_previous_year_figures(previous_year_row, financial_year_obj, financia
         if month_amount == "-":
             # we accept the '-' as it is a recognised value in Finance for 0
             month_amount = 0
-        if not str(month_amount).strip('-').isnumeric():
+        if not str(month_amount).strip("-").isnumeric():
             raise UploadFileFormatError(
                 f"Non-numeric value in {month_name}:{month_amount}"  # noqa
             )
@@ -198,15 +202,16 @@ def upload_previous_year(worksheet, financial_year, header_dict, file_upload):  
         financial_year=financial_year
     )
     if created:
-        financial_year_obj.financial_year_display = f"{financial_year}/{financial_year - 1999}"
+        financial_year_obj.financial_year_display = (
+            f"{financial_year}/{financial_year - 1999}"
+        )
         financial_year_obj.save()
-
 
     # Clear the table used to upload the previous_years.
     # The previous_years are uploaded to to a temporary storage, and copied
     # when the upload is completed successfully.
     # This means that we always have a full upload.
-    ArchivedForecastDataUpload.objects.filter(financial_year=financial_year, ).delete()
+    ArchivedForecastDataUpload.objects.filter(financial_year=financial_year,).delete()
     rows_to_process = worksheet.max_row + 1
 
     check_financial_code = CheckArchivedFinancialCode(financial_year, file_upload)
@@ -294,8 +299,14 @@ def upload_previous_year_from_file(file_upload, year):
         )
         raise ex
     header_dict = xslx_header_to_dict(worksheet[1])
-    expected_headers = ["cost centre", "natural account", "programme", "analysis",
-                        "analysis2", "project",]
+    expected_headers = [
+        "cost centre",
+        "natural account",
+        "programme",
+        "analysis",
+        "analysis2",
+        "project",
+    ]
     expected_headers.extend(MONTH_HEADERS)
     try:
         check_header(header_dict, expected_headers)

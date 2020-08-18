@@ -7,29 +7,29 @@ from core.metamodels import BaseModel
 
 
 class FileUpload(BaseModel):
-    UNPROCESSED = 'unprocessed'
-    PROCESSING = 'processing'
-    PROCESSED = 'processed'
-    PROCESSEDWITHERROR = 'processed_error'
-    PROCESSEDWITHWARNING = 'processed_warning'
-    PARSING = 'parsing'
-    ERROR = 'error'
-    ANTIVIRUS = 'antivirus'
+    UNPROCESSED = "unprocessed"
+    PROCESSING = "processing"
+    PROCESSED = "processed"
+    PROCESSEDWITHERROR = "processed_error"
+    PROCESSEDWITHWARNING = "processed_warning"
+    PARSING = "parsing"
+    ERROR = "error"
+    ANTIVIRUS = "antivirus"
 
     STATUS_CHOICES = [
-        (UNPROCESSED, 'Unprocessed'),
-        (ANTIVIRUS, 'Checking for viruses'),
-        (PROCESSEDWITHERROR, 'Processed. Not uploaded, error(s) found.'),
-        (PROCESSEDWITHWARNING, 'Processed. Uploaded, warning(s) found.'),
-        (PROCESSING, 'Processing'),
-        (PARSING, 'Processing after error'),
-        (PROCESSED, 'Processed and uploaded.'),
-        (ERROR, 'Fatal error.'),
+        (UNPROCESSED, "Unprocessed"),
+        (ANTIVIRUS, "Checking for viruses"),
+        (PROCESSEDWITHERROR, "Processed. Not uploaded, error(s) found."),
+        (PROCESSEDWITHWARNING, "Processed. Uploaded, warning(s) found."),
+        (PROCESSING, "Processing"),
+        (PARSING, "Processing after error"),
+        (PROCESSED, "Processed and uploaded."),
+        (ERROR, "Fatal error."),
     ]
 
     ACTUALS = "actuals"
     BUDGET = "budget"
-    PREVIOUSYEAR="previousyear"
+    PREVIOUSYEAR = "previousyear"
 
     DOCUMENT_TYPE_CHOICES = [
         (ACTUALS, "Actuals"),
@@ -38,38 +38,24 @@ class FileUpload(BaseModel):
     ]
 
     LOCALFILE = "local"
-    S3FILE= "S3"
+    S3FILE = "S3"
     document_type = models.CharField(
-        max_length=100,
-        choices=DOCUMENT_TYPE_CHOICES,
-        default=ACTUALS,
+        max_length=100, choices=DOCUMENT_TYPE_CHOICES, default=ACTUALS,
     )
     FILE_LOCATION_CHOICE = [
         (LOCALFILE, "File system"),
         (S3FILE, "S3 Bucket"),
     ]
     file_location = models.CharField(
-        max_length=100,
-        choices=DOCUMENT_TYPE_CHOICES,
-        default=S3FILE,
+        max_length=100, choices=DOCUMENT_TYPE_CHOICES, default=S3FILE,
     )
 
-    s3_document_file = S3FileField(
-        max_length=1000,
-        null=True,
-        blank=True,
-    )
+    s3_document_file = S3FileField(max_length=1000, null=True, blank=True,)
 
-    document_file_name = models.CharField(
-        max_length=1000,
-        null=True,
-        blank=True,
-    )
+    document_file_name = models.CharField(max_length=1000, null=True, blank=True,)
 
     status = models.CharField(
-        max_length=100,
-        choices=STATUS_CHOICES,
-        default=UNPROCESSED,
+        max_length=100, choices=STATUS_CHOICES, default=UNPROCESSED,
     )
     uploading_user = models.ForeignKey(
         get_user_model(),

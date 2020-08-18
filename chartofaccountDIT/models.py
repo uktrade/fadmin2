@@ -469,6 +469,7 @@ class ProgrammeCodeAbstract(models.Model):
 class ProgrammeCode(ProgrammeCodeAbstract, IsActiveModel):
     pass
 
+
 class ArchivedProgrammeCode(ProgrammeCodeAbstract, ArchivedModel):
     programme_code = models.CharField("Programme Code", max_length=50)
     active = models.BooleanField(default=False)

@@ -13,11 +13,8 @@ class UploadedView(TemplateView):
         return super(UploadedView, self).dispatch(request, *args, **kwargs)
 
     def uploaded_files(self):
-        uploaded_files = FileUpload.objects.filter(Q(document_type=FileUpload.ACTUALS)
-                                                   | Q(document_type=FileUpload.BUDGET)
-
-        ).order_by(
-            "-created"
-        )
+        uploaded_files = FileUpload.objects.filter(
+            Q(document_type=FileUpload.ACTUALS) | Q(document_type=FileUpload.BUDGET)
+        ).order_by("-created")
 
         return uploaded_files

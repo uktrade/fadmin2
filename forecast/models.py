@@ -329,7 +329,6 @@ class FinancialCodeAbstract(models.Model):
             ("can_download_mi_reports", "Can download mi reports"),
         ]
 
-
     def save(self, *args, **kwargs):
         # Override save to calculate the forecast_expenditure_type.
         if self.pk is None:
@@ -368,7 +367,6 @@ class FinancialCode(FinancialCodeAbstract, BaseModel):
         blank=True,
         null=True,
     )
-
 
 
 class SubTotalForecast:
