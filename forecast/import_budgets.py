@@ -75,7 +75,12 @@ def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
         if period_budget == '-':
             # we accept the '-' as it is a recognised value in Finance for 0
             period_budget = 0
-        if not str(period_budget).strip('-').isnumeric():
+        try:
+            # to avoid problems with precision,
+            # we store the figures in pence
+            # If period_budget is not a number, it will give a value error
+            period_budget = period_budget * 100
+        except ValueError:
             raise UploadFileFormatError(
                 f"Non-numeric value in {budget_row[month_idx].coordinate}:{period_budget}"# noqa
             )
@@ -85,12 +90,10 @@ def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
                 financial_code=financialcode_obj,
                 financial_period=period_obj,
             )
-            # to avoid problems with precision,
-            # we store the figures in pence
             if created:
-                budget_obj.amount = period_budget * 100
+                budget_obj.amount = period_budget
             else:
-                budget_obj.amount += period_budget * 100
+                budget_obj.amount += period_budget
             budget_obj.save()
 
 
