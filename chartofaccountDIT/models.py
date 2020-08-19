@@ -33,7 +33,6 @@ class Analysis1(Analysis1Abstract, IsActiveModel):
 class ArchivedAnalysis1(Analysis1Abstract, ArchivedModel):
     analysis1_code = models.CharField("Contract Code", max_length=50)
     active = models.BooleanField(default=False)
-    chart_of_account_code_name = 'analysis1_code'
 
     def __str__(self):
         return "{} {}".format(
@@ -80,7 +79,6 @@ class Analysis2(Analysis2Abstract, IsActiveModel):
 class ArchivedAnalysis2(Analysis2Abstract, ArchivedModel):
     analysis2_code = models.CharField("Contract Code", max_length=50)
     active = models.BooleanField(default=False)
-    chart_of_account_code_name = 'analysis2_code'
 
     def __str__(self):
         return "{}{}".format(
@@ -195,7 +193,6 @@ class ArchivedExpenditureCategory(
         max_length=255, verbose_name="Budget Grouping", blank=True, null=True,
     )
     active = models.BooleanField(default=False)
-    chart_of_account_code_name = 'grouping_description'
 
     def __str__(self):
         return "{}{}".format(
@@ -260,7 +257,6 @@ class ArchivedCommercialCategory(
     )
 
     active = models.BooleanField(default=False)
-    chart_of_account_code_name = 'commercial_category'
 
     def __str__(self):
         return "{} {}".format(
@@ -371,7 +367,6 @@ class ArchivedNaturalCode(NaturalCodeAbstract, ArchivedModel):
         verbose_name="L5 for OSCAR upload", blank=True, null=True
     )
     active = models.BooleanField(default=False)
-    chart_of_account_code_name = 'natural_account_code'
 
     def __str__(self):
         return super().__str__() + " " + self.financial_year.financial_year_display
@@ -475,7 +470,6 @@ class ArchivedProgrammeCode(ProgrammeCodeAbstract, ArchivedModel):
     programme_code = models.CharField("Programme Code", max_length=50)
     active = models.BooleanField(default=False)
     budget_type = models.CharField("Budget Type", max_length=100)
-    chart_of_account_code_name = 'programme_code'
 
     def __str__(self):
         s = super().__str__()
@@ -541,7 +535,6 @@ class ArchivedInterEntity(InterEntityAbstract, ArchivedModel):
     l1_value = models.CharField("Government Body", max_length=10,)
     l1_description = models.CharField("Government Body Description", max_length=100,)
     active = models.BooleanField(default=False)
-    chart_of_account_code_name = 'l2_value'
 
     def __str__(self):
         s = super().__str__()
@@ -590,7 +583,6 @@ class ProjectCode(ProjectCodeAbstract, IsActiveModel):
 class ArchivedProjectCode(ProjectCodeAbstract, ArchivedModel):
     project_code = models.CharField("Project Code", max_length=50)
     active = models.BooleanField(default=False)
-    chart_of_account_code_name = 'project_code'
 
     def __str__(self):
         return "{} {}".format(
@@ -653,7 +645,6 @@ class ArchivedFCOMapping(FCOMappingAbstract, ArchivedModel):
     )
 
     active = models.BooleanField(default=False)
-    chart_of_account_code_name = 'fco_code'
 
     def __str__(self):
         return "{} {}".format(
