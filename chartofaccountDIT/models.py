@@ -434,6 +434,7 @@ class ArchivedNaturalCode(NaturalCodeAbstract, ArchivedModel):
 class BudgetType(BaseModel):
     budget_type_key = models.CharField("Key", primary_key=True, max_length=50)
     budget_type = models.CharField("Budget Type", max_length=100)
+    # budget_type_display is used when showing the forecast view
     budget_type_display = models.CharField(max_length=100, blank=True, null=True)
     budget_type_display_order = models.IntegerField(default=99)
     budget_type_edit_display_order = models.IntegerField(default=99)
