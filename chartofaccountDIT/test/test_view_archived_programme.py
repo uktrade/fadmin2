@@ -32,7 +32,7 @@ class ArchiveProgrammeCodeTest(TestCase, RequestFactoryBase):
             "archive", type="Programmes", year=self.archive_year, stdout=self.out,
         )
 
-    def test_view_historical_analisys2(self):
+    def test_view_historical_programme(self):
         response = self.factory_get(
             reverse("historical_programme_filter", kwargs={"year": self.archive_year},),
             HistoricalFilteredProgrammeView,
