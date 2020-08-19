@@ -26,13 +26,13 @@ from previous_years.models import (
     ArchivedForecastData,
     ArchivedForecastDataUpload,
 )
+from previous_years.utils import valid_year_for_archiving_actuals
 
 from upload_file.models import FileUpload
 from upload_file.utils import (
     set_file_upload_fatal_error,
     set_file_upload_feedback,
 )
-
 
 # Make the adjustment columns compulsory. They can have just 0 in it.
 # Maybe only one adjustment column is needed, but it becomes too complex to find out
@@ -55,6 +55,10 @@ MONTH_HEADERS = [
     "adj02",
     "adj03",
 ]
+
+
+class ArchiveYearError(Exception):
+    pass
 
 
 class CheckArchivedFinancialCode(CheckFinancialCode):
@@ -247,14 +251,11 @@ def upload_previous_year_figures(
 
 
 def upload_previous_year(worksheet, financial_year, header_dict, file_upload):  # noqa
-    financial_year_obj, created = FinancialYear.objects.get_or_create(
-        financial_year=financial_year
-    )
-    if created:
-        financial_year_obj.financial_year_display = (
-            f"{financial_year}/{financial_year - 1999}"
-        )
-        financial_year_obj.save()
+
+    if not valid_year_for_archiving_actuals(financial_year):
+         raise ArchiveYearError
+
+    financial_year_obj, created = FinancialYear.objects.get(pk=financial_year)
 
     # Clear the table used to upload the previous_years.
     # The previous_years are uploaded to to a temporary storage, and copied
@@ -316,7 +317,7 @@ def upload_previous_year(worksheet, financial_year, header_dict, file_upload):  
                     financialcode_obj,
                     header_dict,
                 )
-            except UploadFileFormatError as ex:
+            except (UploadFileFormatError, ArchiveYearError) as ex:
                 set_file_upload_fatal_error(
                     file_upload, str(ex), str(ex),
                 )
