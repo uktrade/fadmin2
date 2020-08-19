@@ -24,7 +24,10 @@ class IsActiveModel(BaseModel):
 
 
 class ArchivedModel(BaseModel):
-    financial_year = models.ForeignKey("core.FinancialYear", on_delete=models.PROTECT)
+    financial_year = models.ForeignKey("core.FinancialYear",
+                                       on_delete=models.PROTECT,
+                                       related_name=
+                                       '%(app_label)s_%(class)s_financial_year')
     archived = models.DateTimeField(auto_now_add=True)
 
     class Meta:
