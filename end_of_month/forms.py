@@ -4,11 +4,14 @@ from end_of_month.utils import (
     InvalidPeriodError, LaterPeriodAlreadyArchivedError,
     SelectPeriodAlreadyArchivedError, validate_period_code)
 
+from end_of_month.models import EndOfMonthStatus
+
 
 class EndOfMonthProcessForm(forms.Form):
     period_code = forms.CharField(
         required=True,
     )
+    date = EndOfMonthStatus.archived_date
 
     def clean_period_code(self):
         period_code = self.cleaned_data['period_code']

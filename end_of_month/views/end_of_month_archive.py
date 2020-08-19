@@ -32,6 +32,7 @@ class EndOfMonthProcessView(
     def form_valid(self, form):
         data = form.cleaned_data
         self.period_code = data["period_code"]
+        self.date = data["date"]
         return super(self).form_valid(form)
 
     def available_for_archiving(self, form, **kwargs):
@@ -41,4 +42,20 @@ class EndOfMonthProcessView(
         context["section_description"] = (
             f"Month to be archived: {self.period_code}"
         )
-        return "message about whether you can archive"
+        return context
+
+    def forecast_not_locked(self, form, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["section_name"] = "Archiving not available"
+        context["section_description"] = (
+            f"Forecast is not locked"
+        )
+        return context
+
+    def archiving_previously_performed(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["section_name"] = "Nothing to archive"
+        context["section_description"] = (
+            f"Last archive for {self.period_code} ran on {self.date}"
+        )
+        return context
