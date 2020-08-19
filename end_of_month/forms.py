@@ -1,10 +1,9 @@
 from django import forms
 
+from end_of_month.models import EndOfMonthStatus
 from end_of_month.utils import (
     InvalidPeriodError, LaterPeriodAlreadyArchivedError,
     SelectPeriodAlreadyArchivedError, validate_period_code)
-
-from end_of_month.models import EndOfMonthStatus
 
 
 class EndOfMonthProcessForm(forms.Form):
