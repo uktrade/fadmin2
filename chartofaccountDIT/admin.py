@@ -405,7 +405,7 @@ class ProgrammeAdmin(AdminActiveField, AdminImportExtraExport):
     list_display = (
         "programme_code",
         "programme_description",
-        "budget_type_fk",
+        "budget_type",
         "active",
         "created",
         "updated",
@@ -418,7 +418,7 @@ class ProgrammeAdmin(AdminActiveField, AdminImportExtraExport):
             if obj:
                 return [
                     "programme_code",
-                    "budget_type_fk",
+                    "budget_type",
                     "created",
                     "updated",
                 ]  # don't allow to edit the code
@@ -431,14 +431,14 @@ class ProgrammeAdmin(AdminActiveField, AdminImportExtraExport):
         return [
             "programme_code",
             "programme_description",
-            "budget_type_fk",
+            "budget_type",
             "active",
             "created",
             "updated",
         ]
 
     search_fields = ["programme_code", "programme_description"]
-    list_filter = ["budget_type_fk", "active"]
+    list_filter = ["budget_type", "active"]
 
     @property
     def export_func(self):

@@ -25,7 +25,7 @@ class ArchiveProgrammeCodeTest(TestCase, RequestFactoryBase):
         obj = ProgrammeCodeFactory()
         self.programme_code = obj.programme_code
         self.programme_description = obj.programme_description
-        self.budget_type = obj.budget_type_fk.budget_type
+        self.budget_type = obj.budget_type.budget_type
         current_year = get_current_financial_year()
         self.archive_year = current_year - 1
         call_command(

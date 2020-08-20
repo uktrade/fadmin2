@@ -944,7 +944,7 @@ class ViewForecastNaturalAccountCodeTest(TestCase, RequestFactoryBase):
         self.amount2_apr = 1000000
 
         programme_obj = ProgrammeCodeFactory()
-        self.budget_type = programme_obj.budget_type_fk.budget_type_display
+        self.budget_type = programme_obj.budget_type.budget_type_display
         expenditure_obj = ExpenditureCategoryFactory()
         self.expenditure_id = expenditure_obj.id
         self.nac1_obj = NaturalCodeFactory(natural_account_code=12345678,

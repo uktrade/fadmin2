@@ -158,7 +158,7 @@ class ProgrammeCodeFactory(factory.DjangoModelFactory):
     active = True
     programme_code = "123456"
     programme_description = "Programme Test description"
-    budget_type_fk = factory.Iterator(BudgetType.objects.all())
+    budget_type = factory.Iterator(BudgetType.objects.all())
 
 
 class HistoricalProgrammeCodeFactory(factory.DjangoModelFactory):
