@@ -314,6 +314,7 @@ class ArchiveProgrammeTest(TestCase, RequestFactoryBase):
         self.programme_code = obj.programme_code
         self.programme_description = obj.programme_description
         self.budget_type = obj.budget_type.budget_type
+        print (f'++++++ {self.budget_type}')
         current_year = get_current_financial_year()
         self.archive_year = current_year - 1
         current_year = get_current_financial_year()

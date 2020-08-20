@@ -11,6 +11,14 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RemoveField(
+            model_name='archivedprogrammecode',
+            name='budget_type',
+        ),
+        migrations.RemoveField(
+            model_name='simplehistoryarchivedprogrammecode',
+            name='budget_type',
+        ),
         migrations.RenameField(
             model_name='simplehistoryprogrammecode',
             old_name='budget_type_fk',
