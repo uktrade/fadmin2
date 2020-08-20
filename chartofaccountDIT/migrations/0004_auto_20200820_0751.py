@@ -19,6 +19,7 @@ class Migration(migrations.Migration):
             model_name='simplehistoryarchivedprogrammecode',
             name='budget_type',
         ),
+
         migrations.RenameField(
             model_name='simplehistoryprogrammecode',
             old_name='budget_type_fk',
