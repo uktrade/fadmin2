@@ -253,7 +253,7 @@ def upload_previous_year_figures(
 def upload_previous_year(worksheet, financial_year, header_dict, file_upload):  # noqa
 
     if not valid_year_for_archiving_actuals(financial_year):
-         raise ArchiveYearError
+        raise ArchiveYearError
 
     financial_year_obj, created = FinancialYear.objects.get(pk=financial_year)
 

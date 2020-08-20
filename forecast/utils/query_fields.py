@@ -1,8 +1,8 @@
 financial_code_prefix = "financial_code__"
 # indicates if DEL, AME, ADMIN
-BUDGET_TYPE =  f"{financial_code_prefix}programme__budget_type__budget_type_display"
-BUDGET_TYPE_ORDER =  f"{financial_code_prefix}programme__budget_type__budget_type_display_order"  # noqa
-BUDGET_TYPE_EDIT_ORDER =  f"{financial_code_prefix}programme__budget_type__budget_type_edit_display_order"  # noqa
+BUDGET_TYPE = f"{financial_code_prefix}programme__budget_type__budget_type_display"
+BUDGET_TYPE_ORDER = f"{financial_code_prefix}programme__budget_type__budget_type_display_order"  # noqa
+BUDGET_TYPE_EDIT_ORDER = f"{financial_code_prefix}programme__budget_type__budget_type_edit_display_order"  # noqa
 
 # Categories defined by DIT: i.e. Consultancy, Contingency, Contractors, etc
 BUDGET_CATEGORY_ID = f"{financial_code_prefix}natural_account_code__expenditure_category__id"  # noqa
