@@ -16,7 +16,7 @@ from chartofaccountDIT.import_csv import (
     import_programme,
 )
 
-from core.utils.command_utils import (
+from core.utils.command_helpers import (
     CommandUpload,
 )
 

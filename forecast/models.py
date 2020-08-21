@@ -23,8 +23,8 @@ from chartofaccountDIT.models import (
 
 from core.metamodels import BaseModel
 from core.models import FinancialYear
-from core.utils.generic_utils import get_current_financial_year
-from core.utils.generic_utils import GRAND_TOTAL_CLASS, SUB_TOTAL_CLASS, TOTAL_CLASS
+from core.utils.generic_helpers import get_current_financial_year
+from core.utils.generic_helpers import GRAND_TOTAL_CLASS, SUB_TOTAL_CLASS, TOTAL_CLASS
 
 from costcentre.models import CostCentre
 

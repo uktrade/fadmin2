@@ -3,7 +3,7 @@ import logging
 from django.db import connection
 from django.utils import timezone
 
-from core.utils.generic_utils import get_current_financial_year
+from core.utils.generic_helpers import get_current_financial_year
 
 from end_of_month.models import (
     EndOfMonthStatus,

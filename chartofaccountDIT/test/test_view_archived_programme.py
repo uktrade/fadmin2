@@ -13,7 +13,7 @@ from chartofaccountDIT.views import (
     HistoricalFilteredProgrammeView,
 )
 
-from core.utils.generic_utils import get_current_financial_year
+from core.utils.generic_helpers import get_current_financial_year
 from core.test.test_base import RequestFactoryBase
 
 
