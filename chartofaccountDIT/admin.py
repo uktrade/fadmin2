@@ -66,7 +66,7 @@ from core.admin import (
     AdminImportExtraExport,
     AdminReadOnly,
 )
-from core.exportutils import generic_table_iterator
+from core.utils.exportutils import generic_table_iterator
 
 
 class NaturalCodeAdmin(AdminActiveField, AdminImportExtraExport):

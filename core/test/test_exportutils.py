@@ -1,4 +1,4 @@
-from core.exportutils import is_number
+from core.utils.exportutils import is_number
 
 
 def test_is_number_num():

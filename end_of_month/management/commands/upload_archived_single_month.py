@@ -4,7 +4,7 @@ from django.core.management.base import (
     CommandError,
 )
 
-from core.command_utils import (
+from core.utils.command_utils import (
     CommandUpload,
 )
 

@@ -6,9 +6,9 @@ from django.utils.encoding import smart_str
 
 import openpyxl
 
-from core.generic_utils import today_string
+from core.utils.generic_utils import today_string
 
-from .import_csv import (
+from core.import_csv import (
     IMPORT_CSV_MODEL_KEY,
     get_col_from_obj_key,
     get_field_name,

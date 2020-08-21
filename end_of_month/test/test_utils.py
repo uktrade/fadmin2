@@ -5,7 +5,7 @@ from chartofaccountDIT.test.factories import (
 )
 
 from core.models import FinancialYear
-from core.generic_utils import get_current_financial_year
+from core.utils.generic_utils import get_current_financial_year
 
 from costcentre.test.factories import (
     CostCentreFactory,
