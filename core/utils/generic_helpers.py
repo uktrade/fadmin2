@@ -1,19 +1,17 @@
 import datetime
+from enum import Enum
 from io import BytesIO
 
 import boto3
 
-from enum import Enum
-
 from django.conf import settings
-
-import requests
-
 from django.contrib.admin.models import (
     CHANGE,
     LogEntry,
 )
 from django.contrib.contenttypes.models import ContentType
+
+import requests
 
 from core.models import FinancialYear
 

@@ -9,7 +9,7 @@ from django.db.models import (
     UniqueConstraint,
 )
 
-# https://github.com/martsberger/django-pivot/blob/master/django_pivot/pivot.py # noqa
+# https://github.com/martsberger/django-pivot/blob/master/django_pivot/pivot.py
 from django_pivot.pivot import pivot
 
 from chartofaccountDIT.models import (
@@ -23,8 +23,8 @@ from chartofaccountDIT.models import (
 
 from core.metamodels import BaseModel
 from core.models import FinancialYear
-from core.utils.generic_helpers import get_current_financial_year
 from core.utils.generic_helpers import GRAND_TOTAL_CLASS, SUB_TOTAL_CLASS, TOTAL_CLASS
+from core.utils.generic_helpers import get_current_financial_year
 
 from costcentre.models import CostCentre
 
