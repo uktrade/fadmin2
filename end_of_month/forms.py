@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import Select
 
 from end_of_month.models import EndOfMonthStatus
 from end_of_month.utils import (
@@ -6,15 +7,30 @@ from end_of_month.utils import (
     SelectPeriodAlreadyArchivedError, validate_period_code)
 
 
-class EndOfMonthProcessForm(forms.Form):
-    period_code = forms.CharField(
-        required=True,
-    )
-    date = EndOfMonthStatus.archived_date
+class UserModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+         return f"{obj.archived_period.financial_period_code} - {obj.archived_period.period_long_name}"
 
-    def clean_period_code(self):
-        period_code = self.cleaned_data['period_code']
+
+class EndOfMonthProcessForm(forms.Form):
+    period_code_options = UserModelChoiceField(
+        queryset=EndOfMonthStatus.objects.filter(
+            archived=False,
+        ),
+        widget=Select(),
+    )
+    period_code_options.widget.attrs.update(
+        {
+            "class": "govuk-select",
+        }
+    )
+
+    def clean_archive_confirmation(self):
         try:
+            is_confirmed = self.cleaned_data['archive_confirmation']
+            if not is_confirmed:
+                raise forms.ValidationError("You must confirm you wish to archive in order to proceed")
+                period_code = self.render_to_response(self.get_context_data(form=form))
             validate_period_code(period_code)
         except InvalidPeriodError:
             raise forms.ValidationError("Valid Period is between 1 and 15.")
@@ -23,4 +39,4 @@ class EndOfMonthProcessForm(forms.Form):
                                         "been archived.")
         except LaterPeriodAlreadyArchivedError:
             raise forms.ValidationError("A later period has already been archived.")
-        return period_code
+        return is_confirmed

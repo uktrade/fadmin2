@@ -20,7 +20,7 @@ def user_has_archive_access(user):
 
 
 def validate_period_code(period_code, **options):
-    period_code = options[int(period_code)]
+    period_code = int(period_code)
     if period_code > 15 or period_code < 1:
         raise InvalidPeriodError()
     end_of_month_info = EndOfMonthStatus.objects.filter(

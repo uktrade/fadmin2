@@ -11,35 +11,33 @@
 {% block content %}
 
     <h2 class="govuk-heading-l">Archive Monthly Forecast</h2>
-    <h1 class="govuk-heading-l">{{ section_name }}</h1>
-    <h3 class="govuk-heading-m">{{ section_description }}</h3>
     <p class="govuk-body">
 
     <div class="container">
         <div class="col-md-12">
-
+        {% if not locked %}
+            <h3 class="govuk-heading-m">Archiving not available</h3>
+            <h4 class="govuk-heading-s">Forecast is not locked</h4>
+        {% elif already_archived %}
+            <h3 class="govuk-heading-m">Nothing to archive</h3>
+            <h4 class="govuk-heading-s">Last archive for {{ period }} ran on {{ date_archived }}</h4>
+        {% else %}
             <form novalidate method='post'>
                 {% csrf_token %}
                 {% include "core/govt_uk_form.html" with form=form %}
+                <div class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-warning-text__assistive">Warning</span>
+                        Archiving cannot be undone
+                    </strong>
+                </div>
                 <input id="archive_button" type="submit" value="Archive" class="govuk-button govuk-button--secondary" data-module="govuk-button"/>
-
             </form>
+        {% endif %}
+
         </div>
      </div>
     </p>
-
-    <h3 class="govuk-heading-m">Archiving not available: </h3>
-    <h4 class="govuk-heading-s"> Forecast is not locked </h4>
-
-    <h3 class="govuk-heading-m">Nothing to archive </h3>
-    <h4 class="govuk-heading-s">Last archive for MONTH run on DATE</h4>
-
-    <div class="govuk-warning-text">
-          <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-          <strong class="govuk-warning-text__text">
-            <span class="govuk-warning-text__assistive">Warning</span>
-            Archiving cannot be undone
-          </strong>
-    </div>
 
 {% endblock %}
