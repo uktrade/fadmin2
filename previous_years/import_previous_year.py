@@ -250,7 +250,18 @@ def upload_previous_year_figures(
         previous_year_obj.save()
 
 
-def upload_previous_year(worksheet, financial_year, header_dict, file_upload):  # noqa
+def upload_previous_year(worksheet, financial_year, file_upload):  # noqa
+    header_dict = xslx_header_to_dict(worksheet[1])
+    expected_headers = [
+        "cost centre",
+        "natural account",
+        "programme",
+        "analysis",
+        "analysis2",
+        "project",
+    ]
+    expected_headers.extend(MONTH_HEADERS)
+    check_header(header_dict, expected_headers)
 
     if not valid_year_for_archiving_actuals(financial_year):
         raise ArchiveYearError
@@ -348,26 +359,8 @@ def upload_previous_year_from_file(file_upload, year):
             file_upload, str(ex), str(ex),
         )
         raise ex
-    header_dict = xslx_header_to_dict(worksheet[1])
-    expected_headers = [
-        "cost centre",
-        "natural account",
-        "programme",
-        "analysis",
-        "analysis2",
-        "project",
-    ]
-    expected_headers.extend(MONTH_HEADERS)
     try:
-        check_header(header_dict, expected_headers)
-    except UploadFileFormatError as ex:
-        set_file_upload_fatal_error(
-            file_upload, str(ex), str(ex),
-        )
-        workbook.close
-        raise ex
-    try:
-        upload_previous_year(worksheet, year, header_dict, file_upload)
+        upload_previous_year(worksheet, year, file_upload)
     except (UploadFileDataError) as ex:
         set_file_upload_fatal_error(
             file_upload, str(ex), str(ex),
