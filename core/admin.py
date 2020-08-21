@@ -24,7 +24,7 @@ from core.exportutils import (
 )
 from core.exportutils import export_to_csv
 from core.models import FinancialYear
-from core.utils import log_object_change
+from core.generic_utils import log_object_change
 
 
 class AdminActiveField(admin.ModelAdmin):

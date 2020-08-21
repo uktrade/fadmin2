@@ -1,6 +1,6 @@
 from celery import shared_task
 
-from core.myutils import (
+from core.generic_utils import (
     get_s3_file_body,
     run_anti_virus,
 )

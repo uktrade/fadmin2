@@ -4,7 +4,7 @@ from django.db.models import (
 
 from rest_framework import serializers
 
-from core.myutils import get_current_financial_year
+from core.generic_utils import get_current_financial_year
 
 from .models import (
     BudgetMonthlyFigure,

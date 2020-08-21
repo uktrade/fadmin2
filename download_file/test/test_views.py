@@ -17,7 +17,7 @@ from chartofaccountDIT.test.factories import (
 )
 
 from core.models import FinancialYear
-from core.myutils import get_current_financial_year
+from core.generic_utils import get_current_financial_year
 from core.test.test_base import RequestFactoryBase
 
 
