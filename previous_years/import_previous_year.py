@@ -58,14 +58,12 @@ MONTH_HEADERS = [
     "adj03",
 ]
 
-EXPECTED_CHART_OF_ACCOUNT_HEADERS = [
-        "cost centre",
-        "natural account",
-        "programme",
-        "analysis",
-        "analysis2",
-        "project",
-    ]
+COST_CENTRE_HEADER = "cost centre"
+NAC_HEADER = "natural account"
+PROGRAMME_HEADER = "programme"
+PROJECT_HEADER = "programme"
+ANALYSIS_HEADER = "analysis"
+ANALYSIS2_HEADER = "analysis2"
 
 
 class ArchiveYearError(Exception):
@@ -262,8 +260,15 @@ def upload_previous_year_figures(
 
 
 def upload_previous_year(worksheet, financial_year, file_upload):  # noqa
-    header_dict = xslx_header_to_dict(worksheet[1])
-    expected_headers = deepcopy(EXPECTED_CHART_OF_ACCOUNT_HEADERS)
+    header_dict = xslx_header_to_dict(worksheet.rows[1])
+    expected_headers = [
+        COST_CENTRE_HEADER,
+        NAC_HEADER,
+        PROGRAMME_HEADER,
+        ANALYSIS_HEADER,
+        ANALYSIS2_HEADER,
+        PROJECT_HEADER,
+    ]
     expected_headers.extend(MONTH_HEADERS)
     check_header(header_dict, expected_headers)
 
