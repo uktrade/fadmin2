@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django.db import connection
 
 from chartofaccountDIT.models import (
@@ -55,6 +57,15 @@ MONTH_HEADERS = [
     "adj02",
     "adj03",
 ]
+
+EXPECTED_CHART_OF_ACCOUNT_HEADERS = [
+        "cost centre",
+        "natural account",
+        "programme",
+        "analysis",
+        "analysis2",
+        "project",
+    ]
 
 
 class ArchiveYearError(Exception):
@@ -252,14 +263,7 @@ def upload_previous_year_figures(
 
 def upload_previous_year(worksheet, financial_year, file_upload):  # noqa
     header_dict = xslx_header_to_dict(worksheet[1])
-    expected_headers = [
-        "cost centre",
-        "natural account",
-        "programme",
-        "analysis",
-        "analysis2",
-        "project",
-    ]
+    expected_headers = deepcopy(EXPECTED_CHART_OF_ACCOUNT_HEADERS)
     expected_headers.extend(MONTH_HEADERS)
     check_header(header_dict, expected_headers)
 

@@ -1,9 +1,5 @@
 import os
 from datetime import datetime
-from typing import (
-    Dict,
-    TypeVar,
-)
 from unittest.mock import MagicMock, patch
 from zipfile import BadZipFile
 
@@ -29,6 +25,10 @@ from chartofaccountDIT.test.factories import (
 
 from core.models import FinancialYear
 from core.test.test_base import RequestFactoryBase
+from core.utils.excel_test_helpers import (
+    FakeCell,
+    FakeWorkSheet
+)
 
 from costcentre.models import (
     CostCentre,
@@ -70,19 +70,6 @@ TEST_COST_CENTRE = 109189
 TEST_VALID_NATURAL_ACCOUNT_CODE = 52191003
 TEST_NOT_VALID_NATURAL_ACCOUNT_CODE = 92191003
 TEST_PROGRAMME_CODE = '310940'
-_KT = TypeVar('_KT')
-_VT = TypeVar('_VT')
-
-
-class FakeWorkSheet(Dict[_KT, _VT]):
-    title = None
-
-
-class FakeCell:
-    value = None
-
-    def __init__(self, value):
-        self.value = value
 
 
 # Set file upload handlers back to default as
