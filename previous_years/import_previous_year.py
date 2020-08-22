@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from django.db import connection
 
 from chartofaccountDIT.models import (
@@ -67,6 +65,7 @@ ANALYSIS_HEADER = "analysis"
 ANALYSIS2_HEADER = "analysis2"
 
 VALID_WS_NAME = "Outturn"
+
 
 class ArchiveYearError(Exception):
     pass
@@ -202,7 +201,7 @@ def upload_previous_year_figures(
 
     for month_name in DATA_HEADERS:
         month_amount = previous_year_row[header_dict[month_name]].value
-        if month_amount == None or month_amount == "-":
+        if month_amount is None or month_amount == "-":
             # we accept the '-' as it is a recognised value in Finance for 0
             month_amount = 0
         else:
