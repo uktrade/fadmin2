@@ -75,7 +75,7 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
             financial_year=self.archived_year_obj
         )
 
-    def set_worksheet_header(self):
+    def create_workbook(self):
         wb = Workbook()
         self.data_worksheet = wb.active
         self.data_worksheet.title = "Previous_Years"
@@ -102,10 +102,10 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
             col_index += 1
             self.data_worksheet.cell(column=col_index, row=1, value=month)
             self.data_worksheet.cell(column=col_index, row=2, value=col_index*13)
-        wb.save(filename="dummy.xlsx")
+        # wb.save(filename="dummy.xlsx")
 
     def test_upload_previous_year(self):
-        self.set_worksheet_header()
+        self.create_workbook()
         file_upload_obj = FileUpload(
                 document_file_name="dummy.xlxs",
                 document_type=FileUpload.PREVIOUSYEAR,
@@ -118,3 +118,19 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
             self.archived_year,
             file_upload_obj,
         )
+
+    def test_upload_wrong(self):
+        self.create_workbook()
+        file_upload_obj = FileUpload(
+            document_file_name="dummy.xlxs",
+            document_type=FileUpload.PREVIOUSYEAR,
+            file_location=FileUpload.LOCALFILE,
+        )
+        file_upload_obj.save()
+
+        upload_previous_year(
+            self.data_worksheet,
+            self.archived_year,
+            file_upload_obj,
+        )
+
