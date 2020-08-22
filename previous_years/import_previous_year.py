@@ -61,7 +61,7 @@ MONTH_HEADERS = [
 COST_CENTRE_HEADER = "cost centre"
 NAC_HEADER = "natural account"
 PROGRAMME_HEADER = "programme"
-PROJECT_HEADER = "programme"
+PROJECT_HEADER = "project"
 ANALYSIS_HEADER = "analysis"
 ANALYSIS2_HEADER = "analysis2"
 
@@ -260,7 +260,7 @@ def upload_previous_year_figures(
 
 
 def upload_previous_year(worksheet, financial_year, file_upload):  # noqa
-    header_dict = xslx_header_to_dict(worksheet.rows[1])
+    header_dict = xslx_header_to_dict(worksheet[1])
     expected_headers = [
         COST_CENTRE_HEADER,
         NAC_HEADER,
@@ -275,7 +275,7 @@ def upload_previous_year(worksheet, financial_year, file_upload):  # noqa
     if not valid_year_for_archiving_actuals(financial_year):
         raise ArchiveYearError
 
-    financial_year_obj, created = FinancialYear.objects.get(pk=financial_year)
+    financial_year_obj = FinancialYear.objects.get(pk=financial_year)
 
     # Clear the table used to upload the previous_years.
     # The previous_years are uploaded to to a temporary storage, and copied
@@ -285,12 +285,12 @@ def upload_previous_year(worksheet, financial_year, file_upload):  # noqa
     rows_to_process = worksheet.max_row + 1
 
     check_financial_code = CheckArchivedFinancialCode(financial_year, file_upload)
-    cc_index = header_dict["cost centre"]
-    nac_index = header_dict["natural account"]
-    prog_index = header_dict["programme"]
-    a1_index = header_dict["analysis"]
-    a2_index = header_dict["analysis2"]
-    proj_index = header_dict["project"]
+    cc_index = header_dict[COST_CENTRE_HEADER]
+    nac_index = header_dict[NAC_HEADER]
+    prog_index = header_dict[PROGRAMME_HEADER]
+    a1_index = header_dict[ANALYSIS_HEADER]
+    a2_index = header_dict[ANALYSIS2_HEADER]
+    proj_index = header_dict[PROJECT_HEADER]
     row_number = 0
     # There is a terrible performance hit accessing the individual cells:
     # The cell is found starting from cell A0, and continuing until the

@@ -1,4 +1,5 @@
 from openpyxl.utils.cell import get_column_letter
+from openpyxl import Workbook
 
 from django.test import (
     RequestFactory,
@@ -15,10 +16,6 @@ from chartofaccountDIT.test.factories import (
 
 from core.models import FinancialYear
 from core.test.test_base import RequestFactoryBase
-from core.utils.excel_test_helpers import (
-    FakeCell,
-    FakeWorkSheet
-)
 
 from costcentre.test.factories import (
     ArchivedCostCentreFactory,
@@ -78,37 +75,34 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
             financial_year=self.archived_year_obj
         )
 
-    def set_cell(self, col_index, row_index, value):
-        cell_index = f"{get_column_letter(col_index)}{row_index}"
-        self.fake_work_sheet[cell_index] = FakeCell(value)
-
     def set_worksheet_header(self):
-        self.fake_work_sheet = FakeWorkSheet()
-        self.fake_work_sheet.title = "Previous_Years"
+        wb = Workbook()
+        self.data_worksheet = wb.active
+        self.data_worksheet.title = "Previous_Years"
         col_index = 1
-        self.set_cell(col_index, 1, COST_CENTRE_HEADER)
-        self.set_cell(col_index, 2, self.cost_centre_code)
+        self.data_worksheet.cell(column=col_index, row=1, value=COST_CENTRE_HEADER)
+        self.data_worksheet.cell(column=col_index, row=2, value=self.cost_centre_code)
         col_index += 1
-        self.set_cell(col_index, 1, NAC_HEADER)
-        self.set_cell(col_index, 2, self.natural_account_code)
+        self.data_worksheet.cell(column=col_index, row=1, value=NAC_HEADER)
+        self.data_worksheet.cell(column=col_index, row=2, value=self.natural_account_code)
         col_index += 1
-        self.set_cell(col_index, 1, PROGRAMME_HEADER)
-        self.set_cell(col_index, 2, self.programme_code)
+        self.data_worksheet.cell(column=col_index, row=1, value=PROGRAMME_HEADER)
+        self.data_worksheet.cell(column=col_index, row=2, value=self.programme_code)
         col_index += 1
-        self.set_cell(col_index, 1, PROJECT_HEADER)
-        self.set_cell(col_index, 2, self.project_code)
+        self.data_worksheet.cell(column=col_index, row=1, value=PROJECT_HEADER)
+        self.data_worksheet.cell(column=col_index, row=2, value=self.project_code)
         col_index += 1
-        self.set_cell(col_index, 1, ANALYSIS_HEADER)
-        self.set_cell(col_index, 2, self.analisys1)
+        self.data_worksheet.cell(column=col_index, row=1, value=ANALYSIS_HEADER)
+        self.data_worksheet.cell(column=col_index, row=2, value=self.analisys1)
         col_index += 1
-        self.set_cell(col_index, 1, ANALYSIS2_HEADER)
-        self.set_cell(col_index, 2, self.analisys2)
+        self.data_worksheet.cell(column=col_index, row=1, value=ANALYSIS2_HEADER)
+        self.data_worksheet.cell(column=col_index, row=2, value=self.analisys2)
 
         for month in MONTH_HEADERS:
             col_index += 1
-            self.set_cell(col_index, 1, month)
-            self.set_cell(col_index, 2, col_index*13)
-
+            self.data_worksheet.cell(column=col_index, row=1, value=month)
+            self.data_worksheet.cell(column=col_index, row=2, value=col_index*13)
+        wb.save(filename="dummy.xlsx")
 
     def test_upload_previous_year(self):
         self.set_worksheet_header()
@@ -120,7 +114,7 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
         file_upload_obj.save()
 
         upload_previous_year(
-            self.fake_work_sheet,
+            self.data_worksheet,
             self.archived_year,
             file_upload_obj,
         )
