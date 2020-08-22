@@ -1,6 +1,8 @@
-from openpyxl.utils.cell import get_column_letter
+import os
+
 from openpyxl import Workbook
 
+from django.core.management import call_command
 from django.test import (
     RequestFactory,
     TestCase,
@@ -28,9 +30,15 @@ from previous_years.import_previous_year import (
     PROJECT_HEADER,
     ANALYSIS_HEADER,
     ANALYSIS2_HEADER,
-    MONTH_HEADERS,
+    DATA_HEADERS,
+    VALID_WS_NAME,
+    ArchiveYearError,
     upload_previous_year,
 )
+from previous_years.models import (
+    ArchivedFinancialCode,
+    ArchivedForecastData,)
+
 
 from upload_file.models import FileUpload
 
@@ -75,10 +83,14 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
             financial_year=self.archived_year_obj
         )
 
+    def tearDown(self):
+        if os.path.exists(self.excel_file_name):
+            os.remove(self.excel_file_name)
+
     def create_workbook(self):
         wb = Workbook()
         self.data_worksheet = wb.active
-        self.data_worksheet.title = "Previous_Years"
+        self.data_worksheet.title = VALID_WS_NAME
         col_index = 1
         self.data_worksheet.cell(column=col_index, row=1, value=COST_CENTRE_HEADER)
         self.data_worksheet.cell(column=col_index, row=2, value=self.cost_centre_code)
@@ -98,16 +110,20 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
         self.data_worksheet.cell(column=col_index, row=1, value=ANALYSIS2_HEADER)
         self.data_worksheet.cell(column=col_index, row=2, value=self.analisys2)
 
-        for month in MONTH_HEADERS:
+        for month in DATA_HEADERS:
             col_index += 1
             self.data_worksheet.cell(column=col_index, row=1, value=month)
-            self.data_worksheet.cell(column=col_index, row=2, value=col_index*13)
-        # wb.save(filename="dummy.xlsx")
+        self.data_worksheet.cell(column=col_index, row=2, value=col_index * 13)
+        self.data_worksheet.cell(column=col_index, row=3, value=col_index * 7)
+        self.excel_file_name = "dummy.xlsx"
+        wb.save(filename=self.excel_file_name)
 
     def test_upload_previous_year(self):
+        self.assertEqual(ArchivedFinancialCode.objects.all().count(), 0)
+        self.assertEqual(ArchivedForecastData.objects.all().count(), 0)
         self.create_workbook()
         file_upload_obj = FileUpload(
-                document_file_name="dummy.xlxs",
+                document_file_name=self.excel_file_name,
                 document_type=FileUpload.PREVIOUSYEAR,
                 file_location=FileUpload.LOCALFILE,
         )
@@ -118,19 +134,37 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
             self.archived_year,
             file_upload_obj,
         )
+        self.assertEqual(ArchivedFinancialCode.objects.all().count(), 1)
+        self.assertEqual(ArchivedForecastData.objects.all().count(), 1)
+
 
     def test_upload_wrong(self):
         self.create_workbook()
         file_upload_obj = FileUpload(
-            document_file_name="dummy.xlxs",
+            document_file_name=self.excel_file_name,
             document_type=FileUpload.PREVIOUSYEAR,
             file_location=FileUpload.LOCALFILE,
         )
         file_upload_obj.save()
+        with self.assertRaises(ArchiveYearError):
+            upload_previous_year(
+                self.data_worksheet,
+                self.archived_year+1,
+                file_upload_obj,
+            )
 
-        upload_previous_year(
-            self.data_worksheet,
+    def test_command(self):
+        self.assertEqual(ArchivedFinancialCode.objects.all().count(), 0)
+        self.assertEqual(ArchivedForecastData.objects.all().count(), 0)
+        self.create_workbook()
+        call_command(
+            "upload_previous_year",
+            "dummy.xlsx",
             self.archived_year,
-            file_upload_obj,
         )
+        self.assertEqual(ArchivedFinancialCode.objects.all().count(), 1)
+        self.assertEqual(ArchivedForecastData.objects.all().count(), 1)
 
+# TODO
+# test for non numeric value
+# check the totals

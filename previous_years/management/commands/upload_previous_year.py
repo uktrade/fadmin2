@@ -49,6 +49,6 @@ class Command(CommandUpload):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Uploaded historical actuals for year {year} "
+                f"Uploaded historical actuals for year {year}. "
             )
         )

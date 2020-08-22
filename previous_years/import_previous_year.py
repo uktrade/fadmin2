@@ -40,7 +40,8 @@ from upload_file.utils import (
 # Maybe only one adjustment column is needed, but it becomes too complex to find out
 # if it is required or not. This process will only happen 3 or 4 times a year,
 # so it is not a big deal to add the required columns to the Excel file
-MONTH_HEADERS = [
+DATA_HEADERS = [
+    "budget",
     "apr",
     "may",
     "jun",
@@ -65,6 +66,7 @@ PROJECT_HEADER = "project"
 ANALYSIS_HEADER = "analysis"
 ANALYSIS2_HEADER = "analysis2"
 
+VALID_WS_NAME = "Outturn"
 
 class ArchiveYearError(Exception):
     pass
@@ -198,10 +200,9 @@ def upload_previous_year_figures(
     new_values = {}
     value_found = False
 
-    for month_name in MONTH_HEADERS:
+    for month_name in DATA_HEADERS:
         month_amount = previous_year_row[header_dict[month_name]].value
-
-        if month_amount == "-":
+        if month_amount == None or month_amount == "-":
             # we accept the '-' as it is a recognised value in Finance for 0
             month_amount = 0
         else:
@@ -225,6 +226,7 @@ def upload_previous_year_figures(
         # to avoid problems with precision,
         # we store the figures in pence
         if created:
+            previous_year_obj.budget = new_values["budget"]
             previous_year_obj.apr = new_values["apr"]
             previous_year_obj.may = new_values["may"]
             previous_year_obj.jun = new_values["jun"]
@@ -241,6 +243,7 @@ def upload_previous_year_figures(
             previous_year_obj.adj2 = new_values["adj02"]
             previous_year_obj.adj13 = new_values["adj03"]
         else:
+            previous_year_obj.budget += new_values["budget"]
             previous_year_obj.apr += new_values["apr"]
             previous_year_obj.may += new_values["may"]
             previous_year_obj.jun += new_values["jun"]
@@ -269,7 +272,7 @@ def upload_previous_year(worksheet, financial_year, file_upload):  # noqa
         ANALYSIS2_HEADER,
         PROJECT_HEADER,
     ]
-    expected_headers.extend(MONTH_HEADERS)
+    expected_headers.extend(DATA_HEADERS)
     check_header(header_dict, expected_headers)
 
     if not valid_year_for_archiving_actuals(financial_year):
@@ -362,7 +365,7 @@ def upload_previous_year(worksheet, financial_year, file_upload):  # noqa
 
 def upload_previous_year_from_file(file_upload, year):
     try:
-        workbook, worksheet = validate_excel_file(file_upload, "previous_years")
+        workbook, worksheet = validate_excel_file(file_upload, VALID_WS_NAME)
     except UploadFileFormatError as ex:
         set_file_upload_fatal_error(
             file_upload, str(ex), str(ex),
