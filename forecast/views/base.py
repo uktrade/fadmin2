@@ -74,8 +74,14 @@ class ForecastViewTableMixin(MultiTableMixin):
         self._month_list = None
         self._datamodel = None
         self._table_tag = None
-
+        self._field_infos = None
         super().__init__(*args, **kwargs)
+
+    @property
+    def field_infos(self):
+        if self._field_infos is None:
+            self._field_infos = Va
+        return self._field_infos
 
     @property
     def period(self):

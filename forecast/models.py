@@ -28,8 +28,6 @@ from core.utils.generic_helpers import get_current_financial_year
 
 from costcentre.models import CostCentre
 
-from forecast.utils.query_fields import DEFAULT_PIVOT_COLUMNS
-
 GRAND_TOTAL_ROW = "grand_total"
 
 
@@ -559,13 +557,9 @@ class SubTotalForecast:
 class PivotManager(models.Manager):
     """Managers returning the data in Monthly figures pivoted"""
 
-    default_columns = DEFAULT_PIVOT_COLUMNS
-
-    def pivot_data(self, columns={}, filter_dict={}, year=0, order_list=[]):
+    def pivot_data(self, columns, filter_dict={}, year=0, order_list=[]):
         if year == 0:
             year = get_current_financial_year()
-        if columns == {}:
-            columns = self.default_columns
 
         q1 = (
             self.get_queryset()
@@ -581,8 +575,6 @@ class PivotManager(models.Manager):
 class DisplaySubTotalManager(models.Manager):
     """Managers returning the actual/forecast/budget data
     in a format suitable for display"""
-
-    default_columns = DEFAULT_PIVOT_COLUMNS
 
     def subtotal_data(
         self,
@@ -628,12 +620,10 @@ class DisplaySubTotalManager(models.Manager):
         )
 
     def raw_data_annotated(
-        self, columns={}, filter_dict={}, year=0, order_list=[], include_zeros=False
+        self, columns, filter_dict={}, year=0, order_list=[], include_zeros=False
     ):
         if year == 0:
             year = get_current_financial_year()
-        if columns == {}:
-            columns = self.default_columns
 
         annotations = {
             "Budget": Sum("budget"),
