@@ -4,7 +4,7 @@ from core.tables import FadminTable
 
 from costcentre.models import (
     CostCentre,
-    HistoricCostCentre,
+    ArchivedCostCentre,
 )
 
 
@@ -44,7 +44,7 @@ class CostCentreTable(FadminTable):
 
 class HistoricalCostCentreTable(FadminTable):
     class Meta(FadminTable.Meta):
-        model = HistoricCostCentre
+        model = ArchivedCostCentre
         fields = (
             "group_code",
             "group_name",

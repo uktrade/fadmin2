@@ -11,7 +11,7 @@ from chartofaccountDIT.models import (
 from core.import_csv import xslx_header_to_dict
 from core.models import FinancialYear
 
-from costcentre.models import HistoricCostCentre
+from costcentre.models import ArchivedCostCentre
 
 from forecast.utils.import_helpers import (
     CheckFinancialCode,
@@ -76,7 +76,7 @@ class CheckArchivedFinancialCode(CheckFinancialCode):
     the chart of account from the archived tables"""
 
     def __init__(self, financial_year, file_upload):
-        self.cost_centre_model = HistoricCostCentre
+        self.cost_centre_model = ArchivedCostCentre
         self.programme_code_model = ArchivedProgrammeCode
         self.analysis1_model = ArchivedAnalysis1
         self.analysis2_model = ArchivedAnalysis2

@@ -6,7 +6,7 @@ from costcentre.models import (
     CostCentre,
     DepartmentalGroup,
     Directorate,
-    HistoricCostCentre,
+    ArchivedCostCentre,
 )
 
 fake = Faker()
@@ -56,7 +56,7 @@ class CostCentreFactory(factory.DjangoModelFactory):
 class ArchivedCostCentreFactory(factory.DjangoModelFactory):
 
     class Meta:
-        model = HistoricCostCentre
+        model = ArchivedCostCentre
         django_get_or_create = ('cost_centre_code',
                                 'financial_year',)
 
