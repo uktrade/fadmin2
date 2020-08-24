@@ -240,7 +240,7 @@ def upload_previous_year_figures(
             previous_year_obj.mar = new_values["mar"]
             previous_year_obj.adj1 = new_values["adj01"]
             previous_year_obj.adj2 = new_values["adj02"]
-            previous_year_obj.adj13 = new_values["adj03"]
+            previous_year_obj.adj3 = new_values["adj03"]
         else:
             previous_year_obj.budget += new_values["budget"]
             previous_year_obj.apr += new_values["apr"]
@@ -257,7 +257,7 @@ def upload_previous_year_figures(
             previous_year_obj.mar += new_values["mar"]
             previous_year_obj.adj1 += new_values["adj01"]
             previous_year_obj.adj2 += new_values["adj02"]
-            previous_year_obj.adj13 += new_values["adj03"]
+            previous_year_obj.adj3 += new_values["adj03"]
         previous_year_obj.save()
 
 
