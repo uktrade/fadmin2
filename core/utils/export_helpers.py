@@ -153,10 +153,10 @@ def export_to_excel(queryset, func, title="", field_list = None):
     # Truncate the tab name to the maximum lenght permitted by Excel
     ws.title = title[:EXC_TAB_NAME_LEN]
     if field_list:
-        for row in func(queryset):
+        for row in func(queryset, field_list):
             ws.append(display_yes_no(row))
     else:
-        for row in func(queryset(field_list)):
+        for row in func(queryset):
             ws.append(display_yes_no(row))
 
     wb.save(resp)
