@@ -3,8 +3,12 @@ from django.forms import Select
 
 from end_of_month.models import EndOfMonthStatus
 from end_of_month.utils import (
-    InvalidPeriodError, LaterPeriodAlreadyArchivedError,
-    SelectPeriodAlreadyArchivedError, validate_period_code)
+    InvalidPeriodError,
+    LaterPeriodAlreadyArchivedError,
+    SelectPeriodAlreadyArchivedError,
+    validate_period_code,
+    get_archivable_month,
+)
 
 
 class UserModelChoiceField(forms.ModelChoiceField):
@@ -13,16 +17,10 @@ class UserModelChoiceField(forms.ModelChoiceField):
 
 
 class EndOfMonthProcessForm(forms.Form):
-    period_code_options = UserModelChoiceField(
-        queryset=EndOfMonthStatus.objects.filter(
-            archived=False,
-        ),
-        widget=Select(),
-    )
-    period_code_options.widget.attrs.update(
-        {
-            "class": "govuk-select",
-        }
+    archive_confirmation = forms.BooleanField(required=True, label="Please confirm you would like to archive this month")
+    # TODO - Create checkbox template and update class
+    archive_confirmation.widget.attrs.update(
+        {"class": "govuk-checkboxes__item"}
     )
 
     def clean_archive_confirmation(self):
@@ -30,8 +28,9 @@ class EndOfMonthProcessForm(forms.Form):
             is_confirmed = self.cleaned_data['archive_confirmation']
             if not is_confirmed:
                 raise forms.ValidationError("You must confirm you wish to archive in order to proceed")
-                period_code = self.render_to_response(self.get_context_data(form=form))
-            validate_period_code(period_code)
+            archivable_period = get_archivable_month()
+
+            validate_period_code(archivable_period)
         except InvalidPeriodError:
             raise forms.ValidationError("Valid Period is between 1 and 15.")
         except SelectPeriodAlreadyArchivedError:
