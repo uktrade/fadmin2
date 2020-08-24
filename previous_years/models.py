@@ -13,7 +13,7 @@ from core.metamodels import (
 )
 from core.models import FinancialYear
 
-from costcentre.models import HistoricCostCentre
+from costcentre.models import ArchivedCostCentre
 
 from forecast.models import (
     FinancialCodeAbstract,
@@ -26,7 +26,7 @@ class ArchivedFinancialCode(ArchivedModel, FinancialCodeAbstract):
     """Contains the members of Chart of Account needed to create a unique key"""
 
     programme = models.ForeignKey(ArchivedProgrammeCode, on_delete=models.PROTECT)
-    cost_centre = models.ForeignKey(HistoricCostCentre, on_delete=models.PROTECT)
+    cost_centre = models.ForeignKey(ArchivedCostCentre, on_delete=models.PROTECT)
     natural_account_code = models.ForeignKey(
         ArchivedNaturalCode, on_delete=models.PROTECT
     )
