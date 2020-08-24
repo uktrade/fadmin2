@@ -1,6 +1,9 @@
 from core.archive import archive_generic
 
-from .models import CostCentre, ArchivedCostCentre
+from .models import (
+    ArchivedCostCentre,
+    CostCentre,
+)
 
 
 def archive_cost_centre(year):

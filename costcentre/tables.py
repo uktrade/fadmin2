@@ -3,8 +3,8 @@ import django_tables2 as tables
 from core.tables import FadminTable
 
 from costcentre.models import (
-    CostCentre,
     ArchivedCostCentre,
+    CostCentre,
 )
 
 
