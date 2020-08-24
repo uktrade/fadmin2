@@ -121,7 +121,7 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
             value2 = col_index * 7
             self.data_worksheet.cell(column=col_index, row=2, value=value1)
             self.data_worksheet.cell(column=col_index, row=3, value=value2)
-            self.results.append((value1+value2)*100)
+            self.results.append((value1 + value2) * 100)
         self.excel_file_name = "dummy.xlsx"
         wb.save(filename=self.excel_file_name)
 
