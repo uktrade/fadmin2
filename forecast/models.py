@@ -2,7 +2,6 @@ import copy
 
 from django.contrib.auth import get_user_model
 from django.db import models
-from django import forms
 from django.db.models import (
     Max,
     Q,
