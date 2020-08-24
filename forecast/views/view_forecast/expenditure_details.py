@@ -13,18 +13,10 @@ from costcentre.models import DepartmentalGroup
 
 from forecast.tables import ForecastSubTotalTable
 from forecast.utils.query_fields import (
-    BUDGET_CATEGORY_ID,
-    BUDGET_TYPE,
     SHOW_COSTCENTRE,
     SHOW_DIRECTORATE,
     SHOW_DIT,
     SHOW_GROUP,
-    filter_codes,
-    filter_selectors,
-    nac_columns,
-    nac_display_sub_total_column,
-    nac_order_list,
-    nac_sub_total,
 )
 from forecast.views.base import (
     ForecastViewPermissionMixin,
@@ -74,25 +66,25 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
         budget_type_id = self.kwargs["budget_type"]
         expenditure_category_id = self.kwargs["expenditure_category"]
         pivot_filter = {
-            BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
-            BUDGET_TYPE: f"{budget_type_id}",
+            self.field_infos.BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
+            self.field_infos.BUDGET_TYPE: f"{budget_type_id}",
         }
-        arg_name = filter_codes[self.hierarchy_type]
+        arg_name = self.field_infos.filter_codes[self.hierarchy_type]
         if arg_name:
             filter_code = self.kwargs[arg_name]
-            pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
+            pivot_filter[self.field_infos.filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
         nac_data = self.data_model.view_data.subtotal_data(
-            nac_display_sub_total_column,
-            nac_sub_total,
-            nac_columns.keys(),
+            self.field_infos.nac_display_sub_total_column,
+            self.field_infos.nac_sub_total,
+            self.field_infos.nac_columns.keys(),
             pivot_filter,
-            order_list=nac_order_list,
+            order_list=self.field_infos.nac_order_list,
             show_grand_total=False,
         )
 
         nac_table = ForecastSubTotalTable(
-            nac_columns, nac_data, actual_month_list=self.month_list,
+            self.field_infos.nac_columns, nac_data, actual_month_list=self.month_list,
         )
         nac_table.attrs["caption"] = "Expenditure Report"
         nac_table.tag = self.table_tag

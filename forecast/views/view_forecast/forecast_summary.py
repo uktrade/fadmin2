@@ -15,8 +15,12 @@ from forecast.tables import (
     ForecastSubTotalTable,
     ForecastWithLinkTable,
 )
-from forecast.utils.query_fields import ViewForecastFields
-
+from forecast.utils.query_fields import (
+    SHOW_DIT,
+    SHOW_GROUP ,
+    SHOW_DIRECTORATE,
+    SHOW_COSTCENTRE,
+)
 from forecast.views.base import (
     ForecastViewPermissionMixin,
     ForecastViewTableMixin,
@@ -36,57 +40,57 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
         """
         filter_code = ""
         pivot_filter = {}
-        arg_name = filter_codes[self.hierarchy_type]
+        arg_name = self.field_infos.filter_codes[self.hierarchy_type]
         if arg_name:
             filter_code = self.kwargs[arg_name]
-            pivot_filter = {filter_selectors[self.hierarchy_type]: f"{filter_code}"}
+            pivot_filter = {self.field_infos.filter_selectors[self.hierarchy_type]: f"{filter_code}"}
 
-        hierarchy_order_list = hierarchy_order_lists[self.hierarchy_type]
+        hierarchy_order_list = self.field_infos.hierarchy_order_lists[self.hierarchy_type]
         hierarchy_data = self.data_model.view_data.subtotal_data(
-            hierarchy_sub_total_column[self.hierarchy_type],
-            hierarchy_sub_total,
-            hierarchy_columns[self.hierarchy_type].keys(),
+            self.field_infos.hierarchy_sub_total_column[self.hierarchy_type],
+            self.field_infos.hierarchy_sub_total,
+            self.field_infos.hierarchy_columns[self.hierarchy_type].keys(),
             pivot_filter,
             order_list=hierarchy_order_list,
         )
         programme_data = self.data_model.view_data.subtotal_data(
-            programme_display_sub_total_column,
-            programme_sub_total,
-            programme_columns.keys(),
+            self.field_infos.programme_display_sub_total_column,
+            self.field_infos.programme_sub_total,
+            self.field_infos.programme_columns.keys(),
             pivot_filter,
-            order_list=programme_order_list,
+            order_list=self.field_infos.programme_order_list,
         )
 
         expenditure_data = self.data_model.view_data.subtotal_data(
-            expenditure_display_sub_total_column,
-            expenditure_sub_total,
-            expenditure_columns.keys(),
+            self.field_infos.expenditure_display_sub_total_column,
+            self.field_infos.expenditure_sub_total,
+            self.field_infos.expenditure_columns.keys(),
             pivot_filter,
-            order_list=expenditure_order_list,
+            order_list=self.field_infos.expenditure_order_list,
         )
 
         # In the project report, exclude rows without a project code.
-        k = f"{PROJECT_CODE}__isnull"
+        k = f"{self.field_infos.PROJECT_CODE}__isnull"
         pivot_filter.update({k: False})
         project_data = self.data_model.view_data.subtotal_data(
-            project_display_sub_total_column,
-            project_sub_total,
-            project_columns.keys(),
+            self.field_infos.project_display_sub_total_column,
+            self.field_infos.project_sub_total,
+            self.field_infos.project_columns.keys(),
             pivot_filter,
-            order_list=project_order_list,
+            order_list=self.field_infos.project_order_list,
         )
 
         if self.hierarchy_type == SHOW_COSTCENTRE:
             programme_table = ForecastSubTotalTable(
-                programme_columns, programme_data, actual_month_list=self.month_list,
+                self.field_infos.programme_columns, programme_data, actual_month_list=self.month_list,
             )
         else:
             programme_table = ForecastWithLinkTable(
-                PROGRAMME_NAME,
-                programme_detail_view[self.hierarchy_type],
-                [PROGRAMME_CODE, FORECAST_EXPENDITURE_TYPE_NAME, self.period],
+                self.field_infos.PROGRAMME_NAME,
+                self.field_infos.programme_detail_view[self.hierarchy_type],
+                [self.field_infos.PROGRAMME_CODE, self.field_infos.FORECAST_EXPENDITURE_TYPE_NAME, self.period],
                 filter_code,
-                programme_columns,
+                self.field_infos.programme_columns,
                 programme_data,
                 actual_month_list=self.month_list,
             )
@@ -95,11 +99,11 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
         programme_table.tag = self.table_tag
 
         expenditure_table = ForecastWithLinkTable(
-            BUDGET_CATEGORY_NAME,
-            expenditure_view[self.hierarchy_type],
-            [BUDGET_CATEGORY_ID, BUDGET_TYPE, self.period],
+            self.field_infos.BUDGET_CATEGORY_NAME,
+            self.field_infos.expenditure_view[self.hierarchy_type],
+            [self.field_infos.BUDGET_CATEGORY_ID, self.field_infos.BUDGET_TYPE, self.period],
             filter_code,
-            expenditure_columns,
+            self.field_infos.expenditure_columns,
             expenditure_data,
             actual_month_list=self.month_list,
         )
@@ -107,11 +111,11 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
         expenditure_table.tag = self.table_tag
 
         project_table = ForecastWithLinkTable(
-            PROJECT_NAME,
-            project_detail_view[self.hierarchy_type],
-            [PROJECT_CODE, self.period],
+            self.field_infos.PROJECT_NAME,
+            self.field_infos.project_detail_view[self.hierarchy_type],
+            [self.field_infos.PROJECT_CODE, self.period],
             filter_code,
-            project_columns,
+            self.field_infos.project_columns,
             project_data,
             actual_month_list=self.month_list,
         )
@@ -120,17 +124,17 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
 
         if self.hierarchy_type == SHOW_COSTCENTRE:
             hierarchy_table = ForecastSubTotalTable(
-                hierarchy_columns[self.hierarchy_type],
+                self.field_infos.hierarchy_columns[self.hierarchy_type],
                 hierarchy_data,
                 actual_month_list=self.month_list,
             )
         else:
             hierarchy_table = ForecastWithLinkTable(
-                hierarchy_view_link_column[self.hierarchy_type],
-                hierarchy_view[self.hierarchy_type],
-                [hierarchy_view_code[self.hierarchy_type], self.period],
+                self.field_infos.hierarchy_view_link_column[self.hierarchy_type],
+                self.field_infos.hierarchy_view[self.hierarchy_type],
+                [self.field_infos.hierarchy_view_code[self.hierarchy_type], self.period],
                 "",
-                hierarchy_columns[self.hierarchy_type],
+                self.field_infos.hierarchy_columns[self.hierarchy_type],
                 hierarchy_data,
                 actual_month_list=self.month_list,
             )
@@ -219,7 +223,7 @@ class CostCentreView(
 
     def cost_centre(self):
         return CostCentre.objects.get(
-            cost_centre_code=self.kwargs[filter_codes[self.hierarchy_type]],
+            cost_centre_code=self.kwargs[self.field_infos.filter_codes[self.hierarchy_type]],
         )
 
     def cost_centres_form(self):

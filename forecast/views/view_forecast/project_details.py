@@ -13,17 +13,10 @@ from costcentre.models import (
 
 from forecast.tables import ForecastSubTotalTable
 from forecast.utils.query_fields import (
-    PROJECT_CODE,
     SHOW_COSTCENTRE,
     SHOW_DIRECTORATE,
     SHOW_DIT,
     SHOW_GROUP,
-    filter_codes,
-    filter_selectors,
-    project_details_hierarchy_columns,
-    project_details_hierarchy_order_list,
-    project_details_hierarchy_sub_total_column,
-    project_details_sub_total,
 )
 from forecast.views.base import (
     ForecastViewPermissionMixin,
@@ -65,20 +58,20 @@ class ForecastProjectDetailsMixin(ForecastViewTableMixin):
         """
         project_code_id = self.kwargs["project_code"]
         pivot_filter = {
-            PROJECT_CODE: f"{project_code_id}",
+            self.field_infos.PROJECT_CODE: f"{project_code_id}",
         }
-        arg_name = filter_codes[self.hierarchy_type]
+        arg_name = self.field_infos.filter_codes[self.hierarchy_type]
         if arg_name:
             filter_code = self.kwargs[arg_name]
-            pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
+            pivot_filter[self.field_infos.filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
-        columns = project_details_hierarchy_columns[self.hierarchy_type]
+        columns = self.field_infos.project_details_hierarchy_columns[self.hierarchy_type]
         project_details_data = self.data_model.view_data.subtotal_data(
-            project_details_hierarchy_sub_total_column[self.hierarchy_type],
-            project_details_sub_total,
+            self.field_infos.project_details_hierarchy_sub_total_column[self.hierarchy_type],
+            self.field_infos.project_details_sub_total,
             columns.keys(),
             pivot_filter,
-            order_list=project_details_hierarchy_order_list[self.hierarchy_type],
+            order_list=self.field_infos.project_details_hierarchy_order_list[self.hierarchy_type],
             show_grand_total=False,
         )
 

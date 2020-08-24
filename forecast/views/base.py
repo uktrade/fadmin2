@@ -15,6 +15,7 @@ from forecast.utils.access_helpers import (
     can_forecast_be_edited,
     can_view_forecasts,
 )
+from forecast.utils.query_fields import ViewForecastFields
 
 
 class NoCostCentreCodeInURLError(Exception):
@@ -80,7 +81,7 @@ class ForecastViewTableMixin(MultiTableMixin):
     @property
     def field_infos(self):
         if self._field_infos is None:
-            self._field_infos = Va
+            self._field_infos = ViewForecastFields(self.period < 2000)
         return self._field_infos
 
     @property

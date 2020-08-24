@@ -12,17 +12,9 @@ from costcentre.models import (
 
 from forecast.tables import ForecastSubTotalTable
 from forecast.utils.query_fields import (
-    FORECAST_EXPENDITURE_TYPE_NAME,
-    PROGRAMME_CODE,
     SHOW_DIRECTORATE,
     SHOW_DIT,
     SHOW_GROUP,
-    filter_codes,
-    filter_selectors,
-    programme_details_display_sub_total_column,
-    programme_details_hierarchy_columns,
-    programme_details_hierarchy_order_list,
-    programme_details_sub_total,
 )
 from forecast.views.base import (
     ForecastViewPermissionMixin,
@@ -68,21 +60,21 @@ class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
         forecast_expenditure_type_name = self.kwargs["forecast_expenditure_type"]
         programme_code_id = self.kwargs["programme_code"]
         pivot_filter = {
-            PROGRAMME_CODE: f"{programme_code_id}",
-            FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
+            self.field_infos.PROGRAMME_CODE: f"{programme_code_id}",
+            self.field_infos.FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
         }
-        arg_name = filter_codes[self.hierarchy_type]
+        arg_name = self.field_infos.filter_codes[self.hierarchy_type]
         if arg_name:
             filter_code = self.kwargs[arg_name]
-            pivot_filter[filter_selectors[self.hierarchy_type]] = f"{filter_code}"
+            pivot_filter[self.field_infos.filter_selectors[self.hierarchy_type]] = f"{filter_code}"
 
-        columns = programme_details_hierarchy_columns[self.hierarchy_type]
+        columns = self.field_infos.programme_details_hierarchy_columns[self.hierarchy_type]
         programme_details_data = self.data_model.view_data.subtotal_data(
-            programme_details_display_sub_total_column,
-            programme_details_sub_total,
+            self.field_infos.programme_details_display_sub_total_column,
+            self.field_infos.programme_details_sub_total,
             columns.keys(),
             pivot_filter,
-            order_list=programme_details_hierarchy_order_list[self.hierarchy_type],
+            order_list=self.field_infos.programme_details_hierarchy_order_list[self.hierarchy_type],
             show_grand_total=False,
         )
 

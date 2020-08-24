@@ -1,9 +1,13 @@
 financial_code_prefix = "financial_code__"
+SHOW_DIT = 0
+SHOW_GROUP = 1
+SHOW_DIRECTORATE = 2
+SHOW_COSTCENTRE = 3
 
 
 class ViewForecastFields():
-    def __init__(self, current = True):
-        self.current = current
+    def __init__(self, period=0):
+        self.current = period < 2000
 
     financial_code_prefix = "financial_code__"
     # indicates if DEL, AME, ADMIN
@@ -51,12 +55,6 @@ class ViewForecastFields():
 
     ANALYSIS2_CODE = f"{financial_code_prefix}analysis2_code__analysis2_code"
     ANALYSIS2_NAME = f"{financial_code_prefix}analysis2_code__analysis2_description"
-
-    SHOW_DIT = 0
-    SHOW_GROUP = 1
-    SHOW_DIRECTORATE = 2
-    SHOW_COSTCENTRE = 3
-
 
     cost_centre_columns = {
         BUDGET_TYPE: "Budget type",
@@ -420,16 +418,6 @@ class ViewForecastFields():
     ]
 
 
-    def edit_forecast_order():
-        # remove financial_code__ prefix from the
-        # fields used in the download order.
-        order_list = []
-        prefix_len = len(financial_code_prefix)
-        for elem in self.EDIT_FORECAST_DOWNLOAD_ORDER:
-            order_list.append(elem[prefix_len:])
-        return order_list
-
-
     MI_REPORT_DOWNLOAD_COLUMNS = {
         COST_CENTRE_CODE: "Cost Centre code",
         NAC_CODE: 'Natural Account code',
@@ -438,3 +426,18 @@ class ViewForecastFields():
         ANALYSIS2_CODE: 'Market Code',
         PROJECT_CODE: 'Project Code',
     }
+
+
+
+
+def edit_forecast_order():
+    # remove financial_code__ prefix from the
+    # fields used in the download order.
+    edit_fields = ViewForecastFields()
+    order_list = []
+    prefix_len = len(financial_code_prefix)
+    for elem in edit_fields.EDIT_FORECAST_DOWNLOAD_ORDER:
+        order_list.append(elem[prefix_len:])
+    return order_list
+
+
