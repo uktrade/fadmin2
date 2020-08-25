@@ -22,16 +22,11 @@ class FinancialYear(BaseModel):
     financial_year = models.IntegerField(primary_key=True)
     financial_year_display = models.CharField(max_length=20)
     current = models.BooleanField(default=False)
+    data_archived = models.BooleanField(default=False)
+    archived_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return str(self.financial_year_display)
-
-
-class Document(IsActiveModel):
-    """Used to test S3 upload"""
-
-    uploaded_at = models.DateTimeField(auto_now_add=True)
-    upload = models.FileField()
 
 
 # Track changes to permissions

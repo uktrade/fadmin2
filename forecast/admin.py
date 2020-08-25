@@ -46,7 +46,7 @@ class FinancialPeriodAdmin(AdminReadOnly):
     def get_readonly_fields(self, request, obj=None):
         if obj:
             return [
-                "period_short_name",
+                "financial_year",
                 "period_long_name",
                 "financial_period_code",
                 "period_calendar_code",
