@@ -13,6 +13,8 @@ class ViewForecastFields:
     def __init__(self, period=0):
         self.current = period < 2000
 
+    hierarchy_type = SHOW_DIT
+
     financial_code_prefix = "financial_code__"
     # indicates if DEL, AME, ADMIN
     budget_type_field = (
@@ -144,11 +146,14 @@ class ViewForecastFields:
     def programme_display_sub_total_column(self):
         return self.programme_name_field
 
-    programme_detail_view = [
-        "programme_details_dit",
-        "programme_details_group",
-        "programme_details_directorate",
-    ]
+    @property
+    def programme_detail_view(self):
+        list = [
+            "programme_details_dit",
+            "programme_details_group",
+            "programme_details_directorate",
+        ]
+        return list[self.hierarchy_type]
 
     # Expenditure data
     @property
@@ -205,76 +210,94 @@ class ViewForecastFields:
     def project_display_sub_total_column(self):
         return self.project_code_field
 
-    project_detail_view = [
-        "project_details_dit",
-        "project_details_group",
-        "project_details_directorate",
-        "project_details_costcentre",
-    ]
-
-    filter_codes = ["", "group_code", "directorate_code", "cost_centre_code"]
+    @property
+    def project_detail_view(self):
+        list = [
+            "project_details_dit",
+            "project_details_group",
+            "project_details_directorate",
+            "project_details_costcentre",
+        ]
+        return list[self.hierarchy_type]
 
     @property
-    def filter_selectors(self):
-        return [
+    def filter_codes(self):
+        list = ["", "group_code", "directorate_code", "cost_centre_code"]
+        return list[self.hierarchy_type]
+
+    @property
+    def filter_selector(self):
+        list = [
             "",
             self.group_code_field,
             self.directorate_code_field,
             self.cost_centre_code_field,
         ]
+        return list[self.hierarchy_type]
 
     @property
     def hierarchy_columns(self):
-        return [
+        list = [
             self.group_columns,
             self.directorate_columns,
             self.cost_centre_columns,
             self.cost_centre_columns,
         ]
+        return list[self.hierarchy_type]
 
     @property
     def hierarchy_sub_total_column(self):
-        return [
+        list = [
             self.group_name_field,
             self.directorate_name_field,
             self.cost_centre_name_field,
             self.cost_centre_name_field,
         ]
+        return list[self.hierarchy_type]
 
     @property
-    def hierarchy_order_lists(self):
-        return [
+    def hierarchy_order_list(self):
+        list = [
             [self.budget_type_order_field, self.group_name_field, ],
             [self.budget_type_order_field, self.directorate_name_field, ],
             [self.budget_type_order_field, self.cost_centre_name_field, ],
             [self.budget_type_order_field, ],
         ]
+        return list[self.hierarchy_type]
 
     @property
     def hierarchy_view_link_column(self):
-        return [
+        list = [
             self.group_name_field,
             self.directorate_name_field,
             self.cost_centre_name_field,
         ]
+        return list[self.hierarchy_type]
 
     # view names used to display different level of forecast
-    hierarchy_view = ["forecast_group", "forecast_directorate", "forecast_cost_centre"]
+    @property
+    def hierarchy_view(self):
+        list = ["forecast_group", "forecast_directorate", "forecast_cost_centre"]
+        return list[self.hierarchy_type]
 
     @property
     def hierarchy_view_code(self):
-        return [
+        list = [
             self.group_code_field,
             self.directorate_code_field,
             self.cost_centre_code_field,
         ]
+        return list[self.hierarchy_type]
 
-    expenditure_view = [
-        "expenditure_details_dit",
-        "expenditure_details_group",
-        "expenditure_details_directorate",
-        "expenditure_details_cost_centre",
-    ]
+    @property
+    def expenditure_view(self):
+        list = [
+            "expenditure_details_dit",
+            "expenditure_details_group",
+            "expenditure_details_directorate",
+            "expenditure_details_cost_centre",
+        ]
+        return list[self.hierarchy_type]
 
     # NAC data
     @property
@@ -359,7 +382,7 @@ class ViewForecastFields:
 
     @property
     def programme_details_hierarchy_order_list(self):
-         return [
+        return [
             self.programme_details_dit_order_list,
             self.programme_details_group_order_list,
             self.programme_details_directorate_order_list,
@@ -368,7 +391,7 @@ class ViewForecastFields:
 
     @property
     def programme_details_hierarchy_columns(self):
-         return [
+        return [
             self.programme_details_dit_columns,
             self.programme_details_group_columns,
             self.programme_details_directorate_columns,
@@ -377,12 +400,13 @@ class ViewForecastFields:
 
     @property
     def programme_details_hierarchy_sub_total_column(self):
-        return [
+        list = [
             self.group_name_field,
             self.directorate_name_field,
             self.cost_centre_name_field,
             "",
         ]
+        return list[self.hierarchy_type]
 
     # Project details views
     @property
@@ -452,16 +476,16 @@ class ViewForecastFields:
 
     @property
     def project_details_hierarchy_order_list(self):
-         return [
+        return [
             self.project_details_dit_order_list,
             self.project_details_group_order_list,
             self.project_details_directorate_order_list,
             self.project_details_costcentre_order_list,
-         ]
+        ]
 
     @property
     def project_details_hierarchy_columns(self):
-        return  [
+        return [
             self.project_details_dit_columns,
             self.project_details_group_columns,
             self.project_details_directorate_columns,

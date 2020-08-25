@@ -16,10 +16,10 @@ from forecast.tables import (
     ForecastWithLinkTable,
 )
 from forecast.utils.query_fields import (
-    SHOW_DIT,
-    SHOW_GROUP ,
-    SHOW_DIRECTORATE,
     SHOW_COSTCENTRE,
+    SHOW_DIRECTORATE,
+    SHOW_DIT,
+    SHOW_GROUP,
 )
 from forecast.views.base import (
     ForecastViewPermissionMixin,
@@ -29,7 +29,6 @@ from forecast.views.base import (
 
 
 class ForecastMultiTableMixin(ForecastViewTableMixin):
-    hierarchy_type = -1
 
     def class_name(self):
         return "wide-table"
@@ -39,16 +38,18 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
          Return an array of table instances containing data.
         """
         filter_code = ""
+        self.field_infos.hierarchy_type = self.hierarchy_type
+
         pivot_filter = {}
-        arg_name = self.field_infos.filter_codes[self.hierarchy_type]
+        arg_name = self.field_infos.filter_codes
         if arg_name:
             filter_code = self.kwargs[arg_name]
-            pivot_filter = {self.field_infos.filter_selectors[self.hierarchy_type]: f"{filter_code}"}
+            pivot_filter = {self.field_infos.filter_selector: f"{filter_code}"}
 
-        hierarchy_order_list = self.field_infos.hierarchy_order_lists[self.hierarchy_type]
-        hierarchy_columns = self.field_infos.hierarchy_columns[self.hierarchy_type]
+        hierarchy_order_list = self.field_info
+        hierarchy_columns = self.field_infos.hierarchy_columns
         hierarchy_data = self.data_model.view_data.subtotal_data(
-            self.field_infos.hierarchy_sub_total_column[self.hierarchy_type],
+            self.field_infos.hierarchy_sub_total_column,
             self.field_infos.hierarchy_sub_total,
             hierarchy_columns.keys(),
             pivot_filter,
@@ -81,15 +82,19 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             order_list=self.field_infos.project_order_list,
         )
 
-        if self.hierarchy_type == SHOW_COSTCENTRE:
+        if self.field_infos.hierarchy_type == SHOW_COSTCENTRE:
             programme_table = ForecastSubTotalTable(
-                self.field_infos.programme_columns, programme_data, actual_month_list=self.month_list,
+                self.field_infos.programme_columns,
+                programme_data,
+                actual_month_list=self.month_list,
             )
         else:
             programme_table = ForecastWithLinkTable(
                 self.field_infos.programme_name_field,
-                self.field_infos.programme_detail_view[self.hierarchy_type],
-                [self.field_infos.programme_code_field, self.field_infos.expenditure_type_name_field, self.period],
+                self.field_infos.programme_detail_view,
+                [self.field_infos.programme_code_field,
+                 self.field_infos.expenditure_type_name_field,
+                 self.period],
                 filter_code,
                 self.field_infos.programme_columns,
                 programme_data,
@@ -101,8 +106,12 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
 
         expenditure_table = ForecastWithLinkTable(
             self.field_infos.budget_category_name_field,
-            self.field_infos.expenditure_view[self.hierarchy_type],
-            [self.field_infos.budget_category_id_field, self.field_infos.budget_type_field, self.period],
+            self.field_infos.expenditure_view,
+            [
+                self.field_infos.budget_category_id_field,
+                self.field_infos.budget_type_field,
+                self.period,
+            ],
             filter_code,
             self.field_infos.expenditure_columns,
             expenditure_data,
@@ -113,7 +122,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
 
         project_table = ForecastWithLinkTable(
             self.field_infos.project_name_field,
-            self.field_infos.project_detail_view[self.hierarchy_type],
+            self.field_infos.project_detail_view,
             [self.field_infos.project_code_field, self.period],
             filter_code,
             self.field_infos.project_columns,
@@ -123,19 +132,19 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
         project_table.attrs["caption"] = "Project report"
         project_table.tag = self.table_tag
 
-        if self.hierarchy_type == SHOW_COSTCENTRE:
+        if self.field_infos.hierarchy_type == SHOW_COSTCENTRE:
             hierarchy_table = ForecastSubTotalTable(
-                self.field_infos.hierarchy_columns[self.hierarchy_type],
+                hierarchy_columns,
                 hierarchy_data,
                 actual_month_list=self.month_list,
             )
         else:
             hierarchy_table = ForecastWithLinkTable(
-                self.field_infos.hierarchy_view_link_column[self.hierarchy_type],
-                self.field_infos.hierarchy_view[self.hierarchy_type],
-                [self.field_infos.hierarchy_view_code[self.hierarchy_type], self.period],
+                self.field_infos.hierarchy_view_link_column,
+                self.field_infos.hierarchy_view,
+                [self.field_infos.hierarchy_view_code, self.period],
                 "",
-                self.field_infos.hierarchy_columns[self.hierarchy_type],
+                hierarchy_columns,
                 hierarchy_data,
                 actual_month_list=self.month_list,
             )
@@ -224,7 +233,7 @@ class CostCentreView(
 
     def cost_centre(self):
         return CostCentre.objects.get(
-            cost_centre_code=self.kwargs[self.field_infos.filter_codes[self.hierarchy_type]],
+            cost_centre_code=self.kwargs[self.field_infos.filter_codes],
         )
 
     def cost_centres_form(self):

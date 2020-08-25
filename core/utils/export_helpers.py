@@ -142,7 +142,7 @@ def generic_export_to_csv(queryset):
     return export_to_csv(queryset, generic_table_iterator)
 
 
-def export_to_excel(queryset, func, title="", field_list = None):
+def export_to_excel(queryset, func, title="", field_list=None):
     if title == "":
         title = queryset.model._meta.verbose_name_plural.title()
     resp = HttpResponse(content_type=EXCEL_TYPE)

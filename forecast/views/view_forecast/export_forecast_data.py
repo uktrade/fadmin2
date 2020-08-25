@@ -19,14 +19,13 @@ from forecast.utils.export_helpers import (
 from forecast.utils.query_fields import ViewForecastFields
 
 
-
 def get_period_for_title(period):
     if period:
         forecast_period = FinancialPeriod.objects.get(financial_period_code=period)
         title = forecast_period.period_long_name
     else:
-        title = 'Current'
-    return f'({title})'
+        title = "Current"
+    return f"({title})"
 
 
 def export_forecast_data_generic(period, filter, title):
@@ -34,7 +33,9 @@ def export_forecast_data_generic(period, filter, title):
     q = forecast_budget_view_model[period].view_data.raw_data_annotated(
         fields.VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
-    return export_query_to_excel(q, fields.VIEW_FORECAST_DOWNLOAD_COLUMNS, title, period)
+    return export_query_to_excel(
+        q, fields.VIEW_FORECAST_DOWNLOAD_COLUMNS, title, period
+    )
 
 
 @user_passes_test(can_view_forecasts, login_url="index")
