@@ -56,22 +56,24 @@ class ForecastProjectDetailsMixin(ForecastViewTableMixin):
         """
          Return an array of table instances containing data.
         """
+        self.field_infos.hierarchy_type = self.hierarchy_type
         project_code_id = self.kwargs["project_code"]
         pivot_filter = {
             self.field_infos.project_code_field: f"{project_code_id}",
         }
-        arg_name = self.field_infos.filter_codes[self.hierarchy_type]
+        arg_name = self.field_infos.filter_codes
         if arg_name:
             filter_code = self.kwargs[arg_name]
-            pivot_filter[self.field_infos.filter_selectors[self.hierarchy_type]] = f"{filter_code}"
+            # add the correct hierarchy filter to the pivot
+            pivot_filter[self.field_infos.filter_selector] = f"{filter_code}"
 
-        columns = self.field_infos.project_details_hierarchy_columns[self.hierarchy_type]
+        columns = self.field_infos.project_details_hierarchy_columns
         project_details_data = self.data_model.view_data.subtotal_data(
-            self.field_infos.project_details_hierarchy_sub_total_column[self.hierarchy_type],
+            self.field_infos.project_details_hierarchy_sub_total_column,
             self.field_infos.project_details_sub_total,
             columns.keys(),
             pivot_filter,
-            order_list=self.field_infos.project_details_hierarchy_order_list[self.hierarchy_type],
+            order_list=self.field_infos.project_details_hierarchy_order_list,
             show_grand_total=False,
         )
 

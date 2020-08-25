@@ -59,22 +59,23 @@ class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
         """
         forecast_expenditure_type_name = self.kwargs["forecast_expenditure_type"]
         programme_code_id = self.kwargs["programme_code"]
+        self.field_infos.hierarchy_type = self.hierarchy_type
         pivot_filter = {
             self.field_infos.programme_code_field: f"{programme_code_id}",
-            self.field_infos.expenditure_type_name_field: f"{forecast_expenditure_type_name}",
+            self.field_infos.expenditure_type_name_field: f"{forecast_expenditure_type_name}",  # noqa
         }
-        arg_name = self.field_infos.filter_codes[self.hierarchy_type]
+        arg_name = self.field_infos.filter_codes
         if arg_name:
             filter_code = self.kwargs[arg_name]
-            pivot_filter[self.field_infos.filter_selectors[self.hierarchy_type]] = f"{filter_code}"
+            pivot_filter[self.field_infos.filter_selector] = f"{filter_code}"
 
-        columns = self.field_infos.programme_details_hierarchy_columns[self.hierarchy_type]
+        columns = self.field_infos.programme_details_hierarchy_columns
         programme_details_data = self.data_model.view_data.subtotal_data(
             self.field_infos.programme_details_display_sub_total_column,
             self.field_infos.programme_details_sub_total,
             columns.keys(),
             pivot_filter,
-            order_list=self.field_infos.programme_details_hierarchy_order_list[self.hierarchy_type],
+            order_list=self.field_infos.programme_details_hierarchy_order_list,
             show_grand_total=False,
         )
 

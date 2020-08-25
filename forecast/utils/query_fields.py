@@ -382,21 +382,23 @@ class ViewForecastFields:
 
     @property
     def programme_details_hierarchy_order_list(self):
-        return [
+        list = [
             self.programme_details_dit_order_list,
             self.programme_details_group_order_list,
             self.programme_details_directorate_order_list,
             "",
         ]
+        return list[self.hierarchy_type]
 
     @property
     def programme_details_hierarchy_columns(self):
-        return [
+        list = [
             self.programme_details_dit_columns,
             self.programme_details_group_columns,
             self.programme_details_directorate_columns,
             "",
         ]
+        return list[self.hierarchy_type]
 
     @property
     def programme_details_hierarchy_sub_total_column(self):
@@ -476,30 +478,33 @@ class ViewForecastFields:
 
     @property
     def project_details_hierarchy_order_list(self):
-        return [
+        list = [
             self.project_details_dit_order_list,
             self.project_details_group_order_list,
             self.project_details_directorate_order_list,
             self.project_details_costcentre_order_list,
         ]
+        return list[self.hierarchy_type]
 
     @property
     def project_details_hierarchy_columns(self):
-        return [
+        list = [
             self.project_details_dit_columns,
             self.project_details_group_columns,
             self.project_details_directorate_columns,
             self.project_details_costcentre_columns,
         ]
+        return list[self.hierarchy_type]
 
     @property
     def project_details_hierarchy_sub_total_column(self):
-        return [
+        list = [
             self.group_name_field,
             self.directorate_name_field,
             self.cost_centre_name_field,
             self.cost_centre_name_field,
         ]
+        return list[self.hierarchy_type]
 
     @property
     def DEFAULT_PIVOT_COLUMNS(self):

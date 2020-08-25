@@ -46,7 +46,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             filter_code = self.kwargs[arg_name]
             pivot_filter = {self.field_infos.filter_selector: f"{filter_code}"}
 
-        hierarchy_order_list = self.field_info
+        hierarchy_order_list = self.field_infos.hierarchy_order_list
         hierarchy_columns = self.field_infos.hierarchy_columns
         hierarchy_data = self.data_model.view_data.subtotal_data(
             self.field_infos.hierarchy_sub_total_column,

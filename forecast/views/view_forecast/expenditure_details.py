@@ -69,10 +69,11 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
             self.field_infos.budget_category_id_field: f"{expenditure_category_id}",
             self.field_infos.budget_type_field: f"{budget_type_id}",
         }
-        arg_name = self.field_infos.filter_codes[self.hierarchy_type]
+        self.field_infos.hierarchy_type = self.hierarchy_type
+        arg_name = self.field_infos.filter_codes
         if arg_name:
             filter_code = self.kwargs[arg_name]
-            pivot_filter[self.field_infos.filter_selectors[self.hierarchy_type]] = f"{filter_code}"
+            pivot_filter[self.field_infos.filter_selector] = f"{filter_code}"
 
         nac_data = self.data_model.view_data.subtotal_data(
             self.field_infos.nac_display_sub_total_column,
