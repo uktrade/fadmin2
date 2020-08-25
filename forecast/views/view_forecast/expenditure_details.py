@@ -66,8 +66,8 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
         budget_type_id = self.kwargs["budget_type"]
         expenditure_category_id = self.kwargs["expenditure_category"]
         pivot_filter = {
-            self.field_infos.BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
-            self.field_infos.BUDGET_TYPE: f"{budget_type_id}",
+            self.field_infos.budget_category_id_field: f"{expenditure_category_id}",
+            self.field_infos.budget_type_field: f"{budget_type_id}",
         }
         arg_name = self.field_infos.filter_codes[self.hierarchy_type]
         if arg_name:

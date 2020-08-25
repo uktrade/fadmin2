@@ -60,8 +60,8 @@ class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
         forecast_expenditure_type_name = self.kwargs["forecast_expenditure_type"]
         programme_code_id = self.kwargs["programme_code"]
         pivot_filter = {
-            self.field_infos.PROGRAMME_CODE: f"{programme_code_id}",
-            self.field_infos.FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
+            self.field_infos.programme_code_field: f"{programme_code_id}",
+            self.field_infos.expenditure_type_name_field: f"{forecast_expenditure_type_name}",
         }
         arg_name = self.field_infos.filter_codes[self.hierarchy_type]
         if arg_name:

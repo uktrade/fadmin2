@@ -44,10 +44,8 @@ class ViewForecastFields:
     @property
     def cost_centre_name_field(self):
         if self.current:
-            return "CURRENT "
-            # return f"{financial_code_prefix}cost_centre__cost_centre_name"
-        return "PREVIOUS"
-        # return f"{financial_code_prefix}cost_centre_cost_centre_name"
+            return f"{financial_code_prefix}cost_centre__cost_centre_name"
+        return f"{financial_code_prefix}cost_centre_cost_centre_name"
 
     @property
     def cost_centre_code_field(self):
@@ -452,19 +450,23 @@ class ViewForecastFields:
             self.expenditure_type_name_field,
         ]
 
-    project_details_hierarchy_order_list = [
-        project_details_dit_order_list,
-        project_details_group_order_list,
-        project_details_directorate_order_list,
-        project_details_costcentre_order_list,
-    ]
+    @property
+    def project_details_hierarchy_order_list(self):
+         return [
+            self.project_details_dit_order_list,
+            self.project_details_group_order_list,
+            self.project_details_directorate_order_list,
+            self.project_details_costcentre_order_list,
+         ]
 
-    project_details_hierarchy_columns = [
-        project_details_dit_columns,
-        project_details_group_columns,
-        project_details_directorate_columns,
-        project_details_costcentre_columns,
-    ]
+    @property
+    def project_details_hierarchy_columns(self):
+        return  [
+            self.project_details_dit_columns,
+            self.project_details_group_columns,
+            self.project_details_directorate_columns,
+            self.project_details_costcentre_columns,
+        ]
 
     @property
     def project_details_hierarchy_sub_total_column(self):

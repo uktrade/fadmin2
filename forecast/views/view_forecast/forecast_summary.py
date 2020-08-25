@@ -87,9 +87,9 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             )
         else:
             programme_table = ForecastWithLinkTable(
-                self.field_infos.PROGRAMME_NAME,
+                self.field_infos.programme_name_field,
                 self.field_infos.programme_detail_view[self.hierarchy_type],
-                [self.field_infos.PROGRAMME_CODE, self.field_infos.FORECAST_EXPENDITURE_TYPE_NAME, self.period],
+                [self.field_infos.programme_code_field, self.field_infos.expenditure_type_name_field, self.period],
                 filter_code,
                 self.field_infos.programme_columns,
                 programme_data,
@@ -100,9 +100,9 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
         programme_table.tag = self.table_tag
 
         expenditure_table = ForecastWithLinkTable(
-            self.field_infos.BUDGET_CATEGORY_NAME,
+            self.field_infos.budget_category_name_field,
             self.field_infos.expenditure_view[self.hierarchy_type],
-            [self.field_infos.BUDGET_CATEGORY_ID, self.field_infos.BUDGET_TYPE, self.period],
+            [self.field_infos.budget_category_id_field, self.field_infos.budget_type_field, self.period],
             filter_code,
             self.field_infos.expenditure_columns,
             expenditure_data,
@@ -112,9 +112,9 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
         expenditure_table.tag = self.table_tag
 
         project_table = ForecastWithLinkTable(
-            self.field_infos.PROJECT_NAME,
+            self.field_infos.project_name_field,
             self.field_infos.project_detail_view[self.hierarchy_type],
-            [self.field_infos.PROJECT_CODE, self.period],
+            [self.field_infos.project_code_field, self.period],
             filter_code,
             self.field_infos.project_columns,
             project_data,

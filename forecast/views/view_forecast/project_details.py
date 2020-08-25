@@ -58,7 +58,7 @@ class ForecastProjectDetailsMixin(ForecastViewTableMixin):
         """
         project_code_id = self.kwargs["project_code"]
         pivot_filter = {
-            self.field_infos.PROJECT_CODE: f"{project_code_id}",
+            self.field_infos.project_code_field: f"{project_code_id}",
         }
         arg_name = self.field_infos.filter_codes[self.hierarchy_type]
         if arg_name:
