@@ -86,7 +86,7 @@ class UnlockedForecastEditor(BaseModel):
     )
 
     def __str__(self):
-        return self.user.name
+        return self.user
 
 
 class ForecastExpenditureType(BaseModel):

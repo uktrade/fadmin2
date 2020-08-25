@@ -67,7 +67,7 @@ class UnlockedForecastEditorAdmin(admin.ModelAdmin):
             UnlockedForecastEditorAdmin,
             self,
         ).get_form(request, **kwargs)
-        unlock_form.current_user = request.user.id
+        unlock_form.current_user = request.user
         return unlock_form
 
 
