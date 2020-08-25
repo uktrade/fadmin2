@@ -108,8 +108,7 @@ class ViewForecastFields:
 
     @property
     def group_columns(self):
-        return
-        {
+        return {
             self.budget_type_field: "Budget Type",
             self.group_name_field: "Departmental Group description",
             self.group_code_field: "code",
@@ -226,12 +225,14 @@ class ViewForecastFields:
             self.cost_centre_code_field,
         ]
 
-    hierarchy_columns = [
-        group_columns,
-        directorate_columns,
-        cost_centre_columns,
-        cost_centre_columns,
-    ]
+    @property
+    def hierarchy_columns(self):
+        return [
+            self.group_columns,
+            self.directorate_columns,
+            self.cost_centre_columns,
+            self.cost_centre_columns,
+        ]
 
     @property
     def hierarchy_sub_total_column(self):
@@ -358,19 +359,23 @@ class ViewForecastFields:
             self.cost_centre_name_field,
         ]
 
-    programme_details_hierarchy_order_list = [
-        programme_details_dit_order_list,
-        programme_details_group_order_list,
-        programme_details_directorate_order_list,
-        "",
-    ]
+    @property
+    def programme_details_hierarchy_order_list(self):
+         return [
+            self.programme_details_dit_order_list,
+            self.programme_details_group_order_list,
+            self.programme_details_directorate_order_list,
+            "",
+        ]
 
-    programme_details_hierarchy_columns = [
-        programme_details_dit_columns,
-        programme_details_group_columns,
-        programme_details_directorate_columns,
-        "",
-    ]
+    @property
+    def programme_details_hierarchy_columns(self):
+         return [
+            self.programme_details_dit_columns,
+            self.programme_details_group_columns,
+            self.programme_details_directorate_columns,
+            "",
+        ]
 
     @property
     def programme_details_hierarchy_sub_total_column(self):

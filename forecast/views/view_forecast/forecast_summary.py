@@ -46,10 +46,11 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             pivot_filter = {self.field_infos.filter_selectors[self.hierarchy_type]: f"{filter_code}"}
 
         hierarchy_order_list = self.field_infos.hierarchy_order_lists[self.hierarchy_type]
+        hierarchy_columns = self.field_infos.hierarchy_columns[self.hierarchy_type]
         hierarchy_data = self.data_model.view_data.subtotal_data(
             self.field_infos.hierarchy_sub_total_column[self.hierarchy_type],
             self.field_infos.hierarchy_sub_total,
-            self.field_infos.hierarchy_columns[self.hierarchy_type].keys(),
+            hierarchy_columns.keys(),
             pivot_filter,
             order_list=hierarchy_order_list,
         )
@@ -70,7 +71,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
         )
 
         # In the project report, exclude rows without a project code.
-        k = f"{self.field_infos.PROJECT_CODE}__isnull"
+        k = f"{self.field_infos.project_code_field}__isnull"
         pivot_filter.update({k: False})
         project_data = self.data_model.view_data.subtotal_data(
             self.field_infos.project_display_sub_total_column,
