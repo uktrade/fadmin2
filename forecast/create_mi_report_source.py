@@ -81,12 +81,12 @@ def export_mi_iterator(queryset, fields):
         )
         yield [
             "3000",
-            obj[fields.COST_CENTRE_CODE],
-            obj[fields.NAC_CODE],
-            obj[fields.PROGRAMME_CODE],
-            obj[fields.ANALYSIS1_CODE],
-            obj[fields.ANALYSIS2_CODE],
-            obj[fields.PROJECT_CODE],
+            obj[fields.cost_centre_code_field],
+            obj[fields.nac_code_field],
+            obj[fields.programme_code_field],
+            obj[fields.analysis1_code_field],
+            obj[fields.analysis2_code_field],
+            obj[fields.project_code_field],
             apr / 100,
             may / 100,
             jun / 100,
