@@ -81,7 +81,7 @@ class ForecastViewTableMixin(MultiTableMixin):
     @property
     def field_infos(self):
         if self._field_infos is None:
-            self._field_infos = ViewForecastFields(self.period < 2000)
+            self._field_infos = ViewForecastFields(self.period)
         return self._field_infos
 
     @property

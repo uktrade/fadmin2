@@ -6,6 +6,10 @@ SHOW_COSTCENTRE = 3
 
 
 class ViewForecastFields():
+    # the 'long string' describing the field is different for previous years
+    # or current year. This class return the correct field using 'current' to decide
+    # what to return. The period for previous year is the integer describing the year.
+    # while for the current year the values are from 0 to 15.
     def __init__(self, period=0):
         self.current = period < 2000
 
@@ -33,8 +37,20 @@ class ViewForecastFields():
     programme_code_field = f"{financial_code_prefix}programme__programme_code"
     programme_name_field = f"{financial_code_prefix}programme__programme_description"
 
-    cost_centre_name_field = f"{financial_code_prefix}cost_centre__cost_centre_name"
-    cost_centre_code_field = f"{financial_code_prefix}cost_centre__cost_centre_code"
+    @property
+    def cost_centre_name_field(self):
+        if self.current:
+            return ("CURRENT ")
+            # return f"{financial_code_prefix}cost_centre__cost_centre_name"
+        return("PREVIOUS")
+        # return f"{financial_code_prefix}cost_centre_cost_centre_name"
+
+    @property
+    def cost_centre_code_field(self):
+        if self.current:
+            return f"{financial_code_prefix}cost_centre__cost_centre_code"
+        return f"{financial_code_prefix}cost_centre_cost_centre_code"
+
 
     directorate_name_field = f"{financial_code_prefix}cost_centre__directorate__directorate_name"
     directorate_code_field = f"{financial_code_prefix}cost_centre__directorate__directorate_code"
@@ -56,44 +72,62 @@ class ViewForecastFields():
     analysis2_code_field = f"{financial_code_prefix}analysis2_code__analysis2_code"
     analysis2_name_field = f"{financial_code_prefix}analysis2_code__analysis2_description"
 
-    cost_centre_columns = {
-        budget_type_field: "Budget type",
-        cost_centre_name_field: "Cost Centre description",
-        cost_centre_code_field: "code",
+    @property
+    def cost_centre_columns(self):
+        return  {
+            self.budget_type_field: "Budget type",
+            self.cost_centre_name_field: "Cost Centre description",
+            self.cost_centre_code_field: "code",
     }
 
-    directorate_columns = {
-        budget_type_field: "Budget Type",
-        directorate_name_field: "Directorate description",
-        directorate_code_field: "code",
-    }
+    @property
+    def directorate_columns(self):
+      return {
+            self.budget_type_field: "Budget Type",
+            self.directorate_name_field: "Directorate description",
+            self.directorate_code_field: "code",
+        }
 
-    group_columns = {
-        budget_type_field: "Budget Type",
-        group_name_field: "Departmental Group description",
-        group_code_field: "code",
-    }
+    @property
+    def group_columns(self):
+        return
+        {
+            self.budget_type_field: "Budget Type",
+            self.group_name_field: "Departmental Group description",
+            self.group_code_field: "code",
+        }
 
-    hierarchy_sub_total = [budget_type_field]
+    @property
+    def hierarchy_sub_total(self):
+        return[self.budget_type_field]
 
-    # programme data
-    programme_columns = {
-        budget_type_field: "Hidden",
-        expenditure_type_description_field: "Hidden",
-        expenditure_type_name_field: "Expenditure type",
-        programme_name_field: "Programme code",
-        programme_code_field: "code",
-    }
+    @property
+    def programme_columns(self):
+        return  {
+            self.budget_type_field: "Hidden",
+            self.expenditure_type_description_field: "Hidden",
+            self.expenditure_type_name_field: "Expenditure type",
+            self.programme_name_field: "Programme code",
+            self.programme_code_field: "code",
+        }
 
-    programme_order_list = [
-        budget_type_order_field,
-        expenditure_type_order_field,
-    ]
-    programme_sub_total = [
-        budget_type_field,
-        expenditure_type_description_field,
-    ]
-    programme_display_sub_total_column = programme_name_field
+    @property
+    def programme_order_list(self):
+        return [
+            self.budget_type_order_field,
+            self.expenditure_type_order_field,
+        ]
+
+    @property
+    def programme_sub_total(self):
+        return [
+            self.budget_type_field,
+            self.expenditure_type_description_field,
+        ]
+
+    @property
+    def programme_display_sub_total_column(self):
+        return self.programme_name_field
 
     programme_detail_view = [
         'programme_details_dit',
@@ -102,38 +136,58 @@ class ViewForecastFields():
     ]
 
     # Expenditure data
-    expenditure_columns = {
-        budget_type_field: "Hidden",
-        budget_category_id_field: "Hidden",
-        budget_grouping_field: "Budget grouping",
-        budget_category_name_field: "Budget category",
-    }
-    expenditure_sub_total = [
-        budget_type_field,
-        budget_grouping_field,
-    ]
-    expenditure_display_sub_total_column = budget_category_name_field
+    @property
+    def expenditure_columns(self):
+         return {
+            self.budget_type_field: "Hidden",
+            self.budget_category_id_field: "Hidden",
+            self.budget_grouping_field: "Budget grouping",
+            self.budget_category_name_field: "Budget category",
+        }
 
-    expenditure_order_list = [
-        budget_type_order_field,
-        budget_grouping_order_field,
-    ]
+    @property
+    def expenditure_sub_total(self):
+         return [
+            self.budget_type_field,
+            self.budget_grouping_field,
+         ]
+
+    @property
+    def expenditure_display_sub_total_column(self):
+        return self.budget_category_name_field
+
+    @property
+    def expenditure_order_list(self):
+         return [
+            self.budget_type_order_field,
+            self.budget_grouping_order_field,
+         ]
 
     # Project data
-    project_columns = {
-        project_name_field: "Project",
-        project_code_field: "code",
-        expenditure_type_order_field: "Hidden",
-        expenditure_type_name_field: "Expenditure type",
-    }
-    project_order_list = [
-        project_code_field,
-        expenditure_type_order_field,
-    ]
-    project_sub_total = [
-        project_name_field,
-    ]
-    project_display_sub_total_column = project_code_field
+    @property
+    def project_columns(self):
+        return {
+            self.project_name_field: "Project",
+            self.project_code_field: "code",
+            self.expenditure_type_order_field: "Hidden",
+            self.expenditure_type_name_field: "Expenditure type",
+        }
+
+    @property
+    def project_order_list(self):
+        return [
+            self.project_code_field,
+            self.expenditure_type_order_field,
+        ]
+
+    @property
+    def project_sub_total(self):
+     return [self.project_name_field,]
+
+    @property
+    def project_display_sub_total_column(self):
+        return self.project_code_field
+
 
     project_detail_view = [
         'project_details_dit',
@@ -143,12 +197,15 @@ class ViewForecastFields():
     ]
 
     filter_codes = ['', 'group_code', 'directorate_code', 'cost_centre_code']
-    filter_selectors = [
-        '',
-        group_code_field,
-        directorate_code_field,
-        cost_centre_code_field,
-    ]
+
+    @property
+    def filter_selectors(self):
+         return [
+            '',
+            self.group_code_field,
+            self.directorate_code_field,
+            self.cost_centre_code_field,
+         ]
 
     hierarchy_columns = [
         group_columns,
@@ -157,37 +214,46 @@ class ViewForecastFields():
         cost_centre_columns,
     ]
 
-    hierarchy_sub_total_column = [
-        group_name_field,
-        directorate_name_field,
-        cost_centre_name_field,
-        cost_centre_name_field,
-    ]
+    @property
+    def hierarchy_sub_total_column(self):
+        return [
+            self.group_name_field,
+            self.directorate_name_field,
+            self.cost_centre_name_field,
+            self.cost_centre_name_field,
+        ]
 
-    hierarchy_order_lists = [
-        [budget_type_order_field, group_name_field, ],
-        [budget_type_order_field, directorate_name_field, ],
-        [budget_type_order_field, cost_centre_name_field, ],
-        [budget_type_order_field, ]
-    ]
+    @property
+    def hierarchy_order_lists(self):
+        return  [
+            [self.budget_type_order_field, self.group_name_field, ],
+            [self.budget_type_order_field, self.directorate_name_field, ],
+            [self.budget_type_order_field, self.cost_centre_name_field, ],
+            [self.budget_type_order_field, ]
+        ]
 
-    hierarchy_view_link_column = [
-        group_name_field,
-        directorate_name_field,
-        cost_centre_name_field,
-    ]
+    @property
+    def hierarchy_view_link_column(self):
+        return [
+            self.group_name_field,
+            self.directorate_name_field,
+            self.cost_centre_name_field,
+        ]
+    
+    # view names used to display different level of forecast
+    hierarchy_view= [
+            'forecast_group',
+            'forecast_directorate',
+            'forecast_cost_centre'
+        ]
 
-    hierarchy_view = [
-        'forecast_group',
-        'forecast_directorate',
-        'forecast_cost_centre'
-    ]
-
-    hierarchy_view_code = [
-        group_code_field,
-        directorate_code_field,
-        cost_centre_code_field,
-    ]
+    @property
+    def hierarchy_view_code(self):
+         return [
+            self.group_code_field,
+            self.directorate_code_field,
+            self.cost_centre_code_field,
+        ]
 
 
     expenditure_view = [
@@ -197,56 +263,78 @@ class ViewForecastFields():
         'expenditure_details_cost_centre',
     ]
     # NAC data
-    nac_columns = {
-        budget_category_name_field: "Hidden",
-        nac_name_field: "Natural Account code",
-        nac_code_field: "code",
-    }
-    nac_sub_total = [
-        budget_category_name_field,
-    ]
-    nac_display_sub_total_column = nac_name_field
+    @property
+    def nac_columns(self):
+        return {
+            self.budget_category_name_field: "Hidden",
+            self.nac_name_field: "Natural Account code",
+            self.nac_code_field: "code",
+        }
 
-    nac_order_list = [
-        nac_name_field,
-    ]
+    @property
+    def nac_sub_total(self):
+        return [self.budget_category_name_field,]
+
+    @property
+    def nac_display_sub_total_column(self):
+        return self.nac_name_field
+
+    @property
+    def nac_order_list(self):
+        return [self.nac_name_field,]
 
     # programme details data
-    programme_details_dit_columns = {
-        programme_name_field: "Hidden",
-        expenditure_type_name_field: "Expenditure type",
-        group_name_field: "Departmental Group",
-        group_code_field: "code",
-    }
-    programme_details_group_columns = {
-        programme_name_field: "Hidden",
-        expenditure_type_name_field: "Expenditure type",
-        directorate_name_field: "Directorate",
-        directorate_code_field: "code",
-    }
+    @property
+    def programme_details_dit_columns(self):
+        return {
+            self.programme_name_field: "Hidden",
+            self.expenditure_type_name_field: "Expenditure type",
+            self.group_name_field: "Departmental Group",
+            self.group_code_field: "code",
+        }
 
-    programme_details_directorate_columns = {
-        programme_name_field: "Hidden",
-        expenditure_type_name_field: "Expenditure type",
-        cost_centre_name_field: "Cost Centre",
-        cost_centre_code_field: "code",
-    }
+    @property
+    def programme_details_group_columns(self):
+        return {
+            self.programme_name_field: "Hidden",
+            self.expenditure_type_name_field: "Expenditure type",
+            self.directorate_name_field: "Directorate",
+            self.directorate_code_field: "code",
+        }
 
-    programme_details_sub_total = [
-        programme_name_field,
-    ]
+    @property
+    def programme_details_directorate_columns(self):
+        return {
+            self.programme_name_field: "Hidden",
+            self.expenditure_type_name_field: "Expenditure type",
+            self.cost_centre_name_field: "Cost Centre",
+            self.cost_centre_code_field: "code",
+        }
 
-    programme_details_display_sub_total_column = expenditure_type_name_field
+    @property
+    def programme_details_sub_total(self):
+        return [self.programme_name_field,]
 
-    programme_details_dit_order_list = [
-        group_name_field,
-    ]
-    programme_details_group_order_list = [
-        directorate_name_field,
-    ]
-    programme_details_directorate_order_list = [
-        cost_centre_name_field,
-    ]
+    @property
+    def programme_details_display_sub_total_column(self):
+        return self.expenditure_type_name_field
+
+    @property
+    def programme_details_dit_order_list(self):
+        return [self.group_name_field,]
+
+    @property
+    def programme_details_group_order_list(self):
+        return [
+            self.directorate_name_field,
+        ]
+
+    @property
+    def programme_details_directorate_order_list(self):
+        return [
+            self.cost_centre_name_field,
+        ]
+
 
     programme_details_hierarchy_order_list = [
         programme_details_dit_order_list,
@@ -262,56 +350,82 @@ class ViewForecastFields():
         '',
     ]
 
-    programme_details_hierarchy_sub_total_column = [
-        group_name_field,
-        directorate_name_field,
-        cost_centre_name_field,
-        '',
-    ]
+    @property
+    def programme_details_hierarchy_sub_total_column(self):
+        return [
+            self.group_name_field,
+            self.directorate_name_field,
+            self.cost_centre_name_field,
+            '',
+        ]
 
 
     # Project details views
-    project_details_dit_columns = {
-        expenditure_type_name_field: "Expenditure type",
-        group_name_field: "Departmental Group",
-        group_code_field: "code",
-    }
-    project_details_group_columns = {
-        expenditure_type_name_field: "Expenditure type",
-        directorate_name_field: "Directorate",
-        directorate_code_field: "code",
-    }
-    project_details_directorate_columns = {
-        expenditure_type_name_field: "Expenditure type",
-        cost_centre_name_field: "Cost Centre",
-        cost_centre_code_field: "code",
-    }
-    project_details_costcentre_columns = {
-        expenditure_type_name_field: "Expenditure type",
-        cost_centre_name_field: "Cost Centre",
-        cost_centre_code_field: "code",
-    }
+    @property
+    def project_details_dit_columns(self):
+        return {
+            self.expenditure_type_name_field: "Expenditure type",
+            self.group_name_field: "Departmental Group",
+            self.group_code_field: "code",
+        }
 
-    project_details_sub_total = [
-        expenditure_type_name_field,
-    ]
+    @property
+    def project_details_group_columns(self):
+        return {
+            self.expenditure_type_name_field: "Expenditure type",
+            self.directorate_name_field: "Directorate",
+            self.directorate_code_field: "code",
+        }
 
-    project_details_dit_order_list = [
-        group_name_field,
-        expenditure_type_name_field,
-    ]
-    project_details_group_order_list = [
-        directorate_name_field,
-        expenditure_type_name_field,
-    ]
-    project_details_directorate_order_list = [
-        cost_centre_name_field,
-        expenditure_type_name_field,
-    ]
+    @property
+    def project_details_directorate_columns(self):
+        return {
+            self.expenditure_type_name_field: "Expenditure type",
+            self.cost_centre_name_field: "Cost Centre",
+            self.cost_centre_code_field: "code",
+        }
 
-    project_details_costcentre_order_list = [
-        expenditure_type_name_field,
-    ]
+    @property
+    def project_details_costcentre_columns(self):
+        return {
+            self.expenditure_type_name_field: "Expenditure type",
+            self.cost_centre_name_field: "Cost Centre",
+            self.cost_centre_code_field: "code",
+        }
+
+    @property
+    def project_details_sub_total(self):
+        return [
+            self.expenditure_type_name_field,
+        ]
+
+    @property
+    def project_details_dit_order_list(self):
+        return [
+            self.group_name_field,
+            self.expenditure_type_name_field,
+        ]
+
+    @property
+    def project_details_group_order_list(self):
+        return [
+            self.directorate_name_field,
+            self.expenditure_type_name_field,
+        ]
+
+    @property
+    def project_details_directorate_order_list(self):
+        return [
+            self.cost_centre_name_field,
+            self.expenditure_type_name_field,
+        ]
+
+    @property
+    def project_details_costcentre_order_list(self):
+        return [
+            self.expenditure_type_name_field,
+        ]
+
 
     project_details_hierarchy_order_list = [
         project_details_dit_order_list,
@@ -327,107 +441,114 @@ class ViewForecastFields():
         project_details_costcentre_columns,
     ]
 
-    project_details_hierarchy_sub_total_column = [
-        group_name_field,
-        directorate_name_field,
-        cost_centre_name_field,
-        cost_centre_name_field,
-    ]
+    @property
+    def project_details_hierarchy_sub_total_column(self):
+        return [
+            self.group_name_field,
+            self.directorate_name_field,
+            self.cost_centre_name_field,
+            self.cost_centre_name_field,
+        ]
 
+    @property
+    def DEFAULT_PIVOT_COLUMNS(self):
+        return {
+            self.cost_centre_code_field: "Cost Centre code",
+            self.cost_centre_name_field: "Cost Centre description",
+            self.nac_code_field: "Natural Account code",
+            self.nac_name_field: "Natural Account code description",
+            self.programme_code_field: "Programme code",
+            self.programme_name_field: "Programme code description",
+            self.analysis1_code_field: "Contract code",
+            self.analysis1_name_field: "Contract description",
+            self.analysis2_code_field: "Market code",
+            self.analysis2_name_field: "Market description",
+            self.project_code_field: "Project code",
+            self.project_name_field: "Project description",
+        }
 
-    DEFAULT_PIVOT_COLUMNS = {
-        cost_centre_code_field: "Cost Centre code",
-        cost_centre_name_field: "Cost Centre description",
-        nac_code_field: "Natural Account code",
-        nac_name_field: "Natural Account code description",
-        programme_code_field: "Programme code",
-        programme_name_field: "Programme code description",
-        analysis1_code_field: "Contract code",
-        analysis1_name_field: "Contract description",
-        analysis2_code_field: "Market code",
-        analysis2_name_field: "Market description",
-        project_code_field: "Project code",
-        project_name_field: "Project description",
-    }
+    @property
+    def VIEW_FORECAST_DOWNLOAD_COLUMNS(self):
+        return {
+            self.group_name_field: "Group name",
+            self.group_code_field: "Group code",
+            self.directorate_name_field: "Directorate name",
+            self.directorate_code_field: "Directorate code",
+            self.cost_centre_name_field: "Cost Centre name",
+            self.cost_centre_code_field: "Cost Centre code",
+            self.budget_grouping_field: "Budget grouping",
+            self.expenditure_type_name_field: "Expenditure type",
+            self.expenditure_type_description_field: "Expenditure type description",
+            self.budget_type_field: "Budget Type",
+            self.budget_category_name_field: "Budget category",
+            self.budget_nac_field: "Budget/Forecast NAC",
+            self.budget_nac_description_field: "Budget/Forecast NAC description",
+            self.nac_code_field: "PO/Actual NAC",
+            self.nac_name_field: "Natural Account code description",
+            self.nac_expenditure_type_field: "NAC Expenditure type",
+            self.programme_code_field: "Programme code",
+            self.programme_name_field: "Programme code description",
+            self.analysis1_code_field: "Contract code",
+            self.analysis1_name_field: "Contract description",
+            self.analysis2_code_field: "Market code",
+            self.analysis2_name_field: "Market description",
+            self.project_code_field: "Project code",
+            self.project_name_field: "Project description",
+        }
 
+    @property
+    def EDIT_KEYS_DOWNLOAD(self):
+         return{
+            self.programme_code_field: 'Programme code',
+            self.programme_name_field: "Programme code Description",
+            self.nac_code_field: 'Natural Account code',
+            self.nac_name_field: "Natural Account Code Description",
+            self.analysis1_code_field: 'Contract Code',
+            self.analysis2_code_field: 'Market Code',
+            self.project_code_field: 'Project Code',
+        }
 
-    VIEW_FORECAST_DOWNLOAD_COLUMNS = {
-        group_name_field: "Group name",
-        group_code_field: "Group code",
-        directorate_name_field: "Directorate name",
-        directorate_code_field: "Directorate code",
-        cost_centre_name_field: "Cost Centre name",
-        cost_centre_code_field: "Cost Centre code",
-        budget_grouping_field: "Budget grouping",
-        expenditure_type_name_field: "Expenditure type",
-        expenditure_type_description_field: "Expenditure type description",
-        budget_type_field: "Budget Type",
-        budget_category_name_field: "Budget category",
-        budget_nac_field: "Budget/Forecast NAC",
-        budget_nac_description_field: "Budget/Forecast NAC description",
-        nac_code_field: "PO/Actual NAC",
-        nac_name_field: "Natural Account code description",
-        nac_expenditure_type_field: "NAC Expenditure type",
-        programme_code_field: "Programme code",
-        programme_name_field: "Programme code description",
-        analysis1_code_field: "Contract code",
-        analysis1_name_field: "Contract description",
-        analysis2_code_field: "Market code",
-        analysis2_name_field: "Market description",
-        project_code_field: "Project code",
-        project_name_field: "Project description",
-    }
+    @property
+    def EDIT_FORECAST_DOWNLOAD_COLUMNS(self):
+        return {
+            self.group_name_field: "Group name",
+            self.group_code_field: "Group code",
+            self.directorate_name_field: "Directorate name",
+            self.directorate_code_field: "Directorate code",
+            self.cost_centre_name_field: "Cost Centre name",
+            self.cost_centre_code_field: "Cost Centre code",
+            self.budget_grouping_field: "Budget Grouping",
+            self.expenditure_type_name_field: "Expenditure type",
+            self.expenditure_type_description_field: "Expenditure type description",
+            self.budget_type_field: "Budget type",
+            self.budget_category_name_field: "Budget Category",
+            self.budget_nac_field: "Budget/Forecast NAC",
+            self.budget_nac_description_field: "Budget/Forecast NAC Description",
+            self.nac_expenditure_type_field: "NAC Expenditure Type",
+            self.analysis1_name_field: "Contract Description",
+            self.analysis2_name_field: "Market Description",
+            self.project_name_field: "Project Description",
+        }
 
+    @property
+    def EDIT_FORECAST_DOWNLOAD_ORDER(self):
+        return [
+            self.budget_type_edit_order_field,
+            self.programme_code_field,
+            self.budget_grouping_order_field,
+            self.nac_code_field,
+        ]
 
-    EDIT_KEYS_DOWNLOAD = {
-        programme_code_field: 'Programme code',
-        programme_name_field: "Programme code Description",
-        nac_code_field: 'Natural Account code',
-        nac_name_field: "Natural Account Code Description",
-        analysis1_code_field: 'Contract Code',
-        analysis2_code_field: 'Market Code',
-        project_code_field: 'Project Code',
-    }
-
-
-    EDIT_FORECAST_DOWNLOAD_COLUMNS = {
-        group_name_field: "Group name",
-        group_code_field: "Group code",
-        directorate_name_field: "Directorate name",
-        directorate_code_field: "Directorate code",
-        cost_centre_name_field: "Cost Centre name",
-        cost_centre_code_field: "Cost Centre code",
-        budget_grouping_field: "Budget Grouping",
-        expenditure_type_name_field: "Expenditure type",
-        expenditure_type_description_field: "Expenditure type description",
-        budget_type_field: "Budget type",
-        budget_category_name_field: "Budget Category",
-        budget_nac_field: "Budget/Forecast NAC",
-        budget_nac_description_field: "Budget/Forecast NAC Description",
-        nac_expenditure_type_field: "NAC Expenditure Type",
-        analysis1_name_field: "Contract Description",
-        analysis2_name_field: "Market Description",
-        project_name_field: "Project Description",
-    }
-
-    EDIT_FORECAST_DOWNLOAD_ORDER = [
-        budget_type_edit_order_field,
-        programme_code_field,
-        budget_grouping_order_field,
-        nac_code_field,
-    ]
-
-
-    MI_REPORT_DOWNLOAD_COLUMNS = {
-        cost_centre_code_field: "Cost Centre code",
-        nac_code_field: 'Natural Account code',
-        programme_code_field: 'Programme code',
-        analysis1_code_field: 'Contract Code',
-        analysis2_code_field: 'Market Code',
-        project_code_field: 'Project Code',
-    }
-
-
+    @property
+    def MI_REPORT_DOWNLOAD_COLUMNS(self):
+        return {
+            self.cost_centre_code_field: "Cost Centre code",
+            self.nac_code_field: 'Natural Account code',
+            self.programme_code_field: 'Programme code',
+            self.analysis1_code_field: 'Contract Code',
+            self.analysis2_code_field: 'Market Code',
+            self.project_code_field: 'Project Code',
+        }
 
 
 def edit_forecast_order():
