@@ -11,89 +11,89 @@ class ViewForecastFields():
 
     financial_code_prefix = "financial_code__"
     # indicates if DEL, AME, ADMIN
-    BUDGET_TYPE = f"{financial_code_prefix}programme__budget_type__budget_type_display"
-    BUDGET_TYPE_ORDER = f"{financial_code_prefix}programme__budget_type__budget_type_display_order"  # noqa
-    BUDGET_TYPE_EDIT_ORDER = f"{financial_code_prefix}programme__budget_type__budget_type_edit_display_order"  # noqa
+    budget_type_field = f"{financial_code_prefix}programme__budget_type__budget_type_display"
+    budget_type_order_field = f"{financial_code_prefix}programme__budget_type__budget_type_display_order"  # noqa
+    budget_type_edit_order_field = f"{financial_code_prefix}programme__budget_type__budget_type_edit_display_order"  # noqa
 
     # Categories defined by DIT: i.e. Consultancy, Contingency, Contractors, etc
-    BUDGET_CATEGORY_ID = f"{financial_code_prefix}natural_account_code__expenditure_category__id"  # noqa
-    BUDGET_CATEGORY_NAME = f"{financial_code_prefix}natural_account_code__expenditure_category__grouping_description"   # noqa
+    budget_category_id_field = f"{financial_code_prefix}natural_account_code__expenditure_category__id"  # noqa
+    budget_category_name_field = f"{financial_code_prefix}natural_account_code__expenditure_category__grouping_description"   # noqa
 
     # PAY, NON-PAY, CAPITAL, NON-CASH
-    BUDGET_GROUPING = f"{financial_code_prefix}natural_account_code__expenditure_category__NAC_category__NAC_category_description"   # noqa
-    BUDGET_GROUPING_ORDERING = f"{financial_code_prefix}natural_account_code__expenditure_category__NAC_category__NAC_category_display_order"   # noqa
-    BUDGET_NAC_CODE = f"{financial_code_prefix}natural_account_code__expenditure_category__linked_budget_code"  # noqa
-    BUDGET_NAC_CODE_DESCRIPTION = f"{financial_code_prefix}natural_account_code__expenditure_category__linked_budget_code__natural_account_code_description"  # noqa
+    budget_grouping_field = f"{financial_code_prefix}natural_account_code__expenditure_category__NAC_category__NAC_category_description"   # noqa
+    budget_grouping_order_field = f"{financial_code_prefix}natural_account_code__expenditure_category__NAC_category__NAC_category_display_order"   # noqa
+    budget_nac_field = f"{financial_code_prefix}natural_account_code__expenditure_category__linked_budget_code"  # noqa
+    budget_nac_description_field = f"{financial_code_prefix}natural_account_code__expenditure_category__linked_budget_code__natural_account_code_description"  # noqa
 
     # Admin, Capital or Programme
-    FORECAST_EXPENDITURE_TYPE_NAME = f"{financial_code_prefix}forecast_expenditure_type__forecast_expenditure_type_name"  # noqa
-    FORECAST_EXPENDITURE_TYPE_DESCRIPTION = f"{financial_code_prefix}forecast_expenditure_type__forecast_expenditure_type_description"  # noqa
-    FORECAST_EXPENDITURE_TYPE_ORDER = f"{financial_code_prefix}forecast_expenditure_type__forecast_expenditure_type_display_order"   # noqa
+    expenditure_type_name_field = f"{financial_code_prefix}forecast_expenditure_type__forecast_expenditure_type_name"  # noqa
+    expenditure_type_description_field = f"{financial_code_prefix}forecast_expenditure_type__forecast_expenditure_type_description"  # noqa
+    expenditure_type_order_field = f"{financial_code_prefix}forecast_expenditure_type__forecast_expenditure_type_display_order"   # noqa
 
-    PROGRAMME_CODE = f"{financial_code_prefix}programme__programme_code"
-    PROGRAMME_NAME = f"{financial_code_prefix}programme__programme_description"
+    programme_code_field = f"{financial_code_prefix}programme__programme_code"
+    programme_name_field = f"{financial_code_prefix}programme__programme_description"
 
-    COST_CENTRE_NAME = f"{financial_code_prefix}cost_centre__cost_centre_name"
-    COST_CENTRE_CODE = f"{financial_code_prefix}cost_centre__cost_centre_code"
+    cost_centre_name_field = f"{financial_code_prefix}cost_centre__cost_centre_name"
+    cost_centre_code_field = f"{financial_code_prefix}cost_centre__cost_centre_code"
 
-    DIRECTORATE_NAME = f"{financial_code_prefix}cost_centre__directorate__directorate_name"
-    DIRECTORATE_CODE = f"{financial_code_prefix}cost_centre__directorate__directorate_code"
+    directorate_name_field = f"{financial_code_prefix}cost_centre__directorate__directorate_name"
+    directorate_code_field = f"{financial_code_prefix}cost_centre__directorate__directorate_code"
 
-    GROUP_NAME = f"{financial_code_prefix}cost_centre__directorate__group__group_name"
-    GROUP_CODE = f"{financial_code_prefix}cost_centre__directorate__group__group_code"
+    group_name_field = f"{financial_code_prefix}cost_centre__directorate__group__group_name"
+    group_code_field = f"{financial_code_prefix}cost_centre__directorate__group__group_code"
 
-    NAC_CODE = f"{financial_code_prefix}natural_account_code__natural_account_code"
-    NAC_NAME = f"{financial_code_prefix}natural_account_code__natural_account_code_description"  # noqa
-    NAC_EXPENDITURE_TYPE = f"{financial_code_prefix}natural_account_code__economic_budget_code"  # noqa
+    nac_code_field = f"{financial_code_prefix}natural_account_code__natural_account_code"
+    nac_name_field = f"{financial_code_prefix}natural_account_code__natural_account_code_description"  # noqa
+    nac_expenditure_type_field = f"{financial_code_prefix}natural_account_code__economic_budget_code"  # noqa
 
 
-    PROJECT_CODE = f"{financial_code_prefix}project_code__project_code"
-    PROJECT_NAME = f"{financial_code_prefix}project_code__project_description"
+    project_code_field = f"{financial_code_prefix}project_code__project_code"
+    project_name_field = f"{financial_code_prefix}project_code__project_description"
 
-    ANALYSIS1_CODE = f"{financial_code_prefix}analysis1_code__analysis1_code"
-    ANALYSIS1_NAME = f"{financial_code_prefix}analysis1_code__analysis1_description"
+    analysis1_code_field = f"{financial_code_prefix}analysis1_code__analysis1_code"
+    analysis1_name_field = f"{financial_code_prefix}analysis1_code__analysis1_description"
 
-    ANALYSIS2_CODE = f"{financial_code_prefix}analysis2_code__analysis2_code"
-    ANALYSIS2_NAME = f"{financial_code_prefix}analysis2_code__analysis2_description"
+    analysis2_code_field = f"{financial_code_prefix}analysis2_code__analysis2_code"
+    analysis2_name_field = f"{financial_code_prefix}analysis2_code__analysis2_description"
 
     cost_centre_columns = {
-        BUDGET_TYPE: "Budget type",
-        COST_CENTRE_NAME: "Cost Centre description",
-        COST_CENTRE_CODE: "code",
+        budget_type_field: "Budget type",
+        cost_centre_name_field: "Cost Centre description",
+        cost_centre_code_field: "code",
     }
 
     directorate_columns = {
-        BUDGET_TYPE: "Budget Type",
-        DIRECTORATE_NAME: "Directorate description",
-        DIRECTORATE_CODE: "code",
+        budget_type_field: "Budget Type",
+        directorate_name_field: "Directorate description",
+        directorate_code_field: "code",
     }
 
     group_columns = {
-        BUDGET_TYPE: "Budget Type",
-        GROUP_NAME: "Departmental Group description",
-        GROUP_CODE: "code",
+        budget_type_field: "Budget Type",
+        group_name_field: "Departmental Group description",
+        group_code_field: "code",
     }
 
-    hierarchy_sub_total = [BUDGET_TYPE]
+    hierarchy_sub_total = [budget_type_field]
 
     # programme data
     programme_columns = {
-        BUDGET_TYPE: "Hidden",
-        FORECAST_EXPENDITURE_TYPE_DESCRIPTION: "Hidden",
-        FORECAST_EXPENDITURE_TYPE_NAME: "Expenditure type",
-        PROGRAMME_NAME: "Programme code",
-        PROGRAMME_CODE: "code",
+        budget_type_field: "Hidden",
+        expenditure_type_description_field: "Hidden",
+        expenditure_type_name_field: "Expenditure type",
+        programme_name_field: "Programme code",
+        programme_code_field: "code",
     }
 
     programme_order_list = [
-        BUDGET_TYPE_ORDER,
-        FORECAST_EXPENDITURE_TYPE_ORDER,
+        budget_type_order_field,
+        expenditure_type_order_field,
     ]
     programme_sub_total = [
-        BUDGET_TYPE,
-        FORECAST_EXPENDITURE_TYPE_DESCRIPTION,
+        budget_type_field,
+        expenditure_type_description_field,
     ]
-    programme_display_sub_total_column = PROGRAMME_NAME
+    programme_display_sub_total_column = programme_name_field
 
     programme_detail_view = [
         'programme_details_dit',
@@ -103,37 +103,37 @@ class ViewForecastFields():
 
     # Expenditure data
     expenditure_columns = {
-        BUDGET_TYPE: "Hidden",
-        BUDGET_CATEGORY_ID: "Hidden",
-        BUDGET_GROUPING: "Budget grouping",
-        BUDGET_CATEGORY_NAME: "Budget category",
+        budget_type_field: "Hidden",
+        budget_category_id_field: "Hidden",
+        budget_grouping_field: "Budget grouping",
+        budget_category_name_field: "Budget category",
     }
     expenditure_sub_total = [
-        BUDGET_TYPE,
-        BUDGET_GROUPING,
+        budget_type_field,
+        budget_grouping_field,
     ]
-    expenditure_display_sub_total_column = BUDGET_CATEGORY_NAME
+    expenditure_display_sub_total_column = budget_category_name_field
 
     expenditure_order_list = [
-        BUDGET_TYPE_ORDER,
-        BUDGET_GROUPING_ORDERING,
+        budget_type_order_field,
+        budget_grouping_order_field,
     ]
 
     # Project data
     project_columns = {
-        PROJECT_NAME: "Project",
-        PROJECT_CODE: "code",
-        FORECAST_EXPENDITURE_TYPE_ORDER: "Hidden",
-        FORECAST_EXPENDITURE_TYPE_NAME: "Expenditure type",
+        project_name_field: "Project",
+        project_code_field: "code",
+        expenditure_type_order_field: "Hidden",
+        expenditure_type_name_field: "Expenditure type",
     }
     project_order_list = [
-        PROJECT_CODE,
-        FORECAST_EXPENDITURE_TYPE_ORDER,
+        project_code_field,
+        expenditure_type_order_field,
     ]
     project_sub_total = [
-        PROJECT_NAME,
+        project_name_field,
     ]
-    project_display_sub_total_column = PROJECT_CODE
+    project_display_sub_total_column = project_code_field
 
     project_detail_view = [
         'project_details_dit',
@@ -145,9 +145,9 @@ class ViewForecastFields():
     filter_codes = ['', 'group_code', 'directorate_code', 'cost_centre_code']
     filter_selectors = [
         '',
-        GROUP_CODE,
-        DIRECTORATE_CODE,
-        COST_CENTRE_CODE,
+        group_code_field,
+        directorate_code_field,
+        cost_centre_code_field,
     ]
 
     hierarchy_columns = [
@@ -158,23 +158,23 @@ class ViewForecastFields():
     ]
 
     hierarchy_sub_total_column = [
-        GROUP_NAME,
-        DIRECTORATE_NAME,
-        COST_CENTRE_NAME,
-        COST_CENTRE_NAME,
+        group_name_field,
+        directorate_name_field,
+        cost_centre_name_field,
+        cost_centre_name_field,
     ]
 
     hierarchy_order_lists = [
-        [BUDGET_TYPE_ORDER, GROUP_NAME, ],
-        [BUDGET_TYPE_ORDER, DIRECTORATE_NAME, ],
-        [BUDGET_TYPE_ORDER, COST_CENTRE_NAME, ],
-        [BUDGET_TYPE_ORDER, ]
+        [budget_type_order_field, group_name_field, ],
+        [budget_type_order_field, directorate_name_field, ],
+        [budget_type_order_field, cost_centre_name_field, ],
+        [budget_type_order_field, ]
     ]
 
     hierarchy_view_link_column = [
-        GROUP_NAME,
-        DIRECTORATE_NAME,
-        COST_CENTRE_NAME,
+        group_name_field,
+        directorate_name_field,
+        cost_centre_name_field,
     ]
 
     hierarchy_view = [
@@ -184,9 +184,9 @@ class ViewForecastFields():
     ]
 
     hierarchy_view_code = [
-        GROUP_CODE,
-        DIRECTORATE_CODE,
-        COST_CENTRE_CODE,
+        group_code_field,
+        directorate_code_field,
+        cost_centre_code_field,
     ]
 
 
@@ -198,54 +198,54 @@ class ViewForecastFields():
     ]
     # NAC data
     nac_columns = {
-        BUDGET_CATEGORY_NAME: "Hidden",
-        NAC_NAME: "Natural Account code",
-        NAC_CODE: "code",
+        budget_category_name_field: "Hidden",
+        nac_name_field: "Natural Account code",
+        nac_code_field: "code",
     }
     nac_sub_total = [
-        BUDGET_CATEGORY_NAME,
+        budget_category_name_field,
     ]
-    nac_display_sub_total_column = NAC_NAME
+    nac_display_sub_total_column = nac_name_field
 
     nac_order_list = [
-        NAC_NAME,
+        nac_name_field,
     ]
 
     # programme details data
     programme_details_dit_columns = {
-        PROGRAMME_NAME: "Hidden",
-        FORECAST_EXPENDITURE_TYPE_NAME: "Expenditure type",
-        GROUP_NAME: "Departmental Group",
-        GROUP_CODE: "code",
+        programme_name_field: "Hidden",
+        expenditure_type_name_field: "Expenditure type",
+        group_name_field: "Departmental Group",
+        group_code_field: "code",
     }
     programme_details_group_columns = {
-        PROGRAMME_NAME: "Hidden",
-        FORECAST_EXPENDITURE_TYPE_NAME: "Expenditure type",
-        DIRECTORATE_NAME: "Directorate",
-        DIRECTORATE_CODE: "code",
+        programme_name_field: "Hidden",
+        expenditure_type_name_field: "Expenditure type",
+        directorate_name_field: "Directorate",
+        directorate_code_field: "code",
     }
 
     programme_details_directorate_columns = {
-        PROGRAMME_NAME: "Hidden",
-        FORECAST_EXPENDITURE_TYPE_NAME: "Expenditure type",
-        COST_CENTRE_NAME: "Cost Centre",
-        COST_CENTRE_CODE: "code",
+        programme_name_field: "Hidden",
+        expenditure_type_name_field: "Expenditure type",
+        cost_centre_name_field: "Cost Centre",
+        cost_centre_code_field: "code",
     }
 
     programme_details_sub_total = [
-        PROGRAMME_NAME,
+        programme_name_field,
     ]
 
-    programme_details_display_sub_total_column = FORECAST_EXPENDITURE_TYPE_NAME
+    programme_details_display_sub_total_column = expenditure_type_name_field
 
     programme_details_dit_order_list = [
-        GROUP_NAME,
+        group_name_field,
     ]
     programme_details_group_order_list = [
-        DIRECTORATE_NAME,
+        directorate_name_field,
     ]
     programme_details_directorate_order_list = [
-        COST_CENTRE_NAME,
+        cost_centre_name_field,
     ]
 
     programme_details_hierarchy_order_list = [
@@ -263,54 +263,54 @@ class ViewForecastFields():
     ]
 
     programme_details_hierarchy_sub_total_column = [
-        GROUP_NAME,
-        DIRECTORATE_NAME,
-        COST_CENTRE_NAME,
+        group_name_field,
+        directorate_name_field,
+        cost_centre_name_field,
         '',
     ]
 
 
     # Project details views
     project_details_dit_columns = {
-        FORECAST_EXPENDITURE_TYPE_NAME: "Expenditure type",
-        GROUP_NAME: "Departmental Group",
-        GROUP_CODE: "code",
+        expenditure_type_name_field: "Expenditure type",
+        group_name_field: "Departmental Group",
+        group_code_field: "code",
     }
     project_details_group_columns = {
-        FORECAST_EXPENDITURE_TYPE_NAME: "Expenditure type",
-        DIRECTORATE_NAME: "Directorate",
-        DIRECTORATE_CODE: "code",
+        expenditure_type_name_field: "Expenditure type",
+        directorate_name_field: "Directorate",
+        directorate_code_field: "code",
     }
     project_details_directorate_columns = {
-        FORECAST_EXPENDITURE_TYPE_NAME: "Expenditure type",
-        COST_CENTRE_NAME: "Cost Centre",
-        COST_CENTRE_CODE: "code",
+        expenditure_type_name_field: "Expenditure type",
+        cost_centre_name_field: "Cost Centre",
+        cost_centre_code_field: "code",
     }
     project_details_costcentre_columns = {
-        FORECAST_EXPENDITURE_TYPE_NAME: "Expenditure type",
-        COST_CENTRE_NAME: "Cost Centre",
-        COST_CENTRE_CODE: "code",
+        expenditure_type_name_field: "Expenditure type",
+        cost_centre_name_field: "Cost Centre",
+        cost_centre_code_field: "code",
     }
 
     project_details_sub_total = [
-        FORECAST_EXPENDITURE_TYPE_NAME,
+        expenditure_type_name_field,
     ]
 
     project_details_dit_order_list = [
-        GROUP_NAME,
-        FORECAST_EXPENDITURE_TYPE_NAME,
+        group_name_field,
+        expenditure_type_name_field,
     ]
     project_details_group_order_list = [
-        DIRECTORATE_NAME,
-        FORECAST_EXPENDITURE_TYPE_NAME,
+        directorate_name_field,
+        expenditure_type_name_field,
     ]
     project_details_directorate_order_list = [
-        COST_CENTRE_NAME,
-        FORECAST_EXPENDITURE_TYPE_NAME,
+        cost_centre_name_field,
+        expenditure_type_name_field,
     ]
 
     project_details_costcentre_order_list = [
-        FORECAST_EXPENDITURE_TYPE_NAME,
+        expenditure_type_name_field,
     ]
 
     project_details_hierarchy_order_list = [
@@ -328,103 +328,103 @@ class ViewForecastFields():
     ]
 
     project_details_hierarchy_sub_total_column = [
-        GROUP_NAME,
-        DIRECTORATE_NAME,
-        COST_CENTRE_NAME,
-        COST_CENTRE_NAME,
+        group_name_field,
+        directorate_name_field,
+        cost_centre_name_field,
+        cost_centre_name_field,
     ]
 
 
     DEFAULT_PIVOT_COLUMNS = {
-        COST_CENTRE_CODE: "Cost Centre code",
-        COST_CENTRE_NAME: "Cost Centre description",
-        NAC_CODE: "Natural Account code",
-        NAC_NAME: "Natural Account code description",
-        PROGRAMME_CODE: "Programme code",
-        PROGRAMME_NAME: "Programme code description",
-        ANALYSIS1_CODE: "Contract code",
-        ANALYSIS1_NAME: "Contract description",
-        ANALYSIS2_CODE: "Market code",
-        ANALYSIS2_NAME: "Market description",
-        PROJECT_CODE: "Project code",
-        PROJECT_NAME: "Project description",
+        cost_centre_code_field: "Cost Centre code",
+        cost_centre_name_field: "Cost Centre description",
+        nac_code_field: "Natural Account code",
+        nac_name_field: "Natural Account code description",
+        programme_code_field: "Programme code",
+        programme_name_field: "Programme code description",
+        analysis1_code_field: "Contract code",
+        analysis1_name_field: "Contract description",
+        analysis2_code_field: "Market code",
+        analysis2_name_field: "Market description",
+        project_code_field: "Project code",
+        project_name_field: "Project description",
     }
 
 
     VIEW_FORECAST_DOWNLOAD_COLUMNS = {
-        GROUP_NAME: "Group name",
-        GROUP_CODE: "Group code",
-        DIRECTORATE_NAME: "Directorate name",
-        DIRECTORATE_CODE: "Directorate code",
-        COST_CENTRE_NAME: "Cost Centre name",
-        COST_CENTRE_CODE: "Cost Centre code",
-        BUDGET_GROUPING: "Budget grouping",
-        FORECAST_EXPENDITURE_TYPE_NAME: "Expenditure type",
-        FORECAST_EXPENDITURE_TYPE_DESCRIPTION: "Expenditure type description",
-        BUDGET_TYPE: "Budget Type",
-        BUDGET_CATEGORY_NAME: "Budget category",
-        BUDGET_NAC_CODE: "Budget/Forecast NAC",
-        BUDGET_NAC_CODE_DESCRIPTION: "Budget/Forecast NAC description",
-        NAC_CODE: "PO/Actual NAC",
-        NAC_NAME: "Natural Account code description",
-        NAC_EXPENDITURE_TYPE: "NAC Expenditure type",
-        PROGRAMME_CODE: "Programme code",
-        PROGRAMME_NAME: "Programme code description",
-        ANALYSIS1_CODE: "Contract code",
-        ANALYSIS1_NAME: "Contract description",
-        ANALYSIS2_CODE: "Market code",
-        ANALYSIS2_NAME: "Market description",
-        PROJECT_CODE: "Project code",
-        PROJECT_NAME: "Project description",
+        group_name_field: "Group name",
+        group_code_field: "Group code",
+        directorate_name_field: "Directorate name",
+        directorate_code_field: "Directorate code",
+        cost_centre_name_field: "Cost Centre name",
+        cost_centre_code_field: "Cost Centre code",
+        budget_grouping_field: "Budget grouping",
+        expenditure_type_name_field: "Expenditure type",
+        expenditure_type_description_field: "Expenditure type description",
+        budget_type_field: "Budget Type",
+        budget_category_name_field: "Budget category",
+        budget_nac_field: "Budget/Forecast NAC",
+        budget_nac_description_field: "Budget/Forecast NAC description",
+        nac_code_field: "PO/Actual NAC",
+        nac_name_field: "Natural Account code description",
+        nac_expenditure_type_field: "NAC Expenditure type",
+        programme_code_field: "Programme code",
+        programme_name_field: "Programme code description",
+        analysis1_code_field: "Contract code",
+        analysis1_name_field: "Contract description",
+        analysis2_code_field: "Market code",
+        analysis2_name_field: "Market description",
+        project_code_field: "Project code",
+        project_name_field: "Project description",
     }
 
 
     EDIT_KEYS_DOWNLOAD = {
-        PROGRAMME_CODE: 'Programme code',
-        PROGRAMME_NAME: "Programme code Description",
-        NAC_CODE: 'Natural Account code',
-        NAC_NAME: "Natural Account Code Description",
-        ANALYSIS1_CODE: 'Contract Code',
-        ANALYSIS2_CODE: 'Market Code',
-        PROJECT_CODE: 'Project Code',
+        programme_code_field: 'Programme code',
+        programme_name_field: "Programme code Description",
+        nac_code_field: 'Natural Account code',
+        nac_name_field: "Natural Account Code Description",
+        analysis1_code_field: 'Contract Code',
+        analysis2_code_field: 'Market Code',
+        project_code_field: 'Project Code',
     }
 
 
     EDIT_FORECAST_DOWNLOAD_COLUMNS = {
-        GROUP_NAME: "Group name",
-        GROUP_CODE: "Group code",
-        DIRECTORATE_NAME: "Directorate name",
-        DIRECTORATE_CODE: "Directorate code",
-        COST_CENTRE_NAME: "Cost Centre name",
-        COST_CENTRE_CODE: "Cost Centre code",
-        BUDGET_GROUPING: "Budget Grouping",
-        FORECAST_EXPENDITURE_TYPE_NAME: "Expenditure type",
-        FORECAST_EXPENDITURE_TYPE_DESCRIPTION: "Expenditure type description",
-        BUDGET_TYPE: "Budget type",
-        BUDGET_CATEGORY_NAME: "Budget Category",
-        BUDGET_NAC_CODE: "Budget/Forecast NAC",
-        BUDGET_NAC_CODE_DESCRIPTION: "Budget/Forecast NAC Description",
-        NAC_EXPENDITURE_TYPE: "NAC Expenditure Type",
-        ANALYSIS1_NAME: "Contract Description",
-        ANALYSIS2_NAME: "Market Description",
-        PROJECT_NAME: "Project Description",
+        group_name_field: "Group name",
+        group_code_field: "Group code",
+        directorate_name_field: "Directorate name",
+        directorate_code_field: "Directorate code",
+        cost_centre_name_field: "Cost Centre name",
+        cost_centre_code_field: "Cost Centre code",
+        budget_grouping_field: "Budget Grouping",
+        expenditure_type_name_field: "Expenditure type",
+        expenditure_type_description_field: "Expenditure type description",
+        budget_type_field: "Budget type",
+        budget_category_name_field: "Budget Category",
+        budget_nac_field: "Budget/Forecast NAC",
+        budget_nac_description_field: "Budget/Forecast NAC Description",
+        nac_expenditure_type_field: "NAC Expenditure Type",
+        analysis1_name_field: "Contract Description",
+        analysis2_name_field: "Market Description",
+        project_name_field: "Project Description",
     }
 
     EDIT_FORECAST_DOWNLOAD_ORDER = [
-        BUDGET_TYPE_EDIT_ORDER,
-        PROGRAMME_CODE,
-        BUDGET_GROUPING_ORDERING,
-        NAC_CODE,
+        budget_type_edit_order_field,
+        programme_code_field,
+        budget_grouping_order_field,
+        nac_code_field,
     ]
 
 
     MI_REPORT_DOWNLOAD_COLUMNS = {
-        COST_CENTRE_CODE: "Cost Centre code",
-        NAC_CODE: 'Natural Account code',
-        PROGRAMME_CODE: 'Programme code',
-        ANALYSIS1_CODE: 'Contract Code',
-        ANALYSIS2_CODE: 'Market Code',
-        PROJECT_CODE: 'Project Code',
+        cost_centre_code_field: "Cost Centre code",
+        nac_code_field: 'Natural Account code',
+        programme_code_field: 'Programme code',
+        analysis1_code_field: 'Contract Code',
+        analysis2_code_field: 'Market Code',
+        project_code_field: 'Project Code',
     }
 
 

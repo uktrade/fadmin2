@@ -47,7 +47,7 @@ def export_forecast_data_dit(request, period):
 @user_passes_test(can_view_forecasts, login_url="index")
 def export_forecast_data_group(request, group_code, period):
     fields = ViewForecastFields(period)
-    filter = {fields.GROUP_CODE: group_code}
+    filter = {fields.group_code_field: group_code}
     title = f"{group_code} {get_period_for_title(period)}"
     return export_forecast_data_generic(period, filter, title)
 
@@ -55,7 +55,7 @@ def export_forecast_data_group(request, group_code, period):
 @user_passes_test(can_view_forecasts, login_url="index")
 def export_forecast_data_directorate(request, directorate_code, period):
     fields = ViewForecastFields(period)
-    filter = {fields.DIRECTORATE_CODE: directorate_code}
+    filter = {fields.directorate_code_field: directorate_code}
     title = f"{directorate_code} {get_period_for_title(period)}"
     return export_forecast_data_generic(period, filter, title)
 
@@ -63,7 +63,7 @@ def export_forecast_data_directorate(request, directorate_code, period):
 @user_passes_test(can_view_forecasts, login_url="index")
 def export_forecast_data_cost_centre(request, cost_centre, period):
     fields = ViewForecastFields(period)
-    filter = {fields.COST_CENTRE_CODE: cost_centre}
+    filter = {fields.cost_centre_code_field: cost_centre}
     title = f"{cost_centre} {get_period_for_title(period)}"
     return export_forecast_data_generic(period, filter, title)
 
@@ -74,9 +74,9 @@ def export_forecast_data_expenditure_detail_cost_centre(
 ):
     fields = ViewForecastFields(period)
     filter = {
-        fields.COST_CENTRE_CODE: cost_centre,
-        fields.BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
-        fields.BUDGET_TYPE: f"{budget_type_id}",
+        fields.cost_centre_code_field: cost_centre,
+        fields.budget_category_id_field: f"{expenditure_category_id}",
+        fields.budget_type_field: f"{budget_type_id}",
     }
     title = f"{cost_centre} {get_period_for_title(period)} Expenditure"
     return export_forecast_data_generic(period, filter, title)
@@ -88,9 +88,9 @@ def export_forecast_data_expenditure_detail_directorate(
 ):
     fields = ViewForecastFields(period)
     filter = {
-        fields.DIRECTORATE_CODE: directorate_code,
-        fields.BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
-        fields.BUDGET_TYPE: f"{budget_type_id}",
+        fields.directorate_code_field: directorate_code,
+        fields.budget_category_id_field: f"{expenditure_category_id}",
+        fields.budget_type_field: f"{budget_type_id}",
     }
     title = f"{directorate_code} {get_period_for_title(period)} Expenditure"
     return export_forecast_data_generic(period, filter, title)
@@ -102,9 +102,9 @@ def export_forecast_data_expenditure_detail_group(
 ):
     fields = ViewForecastFields(period)
     filter = {
-        fields.GROUP_CODE: group_code,
-        fields.BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
-        fields.BUDGET_TYPE: f"{budget_type_id}",
+        fields.group_code_field: group_code,
+        fields.budget_category_id_field: f"{expenditure_category_id}",
+        fields.budget_type_field: f"{budget_type_id}",
     }
     title = f"{group_code} {get_period_for_title(period)} Expenditure"
     return export_forecast_data_generic(period, filter, title)
@@ -116,8 +116,8 @@ def export_forecast_data_expenditure_dit(
 ):
     fields = ViewForecastFields(period)
     filter = {
-        fields.BUDGET_CATEGORY_ID: f"{expenditure_category_id}",
-        fields.BUDGET_TYPE: f"{budget_type_id}",
+        fields.budget_category_id_field: f"{expenditure_category_id}",
+        fields.budget_type_field: f"{budget_type_id}",
     }
     title = f"DIT {get_period_for_title(period)} Expenditure"
     return export_forecast_data_generic(period, filter, title)
@@ -129,9 +129,9 @@ def export_forecast_data_programme_detail_directorate(
 ):
     fields = ViewForecastFields(period)
     filter = {
-        fields.DIRECTORATE_CODE: directorate_code,
-        fields.PROGRAMME_CODE: f"{programme_code_id}",
-        fields.FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
+        fields.directorate_code_field: directorate_code,
+        fields.programme_code_field: f"{programme_code_id}",
+        fields.expenditure_type_name_field: f"{forecast_expenditure_type_name}",
     }
     title = f"{directorate_code} {programme_code_id} {get_period_for_title(period)}"
     return export_forecast_data_generic(period, filter, title)
@@ -143,9 +143,9 @@ def export_forecast_data_programme_detail_group(
 ):
     fields = ViewForecastFields(period)
     filter = {
-        fields.GROUP_CODE: group_code,
-        fields.PROGRAMME_CODE: f"{programme_code_id}",
-        fields.FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
+        fields.group_code_field: group_code,
+        fields.programme_code_field: f"{programme_code_id}",
+        fields.expenditure_type_name_field: f"{forecast_expenditure_type_name}",
     }
     title = f"{group_code} {programme_code_id} {get_period_for_title(period)}"
     return export_forecast_data_generic(period, filter, title)
@@ -157,8 +157,8 @@ def export_forecast_data_programme_detail_dit(
 ):
     fields = ViewForecastFields(period)
     filter = {
-        fields.PROGRAMME_CODE: f"{programme_code_id}",
-        fields.FORECAST_EXPENDITURE_TYPE_NAME: f"{forecast_expenditure_type_name}",
+        fields.programme_code_field: f"{programme_code_id}",
+        fields.expenditure_type_name_field: f"{forecast_expenditure_type_name}",
     }
     title = f"DIT {programme_code_id} {get_period_for_title(period)}"
     return export_forecast_data_generic(period, filter, title)
@@ -170,8 +170,8 @@ def export_forecast_data_project_detail_cost_centre(
 ):
     fields = ViewForecastFields(period)
     filter = {
-        fields.COST_CENTRE_CODE: cost_centre,
-        fields.PROJECT_CODE: f"{project_code_id}",
+        fields.cost_centre_code_field: cost_centre,
+        fields.project_code_field: f"{project_code_id}",
     }
     title = f"{cost_centre} {project_code_id} {get_period_for_title(period)}"
     return export_forecast_data_generic(period, filter, title)
@@ -183,8 +183,8 @@ def export_forecast_data_project_detail_directorate(
 ):
     fields = ViewForecastFields(period)
     filter = {
-        fields.DIRECTORATE_CODE: directorate_code,
-        fields.PROJECT_CODE: f"{project_code_id}",
+        fields.directorate_code_field: directorate_code,
+        fields.project_code_field: f"{project_code_id}",
     }
     title = f"{directorate_code} {project_code_id} {get_period_for_title(period)}"
     return export_forecast_data_generic(period, filter, title)
@@ -196,8 +196,8 @@ def export_forecast_data_project_detail_group(
 ):
     fields = ViewForecastFields(period)
     filter = {
-        fields.GROUP_CODE: group_code,
-        fields.PROJECT_CODE: f"{project_code_id}",
+        fields.group_code_field: group_code,
+        fields.project_code_field: f"{project_code_id}",
     }
     title = f"{group_code} {project_code_id} {get_period_for_title(period)}"
     return export_forecast_data_generic(period, filter, title)
@@ -207,7 +207,7 @@ def export_forecast_data_project_detail_group(
 def export_forecast_data_project_detail_dit(request, project_code_id, period):
     fields = ViewForecastFields(period)
     filter = {
-        fields.PROJECT_CODE: f"{project_code_id}",
+        fields.project_code_field: f"{project_code_id}",
     }
     title = f"DIT {project_code_id} {get_period_for_title(period)}"
     return export_forecast_data_generic(period, filter, title)
@@ -216,7 +216,7 @@ def export_forecast_data_project_detail_dit(request, project_code_id, period):
 def export_edit_forecast_data(request, cost_centre):
     fields = ViewForecastFields()
     if can_edit_cost_centre(request.user, cost_centre):
-        filter = {fields.COST_CENTRE_CODE: cost_centre}
+        filter = {fields.cost_centre_code_field: cost_centre}
         q = ForecastingDataView.view_data.raw_data_annotated(
             {**fields.EDIT_KEYS_DOWNLOAD, **fields.EDIT_FORECAST_DOWNLOAD_COLUMNS},
             filter,
