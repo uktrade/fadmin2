@@ -14,7 +14,7 @@ def valid_year_for_archiving_actuals(financial_year):
     if (
         obj.chartofaccountdit_archivednaturalcode.all().count()
         & obj.chartofaccountdit_archivedprogrammecode.all().count()
-        & obj.costcentre_historiccostcentre.all().count()
+        & obj.costcentre_archivedcostcentre.all().count()
     ):
         return True
     return False
