@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='financialyear',
-            name='data_archived',
+            name='archived',
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='simplehistoryfinancialyear',
-            name='data_archived',
+            name='archived',
             field=models.BooleanField(default=False),
         ),
         migrations.DeleteModel(

@@ -378,7 +378,7 @@ class FinancialYearAdmin(admin.ModelAdmin):
         "financial_year",
         "financial_year_display",
         "current",
-        "data_archived",
+        "archived",
     )
 
     def get_readonly_fields(self, request, obj=None):
@@ -386,10 +386,6 @@ class FinancialYearAdmin(admin.ModelAdmin):
             return [
                 "financial_year",
             ]
-
-    @property
-    def export_func(self):
-        return export_logentry_iterator
 
 
 admin.site.register(LogEntry, LogEntryAdmin)
