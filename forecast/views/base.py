@@ -17,6 +17,8 @@ from forecast.utils.access_helpers import (
 )
 from forecast.utils.query_fields import ViewForecastFields
 
+from previous_years.models import ArchivedForecastData
+
 
 class NoCostCentreCodeInURLError(Exception):
     pass
@@ -70,12 +72,14 @@ class CostCentrePermissionTest(UserPassesTestMixin):
 class ForecastViewTableMixin(MultiTableMixin):
     # It handles the differences caused by viewing
     # forecasts entered in different period.
+    # the period can also be a previous archived year
     def __init__(self, *args, **kwargs):
         self._period = None
         self._month_list = None
         self._datamodel = None
         self._table_tag = None
         self._field_infos = None
+        self._year = None
         super().__init__(*args, **kwargs)
 
     @property
@@ -91,7 +95,21 @@ class ForecastViewTableMixin(MultiTableMixin):
         return self._period
 
     @property
+    def handling_past_years(self):
+        return self.period > 2000
+
+    @property
+    def year(self):
+        if self._year is None:
+            if self.handling_past_years:
+                self._year = self.period
+            else:
+                self._year = 0
+        return self._year
+
+    @property
     def month_list(self):
+        # returns the list of month with actuals in the selected period.
         if self._month_list is None:
             period = self.period
             if period:
@@ -108,7 +126,10 @@ class ForecastViewTableMixin(MultiTableMixin):
     @property
     def data_model(self):
         if self._datamodel is None:
-            self._datamodel = forecast_budget_view_model[self.period]
+            if self.handling_past_years:
+                self._datamodel = ArchivedForecastData
+            else:
+                self._datamodel = forecast_budget_view_model[self.period]
         return self._datamodel
 
     @property

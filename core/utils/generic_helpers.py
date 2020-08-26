@@ -17,7 +17,7 @@ from core.models import FinancialYear
 
 
 def get_current_financial_year():
-    y = FinancialYear.objects.filter(current=True)
+    y = FinancialYear.objects.filter(current=True).values("financial_year")
     if y:
         current_financial_year = y.last().financial_year
     else:

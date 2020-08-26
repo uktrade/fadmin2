@@ -149,6 +149,9 @@ class FinancialPeriodManager(models.Manager):
         )
 
     def month_sublist(self, month):
+        if month > 15:
+            # needed for displaying previous year outturn
+            month = 15
         return self.period_display_list()[: month]
 
     def actual_month(self):
