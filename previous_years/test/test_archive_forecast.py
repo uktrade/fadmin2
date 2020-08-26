@@ -122,7 +122,7 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
             self.data_worksheet.cell(column=col_index, row=2, value=value1)
             self.data_worksheet.cell(column=col_index, row=3, value=value2)
             self.results.append((value1 + value2) * 100)
-        self.excel_file_name = "dummy.xlsx"
+        self.excel_file_name = os.path.join(os.path.dirname(__file__), 'dummy.xlsx', )
         wb.save(filename=self.excel_file_name)
 
     def test_upload_wrong(self):
@@ -143,7 +143,7 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
         self.assertEqual(ArchivedForecastData.objects.all().count(), 0)
         self.create_workbook()
         call_command(
-            "upload_previous_year", "dummy.xlsx", self.archived_year,
+            "upload_previous_year", self.excel_file_name, self.archived_year,
         )
         self.assertEqual(ArchivedFinancialCode.objects.all().count(), 1)
         self.assertEqual(ArchivedForecastData.objects.all().count(), 1)
