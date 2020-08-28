@@ -142,6 +142,13 @@ class ExpenditureCategoryAbstract(models.Model):
     )
     description = models.CharField(max_length=5000, blank=True, null=True)
     further_description = models.CharField(max_length=5000, blank=True, null=True,)
+    NAC_category = models.ForeignKey(
+        NACCategory,
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        verbose_name="Budget Grouping",
+    )
 
     def __str__(self):
         return str(self.grouping_description)
@@ -162,13 +169,6 @@ class ExpenditureCategory(
         blank=True,
         null=True,
         verbose_name="Budget Code",
-    )
-    NAC_category = models.ForeignKey(
-        NACCategory,
-        on_delete=models.PROTECT,
-        blank=True,
-        null=True,
-        verbose_name="Budget Grouping",
     )
     op_del_category = models.ForeignKey(
         OperatingDeliveryCategory,
@@ -191,7 +191,7 @@ class ArchivedExpenditureCategory(
     linked_budget_code_description = models.CharField(
         max_length=200, verbose_name="Budget Description", blank=True, null=True,
     )
-    NAC_category = models.CharField(
+    NAC_category_description = models.CharField(
         max_length=255, verbose_name="Budget Grouping", blank=True, null=True,
     )
     active = models.BooleanField(default=False)
@@ -208,7 +208,7 @@ class ArchivedExpenditureCategory(
             financial_year=year_obj,
             active=obj.active,
             grouping_description=obj.grouping_description + suffix,
-            NAC_category=obj.NAC_category.NAC_category_description
+            NAC_category_description=obj.NAC_category.NAC_category_description
             if obj.NAC_category
             else None,
             description=obj.description,

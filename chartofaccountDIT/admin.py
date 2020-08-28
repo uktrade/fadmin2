@@ -334,10 +334,10 @@ class HistoricalExpenditureCategoryAdmin(AdminReadOnly, AdminExport):
     list_display = [
         "grouping_description",
         "description",
-        "NAC_category",
+        "NAC_category_description",
         "linked_budget_code",
     ]
-    list_filter = ("NAC_category", ("financial_year", RelatedDropdownFilter))
+    list_filter = ("NAC_category_description", ("financial_year", RelatedDropdownFilter))
 
     fields = (
         "financial_year",
@@ -346,7 +346,7 @@ class HistoricalExpenditureCategoryAdmin(AdminReadOnly, AdminExport):
         "further_description",
         "linked_budget_code",
         "linked_budget_code_description",
-        "NAC_category",
+        "NAC_category_description",
         "archived",
     )
 

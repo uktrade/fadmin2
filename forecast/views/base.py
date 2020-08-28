@@ -6,6 +6,8 @@ from django.views.generic.edit import FormView
 
 from django_tables2 import MultiTableMixin
 
+from core.models import FinancialYear
+
 from end_of_month.models import forecast_budget_view_model
 
 from forecast.forms import ForecastPeriodForm
@@ -137,11 +139,16 @@ class ForecastViewTableMixin(MultiTableMixin):
         if self._table_tag is None:
             period = self.period
             if period:
-                # We are displaying historical forecast
-                forecast_period_obj = FinancialPeriod.objects.get(pk=period)
+                if period < 2000:
+                    # We are displaying historical forecast
+                    forecast_period_obj = FinancialPeriod.objects.get(pk=period)
+                    period_name = forecast_period_obj.period_long_name
+                else:
+                    financial_year_obj = FinancialYear.objects.get(pk=period)
+                    period_name = financial_year_obj.financial_year_display
                 self._table_tag = (
-                    f"Historical data for {forecast_period_obj.period_long_name}"
-                )
+                        f"Historical data for {period_name}"
+                    )
             else:
                 self._table_tag = ""
         return self._table_tag
