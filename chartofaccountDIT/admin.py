@@ -1,8 +1,6 @@
 from django.contrib import admin
 
-from django_admin_listfilter_dropdown.filters import (
-    RelatedDropdownFilter,
-)
+from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
 from chartofaccountDIT.exportcsv import (
     _export_comm_cat_iterator,
@@ -337,7 +335,10 @@ class HistoricalExpenditureCategoryAdmin(AdminReadOnly, AdminExport):
         "NAC_category_description",
         "linked_budget_code",
     ]
-    list_filter = ("NAC_category_description", ("financial_year", RelatedDropdownFilter))
+    list_filter = (
+        "NAC_category_description",
+        ("financial_year", RelatedDropdownFilter),
+    )
 
     fields = (
         "financial_year",
@@ -413,7 +414,7 @@ class ProgrammeAdmin(AdminActiveField, AdminImportExtraExport):
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser:
-            return["created", "updated"]
+            return ["created", "updated"]
         elif request.user.groups.filter(name="Finance Administrator"):
             if obj:
                 return [
@@ -628,7 +629,10 @@ class OpDelCategoryAdmin(AdminImportExport):
 
 
 class BudgetTypeAdmin(AdminImportExport):
-    list_display = ("budget_type_key", "budget_type",)
+    list_display = (
+        "budget_type_key",
+        "budget_type",
+    )
 
     # different fields editable if updating or creating the object
     def get_readonly_fields(self, request, obj=None):

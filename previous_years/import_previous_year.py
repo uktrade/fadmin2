@@ -370,7 +370,9 @@ def upload_previous_year(worksheet, financial_year, file_upload):  # noqa
     )
 
     if check_financial_code.error_found:
-        raise UploadFileDataError("No data uploaded. Check the log in the file upload record.")
+        raise UploadFileDataError(
+            "No data uploaded. Check the log in the file upload record."
+        )
 
 
 def upload_previous_year_from_file(file_upload, year):

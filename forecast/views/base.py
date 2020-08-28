@@ -63,10 +63,7 @@ class CostCentrePermissionTest(UserPassesTestMixin):
             return redirect(
                 reverse(
                     "forecast_cost_centre",
-                    kwargs={
-                        "cost_centre_code": self.cost_centre_code,
-                        "period": 0,
-                    },
+                    kwargs={"cost_centre_code": self.cost_centre_code, "period": 0, },
                 )
             )
 
@@ -146,9 +143,7 @@ class ForecastViewTableMixin(MultiTableMixin):
                 else:
                     financial_year_obj = FinancialYear.objects.get(pk=period)
                     period_name = financial_year_obj.financial_year_display
-                self._table_tag = (
-                        f"Historical data for {period_name}"
-                    )
+                self._table_tag = f"Historical data for {period_name}"
             else:
                 self._table_tag = ""
         return self._table_tag

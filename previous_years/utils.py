@@ -1,5 +1,6 @@
 from core.models import FinancialYear
 
+
 class ArchiveYearError(Exception):
     pass
 
@@ -8,7 +9,7 @@ def validate_year_for_archiving_actuals(financial_year):
     try:
         obj = FinancialYear.objects.get(pk=financial_year)
     except FinancialYear.DoesNotExist:
-        raise(ArchiveYearError(f"Financial year {financial_year} does not exist."))
+        raise (ArchiveYearError(f"Financial year {financial_year} does not exist."))
 
     # Checks if there are cost centres archived for this year
     # and all the mandatory members of the Chart of Account
@@ -30,4 +31,7 @@ def validate_year_for_archiving_actuals(financial_year):
 
     if error_found:
         raise (
-            ArchiveYearError(f"Error(s) in chart of account for {financial_year}: f{error_msg}"))
+            ArchiveYearError(
+                f"Error(s) in chart of account for {financial_year}: f{error_msg}"
+            )
+        )

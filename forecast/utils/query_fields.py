@@ -24,7 +24,9 @@ class ViewForecastFields:
     budget_type_edit_order_field = f"{financial_code_prefix}programme__budget_type__budget_type_edit_display_order"  # noqa
 
     # Categories defined by DIT: i.e. Consultancy, Contingency, Contractors, etc
-    budget_category_id_field = f"{financial_code_prefix}natural_account_code__expenditure_category__id"
+    budget_category_id_field = (
+        f"{financial_code_prefix}natural_account_code__expenditure_category__id"
+    )
 
     budget_category_name_field = f"{financial_code_prefix}natural_account_code__expenditure_category__grouping_description"  # noqa
 
@@ -60,13 +62,11 @@ class ViewForecastFields:
             return f"{financial_code_prefix}cost_centre__directorate__directorate_name"
         return f"{financial_code_prefix}cost_centre__directorate_name"
 
-
     @property
     def directorate_code_field(self):
         if self.current:
-            return  f"{financial_code_prefix}cost_centre__directorate__directorate_code"
+            return f"{financial_code_prefix}cost_centre__directorate__directorate_code"
         return f"{financial_code_prefix}cost_centre__directorate_code"
-
 
     @property
     def group_name_field(self):
@@ -74,13 +74,11 @@ class ViewForecastFields:
             return f"{financial_code_prefix}cost_centre__directorate__group__group_name"
         return f"{financial_code_prefix}cost_centre__group_name"
 
-
     @property
     def group_code_field(self):
         if self.current:
             return f"{financial_code_prefix}cost_centre__directorate__group__group_code"
         return f"{financial_code_prefix}cost_centre__group_code"
-
 
     nac_code_field = (
         f"{financial_code_prefix}natural_account_code__natural_account_code"
