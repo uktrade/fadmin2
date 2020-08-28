@@ -353,7 +353,14 @@ class ArchivedNaturalCode(NaturalCodeAbstract, ArchivedModel):
     from other tables. The tables is not normalised by design."""
 
     natural_account_code = models.IntegerField(verbose_name="PO/Actuals NAC")
-    expenditure_category = models.CharField(
+    expenditure_category = models.ForeignKey(
+                ArchivedExpenditureCategory,
+                verbose_name = "Budget Category",
+                on_delete = models.PROTECT,
+                blank = True,
+                null = True,
+    )
+    expenditure_category_description = models.CharField(
         max_length=255, verbose_name="Budget Category", blank=True, null=True
     )
     NAC_category = models.CharField(
@@ -381,7 +388,12 @@ class ArchivedNaturalCode(NaturalCodeAbstract, ArchivedModel):
         if obj.expenditure_category:
             expenditure_category_value = (
                 obj.expenditure_category.grouping_description
-            )  # noqa
+            )
+            # Find the archived equivalent
+            expenditure_category_obj = ArchivedExpenditureCategory.objects.get(
+                grouping_description=obj.expenditure_category.grouping_description)
+            expenditure_category_id = expenditure_category_obj.id
+
             NAC_category_val = (
                 obj.expenditure_category.NAC_category.NAC_category_description
             )
@@ -411,7 +423,8 @@ class ArchivedNaturalCode(NaturalCodeAbstract, ArchivedModel):
             + suffix,  # noqa
             natural_account_code=obj.natural_account_code,
             used_for_budget=obj.used_for_budget,
-            expenditure_category=expenditure_category_value,
+            expenditure_category_id=expenditure_category_id,
+            expenditure_category_description=expenditure_category_value,
             NAC_category=NAC_category_val,
             commercial_category=commercial_category_val,
             account_L6_budget=account_L6_budget_val,

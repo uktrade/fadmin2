@@ -24,9 +24,8 @@ class ViewForecastFields:
     budget_type_edit_order_field = f"{financial_code_prefix}programme__budget_type__budget_type_edit_display_order"  # noqa
 
     # Categories defined by DIT: i.e. Consultancy, Contingency, Contractors, etc
-    budget_category_id_field = (
-        f"{financial_code_prefix}natural_account_code__expenditure_category__id"  # noqa
-    )
+    budget_category_id_field = f"{financial_code_prefix}natural_account_code__expenditure_category__id"
+
     budget_category_name_field = f"{financial_code_prefix}natural_account_code__expenditure_category__grouping_description"  # noqa
 
     # PAY, NON-PAY, CAPITAL, NON-CASH
@@ -47,27 +46,41 @@ class ViewForecastFields:
     def cost_centre_name_field(self):
         if self.current:
             return f"{financial_code_prefix}cost_centre__cost_centre_name"
-        return f"{financial_code_prefix}cost_centre_cost_centre_name"
+        return f"{financial_code_prefix}cost_centre__cost_centre_name"
 
     @property
     def cost_centre_code_field(self):
         if self.current:
             return f"{financial_code_prefix}cost_centre__cost_centre_code"
-        return f"{financial_code_prefix}cost_centre_cost_centre_code"
+        return f"{financial_code_prefix}cost_centre__cost_centre_code"
 
-    directorate_name_field = (
-        f"{financial_code_prefix}cost_centre__directorate__directorate_name"
-    )
-    directorate_code_field = (
-        f"{financial_code_prefix}cost_centre__directorate__directorate_code"
-    )
+    @property
+    def directorate_name_field(self):
+        if self.current:
+            return f"{financial_code_prefix}cost_centre__directorate__directorate_name"
+        return f"{financial_code_prefix}cost_centre__directorate_name"
 
-    group_name_field = (
-        f"{financial_code_prefix}cost_centre__directorate__group__group_name"
-    )
-    group_code_field = (
-        f"{financial_code_prefix}cost_centre__directorate__group__group_code"
-    )
+
+    @property
+    def directorate_code_field(self):
+        if self.current:
+            return  f"{financial_code_prefix}cost_centre__directorate__directorate_code"
+        return f"{financial_code_prefix}cost_centre__directorate_code"
+
+
+    @property
+    def group_name_field(self):
+        if self.current:
+            return f"{financial_code_prefix}cost_centre__directorate__group__group_name"
+        return f"{financial_code_prefix}cost_centre__group_name"
+
+
+    @property
+    def group_code_field(self):
+        if self.current:
+            return f"{financial_code_prefix}cost_centre__directorate__group__group_code"
+        return f"{financial_code_prefix}cost_centre__group_code"
+
 
     nac_code_field = (
         f"{financial_code_prefix}natural_account_code__natural_account_code"

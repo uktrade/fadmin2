@@ -17,12 +17,12 @@ class ExpenditureTypeForm(forms.Form):
             *args,
             **kwargs,
         )
-        self.fields['expenditure_category'] = forms.ModelChoiceField(
+        self.fields['expenditure_category_description'] = forms.ModelChoiceField(
             queryset=ExpenditureCategory.objects.all(),
             widget=Select(),
             initial=expenditure_category,
         )
-        self.fields['expenditure_category'].widget.attrs.update(
+        self.fields['expenditure_category_description'].widget.attrs.update(
             {
                 "class": "govuk-select",
             }
