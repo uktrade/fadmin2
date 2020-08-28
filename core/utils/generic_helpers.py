@@ -4,6 +4,7 @@ from io import BytesIO
 
 import boto3
 
+from django.db.models import Max
 from django.conf import settings
 from django.contrib.admin.models import (
     CHANGE,
@@ -17,10 +18,14 @@ from core.models import FinancialYear
 
 
 def get_current_financial_year():
-    y = FinancialYear.objects.filter(current=True).values("financial_year")
-    if y:
-        current_financial_year = y.last().financial_year
-    else:
+    # Use max for the anomalous case of more than one current year defines
+    y = (
+        FinancialYear.objects
+            .filter(current=True)
+            .aggregate(Max("financial_year"))
+    )
+    current_financial_year = y["financial_year__max"]
+    if current_financial_year is None:
         # If there is a data problem
         # and the current year is not
         # defined, return the financial
