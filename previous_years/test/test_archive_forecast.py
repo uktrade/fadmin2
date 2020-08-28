@@ -139,12 +139,16 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
             )
 
     def test_command(self):
+        financial_year_obj = FinancialYear.objects.get(pk=self.archived_year)
+        self.assertEqual(financial_year_obj.archived, False)
         self.assertEqual(ArchivedFinancialCode.objects.all().count(), 0)
         self.assertEqual(ArchivedForecastData.objects.all().count(), 0)
         self.create_workbook()
         call_command(
             "upload_previous_year", self.excel_file_name, self.archived_year,
         )
+        financial_year_obj = FinancialYear.objects.get(pk=self.archived_year)
+        self.assertEqual(financial_year_obj.archived, True)
         self.assertEqual(ArchivedFinancialCode.objects.all().count(), 1)
         self.assertEqual(ArchivedForecastData.objects.all().count(), 1)
         result_obj = ArchivedForecastData.objects.all().first()
