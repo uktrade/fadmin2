@@ -34,7 +34,7 @@ def process_uploaded_file(*args):
 
         # Get file body from S3
         logger.info("Attempting get file from S3")
-        file_body = get_s3_file_body(latest_unprocessed.document_file.name)
+        file_body = get_s3_file_body(latest_unprocessed.s3_document_file.name)
 
         # Check for viruses
         anti_virus_result = run_anti_virus(file_body,)
