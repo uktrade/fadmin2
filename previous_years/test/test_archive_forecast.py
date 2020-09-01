@@ -1,6 +1,5 @@
 import os
 
-from django.core.management import call_command
 from django.test import (
     RequestFactory,
     TestCase,
@@ -76,6 +75,7 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
         HistoricalAnalysis1Factory.create(
             analysis1_code=self.analisys1, financial_year=self.archived_year_obj
         )
+        self.create_workbook()
 
     def tearDown(self):
         if os.path.exists(self.excel_file_name):
@@ -126,7 +126,6 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
         wb.save(filename=self.excel_file_name)
 
     def test_upload_wrong(self):
-        self.create_workbook()
         file_upload_obj = FileUpload(
             document_file_name=self.excel_file_name,
             document_type=FileUpload.PREVIOUSYEAR,
@@ -138,13 +137,18 @@ class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
                 self.data_worksheet, self.archived_year + 1, file_upload_obj,
             )
 
-    def test_command(self):
+    def test_upload(self):
         self.assertEqual(ArchivedFinancialCode.objects.all().count(), 0)
         self.assertEqual(ArchivedForecastData.objects.all().count(), 0)
-        self.create_workbook()
-        call_command(
-            "upload_previous_year", self.excel_file_name, self.archived_year,
+
+        file_upload_obj = FileUpload(
+            document_file_name=self.excel_file_name,
+            document_type=FileUpload.PREVIOUSYEAR,
+            file_location=FileUpload.LOCALFILE,
         )
+        file_upload_obj.save()
+        upload_previous_year(self.data_worksheet, self.archived_year, file_upload_obj,)
+
         self.assertEqual(ArchivedFinancialCode.objects.all().count(), 1)
         self.assertEqual(ArchivedForecastData.objects.all().count(), 1)
         result_obj = ArchivedForecastData.objects.all().first()
