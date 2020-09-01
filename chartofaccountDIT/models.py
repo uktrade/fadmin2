@@ -83,7 +83,7 @@ class ArchivedAnalysis2(Analysis2Abstract, ArchivedModel):
     chart_of_account_code_name = "analysis2_code"
 
     def __str__(self):
-        return "{}{}".format(
+        return "{} {}".format(
             super().__str__(), self.financial_year.financial_year_display,
         )
 
@@ -198,7 +198,7 @@ class ArchivedExpenditureCategory(
     chart_of_account_code_name = "grouping_description"
 
     def __str__(self):
-        return "{}{}".format(
+        return "{} {}".format(
             super().__str__(), self.financial_year.financial_year_display,
         )
 
