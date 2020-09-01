@@ -13,15 +13,17 @@ body.onload=function(){
     var checkboxToggle = document.getElementById('id_archive_confirmation').parentNode;
     checkboxToggle.classList.remove('govuk-form-group');
     checkboxToggle.classList.add('govuk-checkboxes');
-    var checkboxLabel = checkboxToggle.getElementsByTagName('label')[0];
-    checkboxLabel.classList.add('govuk-checkboxes__label');
-    var checkbox = checkboxToggle.getElementsByTagName('input')[0];
-    checkbox.remove();
-    checkboxToggle.insertBefore(checkbox, checkboxToggle.childNodes[0]);
-    checkbox.style.boxSizing = "border-box";
-    var newDivClass = document.createElement('div');
-    newDivClass.classList.add('govuk-checkboxes__item')
-    checkboxToggle.insertBefore(newDivClass, checkboxToggle.childNodes[0]);
+    {#var checkboxLabel = checkboxToggle.getElementsByTagName('label')[0];#}
+    {#checkboxLabel.classList.add('govuk-checkboxes__label');#}
+    {#var checkbox = checkboxToggle.getElementsByTagName('input')[0];#}
+    var inner = checkboxToggle.innerHTML;
+    var newInner = "<span>" + inner + "</span>";
+    checkboxToggle.innerHTML = newInner
+    {#checkbox.remove();#}
+    {#checkboxToggle.insertBefore(checkbox, checkboxToggle.childNodes[0]);#}
+    {#var newDivClass = document.createElement('div');#}
+    {#newDivClass.classList.add('govuk-checkboxes__item');#}
+    {#checkboxToggle.insertBefore(newDivClass, checkboxToggle.childNodes[0]);#}
     };
 </script>
 {% endblock %}
