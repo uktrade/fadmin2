@@ -637,6 +637,7 @@ class ViewForecastFields:
                 self._datamodel = ArchivedForecastData
         return self._datamodel
 
+
 def edit_forecast_order():
     # remove financial_code__ prefix from the
     # fields used in the download order.

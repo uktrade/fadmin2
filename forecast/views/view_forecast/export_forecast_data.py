@@ -19,7 +19,7 @@ from forecast.views.base import get_view_forecast_period_name
 
 def get_period_for_title(period):
     if period:
-         title = get_view_forecast_period_name(period)
+        title = get_view_forecast_period_name(period)
     else:
         title = "Current"
     return f"({title})"
