@@ -1,3 +1,7 @@
+from end_of_month.models import forecast_budget_view_model
+
+from previous_years.models import ArchivedForecastData
+
 financial_code_prefix = "financial_code__"
 SHOW_DIT = 0
 SHOW_GROUP = 1
@@ -12,6 +16,8 @@ class ViewForecastFields:
     # while for the current year the values are from 0 to 15.
     def __init__(self, period=0):
         self.current = period < 2000
+        self.period = period
+        self._datamodel = None
 
     hierarchy_type = SHOW_DIT
 
@@ -34,7 +40,12 @@ class ViewForecastFields:
     budget_grouping_field = f"{financial_code_prefix}natural_account_code__expenditure_category__NAC_category__NAC_category_description"  # noqa
     budget_grouping_order_field = f"{financial_code_prefix}natural_account_code__expenditure_category__NAC_category__NAC_category_display_order"  # noqa
     budget_nac_field = f"{financial_code_prefix}natural_account_code__expenditure_category__linked_budget_code"  # noqa
-    budget_nac_description_field = f"{financial_code_prefix}natural_account_code__expenditure_category__linked_budget_code__natural_account_code_description"  # noqa
+
+    @property
+    def budget_nac_description_field(self):
+        if self.current:
+            return f"{financial_code_prefix}natural_account_code__expenditure_category__linked_budget_code__natural_account_code_description"  # noqa
+        return f"{financial_code_prefix}natural_account_code__expenditure_category__linked_budget_code_description"  # noqa
 
     # Admin, Capital or Programme
     expenditure_type_name_field = f"{financial_code_prefix}forecast_expenditure_type__forecast_expenditure_type_name"  # noqa
@@ -617,6 +628,14 @@ class ViewForecastFields:
             self.project_code_field: "Project Code",
         }
 
+    @property
+    def datamodel(self):
+        if self._datamodel is None:
+            if self.current:
+                self._datamodel = forecast_budget_view_model[self.period]
+            else:
+                self._datamodel = ArchivedForecastData
+        return self._datamodel
 
 def edit_forecast_order():
     # remove financial_code__ prefix from the

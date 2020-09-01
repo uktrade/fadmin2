@@ -2,10 +2,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from end_of_month.models import forecast_budget_view_model
-
 from forecast.models import (
-    FinancialPeriod,
     ForecastingDataView,
 )
 from forecast.utils.access_helpers import (
@@ -17,12 +14,12 @@ from forecast.utils.export_helpers import (
     export_query_to_excel,
 )
 from forecast.utils.query_fields import ViewForecastFields
+from forecast.views.base import get_view_forecast_period_name
 
 
 def get_period_for_title(period):
     if period:
-        forecast_period = FinancialPeriod.objects.get(financial_period_code=period)
-        title = forecast_period.period_long_name
+         title = get_view_forecast_period_name(period)
     else:
         title = "Current"
     return f"({title})"
@@ -30,7 +27,8 @@ def get_period_for_title(period):
 
 def export_forecast_data_generic(period, filter, title):
     fields = ViewForecastFields(period)
-    q = forecast_budget_view_model[period].view_data.raw_data_annotated(
+    datamodel = fields.datamodel
+    q = datamodel.view_data.raw_data_annotated(
         fields.VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
     )
     return export_query_to_excel(

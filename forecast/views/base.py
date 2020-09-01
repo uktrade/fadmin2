@@ -8,8 +8,6 @@ from django_tables2 import MultiTableMixin
 
 from core.models import FinancialYear
 
-from end_of_month.models import forecast_budget_view_model
-
 from forecast.forms import ForecastPeriodForm
 from forecast.models import FinancialPeriod
 from forecast.utils.access_helpers import (
@@ -19,7 +17,16 @@ from forecast.utils.access_helpers import (
 )
 from forecast.utils.query_fields import ViewForecastFields
 
-from previous_years.models import ArchivedForecastData
+
+def get_view_forecast_period_name(period):
+    if period < 2000:
+        # We are displaying historical forecast
+        forecast_period_obj = FinancialPeriod.objects.get(pk=period)
+        period_name = forecast_period_obj.period_long_name
+    else:
+        financial_year_obj = FinancialYear.objects.get(pk=period)
+        period_name = financial_year_obj.financial_year_display
+    return period_name
 
 
 class NoCostCentreCodeInURLError(Exception):
@@ -94,16 +101,12 @@ class ForecastViewTableMixin(MultiTableMixin):
         return self._period
 
     @property
-    def handling_past_years(self):
-        return self.period > 2000
-
-    @property
     def year(self):
         if self._year is None:
-            if self.handling_past_years:
-                self._year = self.period
-            else:
+            if self.field_infos.current:
                 self._year = 0
+            else:
+                self._year = self.period
         return self._year
 
     @property
@@ -124,26 +127,15 @@ class ForecastViewTableMixin(MultiTableMixin):
 
     @property
     def data_model(self):
-        if self._datamodel is None:
-            if self.handling_past_years:
-                self._datamodel = ArchivedForecastData
-            else:
-                self._datamodel = forecast_budget_view_model[self.period]
-        return self._datamodel
+        return self.field_infos.datamodel
 
     @property
     def table_tag(self):
         if self._table_tag is None:
             period = self.period
             if period:
-                if period < 2000:
-                    # We are displaying historical forecast
-                    forecast_period_obj = FinancialPeriod.objects.get(pk=period)
-                    period_name = forecast_period_obj.period_long_name
-                else:
-                    financial_year_obj = FinancialYear.objects.get(pk=period)
-                    period_name = financial_year_obj.financial_year_display
-                self._table_tag = f"Historical data for {period_name}"
+                self._table_tag = \
+                    f"Historical data for {get_view_forecast_period_name(period)}"
             else:
                 self._table_tag = ""
         return self._table_tag
