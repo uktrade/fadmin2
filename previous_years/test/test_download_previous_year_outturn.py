@@ -24,6 +24,10 @@ from forecast.views.view_forecast.export_forecast_data import (
     export_forecast_data_directorate,
     export_forecast_data_dit,
     export_forecast_data_group,
+    export_forecast_data_project_detail_cost_centre,
+    export_forecast_data_project_detail_directorate,
+    export_forecast_data_project_detail_dit,
+    export_forecast_data_project_detail_group,
 )
 
 from previous_years.models import (
@@ -32,7 +36,7 @@ from previous_years.models import (
 )
 
 
-class DownloadPastYearForecastHierarchyTest(TestCase, RequestFactoryBase):
+class DownloadPastYearForecastTest(TestCase, RequestFactoryBase):
 
     #     self.budget = create_budget(financial_code_obj, year_obj)
     #     self.year_total = self.amount_apr + self.amount_may
@@ -128,7 +132,7 @@ class DownloadPastYearForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.test_user.user_permissions.add(can_view_forecasts)
         self.test_user.save()
 
-    def check_download(self, content):
+    def check_response_content(self, content):
         file = io.BytesIO(content)
         wb = load_workbook(filename=file)
         ws = wb.active
@@ -169,7 +173,6 @@ class DownloadPastYearForecastHierarchyTest(TestCase, RequestFactoryBase):
         assert ws["AM2"].value == self.outturn["adj02"]
         assert ws["AN2"].value == self.outturn["adj03"]
 
-
     def test_dit_download(self):
         response = self.factory_get(
             reverse("export_forecast_data_dit", kwargs={"period": self.archived_year}),
@@ -177,51 +180,126 @@ class DownloadPastYearForecastHierarchyTest(TestCase, RequestFactoryBase):
             period=self.archived_year,
         )
         self.assertEqual(response.status_code, 200)
-        self.check_download(response.content)
+        self.check_response_content(response.content)
 
-    # def test_group_download(self):
-    #     response = self.factory_get(
-    #         reverse(
-    #             "export_forecast_data_group",
-    #             kwargs={"group_code": self.group_code, "period": self.archived_year, },
-    #         ),
-    #         export_forecast_data_group,
-    #         group_code=self.group_code,
-    #         period=self.archived_year,
-    #     )
-    #     self.assertEqual(response.status_code, 200)
-    #     self.check_download(response.content)
-    #
-    # def test_directorate_download(self):
-    #     response = self.factory_get(
-    #         reverse(
-    #             "export_forecast_data_directorate",
-    #             kwargs={
-    #                 "directorate_code": self.directorate_code,
-    #                 "period": self.archived_year,
-    #             },
-    #         ),
-    #         export_forecast_data_directorate,
-    #         directorate_code=self.directorate_code,
-    #         period=self.archived_year,
-    #     )
-    #     self.assertEqual(response.status_code, 200)
-    #     self.check_download(response.content)
-    #
-    # def test_cost_centre_download(self):
-    #     response = self.factory_get(
-    #         reverse(
-    #             "export_forecast_data_cost_centre",
-    #             kwargs={
-    #                 "cost_centre": self.cost_centre_code,
-    #                 "period": self.archived_year,
-    #             },
-    #         ),
-    #         export_forecast_data_cost_centre,
-    #         cost_centre=self.cost_centre_code,
-    #         period=self.archived_year,
-    #     )
-    #
-    #     self.assertEqual(response.status_code, 200)
-    #     self.check_download(response.content)
-    #
+    def test_group_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_forecast_data_group",
+                kwargs={"group_code": self.group_code, "period": self.archived_year, },
+            ),
+            export_forecast_data_group,
+            group_code=self.group_code,
+            period=self.archived_year,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.check_response_content(response.content)
+
+    def test_directorate_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_forecast_data_directorate",
+                kwargs={
+                    "directorate_code": self.directorate_code,
+                    "period": self.archived_year,
+                },
+            ),
+            export_forecast_data_directorate,
+            directorate_code=self.directorate_code,
+            period=self.archived_year,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.check_response_content(response.content)
+
+    def test_cost_centre_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_forecast_data_cost_centre",
+                kwargs={
+                    "cost_centre": self.cost_centre_code,
+                    "period": self.archived_year,
+                },
+            ),
+            export_forecast_data_cost_centre,
+            cost_centre=self.cost_centre_code,
+            period=self.archived_year,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.check_response_content(response.content)
+
+    def test_dit_project_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_forecast_data_project_detail_dit",
+                kwargs={
+                    "project_code_id": self.project_code,
+                    "period": self.archived_year
+                },
+            ),
+            export_forecast_data_project_detail_dit,
+            project_code_id=self.project_code,
+            period=self.archived_year,
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.check_response_content(response.content)
+
+    def test_group_project_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_forecast_data_project_detail_group",
+                kwargs={
+                    "group_code": self.group_code,
+                    "project_code_id": self.project_code,
+                    "period": self.archived_year,
+                },
+            ),
+            export_forecast_data_project_detail_group,
+            group_code=self.group_code,
+            project_code_id=self.project_code,
+            period=self.archived_year,
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.check_response_content(response.content)
+
+    def test_directorate_project_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_forecast_data_project_detail_directorate",
+                kwargs={
+                    "directorate_code": self.directorate_code,
+                    "project_code_id": self.project_code,
+                    "period": self.archived_year,
+                },
+            ),
+            export_forecast_data_project_detail_directorate,
+            directorate_code=self.directorate_code,
+            project_code_id=self.project_code,
+            period=self.archived_year,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.check_response_content(response.content)
+
+    def test_cost_centre_project_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_forecast_data_project_detail_cost_centre",
+                kwargs={
+                    "cost_centre": self.cost_centre_code,
+                    "project_code_id": self.project_code,
+                    "period": self.archived_year,
+                },
+            ),
+            export_forecast_data_project_detail_cost_centre,
+            cost_centre=self.cost_centre_code,
+            project_code_id=self.project_code,
+            period=self.archived_year,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.check_response_content(response.content)
