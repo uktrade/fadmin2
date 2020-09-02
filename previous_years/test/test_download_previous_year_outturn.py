@@ -9,6 +9,7 @@ from openpyxl import load_workbook
 from chartofaccountDIT.test.factories import (
     HistoricalAnalysis1Factory,
     HistoricalAnalysis2Factory,
+    HistoricalExpenditureCategoryFactory,
     HistoricalNaturalCodeFactory,
     HistoricalProgrammeCodeFactory,
     HistoricalProjectCodeFactory,
@@ -23,10 +24,10 @@ from forecast.views.view_forecast.export_forecast_data import (
     export_forecast_data_cost_centre,
     export_forecast_data_directorate,
     export_forecast_data_dit,
-    # export_forecast_data_expenditure_detail_cost_centre,
-    # export_forecast_data_expenditure_detail_directorate,
-    # export_forecast_data_expenditure_detail_group,
-    # export_forecast_data_expenditure_dit,
+    export_forecast_data_expenditure_detail_cost_centre,
+    export_forecast_data_expenditure_detail_directorate,
+    export_forecast_data_expenditure_detail_group,
+    export_forecast_data_expenditure_dit,
     export_forecast_data_group,
     export_forecast_data_programme_detail_directorate,
     export_forecast_data_programme_detail_dit,
@@ -72,15 +73,21 @@ class DownloadPastYearForecastTest(TestCase, RequestFactoryBase):
         project_obj = HistoricalProjectCodeFactory.create(
             project_code=self.project_code, financial_year=archived_year_obj
         )
-        self.budget_type = "AME"
+        self.budget_type_id = "AME"
         programme_obj = HistoricalProgrammeCodeFactory.create(
             programme_code=self.programme_code,
-            budget_type_id=self.budget_type,
+            budget_type_id=self.budget_type_id,
             financial_year=archived_year_obj
         )
+
+        expenditure_category_obj = HistoricalExpenditureCategoryFactory.create(
+            financial_year=archived_year_obj
+        )
+        self.expenditure_category_id = expenditure_category_obj.id
         nac_obj = HistoricalNaturalCodeFactory.create(
             natural_account_code=self.natural_account_code,
             economic_budget_code="CAPITAL",
+            expenditure_category=expenditure_category_obj,
             financial_year=archived_year_obj,
         )
         analysis2_obj = HistoricalAnalysis2Factory.create(
@@ -166,7 +173,7 @@ class DownloadPastYearForecastTest(TestCase, RequestFactoryBase):
         assert ws["U1"].value == "Market code"
         assert ws["U2"].value == self.analisys2
         assert ws["J1"].value == "Budget Type"
-        assert ws["J2"].value == self.budget_type
+        assert ws["J2"].value == self.budget_type_id
 
         # print(f'{ws["G2"].value} {ws["H2"].value} {ws["J2"].value}')
         # check the figures
@@ -378,3 +385,86 @@ class DownloadPastYearForecastTest(TestCase, RequestFactoryBase):
 
         self.assertEqual(response.status_code, 200)
         self.check_response_content(response.content)
+
+    def test_cost_centre_expenditure_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_expenditure_details_cost_centre",
+                kwargs={
+                    "cost_centre": self.cost_centre_code,
+                    "expenditure_category_id": self.expenditure_category_id,
+                    "budget_type_id": self.budget_type_id,
+                    "period": self.archived_year,
+                },
+            ),
+            export_forecast_data_expenditure_detail_cost_centre,
+            cost_centre=self.cost_centre_code,
+            expenditure_category_id=self.expenditure_category_id,
+            budget_type_id=self.budget_type_id,
+            period=self.archived_year,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.check_response_content(response.content)
+
+    def test_directorate_expenditure_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_expenditure_details_directorate",
+                kwargs={
+                    "directorate_code": self.directorate_code,
+                    "expenditure_category_id": self.expenditure_category_id,
+                    "budget_type_id": self.budget_type_id,
+                    "period": self.archived_year,
+                },
+            ),
+            export_forecast_data_expenditure_detail_directorate,
+            directorate_code=self.directorate_code,
+            expenditure_category_id=self.expenditure_category_id,
+            budget_type_id=self.budget_type_id,
+            period=self.archived_year,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.check_response_content(response.content)
+
+    def test_group_expenditure_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_expenditure_details_group",
+                kwargs={
+                    "group_code": self.group_code,
+                    "expenditure_category_id": self.expenditure_category_id,
+                    "budget_type_id": self.budget_type_id,
+                    "period": self.archived_year,
+                },
+            ),
+            export_forecast_data_expenditure_detail_group,
+            group_code=self.group_code,
+            expenditure_category_id=self.expenditure_category_id,
+            budget_type_id=self.budget_type_id,
+            period=self.archived_year,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.check_response_content(response.content)
+
+    def test_dit_expenditure_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_expenditure_details_dit",
+                kwargs={
+                    "expenditure_category_id": self.expenditure_category_id,
+                    "budget_type_id": self.budget_type_id,
+                    "period": self.archived_year,
+                },
+            ),
+            export_forecast_data_expenditure_dit,
+            expenditure_category_id=self.expenditure_category_id,
+            budget_type_id=self.budget_type_id,
+            period=self.archived_year,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.check_response_content(response.content)
+
