@@ -16,7 +16,7 @@ from forecast.utils.export_helpers import (
 from forecast.utils.query_fields import ViewForecastFields
 from forecast.views.base import get_view_forecast_period_name
 
-
+# TODO display ADJ periods for previous years
 def get_period_for_title(period):
     if period:
         title = get_view_forecast_period_name(period)

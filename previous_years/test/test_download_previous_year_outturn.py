@@ -23,7 +23,14 @@ from forecast.views.view_forecast.export_forecast_data import (
     export_forecast_data_cost_centre,
     export_forecast_data_directorate,
     export_forecast_data_dit,
+    # export_forecast_data_expenditure_detail_cost_centre,
+    # export_forecast_data_expenditure_detail_directorate,
+    # export_forecast_data_expenditure_detail_group,
+    # export_forecast_data_expenditure_dit,
     export_forecast_data_group,
+    export_forecast_data_programme_detail_directorate,
+    export_forecast_data_programme_detail_dit,
+    export_forecast_data_programme_detail_group,
     export_forecast_data_project_detail_cost_centre,
     export_forecast_data_project_detail_directorate,
     export_forecast_data_project_detail_dit,
@@ -65,8 +72,11 @@ class DownloadPastYearForecastTest(TestCase, RequestFactoryBase):
         project_obj = HistoricalProjectCodeFactory.create(
             project_code=self.project_code, financial_year=archived_year_obj
         )
+        self.budget_type = "AME"
         programme_obj = HistoricalProgrammeCodeFactory.create(
-            programme_code=self.programme_code, financial_year=archived_year_obj
+            programme_code=self.programme_code,
+            budget_type_id=self.budget_type,
+            financial_year=archived_year_obj
         )
         nac_obj = HistoricalNaturalCodeFactory.create(
             natural_account_code=self.natural_account_code,
@@ -88,7 +98,9 @@ class DownloadPastYearForecastTest(TestCase, RequestFactoryBase):
             project_code=project_obj,
             financial_year=archived_year_obj,
         )
-
+        # __forecast_expenditure_type_name"
+        self.expenditure_type_name = financial_code_obj.forecast_expenditure_type
+        print(f'{self.expenditure_type_name }')
         previous_year_obj = ArchivedForecastData.objects.create(
             financial_year=archived_year_obj, financial_code=financial_code_obj,
         )
@@ -154,7 +166,10 @@ class DownloadPastYearForecastTest(TestCase, RequestFactoryBase):
         assert ws["S2"].value == self.analisys1
         assert ws["U1"].value == "Market code"
         assert ws["U2"].value == self.analisys2
+        assert ws["J1"].value == "Budget Type"
+        assert ws["J2"].value == self.budget_type
 
+        # print(f'{ws["G2"].value} {ws["H2"].value} {ws["J2"].value}')
         # check the figures
         assert ws["Y2"].value == self.outturn["budget"]
         assert ws["Z2"].value == self.outturn["apr"]
@@ -303,3 +318,25 @@ class DownloadPastYearForecastTest(TestCase, RequestFactoryBase):
 
         self.assertEqual(response.status_code, 200)
         self.check_response_content(response.content)
+
+
+def test_directorate_programme_download(self):
+    response = self.factory_get(
+        reverse(
+            "export_forecast_data_programme_detail_directorate",
+            kwargs={
+                "directorate_code": self.directorate_code,
+                "programme_code_id": self.project_code,
+                "forecast_expenditure_type_name": 1,
+                "period": self.archived_year,
+            },
+        ),
+        export_forecast_data_programme_detail_directorate,
+        directorate_code=self.directorate_code,
+        programme_code_id=self.programme_code,
+        forecast_expenditure_type_name=self.project_code,
+        period=self.archived_year,
+    )
+
+    self.assertEqual(response.status_code, 200)
+    self.check_response_content(response.content)
