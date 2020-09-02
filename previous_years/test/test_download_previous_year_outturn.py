@@ -100,7 +100,6 @@ class DownloadPastYearForecastTest(TestCase, RequestFactoryBase):
         )
         # __forecast_expenditure_type_name"
         self.expenditure_type_name = financial_code_obj.forecast_expenditure_type
-        print(f'{self.expenditure_type_name }')
         previous_year_obj = ArchivedForecastData.objects.create(
             financial_year=archived_year_obj, financial_code=financial_code_obj,
         )
@@ -319,24 +318,63 @@ class DownloadPastYearForecastTest(TestCase, RequestFactoryBase):
         self.assertEqual(response.status_code, 200)
         self.check_response_content(response.content)
 
+    def test_directorate_programme_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_programme_details_directorate",
+                kwargs={
+                    "directorate_code": self.directorate_code,
+                    "programme_code_id": self.project_code,
+                    "forecast_expenditure_type_name": self.expenditure_type_name,
+                    "period": self.archived_year,
+                },
+            ),
+            export_forecast_data_programme_detail_directorate,
+            directorate_code=self.directorate_code,
+            programme_code_id=self.programme_code,
+            forecast_expenditure_type_name=self.expenditure_type_name,
+            period=self.archived_year,
+        )
 
-def test_directorate_programme_download(self):
-    response = self.factory_get(
-        reverse(
-            "export_forecast_data_programme_detail_directorate",
-            kwargs={
-                "directorate_code": self.directorate_code,
-                "programme_code_id": self.project_code,
-                "forecast_expenditure_type_name": 1,
-                "period": self.archived_year,
-            },
-        ),
-        export_forecast_data_programme_detail_directorate,
-        directorate_code=self.directorate_code,
-        programme_code_id=self.programme_code,
-        forecast_expenditure_type_name=self.project_code,
-        period=self.archived_year,
-    )
+        self.assertEqual(response.status_code, 200)
+        self.check_response_content(response.content)
 
-    self.assertEqual(response.status_code, 200)
-    self.check_response_content(response.content)
+    def test_group_programme_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_programme_details_group",
+                kwargs={
+                    "group_code": self.group_code,
+                    "programme_code_id": self.project_code,
+                    "forecast_expenditure_type_name": self.expenditure_type_name,
+                    "period": self.archived_year,
+                },
+            ),
+            export_forecast_data_programme_detail_group,
+            group_code=self.group_code,
+            programme_code_id=self.programme_code,
+            forecast_expenditure_type_name=self.expenditure_type_name,
+            period=self.archived_year,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.check_response_content(response.content)
+
+    def test_dit_programme_download(self):
+        response = self.factory_get(
+            reverse(
+                "export_programme_details_dit",
+                kwargs={
+                    "programme_code_id": self.project_code,
+                    "forecast_expenditure_type_name": self.expenditure_type_name,
+                    "period": self.archived_year,
+                },
+            ),
+            export_forecast_data_programme_detail_dit,
+            programme_code_id=self.programme_code,
+            forecast_expenditure_type_name=self.expenditure_type_name,
+            period=self.archived_year,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.check_response_content(response.content)
