@@ -1,5 +1,4 @@
 import datetime
-from enum import Enum
 from io import BytesIO
 
 import boto3
@@ -87,13 +86,6 @@ def run_anti_virus(file_body):
     response = requests.post(settings.CLAM_AV_URL, auth=auth, files=files,)
 
     return response.json()
-
-
-# to use enum in the models
-class ChoiceEnum(Enum):
-    @classmethod
-    def choices(cls):
-        return tuple((x.name, x.value) for x in cls)
 
 
 def today_string():
