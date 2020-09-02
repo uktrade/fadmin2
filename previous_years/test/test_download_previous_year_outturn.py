@@ -1,14 +1,10 @@
 import io
 
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 
 from openpyxl import load_workbook
-
-from core.models import FinancialYear
-from core.test.test_base import RequestFactoryBase
-
-from costcentre.test.factories import ArchivedCostCentreFactory
 
 from chartofaccountDIT.test.factories import (
     HistoricalAnalysis1Factory,
@@ -18,8 +14,11 @@ from chartofaccountDIT.test.factories import (
     HistoricalProjectCodeFactory,
 )
 
+from core.models import FinancialYear
+from core.test.test_base import RequestFactoryBase
 
-from forecast.permission_shortcuts import assign_perm
+from costcentre.test.factories import ArchivedCostCentreFactory
+
 from forecast.views.view_forecast.export_forecast_data import (
     export_forecast_data_cost_centre,
     export_forecast_data_directorate,
@@ -45,7 +44,7 @@ class DownloadPastYearForecastHierarchyTest(TestCase, RequestFactoryBase):
         # 2019 is created when the database is created, so it exists
         self.archived_year = 2019
         archived_year_obj = FinancialYear.objects.get(pk=self.archived_year)
-        self.cost_centre = "109189"
+        self.cost_centre_code = "109189"
         self.group_code = "1090TT"
         self.directorate_code = "10900T"
         self.natural_account_code = 52191003
@@ -54,9 +53,9 @@ class DownloadPastYearForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.analisys1 = "00798"
         self.analisys2 = "00321"
         cc_obj = ArchivedCostCentreFactory.create(
-            cost_centre_code=self.cost_centre,
-            directorate_code = self.directorate_code,
-            group_code = self.group_code,
+            cost_centre_code=self.cost_centre_code,
+            directorate_code=self.directorate_code,
+            group_code=self.group_code,
             financial_year=archived_year_obj,
         )
         project_obj = HistoricalProjectCodeFactory.create(
@@ -85,7 +84,7 @@ class DownloadPastYearForecastHierarchyTest(TestCase, RequestFactoryBase):
             project_code=project_obj,
             financial_year=archived_year_obj,
         )
- 
+
         previous_year_obj = ArchivedForecastData.objects.create(
             financial_year=archived_year_obj, financial_code=financial_code_obj,
         )
@@ -124,11 +123,14 @@ class DownloadPastYearForecastHierarchyTest(TestCase, RequestFactoryBase):
         previous_year_obj.adj2 = self.outturn["adj02"] * 100
         previous_year_obj.adj3 = self.outturn["adj03"] * 100
         previous_year_obj.save()
+        # Assign forecast view permission
+        can_view_forecasts = Permission.objects.get(codename="can_view_forecasts")
+        self.test_user.user_permissions.add(can_view_forecasts)
+        self.test_user.save()
 
     def test_dit_download(self):
         dit_url = self.factory_get(
-            reverse("export_forecast_data_dit",
-                    kwargs={"period": self.archived_year}),
+            reverse("export_forecast_data_dit", kwargs={"period": self.archived_year}),
             export_forecast_data_dit,
             period=self.archived_year,
         )
@@ -141,15 +143,11 @@ class DownloadPastYearForecastHierarchyTest(TestCase, RequestFactoryBase):
         assert ws["A1"].value == "Group name"
         assert ws["B2"].value == self.group_code
 
-
     def test_group_download(self):
         response = self.factory_get(
             reverse(
                 "export_forecast_data_group",
-                kwargs={
-                    'group_code': self.group.group_code,
-                    'period': self.archived_year,
-                },
+                kwargs={"group_code": self.group_code, "period": self.archived_year, },
             ),
             export_forecast_data_group,
             group_code=self.group_code,
@@ -170,8 +168,8 @@ class DownloadPastYearForecastHierarchyTest(TestCase, RequestFactoryBase):
             reverse(
                 "export_forecast_data_directorate",
                 kwargs={
-                    'directorate_code': self.directorate_code,
-                    'period': self.archived_year,
+                    "directorate_code": self.directorate_code,
+                    "period": self.archived_year,
                 },
             ),
             export_forecast_data_directorate,
@@ -188,19 +186,17 @@ class DownloadPastYearForecastHierarchyTest(TestCase, RequestFactoryBase):
         assert ws["A1"].value == "Group name"
         assert ws["B2"].value == self.group_code
 
-
     def test_cost_centre_download(self):
-        self.cost_centre = self.cost_centre
         response = self.factory_get(
             reverse(
                 "export_forecast_data_cost_centre",
                 kwargs={
-                    'cost_centre': self.cost_centre.cost_centre_code,
-                    'period': self.archived_year,
+                    "cost_centre": self.cost_centre_code,
+                    "period": self.archived_year,
                 },
             ),
             export_forecast_data_cost_centre,
-            cost_centre=self.cost_centre.cost_centre_code,
+            cost_centre=self.cost_centre_code,
             period=self.archived_year,
         )
 
