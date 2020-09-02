@@ -18,7 +18,6 @@ class UserModelChoiceField(forms.ModelChoiceField):
 
 class EndOfMonthProcessForm(forms.Form):
     archive_confirmation = forms.BooleanField(required=True, label="Please confirm you would like to archive this month")
-    # TODO - Create checkbox template and update class
     archive_confirmation.widget.attrs.update(
         {"class": "govuk-checkboxes__input"}
     )

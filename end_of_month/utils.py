@@ -36,7 +36,7 @@ def validate_period_code(period_code, **options):
     if highest_archived.count():
         raise LaterPeriodAlreadyArchivedError()
 
-# TODO - Write test
+
 def get_archivable_month():
     first_month_without_actual = FinancialPeriod.financial_period_info.actual_month() + 1
     if first_month_without_actual > FinancialPeriod.financial_period_info.get_max_period().financial_period_code:
@@ -46,6 +46,6 @@ def get_archivable_month():
     ).first()
     if is_archived:
         financial_period = FinancialPeriod.objects.get(financial_period_code=first_month_without_actual)
-        raise SelectPeriodAlreadyArchivedError(f"Period: {financial_period.period_long_name} already archived")
+        raise SelectPeriodAlreadyArchivedError(f"Period {financial_period.period_long_name} already archived")
 
     return first_month_without_actual
