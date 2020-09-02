@@ -467,4 +467,3 @@ class DownloadPastYearForecastTest(TestCase, RequestFactoryBase):
 
         self.assertEqual(response.status_code, 200)
         self.check_response_content(response.content)
-
