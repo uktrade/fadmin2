@@ -1,15 +1,15 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 
 from end_of_month.end_of_month_actions import end_of_month_archive
 from end_of_month.forms import EndOfMonthProcessForm
 from end_of_month.utils import (
-    user_has_archive_access,
-    get_archivable_month,
     InvalidPeriodError,
-    SelectPeriodAlreadyArchivedError
+    SelectPeriodAlreadyArchivedError,
+    get_archivable_month,
+    user_has_archive_access,
 )
 
 from forecast.models import FinancialPeriod
@@ -45,7 +45,8 @@ class EndOfMonthProcessView(
         context["locked"] = is_system_locked()
         try:
             archivable_period = get_archivable_month()
-            context["archivable_month"] = FinancialPeriod.objects.get(pk=archivable_period).period_long_name
+            context["archivable_month"] = FinancialPeriod.objects.get(
+                pk=archivable_period).period_long_name
         except InvalidPeriodError:
             context["invalid_period"] = True
         except SelectPeriodAlreadyArchivedError as ex:
