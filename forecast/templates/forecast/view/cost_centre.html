@@ -15,6 +15,7 @@
 
 {% block content %}
     <h1 class="govuk-heading-l">{{ view.cost_centre.cost_centre_name }} - {{ view.cost_centre.cost_centre_code }} </h1>
+    <h2 class="govuk-heading-l">{{ view.year }} </h2>
     <div class="action-bar-wrapper">
         <div class="action-bar">
             <a class="govuk-button govuk-button" href="{% url 'export_forecast_data_cost_centre' view.cost_centre.cost_centre_code view.period %} ">Download raw data</a>

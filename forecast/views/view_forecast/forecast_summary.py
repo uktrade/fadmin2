@@ -8,6 +8,7 @@ from costcentre.models import (
     ArchivedCostCentre,
 )
 
+from forecast.forms import ForecastPeriodForm
 from forecast.tables import (
     ForecastSubTotalTable,
     ForecastWithLinkTable,
@@ -235,6 +236,9 @@ class CostCentreView(
             cost_centre_code=cost_centre_code,
             year=self.year
         )
+
+    def period_form(self):
+        return ForecastPeriodForm(selected_period=self.period)
 
     def post(self, request, *args, **kwargs):
         # Checking selected_period is needed to find out if we are posting after

@@ -651,16 +651,19 @@ class ViewForecastFields:
             )
         queryset = ArchivedCostCentre.objects.filter(
             group_code=group_code,
-            financial_year_id=self.period)
+            financial_year_id=self.period,
+        )
         return queryset.first()
 
     def directorate(self, directorate_code):
         if self.current:
             return Directorate.objects.get(
                 directorate_code=directorate_code,
-                financial_year_id=self.period
             )
-        queryset = ArchivedCostCentre.objects.filter(directorate_code=directorate_code,)
+        queryset = ArchivedCostCentre.objects.filter(
+            directorate_code=directorate_code,
+            financial_year_id=self.period,
+        )
         return queryset.first()
 
     def cost_centre(self, cost_centre_code):
@@ -670,7 +673,8 @@ class ViewForecastFields:
         )
         queryset = ArchivedCostCentre.objects.filter(
             cost_centre_code=cost_centre_code,
-            financial_year_id=self.period)
+            financial_year_id=self.period,
+        )
         return queryset.first()
 
 

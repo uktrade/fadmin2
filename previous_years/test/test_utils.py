@@ -41,6 +41,7 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
         self.directorate_name = "Test directorate name"
         self.natural_account_code = 52191003
         self.programme_code = "310940"
+        self.programme_description = "Test programme description"
         self.project_code = "0123"
         self.analisys1 = "00798"
         self.analisys2 = "00321"
@@ -111,8 +112,9 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
             "adj02": -2118976,
             "adj03": 3135450,
         }
+        self.budget = self.outturn["budget"]
         self.year_total = sum(self.outturn.values())
-        self.underspend_total = self.outturn["budget"] - self.year_total
+        self.underspend_total = self.budget - self.year_total
         self.spend_to_date_total = self.year_total
 
         previous_year_obj.budget = self.outturn["budget"] * 100
