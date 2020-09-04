@@ -34,8 +34,11 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
         self.archived_year = 2019
         archived_year_obj = FinancialYear.objects.get(pk=self.archived_year)
         self.cost_centre_code = "109189"
+        self.cost_centre_name = "Test cost centre"
         self.group_code = "1090TT"
+        self.group_name = "Test group name"
         self.directorate_code = "10900T"
+        self.directorate_name = "Test directorate name"
         self.natural_account_code = 52191003
         self.programme_code = "310940"
         self.project_code = "0123"
@@ -43,8 +46,11 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
         self.analisys2 = "00321"
         cc_obj = ArchivedCostCentreFactory.create(
             cost_centre_code=self.cost_centre_code,
+            cost_centre_name=self.cost_centre_name,
             directorate_code=self.directorate_code,
+            directorate_name=self.directorate_name,
             group_code=self.group_code,
+            group_name=self.group_name,
             financial_year=archived_year_obj,
         )
         project_obj = HistoricalProjectCodeFactory.create(
@@ -102,9 +108,13 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
             "feb": 4521111,
             "mar": 9090111,
             "adj01": 5464644,
-            "adj02": 2118976,
+            "adj02": -2118976,
             "adj03": 3135450,
         }
+        self.year_total = sum(self.outturn.values())
+        self.underspend_total = self.outturn["budget"] - self.year_total
+        self.spend_to_date_total = self.year_total
+
         previous_year_obj.budget = self.outturn["budget"] * 100
         previous_year_obj.apr = self.outturn["apr"] * 100
         previous_year_obj.may = self.outturn["may"] * 100

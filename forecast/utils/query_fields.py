@@ -1,3 +1,8 @@
+from costcentre.models import (ArchivedCostCentre,
+                               DepartmentalGroup,
+                               )
+
+
 from end_of_month.models import forecast_budget_view_model
 
 from previous_years.models import ArchivedForecastData
@@ -637,7 +642,15 @@ class ViewForecastFields:
                 self._datamodel = ArchivedForecastData
         return self._datamodel
 
+    def group(self, group_code):
+        if self.current:
+            return DepartmentalGroup.objects.get(
+                group_code=group_code
+            )
+        queryset = ArchivedCostCentre.objects.filter(group_code=group_code)
+        return queryset.first()
 
+    
 def edit_forecast_order():
     # remove financial_code__ prefix from the
     # fields used in the download order.

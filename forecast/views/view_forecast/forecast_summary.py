@@ -8,7 +8,6 @@ from costcentre.models import (
     CostCentre,
     Directorate,
 )
-from costcentre.models import DepartmentalGroup
 
 from forecast.forms import ForecastPeriodForm
 from forecast.tables import (
@@ -182,9 +181,7 @@ class GroupView(
     hierarchy_type = SHOW_GROUP
 
     def group(self):
-        return DepartmentalGroup.objects.get(
-            group_code=self.kwargs["group_code"], active=True,
-        )
+        return self.field_infos.group(self.kwargs["group_code"])
 
     def post(self, request, *args, **kwargs):
         new_period = request.POST.get("selected_period", None,)
