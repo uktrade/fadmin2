@@ -301,7 +301,7 @@ class UserListFilter(admin.SimpleListFilter):
 
             return queryset.exclude(
                 pk__in=id_list
-            ).order_by("-first_name")
+            ).order_by("-last_name")
 
         return queryset
 
