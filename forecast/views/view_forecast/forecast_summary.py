@@ -5,11 +5,9 @@ from django.views.generic.base import TemplateView
 
 from costcentre.forms import DirectorateCostCentresForm
 from costcentre.models import (
-    CostCentre,
-    Directorate,
+    ArchivedCostCentre,
 )
 
-from forecast.forms import ForecastPeriodForm
 from forecast.tables import (
     ForecastSubTotalTable,
     ForecastWithLinkTable,
@@ -204,9 +202,7 @@ class DirectorateView(
     hierarchy_type = SHOW_DIRECTORATE
 
     def directorate(self):
-        return Directorate.objects.get(
-            directorate_code=self.kwargs["directorate_code"], active=True,
-        )
+        return self.field_infos.directorate(self.kwargs["directorate_code"])
 
     def post(self, request, *args, **kwargs):
         new_period = request.POST.get("selected_period", None,)
@@ -229,25 +225,31 @@ class CostCentreView(
     hierarchy_type = SHOW_COSTCENTRE
 
     def cost_centre(self):
-        return CostCentre.objects.get(
-            cost_centre_code=self.kwargs[self.field_infos.filter_codes],
+        return self.field_infos.cost_centre(
+            cost_centre_code=self.kwargs['cost_centre_code'],
         )
 
     def cost_centres_form(self):
-        cost_centre = self.cost_centre()
+        cost_centre_code = self.kwargs['cost_centre_code']
         return DirectorateCostCentresForm(
-            cost_centre_code=cost_centre.cost_centre_code,
-            directorate_code=cost_centre.directorate.directorate_code,
+            cost_centre_code=cost_centre_code,
+            year=self.year
         )
 
-    def period_form(self):
-        return ForecastPeriodForm(selected_period=self.period)
-
     def post(self, request, *args, **kwargs):
+        # Checking selected_period is needed to find out if we are posting after
+        # changing the period or changing the cost centre
         selected_period = request.POST.get("selected_period", None,)
         if selected_period is None:
-            cost_centre_code = request.POST.get("cost_centre", None,)
-            if cost_centre_code:
+            # Cost contre changed
+            cost_centre_id = request.POST.get("cost_centre", None,)
+            if cost_centre_id:
+                if self.field_infos.current:
+                    cost_centre_code = cost_centre_id
+                else:
+                    cost_centre_code = ArchivedCostCentre.objects\
+                        .get(pk=cost_centre_id).cost_centre_code
+
                 return HttpResponseRedirect(
                     reverse(
                         "forecast_cost_centre",

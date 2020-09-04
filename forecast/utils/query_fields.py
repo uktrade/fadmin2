@@ -1,5 +1,7 @@
 from costcentre.models import (ArchivedCostCentre,
+                               CostCentre,
                                DepartmentalGroup,
+                               Directorate,
                                )
 
 
@@ -647,10 +649,31 @@ class ViewForecastFields:
             return DepartmentalGroup.objects.get(
                 group_code=group_code
             )
-        queryset = ArchivedCostCentre.objects.filter(group_code=group_code)
+        queryset = ArchivedCostCentre.objects.filter(
+            group_code=group_code,
+            financial_year_id=self.period)
         return queryset.first()
 
-    
+    def directorate(self, directorate_code):
+        if self.current:
+            return Directorate.objects.get(
+                directorate_code=directorate_code,
+                financial_year_id=self.period
+            )
+        queryset = ArchivedCostCentre.objects.filter(directorate_code=directorate_code,)
+        return queryset.first()
+
+    def cost_centre(self, cost_centre_code):
+        if self.current:
+            return CostCentre.objects.get(
+            cost_centre_code=cost_centre_code,
+        )
+        queryset = ArchivedCostCentre.objects.filter(
+            cost_centre_code=cost_centre_code,
+            financial_year_id=self.period)
+        return queryset.first()
+
+
 def edit_forecast_order():
     # remove financial_code__ prefix from the
     # fields used in the download order.
