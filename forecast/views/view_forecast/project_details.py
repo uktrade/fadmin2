@@ -12,9 +12,12 @@ from forecast.utils.query_fields import (
     SHOW_GROUP,
 )
 from forecast.views.base import (
+    CostCentreForecastMixin,
+    DirectorateForecastMixin,
+    DITForecastMixin,
     ForecastViewPermissionMixin,
     ForecastViewTableMixin,
-    PeriodView,
+    GroupForecastMixin,
 )
 
 
@@ -84,10 +87,9 @@ class ForecastProjectDetailsMixin(ForecastViewTableMixin):
 
 
 class DITProjectDetailsView(
-    ForecastViewPermissionMixin, ForecastProjectDetailsMixin, PeriodView,
+    ForecastViewPermissionMixin, ForecastProjectDetailsMixin, DITForecastMixin,
 ):
     template_name = "forecast/view/project_details/dit.html"
-    hierarchy_type = SHOW_DIT
     url_name = "project_details_dit"
 
     def selection_kwargs(self):
@@ -98,10 +100,9 @@ class DITProjectDetailsView(
 
 
 class GroupProjectDetailsView(
-    ForecastViewPermissionMixin, ForecastProjectDetailsMixin, PeriodView,
+    ForecastViewPermissionMixin, ForecastProjectDetailsMixin, GroupForecastMixin,
 ):
     template_name = "forecast/view/project_details/group.html"
-    hierarchy_type = SHOW_GROUP
     url_name = "project_details_group"
 
     def selection_kwargs(self):
@@ -111,15 +112,11 @@ class GroupProjectDetailsView(
             "period": self.selected_period,
         }
 
-    def group(self):
-        return self.field_infos.group(self.kwargs["group_code"])
-
 
 class DirectorateProjectDetailsView(
-    ForecastViewPermissionMixin, ForecastProjectDetailsMixin, PeriodView,
+    ForecastViewPermissionMixin, ForecastProjectDetailsMixin, DirectorateForecastMixin,
 ):
     template_name = "forecast/view/project_details/directorate.html"
-    hierarchy_type = SHOW_DIRECTORATE
     url_name = "project_details_directorate"
 
     def selection_kwargs(self):
@@ -129,16 +126,12 @@ class DirectorateProjectDetailsView(
             "period": self.selected_period,
         }
 
-    def directorate(self):
-        return self.field_infos.directorate(self.kwargs["directorate_code"])
-
 
 class CostCentreProjectDetailsView(
-    ForecastViewPermissionMixin, ForecastProjectDetailsMixin, PeriodView,
+    ForecastViewPermissionMixin, ForecastProjectDetailsMixin, CostCentreForecastMixin,
 ):
     template_name = "forecast/view/project_details/cost_centre.html"
     table_pagination = False
-    hierarchy_type = SHOW_COSTCENTRE
     url_name = "project_details_costcentre"
 
     def selection_kwargs(self):
@@ -147,6 +140,3 @@ class CostCentreProjectDetailsView(
             "project_code": self.selected_project_code_id,
             "period": self.selected_period,
         }
-
-    def cost_centre(self):
-        return self.field_infos.cost_centre(self.kwargs["cost_centre_code"])
