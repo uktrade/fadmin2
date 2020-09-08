@@ -33,7 +33,6 @@ class ViewForecastFields:
         self.period = period
         self._datamodel = None
 
-    hierarchy_type = SHOW_DIT
 
     financial_code_prefix = "financial_code__"
     # indicates if DEL, AME, ADMIN
