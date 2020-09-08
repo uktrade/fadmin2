@@ -3,18 +3,14 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import reverse
 
 from chartofaccountDIT.forms import ProgrammeForm
-from chartofaccountDIT.models import ArchivedProgrammeCode
 
 from forecast.tables import ForecastSubTotalTable
-from forecast.utils.query_fields import (
-    SHOW_DIRECTORATE,
-    SHOW_DIT,
-    SHOW_GROUP,
-)
 from forecast.views.base import (
+    DirectorateForecastMixin,
+    DITForecastMixin,
     ForecastViewPermissionMixin,
     ForecastViewTableMixin,
-    PeriodView,
+    GroupForecastMixin,
 )
 
 
@@ -90,10 +86,9 @@ class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
 
 
 class DITProgrammeDetailsView(
-    ForecastViewPermissionMixin, ForecastProgrammeDetailsMixin, PeriodView,
+    ForecastViewPermissionMixin, ForecastProgrammeDetailsMixin, DITForecastMixin,
 ):
     template_name = "forecast/view/programme_details/dit.html"
-    hierarchy_type = SHOW_DIT
     url_name = "programme_details_dit"
 
     def class_name(self):
@@ -108,14 +103,10 @@ class DITProgrammeDetailsView(
 
 
 class GroupProgrammeDetailsView(
-    ForecastViewPermissionMixin, ForecastProgrammeDetailsMixin, PeriodView,
+    ForecastViewPermissionMixin, ForecastProgrammeDetailsMixin, GroupForecastMixin,
 ):
     template_name = "forecast/view/programme_details/group.html"
-    hierarchy_type = SHOW_GROUP
     url_name = "programme_details_group"
-
-    def group(self):
-        return self.field_infos.group(self.kwargs["group_code"])
 
     def selection_kwargs(self):
         return {
@@ -127,14 +118,10 @@ class GroupProgrammeDetailsView(
 
 
 class DirectorateProgrammeDetailsView(
-    ForecastViewPermissionMixin, ForecastProgrammeDetailsMixin, PeriodView,
+    ForecastViewPermissionMixin, ForecastProgrammeDetailsMixin, DirectorateForecastMixin,
 ):
     template_name = "forecast/view/programme_details/directorate.html"
-    hierarchy_type = SHOW_DIRECTORATE
     url_name = "programme_details_directorate"
-
-    def directorate(self):
-        return self.field_infos.directorate(self.kwargs["directorate_code"])
 
     def selection_kwargs(self):
         return {

@@ -5,16 +5,13 @@ from django.shortcuts import reverse
 from chartofaccountDIT.forms import ExpenditureTypeForm
 
 from forecast.tables import ForecastSubTotalTable
-from forecast.utils.query_fields import (
-    SHOW_COSTCENTRE,
-    SHOW_DIRECTORATE,
-    SHOW_DIT,
-    SHOW_GROUP,
-)
 from forecast.views.base import (
+    CostCentreForecastMixin,
+    DirectorateForecastMixin,
+    DITForecastMixin,
     ForecastViewPermissionMixin,
     ForecastViewTableMixin,
-    PeriodView,
+    GroupForecastMixin,
 )
 
 
@@ -91,10 +88,9 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
 
 
 class DITExpenditureDetailsView(
-    ForecastViewPermissionMixin, ForecastExpenditureDetailsMixin, PeriodView,
+    ForecastViewPermissionMixin, ForecastExpenditureDetailsMixin, DITForecastMixin,
 ):
     template_name = "forecast/view/expenditure_details/dit.html"
-    hierarchy_type = SHOW_DIT
     url_name = "expenditure_details_dit"
 
     def selection_kwargs(self):
@@ -106,14 +102,10 @@ class DITExpenditureDetailsView(
 
 
 class GroupExpenditureDetailsView(
-    ForecastViewPermissionMixin, ForecastExpenditureDetailsMixin, PeriodView,
+    ForecastViewPermissionMixin, ForecastExpenditureDetailsMixin, GroupForecastMixin,
 ):
     template_name = "forecast/view/expenditure_details/group.html"
-    hierarchy_type = SHOW_GROUP
     url_name = "expenditure_details_group"
-
-    def group(self):
-        return self.field_infos.group(self.kwargs["group_code"])
 
     def selection_kwargs(self):
         return {
@@ -125,14 +117,10 @@ class GroupExpenditureDetailsView(
 
 
 class DirectorateExpenditureDetailsView(
-    ForecastViewPermissionMixin, ForecastExpenditureDetailsMixin, PeriodView,
+    ForecastViewPermissionMixin, ForecastExpenditureDetailsMixin, DirectorateForecastMixin,
 ):
     template_name = "forecast/view/expenditure_details/directorate.html"
-    hierarchy_type = SHOW_DIRECTORATE
     url_name = "expenditure_details_directorate"
-
-    def directorate(self):
-        return self.field_infos.directorate(self.kwargs["directorate_code"])
 
     def selection_kwargs(self):
         return {
@@ -144,15 +132,11 @@ class DirectorateExpenditureDetailsView(
 
 
 class CostCentreExpenditureDetailsView(
-    ForecastViewPermissionMixin, ForecastExpenditureDetailsMixin, PeriodView,
+    ForecastViewPermissionMixin, ForecastExpenditureDetailsMixin, CostCentreForecastMixin,
 ):
     template_name = "forecast/view/expenditure_details/cost_centre.html"
     table_pagination = False
-    hierarchy_type = SHOW_COSTCENTRE
     url_name = "expenditure_details_cost_centre"
-
-    def cost_centre(self):
-        return self.field_infos.cost_centre(self.kwargs["cost_centre_code"])
 
     def selection_kwargs(self):
         return {

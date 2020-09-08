@@ -20,7 +20,6 @@ from forecast.views.base import (
     ForecastViewPermissionMixin,
     ForecastViewTableMixin,
     GroupForecastMixin,
-
 )
 
 
