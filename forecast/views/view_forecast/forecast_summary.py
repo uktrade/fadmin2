@@ -180,7 +180,15 @@ class GroupView(
     hierarchy_type = SHOW_GROUP
 
     def group(self):
-        return self.field_infos.group(self.kwargs["group_code"])
+        return self.field_infos.group(self.group_code)
+
+    @property
+    def group_code(self):
+        return self.kwargs["group_code"]
+
+    @property
+    def group_name(self):
+        return self.group().group_name
 
     def post(self, request, *args, **kwargs):
         new_period = request.POST.get("selected_period", None,)
@@ -207,7 +215,26 @@ class DirectorateView(
         return self.kwargs["directorate_code"]
 
     def directorate(self):
-        return self.field_infos.directorate(self.kwargs["directorate_code"])
+        return self.field_infos.directorate(self.directorate_code)
+
+    @property
+    def directorate_name(self):
+        return self.directorate().directorate_name
+
+    @property
+    def group_code(self):
+        if self.field_infos.current:
+            return self.directorate().group.group_code
+        else:
+            return self.directorate().group_code
+
+    @property
+    def group_name(self):
+        if self.field_infos.current:
+            return self.directorate().group.group_name
+        else:
+            return self.directorate().group_name
+
 
     def post(self, request, *args, **kwargs):
         new_period = request.POST.get("selected_period", None,)
