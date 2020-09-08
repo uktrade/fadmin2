@@ -3,7 +3,7 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import reverse
 
 from chartofaccountDIT.forms import ProgrammeForm
-from chartofaccountDIT.models import ProgrammeCode
+from chartofaccountDIT.models import ArchivedProgrammeCode
 
 from forecast.tables import ForecastSubTotalTable
 from forecast.utils.query_fields import (
@@ -26,22 +26,25 @@ class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
         return "wide-table"
 
     def programme_code(self):
-        return ProgrammeCode.objects.get(pk=self.kwargs["programme_code"],)
+        return self.field_infos.programme_code(self.kwargs["programme_code"])
 
     def forecast_expenditure_type(self):
         return self.kwargs["forecast_expenditure_type"]
 
     def programme_code_form(self):
-        return ProgrammeForm(programme_code=self.kwargs["programme_code"])
+        return ProgrammeForm(
+            programme_code=self.kwargs["programme_code"],
+            year=self.year
+        )
 
     def post(self, request, *args, **kwargs):
         self.selected_period = request.POST.get("selected_period", None,)
         if self.selected_period is None:
             self.selected_period = self.period
-            # Check that an expenditure category was selected
+            # Check that a programme code was selected
             self.selected_programme_code_id = request.POST.get("programme_code", None,)
             if self.selected_programme_code_id is None:
-                raise Http404("Budget Type not found")
+                raise Http404("Programme code not found")
         else:
             self.selected_programme_code_id = self.kwargs["programme_code"]
         return HttpResponseRedirect(

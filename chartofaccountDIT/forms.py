@@ -4,6 +4,7 @@ from django.forms import Select
 
 from chartofaccountDIT.models import (
     ArchivedExpenditureCategory,
+    ArchivedProgrammeCode,
     ExpenditureCategory,
     ProgrammeCode,
     ProjectCode,
@@ -21,8 +22,9 @@ class ExpenditureTypeForm(forms.Form):
         )
         if year:
             self.fields['expenditure_category_description'] = forms.ModelChoiceField(
-                queryset=ArchivedExpenditureCategory.objects.
-                        filter(financial_year=year),
+                queryset=ArchivedExpenditureCategory.objects.filter(
+                    financial_year=year
+                ),
                 widget=Select(),
                 initial=expenditure_category,
             )
@@ -42,19 +44,31 @@ class ExpenditureTypeForm(forms.Form):
 
 class ProgrammeForm(forms.Form):
     def __init__(self, *args, **kwargs):
+        year = kwargs.pop('year')
         programme_code = kwargs.pop('programme_code')
 
         super(ProgrammeForm, self).__init__(
             *args,
             **kwargs,
         )
-        self.fields['programme_code'] = forms.ModelChoiceField(
-            queryset=ProgrammeCode.objects.filter(
-                active=True,
-            ),
-            widget=Select(),
-            initial=programme_code,
-        )
+        if year:
+            self.fields['programme_code'] = forms.ModelChoiceField(
+                queryset=ArchivedProgrammeCode.objects.filter(
+                    financial_year=year,
+                    active=True,
+                ),
+                widget=Select(),
+                initial=programme_code,
+                to_field_name="programme_code"
+            )
+        else:
+            self.fields['programme_code'] = forms.ModelChoiceField(
+                queryset=ProgrammeCode.objects.filter(
+                    active=True,
+                ),
+                widget=Select(),
+                initial=programme_code,
+            )
         self.fields['programme_code'] .widget.attrs.update(
             {
                 "class": "govuk-select",

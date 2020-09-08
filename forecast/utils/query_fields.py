@@ -1,5 +1,9 @@
 from chartofaccountDIT.models import (ArchivedExpenditureCategory,
-                                      ExpenditureCategory, )
+                                      ArchivedProgrammeCode,
+                                      ArchivedProjectCode,
+                                      ExpenditureCategory,
+                                      ProgrammeCode,
+                                      ProjectCode)
 
 from costcentre.models import (ArchivedCostCentre,
                                CostCentre,
@@ -684,6 +688,15 @@ class ViewForecastFields:
         if self.current:
             return ExpenditureCategory.objects.get(pk=expenditure_category_id)
         return ArchivedExpenditureCategory.objects.get(pk=expenditure_category_id)
+
+    def programme_code(self, programme_code):
+        if self.current:
+            return ProgrammeCode.objects.get(pk=programme_code)
+
+        return ArchivedProgrammeCode.objects.get(
+            programme_code=programme_code,
+            financial_year_id=self.period,
+        )
 
 
 def edit_forecast_order():

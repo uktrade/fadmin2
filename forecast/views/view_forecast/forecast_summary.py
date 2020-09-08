@@ -202,6 +202,10 @@ class DirectorateView(
     table_pagination = False
     hierarchy_type = SHOW_DIRECTORATE
 
+    @property
+    def directorate_code(self):
+        return self.kwargs["directorate_code"]
+
     def directorate(self):
         return self.field_infos.directorate(self.kwargs["directorate_code"])
 
@@ -227,11 +231,47 @@ class CostCentreView(
 
     def cost_centre(self):
         return self.field_infos.cost_centre(
-            cost_centre_code=self.kwargs['cost_centre_code'],
+            cost_centre_code=self.cost_centre_code,
         )
 
+    @property
+    def cost_centre_code(self):
+        return self.kwargs['cost_centre_code']
+
+    @property
+    def cost_centre_name(self):
+        return self.cost_centre().cost_centre_name
+
+    @property
+    def directorate_code(self):
+        if self.field_infos.current:
+            return self.cost_centre().directorate.directorate_code
+        else:
+            return self.cost_centre().directorate_code
+
+    @property
+    def directorate_name(self):
+        if self.field_infos.current:
+            return self.cost_centre().directorate.directorate_name
+        else:
+            return self.cost_centre().directorate_name
+
+    @property
+    def group_code(self):
+        if self.field_infos.current:
+            return self.cost_centre().directorate.group.group_code
+        else:
+            return self.cost_centre().group_code
+
+    @property
+    def group_name(self):
+        if self.field_infos.current:
+            return self.cost_centre().directorate.group.group_name
+        else:
+            return self.cost_centre().group_name
+
     def cost_centres_form(self):
-        cost_centre_code = self.kwargs['cost_centre_code']
+        cost_centre_code = self.cost_centre_code
         return DirectorateCostCentresForm(
             cost_centre_code=cost_centre_code,
             year=self.year
@@ -246,19 +286,13 @@ class CostCentreView(
         selected_period = request.POST.get("selected_period", None,)
         if selected_period is None:
             # Cost contre changed
-            cost_centre_id = request.POST.get("cost_centre", None,)
-            if cost_centre_id:
-                if self.field_infos.current:
-                    cost_centre_code = cost_centre_id
-                else:
-                    cost_centre_code = ArchivedCostCentre.objects\
-                        .get(pk=cost_centre_id).cost_centre_code
-
+            selected_cost_centre_code = request.POST.get("cost_centre", None,)
+            if selected_cost_centre_code:
                 return HttpResponseRedirect(
                     reverse(
                         "forecast_cost_centre",
                         kwargs={
-                            "cost_centre_code": cost_centre_code,
+                            "cost_centre_code": selected_cost_centre_code,
                             "period": self.period,
                         },
                     )
@@ -271,7 +305,7 @@ class CostCentreView(
                     reverse(
                         "forecast_cost_centre",
                         kwargs={
-                            "cost_centre_code": self.cost_centre().cost_centre_code,
+                            "cost_centre_code": self.cost_centre_code,
                             "period": selected_period,
                         },
                     )

@@ -44,7 +44,6 @@ class AllCostCentresForm(forms.Form):
     )
 
 
-# TODO case of non existing directorate or cost centre code
 class DirectorateCostCentresForm(forms.Form):
     def __init__(self, *args, **kwargs):
         year = kwargs.pop('year')
@@ -64,6 +63,12 @@ class DirectorateCostCentresForm(forms.Form):
                 financial_year_id=year,
                 active=True,
             )
+            self.fields['cost_centre'] = forms.ModelChoiceField(
+                queryset=cost_centre_queryset,
+                widget=Select(),
+                initial=cost_centre_code,
+                to_field_name = 'cost_centre_code'
+            )
         else:
             directorate_code = CostCentre.objects.get(
                 cost_centre_code=cost_centre_code)\
@@ -72,12 +77,12 @@ class DirectorateCostCentresForm(forms.Form):
                 directorate__directorate_code=directorate_code,
                 active=True,
             )
+            self.fields['cost_centre'] = forms.ModelChoiceField(
+                queryset=cost_centre_queryset,
+                widget=Select(),
+                initial=cost_centre_code
+            )
 
-        self.fields['cost_centre'] = forms.ModelChoiceField(
-            queryset=cost_centre_queryset,
-            widget=Select(),
-            initial=cost_centre_code
-        )
         self.fields["cost_centre"].widget.attrs.update(
             {
                 "class": "govuk-select",

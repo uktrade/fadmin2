@@ -3,7 +3,6 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import reverse
 
 from chartofaccountDIT.forms import ProjectForm
-from chartofaccountDIT.models import ProjectCode
 
 from forecast.tables import ForecastSubTotalTable
 from forecast.utils.query_fields import (
@@ -27,7 +26,7 @@ class ForecastProjectDetailsMixin(ForecastViewTableMixin):
         return "wide-table"
 
     def project_code(self):
-        return ProjectCode.objects.get(pk=self.kwargs["project_code"],)
+        return self.kwargs["project_code"]
 
     def project_code_form(self):
         return ProjectForm(project_code=self.kwargs["project_code"])

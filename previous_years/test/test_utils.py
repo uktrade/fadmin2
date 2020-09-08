@@ -23,11 +23,6 @@ from previous_years.models import (
 
 class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
 
-    #     self.budget = create_budget(financial_code_obj, year_obj)
-    #     self.year_total = self.amount_apr + self.amount_may
-    #     self.underspend_total = self.budget - self.amount_apr - self.amount_may
-    #     self.spend_to_date_total = self.amount_apr
-
     def setUp(self):
         RequestFactoryBase.__init__(self)
         # 2019 is created when the database is created, so it exists
@@ -95,8 +90,11 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
             project_code=project_obj,
             financial_year=archived_year_obj,
         )
-        # __forecast_expenditure_type_name"
+
         self.expenditure_type_name = financial_code_obj.forecast_expenditure_type
+        self.forecast_expenditure_type_id = \
+            financial_code_obj.forecast_expenditure_type.forecast_expenditure_type_name
+
         previous_year_obj = ArchivedForecastData.objects.create(
             financial_year=archived_year_obj, financial_code=financial_code_obj,
         )
