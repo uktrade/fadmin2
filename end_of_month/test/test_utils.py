@@ -1,3 +1,7 @@
+from django.test import (
+    TestCase,
+)
+
 from chartofaccountDIT.test.factories import (
     NaturalCodeFactory,
     ProgrammeCodeFactory,
@@ -5,6 +9,7 @@ from chartofaccountDIT.test.factories import (
 )
 
 from core.models import FinancialYear
+from core.test.test_base import RequestFactoryBase
 from core.utils.generic_helpers import get_current_financial_year
 
 from costcentre.test.factories import (
@@ -14,8 +19,13 @@ from costcentre.test.factories import (
 )
 
 from end_of_month.end_of_month_actions import end_of_month_archive
-from end_of_month.models import forecast_budget_view_model
-from end_of_month.utils import get_archivable_month, validate_period_code, InvalidPeriodError
+from end_of_month.models import EndOfMonthStatus, forecast_budget_view_model
+from end_of_month.utils import (
+    InvalidPeriodError,
+    LaterPeriodAlreadyArchivedError,
+    SelectPeriodAlreadyArchivedError,
+    validate_period_code,
+)
 
 from forecast.models import (
     BudgetMonthlyFigure,
@@ -147,14 +157,29 @@ class SetFullYearArchive(MonthlyFigureSetup):
         self.set_archive_period(last_archived_period)
 
 
-class UtilsTests():
-    def setUp(self):
-        pass
-
+class UtilsTests(TestCase, RequestFactoryBase):
     def test_validate_period_code(self):
         with self.assertRaises(InvalidPeriodError):
             validate_period_code(period_code=0)
+        with self.assertRaises(InvalidPeriodError):
+            validate_period_code(period_code=16)
 
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=4
+        )
+        end_of_month_info.archived = True
+        self.assertRaises(SelectPeriodAlreadyArchivedError)
+
+        highest_archived = EndOfMonthStatus.objects.filter(
+            archived=True, archived_period__financial_period_code=3
+        )
+
+        highest_archived.count()
+        self.assertRaises(LaterPeriodAlreadyArchivedError)
 
     def test_get_archivable_month(self):
-        pass
+        is_archived = EndOfMonthStatus.objects.get(
+            archived_period_id=1)
+        is_archived.archived = True
+
+        self.assertRaises(SelectPeriodAlreadyArchivedError)
