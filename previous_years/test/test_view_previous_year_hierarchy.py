@@ -1,38 +1,9 @@
 from bs4 import BeautifulSoup
 
 
-from django.test import (
-    TestCase,
-)
 from django.urls import reverse
 
-from chartofaccountDIT.test.factories import (
-    Analysis1Factory,
-    Analysis2Factory,
-    ExpenditureCategoryFactory,
-    NaturalCodeFactory,
-    ProgrammeCodeFactory,
-    ProjectCodeFactory,
-)
-
-from core.models import FinancialYear
-from core.test.test_base import RequestFactoryBase
-from core.utils.generic_helpers import get_current_financial_year
-
-from costcentre.test.factories import (
-    CostCentreFactory,
-    DepartmentalGroupFactory,
-    DirectorateFactory,
-)
-
-from forecast.models import (
-    FinancialCode,
-    FinancialPeriod,
-    ForecastEditState,
-    ForecastMonthlyFigure,
-)
 from forecast.test.test_utils import (
-    create_budget,
     format_forecast_figure,
 )
 from forecast.views.view_forecast.forecast_summary import (
@@ -378,6 +349,3 @@ class ViewForecastHierarchyTest(DownloadPastYearForecastSetup):
 
         # Check that the second table displays the project and the correct totals
         self.check_project_table(tables[PROJECT_TABLE_INDEX])
-
-
-

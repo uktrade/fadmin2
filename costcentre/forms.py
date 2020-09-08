@@ -43,6 +43,7 @@ class AllCostCentresForm(forms.Form):
         }
     )
 
+
 # TODO case of non existing directorate or cost centre code
 class DirectorateCostCentresForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -71,7 +72,6 @@ class DirectorateCostCentresForm(forms.Form):
                 directorate__directorate_code=directorate_code,
                 active=True,
             )
-
 
         self.fields['cost_centre'] = forms.ModelChoiceField(
             queryset=cost_centre_queryset,

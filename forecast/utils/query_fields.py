@@ -668,9 +668,7 @@ class ViewForecastFields:
 
     def cost_centre(self, cost_centre_code):
         if self.current:
-            return CostCentre.objects.get(
-            cost_centre_code=cost_centre_code,
-        )
+            return CostCentre.objects.get(cost_centre_code=cost_centre_code, )
         queryset = ArchivedCostCentre.objects.filter(
             cost_centre_code=cost_centre_code,
             financial_year_id=self.period,
