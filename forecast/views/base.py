@@ -15,7 +15,13 @@ from forecast.utils.access_helpers import (
     can_forecast_be_edited,
     can_view_forecasts,
 )
-from forecast.utils.query_fields import ViewForecastFields
+from forecast.utils.query_fields import (
+    SHOW_COSTCENTRE,
+    SHOW_DIRECTORATE,
+    SHOW_DIT,
+    SHOW_GROUP,
+    ViewForecastFields,
+)
 
 
 def get_view_forecast_period_name(period):
@@ -154,3 +160,99 @@ class PeriodFormView(FormView):
 class PeriodView(TemplateView):
     def period_form(self):
         return ForecastPeriodForm(selected_period=self.period)
+
+
+class CostCentreForecastMixin(PeriodView):
+    hierarchy_type = SHOW_COSTCENTRE
+
+    def cost_centre(self):
+        return self.field_infos.cost_centre(
+            cost_centre_code=self.cost_centre_code,
+        )
+
+    @property
+    def cost_centre_code(self):
+        return self.kwargs['cost_centre_code']
+
+    @property
+    def cost_centre_name(self):
+        return self.cost_centre().cost_centre_name
+
+    @property
+    def directorate_code(self):
+        if self.field_infos.current:
+            return self.cost_centre().directorate.directorate_code
+        else:
+            return self.cost_centre().directorate_code
+
+    @property
+    def directorate_name(self):
+        if self.field_infos.current:
+            return self.cost_centre().directorate.directorate_name
+        else:
+            return self.cost_centre().directorate_name
+
+    @property
+    def group_code(self):
+        if self.field_infos.current:
+            return self.cost_centre().directorate.group.group_code
+        else:
+            return self.cost_centre().group_code
+
+    @property
+    def group_name(self):
+        if self.field_infos.current:
+            return self.cost_centre().directorate.group.group_name
+        else:
+            return self.cost_centre().group_name
+
+
+class DirectorateForecastMixin(PeriodView):
+    hierarchy_type = SHOW_DIRECTORATE
+
+    @property
+    def directorate_code(self):
+        return self.kwargs["directorate_code"]
+
+    def directorate(self):
+        return self.field_infos.directorate(self.directorate_code)
+
+    @property
+    def directorate_name(self):
+        return self.directorate().directorate_name
+
+    @property
+    def group_code(self):
+        if self.field_infos.current:
+            return self.directorate().group.group_code
+        else:
+            return self.directorate().group_code
+
+    @property
+    def group_name(self):
+        if self.field_infos.current:
+            return self.directorate().group.group_name
+        else:
+            return self.directorate().group_name
+
+
+class GroupForecastMixin(PeriodView):
+    hierarchy_type = SHOW_GROUP
+
+    def group(self):
+        return self.field_infos.group(self.group_code)
+
+    @property
+    def group_code(self):
+        return self.kwargs["group_code"]
+
+    @property
+    def group_name(self):
+        return self.group().group_name
+
+
+class DITForecastMixin(PeriodView):
+    hierarchy_type = SHOW_DIT
+
+
+

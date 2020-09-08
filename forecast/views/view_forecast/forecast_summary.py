@@ -1,12 +1,9 @@
 from django.http import Http404
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import reverse
-from django.views.generic.base import TemplateView
+
 
 from costcentre.forms import DirectorateCostCentresForm
-from costcentre.models import (
-    ArchivedCostCentre,
-)
 
 from forecast.forms import ForecastPeriodForm
 from forecast.tables import (
@@ -15,14 +12,15 @@ from forecast.tables import (
 )
 from forecast.utils.query_fields import (
     SHOW_COSTCENTRE,
-    SHOW_DIRECTORATE,
-    SHOW_DIT,
-    SHOW_GROUP,
 )
 from forecast.views.base import (
+    CostCentreForecastMixin,
+    DirectorateForecastMixin,
+    DITForecastMixin,
     ForecastViewPermissionMixin,
     ForecastViewTableMixin,
-    PeriodView,
+    GroupForecastMixin,
+
 )
 
 
@@ -160,10 +158,9 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
         return self.tables
 
 
-class DITView(ForecastViewPermissionMixin, ForecastMultiTableMixin, PeriodView):
+class DITView(ForecastViewPermissionMixin, ForecastMultiTableMixin, DITForecastMixin):
     template_name = "forecast/view/dit.html"
     table_pagination = False
-    hierarchy_type = SHOW_DIT
 
     def post(self, request, *args, **kwargs):
         new_period = request.POST.get("selected_period", None,)
@@ -173,22 +170,10 @@ class DITView(ForecastViewPermissionMixin, ForecastMultiTableMixin, PeriodView):
 
 
 class GroupView(
-    ForecastViewPermissionMixin, ForecastMultiTableMixin, PeriodView,
+    ForecastViewPermissionMixin, ForecastMultiTableMixin, GroupForecastMixin,
 ):
     template_name = "forecast/view/group.html"
     table_pagination = False
-    hierarchy_type = SHOW_GROUP
-
-    def group(self):
-        return self.field_infos.group(self.group_code)
-
-    @property
-    def group_code(self):
-        return self.kwargs["group_code"]
-
-    @property
-    def group_name(self):
-        return self.group().group_name
 
     def post(self, request, *args, **kwargs):
         new_period = request.POST.get("selected_period", None,)
@@ -204,37 +189,10 @@ class GroupView(
 
 
 class DirectorateView(
-    ForecastViewPermissionMixin, ForecastMultiTableMixin, PeriodView,
+    ForecastViewPermissionMixin, ForecastMultiTableMixin, DirectorateForecastMixin,
 ):
     template_name = "forecast/view/directorate.html"
     table_pagination = False
-    hierarchy_type = SHOW_DIRECTORATE
-
-    @property
-    def directorate_code(self):
-        return self.kwargs["directorate_code"]
-
-    def directorate(self):
-        return self.field_infos.directorate(self.directorate_code)
-
-    @property
-    def directorate_name(self):
-        return self.directorate().directorate_name
-
-    @property
-    def group_code(self):
-        if self.field_infos.current:
-            return self.directorate().group.group_code
-        else:
-            return self.directorate().group_code
-
-    @property
-    def group_name(self):
-        if self.field_infos.current:
-            return self.directorate().group.group_name
-        else:
-            return self.directorate().group_name
-
 
     def post(self, request, *args, **kwargs):
         new_period = request.POST.get("selected_period", None,)
@@ -250,11 +208,10 @@ class DirectorateView(
 
 
 class CostCentreView(
-    ForecastViewPermissionMixin, ForecastMultiTableMixin, TemplateView
+    ForecastViewPermissionMixin, ForecastMultiTableMixin,  CostCentreForecastMixin
 ):
     template_name = "forecast/view/cost_centre.html"
     table_pagination = False
-    hierarchy_type = SHOW_COSTCENTRE
 
     def cost_centre(self):
         return self.field_infos.cost_centre(
