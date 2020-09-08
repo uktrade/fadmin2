@@ -43,6 +43,7 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
         self.programme_code = "310940"
         self.programme_description = "Test programme description"
         self.project_code = "0123"
+        self.project_description = "Test project description"
         self.analisys1 = "00798"
         self.analisys2 = "00321"
         cc_obj = ArchivedCostCentreFactory.create(
@@ -55,11 +56,13 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
             financial_year=archived_year_obj,
         )
         project_obj = HistoricalProjectCodeFactory.create(
-            project_code=self.project_code, financial_year=archived_year_obj
+            project_code=self.project_code, financial_year=archived_year_obj,
+            project_description=self.project_description,
         )
         self.budget_type_id = "AME"
         programme_obj = HistoricalProgrammeCodeFactory.create(
             programme_code=self.programme_code,
+            programme_description=self.programme_description,
             budget_type_id=self.budget_type_id,
             financial_year=archived_year_obj
         )
@@ -113,7 +116,7 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
             "adj03": 3135450,
         }
         self.budget = self.outturn["budget"]
-        self.year_total = sum(self.outturn.values())
+        self.year_total = sum(self.outturn.values()) - self.budget
         self.underspend_total = self.budget - self.year_total
         self.spend_to_date_total = self.year_total
 
