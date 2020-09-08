@@ -15,6 +15,7 @@ from costcentre.test.factories import (
 
 from end_of_month.end_of_month_actions import end_of_month_archive
 from end_of_month.models import forecast_budget_view_model
+from end_of_month.utils import get_archivable_month, validate_period_code, InvalidPeriodError
 
 from forecast.models import (
     BudgetMonthlyFigure,
@@ -144,3 +145,16 @@ class SetFullYearArchive(MonthlyFigureSetup):
             self.archived_forecast.append(0)
             self.archived_budget.append(0)
         self.set_archive_period(last_archived_period)
+
+
+class UtilsTests():
+    def setUp(self):
+        pass
+
+    def test_validate_period_code(self):
+        with self.assertRaises(InvalidPeriodError):
+            validate_period_code(period_code=0)
+
+
+    def test_get_archivable_month(self):
+        pass
