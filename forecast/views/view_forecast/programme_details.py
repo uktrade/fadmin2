@@ -5,11 +5,6 @@ from django.shortcuts import reverse
 from chartofaccountDIT.forms import ProgrammeForm
 from chartofaccountDIT.models import ProgrammeCode
 
-from costcentre.models import (
-    DepartmentalGroup,
-    Directorate,
-)
-
 from forecast.tables import ForecastSubTotalTable
 from forecast.utils.query_fields import (
     SHOW_DIRECTORATE,

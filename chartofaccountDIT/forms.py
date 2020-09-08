@@ -21,20 +21,17 @@ class ExpenditureTypeForm(forms.Form):
         )
         if year:
             self.fields['expenditure_category_description'] = forms.ModelChoiceField(
-                queryset=ArchivedExpenditureCategory.objects
-                    .filter(financial_year=year),
+                queryset=ArchivedExpenditureCategory.objects.
+                        filter(financial_year=year),
                 widget=Select(),
                 initial=expenditure_category,
             )
-
         else:
             self.fields['expenditure_category_description'] = forms.ModelChoiceField(
                 queryset=ExpenditureCategory.objects.all(),
                 widget=Select(),
                 initial=expenditure_category,
             )
-
-
 
         self.fields['expenditure_category_description'].widget.attrs.update(
             {

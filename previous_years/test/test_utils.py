@@ -74,7 +74,7 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
         self.expenditure_category_id = expenditure_category_obj.id
         nac_obj = HistoricalNaturalCodeFactory.create(
             natural_account_code=self.natural_account_code,
-            natural_account_code_description = self.natural_account_description,
+            natural_account_code_description=self.natural_account_description,
             economic_budget_code="CAPITAL",
             expenditure_category=expenditure_category_obj,
             financial_year=archived_year_obj,

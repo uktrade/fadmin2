@@ -1,58 +1,10 @@
-from datetime import datetime
-
 from bs4 import BeautifulSoup
 
 
-from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import (
-    Group,
-    Permission,
-)
-from django.core.exceptions import PermissionDenied
-from django.test import (
-    TestCase,
-)
 from django.urls import reverse
 
-from chartofaccountDIT.test.factories import (
-    Analysis1Factory,
-    Analysis2Factory,
-    ExpenditureCategoryFactory,
-    NaturalCodeFactory,
-    ProgrammeCodeFactory,
-    ProjectCodeFactory,
-)
-
-from core.models import FinancialYear
-from core.test.test_base import RequestFactoryBase
-from core.utils.generic_helpers import get_current_financial_year
-
-from costcentre.test.factories import (
-    CostCentreFactory,
-    DepartmentalGroupFactory,
-    DirectorateFactory,
-)
-
-from forecast.models import (
-    FinancialCode,
-    FinancialPeriod,
-    ForecastEditState,
-    ForecastMonthlyFigure,
-)
-from forecast.permission_shortcuts import assign_perm
-from forecast.test.factories import (
-    FinancialCodeFactory,
-)
 from forecast.test.test_utils import (
-    create_budget,
     format_forecast_figure,
-)
-from forecast.views.edit_forecast import (
-    AddRowView,
-    ChooseCostCentreView,
-    EditForecastFigureView,
-    EditForecastView,
 )
 from forecast.views.view_forecast.expenditure_details import (
     CostCentreExpenditureDetailsView,
@@ -60,17 +12,8 @@ from forecast.views.view_forecast.expenditure_details import (
     DirectorateExpenditureDetailsView,
     GroupExpenditureDetailsView,
 )
-from forecast.views.view_forecast.forecast_summary import (
-    CostCentreView,
-    DITView,
-    DirectorateView,
-    GroupView,
-)
-from forecast.views.view_forecast.programme_details import (
-    DITProgrammeDetailsView,
-    DirectorateProgrammeDetailsView,
-    GroupProgrammeDetailsView,
-)
+
+from previous_years.test.test_utils import DownloadPastYearForecastSetup
 
 TOTAL_COLUMN = -5
 SPEND_TO_DATE_COLUMN = -2
@@ -81,9 +24,6 @@ PROGRAMME_TABLE_INDEX = 1
 EXPENDITURE_TABLE_INDEX = 2
 PROJECT_TABLE_INDEX = 3
 
-
-
-from previous_years.test.test_utils import DownloadPastYearForecastSetup
 
 class ViewForecastNaturalAccountCodeTest(DownloadPastYearForecastSetup):
 
@@ -207,5 +147,3 @@ class ViewForecastNaturalAccountCodeTest(DownloadPastYearForecastSetup):
         )
 
         self.check_response(resp)
-
-

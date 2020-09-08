@@ -3,13 +3,6 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import reverse
 
 from chartofaccountDIT.forms import ExpenditureTypeForm
-from chartofaccountDIT.models import ExpenditureCategory
-
-from costcentre.models import (
-    CostCentre,
-    Directorate,
-)
-from costcentre.models import DepartmentalGroup
 
 from forecast.tables import ForecastSubTotalTable
 from forecast.utils.query_fields import (
@@ -33,8 +26,8 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
         return "wide-table"
 
     def expenditure_category(self):
-
-        return self.field_infos.expenditure_category(self.kwargs["expenditure_category"],)
+        return self.field_infos.\
+            expenditure_category(self.kwargs["expenditure_category"],)
 
     def budget_type(self):
         return self.kwargs["budget_type"]
@@ -42,7 +35,7 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
     def expenditure_type_form(self):
         return ExpenditureTypeForm(
             expenditure_category=self.kwargs["expenditure_category"],
-            year = self.year
+            year=self.year
         )
 
     def post(self, request, *args, **kwargs):

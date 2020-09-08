@@ -5,10 +5,6 @@ from django.shortcuts import reverse
 from chartofaccountDIT.forms import ProjectForm
 from chartofaccountDIT.models import ProjectCode
 
-from costcentre.models import (
-    DepartmentalGroup,
-)
-
 from forecast.tables import ForecastSubTotalTable
 from forecast.utils.query_fields import (
     SHOW_COSTCENTRE,
@@ -136,6 +132,7 @@ class DirectorateProjectDetailsView(
 
     def directorate(self):
         return self.field_infos.directorate(self.kwargs["directorate_code"])
+
 
 class CostCentreProjectDetailsView(
     ForecastViewPermissionMixin, ForecastProjectDetailsMixin, PeriodView,

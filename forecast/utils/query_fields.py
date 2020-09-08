@@ -682,11 +682,8 @@ class ViewForecastFields:
 
     def expenditure_category(self, expenditure_category_id):
         if self.current:
-            return ExpenditureCategory.objects.get(
-                pk=expenditure_category_id )
-
-        return ArchivedExpenditureCategory.objects.get(
-                pk=expenditure_category_id )
+            return ExpenditureCategory.objects.get(pk=expenditure_category_id)
+        return ArchivedExpenditureCategory.objects.get(pk=expenditure_category_id)
 
 
 def edit_forecast_order():
