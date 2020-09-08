@@ -2,8 +2,11 @@ from django.core.management.base import BaseCommand
 
 from end_of_month.end_of_month_actions import end_of_month_archive
 from end_of_month.utils import (
-    InvalidPeriodError, LaterPeriodAlreadyArchivedError,
-    SelectPeriodAlreadyArchivedError, validate_period_code)
+    InvalidPeriodError,
+    LaterPeriodAlreadyArchivedError,
+    PeriodAlreadyArchivedError,
+    validate_period_code,
+)
 
 
 class Command(BaseCommand):
@@ -22,7 +25,7 @@ class Command(BaseCommand):
             except InvalidPeriodError:
                 self.stdout.write(self.style.ERROR("Valid Period is between 1 and 15."))
                 return
-            except SelectPeriodAlreadyArchivedError:
+            except PeriodAlreadyArchivedError:
                 self.stdout.write(
                     self.style.ERROR("The selected period has already been archived.")
                 )

@@ -7,7 +7,7 @@ from end_of_month.end_of_month_actions import end_of_month_archive
 from end_of_month.forms import EndOfMonthProcessForm
 from end_of_month.utils import (
     InvalidPeriodError,
-    SelectPeriodAlreadyArchivedError,
+    PeriodAlreadyArchivedError,
     get_archivable_month,
     user_has_archive_access,
 )
@@ -49,7 +49,7 @@ class EndOfMonthProcessView(
                 pk=archivable_period).period_long_name
         except InvalidPeriodError:
             context["invalid_period"] = True
-        except SelectPeriodAlreadyArchivedError as ex:
+        except PeriodAlreadyArchivedError as ex:
             context["already_archived"] = ex
         return context
 

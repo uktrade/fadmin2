@@ -23,7 +23,8 @@ from end_of_month.models import EndOfMonthStatus, forecast_budget_view_model
 from end_of_month.utils import (
     InvalidPeriodError,
     LaterPeriodAlreadyArchivedError,
-    SelectPeriodAlreadyArchivedError,
+    PeriodAlreadyArchivedError,
+    get_archivable_month,
     validate_period_code,
 )
 
@@ -168,18 +169,22 @@ class UtilsTests(TestCase, RequestFactoryBase):
             archived_period__financial_period_code=4
         )
         end_of_month_info.archived = True
-        self.assertRaises(SelectPeriodAlreadyArchivedError)
+        end_of_month_info.save()
 
-        highest_archived = EndOfMonthStatus.objects.filter(
-            archived=True, archived_period__financial_period_code=3
-        )
+        with self.assertRaises(PeriodAlreadyArchivedError):
+            validate_period_code(period_code=4)
 
-        highest_archived.count()
-        self.assertRaises(LaterPeriodAlreadyArchivedError)
+        with self.assertRaises(LaterPeriodAlreadyArchivedError):
+            validate_period_code(period_code=2)
 
     def test_get_archivable_month(self):
-        is_archived = EndOfMonthStatus.objects.get(
-            archived_period_id=1)
-        is_archived.archived = True
+        first_month_no_actual = FinancialPeriod.financial_period_info.actual_month() + 1
 
-        self.assertRaises(SelectPeriodAlreadyArchivedError)
+        end_of_month_status = EndOfMonthStatus.objects.filter(
+            archived_period__financial_period_code=first_month_no_actual,
+        ).first()
+        end_of_month_status.archived = True
+        end_of_month_status.save()
+
+        with self.assertRaises(PeriodAlreadyArchivedError):
+            get_archivable_month()
