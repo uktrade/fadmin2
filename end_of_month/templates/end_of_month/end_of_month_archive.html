@@ -30,13 +30,13 @@
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-warning-text__assistive">Warning</span>
-                        Please note, once the financial data has been archived, this cannot be undone. Are you sure you want to continue?
+                        Archiving cannot be undone
                     </strong>
                 </div>
             <form novalidate method='post'>
                 {% csrf_token %}
                 {% include "core/govt_uk_form.html" with form=form %}
-                <input id="archive_button" type="submit" value="Archive" class="govuk-button govuk-button--secondary" data-module="govuk-button"/>
+                <input id="archive_button" type="submit" value="Archive {{ archivable_month }}" class="govuk-button govuk-button" data-module="govuk-button"/>
             </form>
         {% endif %}
 

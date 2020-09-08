@@ -154,7 +154,8 @@
                     {% endif %}
                 {% endif %}
 
-            {% if request.user.is_staff %}
+            {% has_end_of_month_archive_permissions request.user as has_end_of_month_archive_permissions %}
+            {% if has_end_of_month_archive_permissions == True %}
                 <li class="internal-header__navigation__item">
                     <a id="end_of_month" class="internal-header__navigation__item__link" href="{% url 'end_of_month' %}">
                                 Archive Monthly Forecast
