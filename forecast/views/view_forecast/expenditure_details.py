@@ -33,14 +33,16 @@ class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
         return "wide-table"
 
     def expenditure_category(self):
-        return ExpenditureCategory.objects.get(pk=self.kwargs["expenditure_category"],)
+
+        return self.field_infos.expenditure_category(self.kwargs["expenditure_category"],)
 
     def budget_type(self):
         return self.kwargs["budget_type"]
 
     def expenditure_type_form(self):
         return ExpenditureTypeForm(
-            expenditure_category=self.kwargs["expenditure_category"]
+            expenditure_category=self.kwargs["expenditure_category"],
+            year = self.year
         )
 
     def post(self, request, *args, **kwargs):
@@ -118,13 +120,11 @@ class GroupExpenditureDetailsView(
     url_name = "expenditure_details_group"
 
     def group(self):
-        return DepartmentalGroup.objects.get(
-            group_code=self.kwargs["group_code"], active=True,
-        )
+        return self.field_infos.group(self.kwargs["group_code"])
 
     def selection_kwargs(self):
         return {
-            "group_code": self.group().group_code,
+            "group_code": self.kwargs["group_code"],
             "expenditure_category": self.selected_expenditure_category_id,
             "budget_type": self.budget_type(),
             "period": self.selected_period,
@@ -139,9 +139,7 @@ class DirectorateExpenditureDetailsView(
     url_name = "expenditure_details_directorate"
 
     def directorate(self):
-        return Directorate.objects.get(
-            directorate_code=self.kwargs["directorate_code"], active=True,
-        )
+        return self.field_infos.directorate(self.kwargs["directorate_code"])
 
     def selection_kwargs(self):
         return {
@@ -161,7 +159,7 @@ class CostCentreExpenditureDetailsView(
     url_name = "expenditure_details_cost_centre"
 
     def cost_centre(self):
-        return CostCentre.objects.get(cost_centre_code=self.kwargs["cost_centre_code"],)
+        return self.field_infos.cost_centre(self.kwargs["cost_centre_code"])
 
     def selection_kwargs(self):
         return {

@@ -6,9 +6,7 @@ from chartofaccountDIT.forms import ProjectForm
 from chartofaccountDIT.models import ProjectCode
 
 from costcentre.models import (
-    CostCentre,
     DepartmentalGroup,
-    Directorate,
 )
 
 from forecast.tables import ForecastSubTotalTable
@@ -113,15 +111,13 @@ class GroupProjectDetailsView(
 
     def selection_kwargs(self):
         return {
-            "group_code": self.group().group_code,
+            "group_code": self.kwargs["group_code"],
             "project_code": self.selected_project_code_id,
             "period": self.selected_period,
         }
 
     def group(self):
-        return DepartmentalGroup.objects.get(
-            group_code=self.kwargs["group_code"], active=True,
-        )
+        return self.field_infos.group(self.kwargs["group_code"])
 
 
 class DirectorateProjectDetailsView(
@@ -133,16 +129,13 @@ class DirectorateProjectDetailsView(
 
     def selection_kwargs(self):
         return {
-            "directorate_code": self.directorate().directorate_code,
+            "directorate_code": self.kwargs["directorate_code"],
             "project_code": self.selected_project_code_id,
             "period": self.selected_period,
         }
 
     def directorate(self):
-        return Directorate.objects.get(
-            directorate_code=self.kwargs["directorate_code"], active=True,
-        )
-
+        return self.field_infos.directorate(self.kwargs["directorate_code"])
 
 class CostCentreProjectDetailsView(
     ForecastViewPermissionMixin, ForecastProjectDetailsMixin, PeriodView,
@@ -154,10 +147,10 @@ class CostCentreProjectDetailsView(
 
     def selection_kwargs(self):
         return {
-            "cost_centre_code": self.cost_centre().cost_centre_code,
+            "cost_centre_code": self.kwargs["cost_centre_code"],
             "project_code": self.selected_project_code_id,
             "period": self.selected_period,
         }
 
     def cost_centre(self):
-        return CostCentre.objects.get(cost_centre_code=self.kwargs["cost_centre_code"],)
+        return self.field_infos.cost_centre(self.kwargs["cost_centre_code"])

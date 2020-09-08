@@ -1,3 +1,6 @@
+from chartofaccountDIT.models import (ArchivedExpenditureCategory,
+                                      ExpenditureCategory, )
+
 from costcentre.models import (ArchivedCostCentre,
                                CostCentre,
                                DepartmentalGroup,
@@ -644,6 +647,8 @@ class ViewForecastFields:
                 self._datamodel = ArchivedForecastData
         return self._datamodel
 
+    # The next methods return the correct objects (archived or not)
+    # using the period to decide which one to use
     def group(self, group_code):
         if self.current:
             return DepartmentalGroup.objects.get(
@@ -674,6 +679,14 @@ class ViewForecastFields:
             financial_year_id=self.period,
         )
         return queryset.first()
+
+    def expenditure_category(self, expenditure_category_id):
+        if self.current:
+            return ExpenditureCategory.objects.get(
+                pk=expenditure_category_id )
+
+        return ArchivedExpenditureCategory.objects.get(
+                pk=expenditure_category_id )
 
 
 def edit_forecast_order():

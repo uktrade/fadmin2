@@ -117,13 +117,11 @@ class GroupProgrammeDetailsView(
     url_name = "programme_details_group"
 
     def group(self):
-        return DepartmentalGroup.objects.get(
-            group_code=self.kwargs["group_code"], active=True,
-        )
+        return self.field_infos.group(self.kwargs["group_code"])
 
     def selection_kwargs(self):
         return {
-            "group_code": self.group().group_code,
+            "group_code": self.kwargs["group_code"],
             "programme_code": self.selected_programme_code_id,
             "forecast_expenditure_type": self.forecast_expenditure_type(),
             "period": self.selected_period,
@@ -138,9 +136,7 @@ class DirectorateProgrammeDetailsView(
     url_name = "programme_details_directorate"
 
     def directorate(self):
-        return Directorate.objects.get(
-            directorate_code=self.kwargs["directorate_code"], active=True,
-        )
+        return self.field_infos.directorate(self.kwargs["directorate_code"])
 
     def selection_kwargs(self):
         return {

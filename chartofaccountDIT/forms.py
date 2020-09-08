@@ -3,6 +3,7 @@ from django import forms
 from django.forms import Select
 
 from chartofaccountDIT.models import (
+    ArchivedExpenditureCategory,
     ExpenditureCategory,
     ProgrammeCode,
     ProjectCode,
@@ -11,17 +12,30 @@ from chartofaccountDIT.models import (
 
 class ExpenditureTypeForm(forms.Form):
     def __init__(self, *args, **kwargs):
+        year = kwargs.pop('year')
         expenditure_category = kwargs.pop('expenditure_category')
 
         super(ExpenditureTypeForm, self).__init__(
             *args,
             **kwargs,
         )
-        self.fields['expenditure_category_description'] = forms.ModelChoiceField(
-            queryset=ExpenditureCategory.objects.all(),
-            widget=Select(),
-            initial=expenditure_category,
-        )
+        if year:
+            self.fields['expenditure_category_description'] = forms.ModelChoiceField(
+                queryset=ArchivedExpenditureCategory.objects
+                    .filter(financial_year=year),
+                widget=Select(),
+                initial=expenditure_category,
+            )
+
+        else:
+            self.fields['expenditure_category_description'] = forms.ModelChoiceField(
+                queryset=ExpenditureCategory.objects.all(),
+                widget=Select(),
+                initial=expenditure_category,
+            )
+
+
+
         self.fields['expenditure_category_description'].widget.attrs.update(
             {
                 "class": "govuk-select",

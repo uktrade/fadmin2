@@ -40,6 +40,7 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
         self.directorate_code = "10900T"
         self.directorate_name = "Test directorate name"
         self.natural_account_code = 52191003
+        self.natural_account_description = "Test nac description"
         self.programme_code = "310940"
         self.programme_description = "Test programme description"
         self.project_code = "0123"
@@ -73,10 +74,12 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
         self.expenditure_category_id = expenditure_category_obj.id
         nac_obj = HistoricalNaturalCodeFactory.create(
             natural_account_code=self.natural_account_code,
+            natural_account_code_description = self.natural_account_description,
             economic_budget_code="CAPITAL",
             expenditure_category=expenditure_category_obj,
             financial_year=archived_year_obj,
         )
+
         analysis2_obj = HistoricalAnalysis2Factory.create(
             analysis2_code=self.analisys2, financial_year=archived_year_obj
         )
