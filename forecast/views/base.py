@@ -158,6 +158,7 @@ class PeriodFormView(FormView):
 
 
 class PeriodView(TemplateView):
+    table_pagination = False
     def period_form(self):
         return ForecastPeriodForm(selected_period=self.period)
 
@@ -169,10 +170,6 @@ class CostCentreForecastMixin(PeriodView):
         return self.field_infos.cost_centre(
             cost_centre_code=self.cost_centre_code,
         )
-
-    @property
-    def cost_centre_code(self):
-        return self.kwargs['cost_centre_code']
 
     @property
     def cost_centre_name(self):

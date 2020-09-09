@@ -16,8 +16,6 @@ from forecast.views.base import (
 
 
 class ForecastExpenditureDetailsMixin(ForecastViewTableMixin):
-    hierarchy_type = -1
-    table_pagination = False
 
     def class_name(self):
         return "wide-table"
@@ -135,7 +133,6 @@ class CostCentreExpenditureDetailsView(
     ForecastViewPermissionMixin, ForecastExpenditureDetailsMixin, CostCentreForecastMixin,
 ):
     template_name = "forecast/view/expenditure_details/cost_centre.html"
-    table_pagination = False
     url_name = "expenditure_details_cost_centre"
 
     def selection_kwargs(self):

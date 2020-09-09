@@ -33,7 +33,6 @@ class ViewForecastFields:
         self.period = period
         self._datamodel = None
 
-
     financial_code_prefix = "financial_code__"
     # indicates if DEL, AME, ADMIN
     budget_type_field = (
@@ -688,12 +687,23 @@ class ViewForecastFields:
             return ExpenditureCategory.objects.get(pk=expenditure_category_id)
         return ArchivedExpenditureCategory.objects.get(pk=expenditure_category_id)
 
+
     def programme_code(self, programme_code):
         if self.current:
             return ProgrammeCode.objects.get(pk=programme_code)
 
         return ArchivedProgrammeCode.objects.get(
             programme_code=programme_code,
+            financial_year_id=self.period,
+        )
+
+
+    def project_code(self, project_code):
+        if self.current:
+            return ProjectCode.objects.get(pk=project_code)
+
+        return ArchivedProjectCode.objects.get(
+            project_code=project_code,
             financial_year_id=self.period,
         )
 

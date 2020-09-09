@@ -5,12 +5,6 @@ from django.shortcuts import reverse
 from chartofaccountDIT.forms import ProjectForm
 
 from forecast.tables import ForecastSubTotalTable
-from forecast.utils.query_fields import (
-    SHOW_COSTCENTRE,
-    SHOW_DIRECTORATE,
-    SHOW_DIT,
-    SHOW_GROUP,
-)
 from forecast.views.base import (
     CostCentreForecastMixin,
     DirectorateForecastMixin,
@@ -22,14 +16,12 @@ from forecast.views.base import (
 
 
 class ForecastProjectDetailsMixin(ForecastViewTableMixin):
-    hierarchy_type = -1
-    table_pagination = False
 
     def class_name(self):
         return "wide-table"
 
     def project_code(self):
-        return self.kwargs["project_code"]
+        return self.field_infos.project_code(self.kwargs["project_code"])
 
     def project_code_form(self):
         return ProjectForm(project_code=self.kwargs["project_code"])
@@ -131,7 +123,6 @@ class CostCentreProjectDetailsView(
     ForecastViewPermissionMixin, ForecastProjectDetailsMixin, CostCentreForecastMixin,
 ):
     template_name = "forecast/view/project_details/cost_centre.html"
-    table_pagination = False
     url_name = "project_details_costcentre"
 
     def selection_kwargs(self):

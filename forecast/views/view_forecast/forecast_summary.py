@@ -159,7 +159,6 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
 
 class DITView(ForecastViewPermissionMixin, ForecastMultiTableMixin, DITForecastMixin):
     template_name = "forecast/view/dit.html"
-    table_pagination = False
 
     def post(self, request, *args, **kwargs):
         new_period = request.POST.get("selected_period", None,)
@@ -172,7 +171,6 @@ class GroupView(
     ForecastViewPermissionMixin, ForecastMultiTableMixin, GroupForecastMixin,
 ):
     template_name = "forecast/view/group.html"
-    table_pagination = False
 
     def post(self, request, *args, **kwargs):
         new_period = request.POST.get("selected_period", None,)
@@ -191,7 +189,6 @@ class DirectorateView(
     ForecastViewPermissionMixin, ForecastMultiTableMixin, DirectorateForecastMixin,
 ):
     template_name = "forecast/view/directorate.html"
-    table_pagination = False
 
     def post(self, request, *args, **kwargs):
         new_period = request.POST.get("selected_period", None,)
@@ -210,48 +207,6 @@ class CostCentreView(
     ForecastViewPermissionMixin, ForecastMultiTableMixin,  CostCentreForecastMixin
 ):
     template_name = "forecast/view/cost_centre.html"
-    table_pagination = False
-
-    def cost_centre(self):
-        return self.field_infos.cost_centre(
-            cost_centre_code=self.cost_centre_code,
-        )
-
-    @property
-    def cost_centre_code(self):
-        return self.kwargs['cost_centre_code']
-
-    @property
-    def cost_centre_name(self):
-        return self.cost_centre().cost_centre_name
-
-    @property
-    def directorate_code(self):
-        if self.field_infos.current:
-            return self.cost_centre().directorate.directorate_code
-        else:
-            return self.cost_centre().directorate_code
-
-    @property
-    def directorate_name(self):
-        if self.field_infos.current:
-            return self.cost_centre().directorate.directorate_name
-        else:
-            return self.cost_centre().directorate_name
-
-    @property
-    def group_code(self):
-        if self.field_infos.current:
-            return self.cost_centre().directorate.group.group_code
-        else:
-            return self.cost_centre().group_code
-
-    @property
-    def group_name(self):
-        if self.field_infos.current:
-            return self.cost_centre().directorate.group.group_name
-        else:
-            return self.cost_centre().group_name
 
     def cost_centres_form(self):
         cost_centre_code = self.cost_centre_code
@@ -259,6 +214,11 @@ class CostCentreView(
             cost_centre_code=cost_centre_code,
             year=self.year
         )
+
+    @property
+    def cost_centre_code(self):
+        return self.kwargs['cost_centre_code']
+
 
     def period_form(self):
         return ForecastPeriodForm(selected_period=self.period)

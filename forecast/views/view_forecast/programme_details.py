@@ -15,8 +15,6 @@ from forecast.views.base import (
 
 
 class ForecastProgrammeDetailsMixin(ForecastViewTableMixin):
-    hierarchy_type = -1
-    table_pagination = False
 
     def class_name(self):
         return "wide-table"
@@ -118,7 +116,9 @@ class GroupProgrammeDetailsView(
 
 
 class DirectorateProgrammeDetailsView(
-    ForecastViewPermissionMixin, ForecastProgrammeDetailsMixin, DirectorateForecastMixin,
+    ForecastViewPermissionMixin,
+    ForecastProgrammeDetailsMixin,
+    DirectorateForecastMixin,
 ):
     template_name = "forecast/view/programme_details/directorate.html"
     url_name = "programme_details_directorate"
