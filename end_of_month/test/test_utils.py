@@ -144,3 +144,35 @@ class SetFullYearArchive(MonthlyFigureSetup):
             self.archived_forecast.append(0)
             self.archived_budget.append(0)
         self.set_archive_period(last_archived_period)
+
+
+class UtilsTests(TestCase, RequestFactoryBase):
+    def test_validate_period_code(self):
+        with self.assertRaises(InvalidPeriodError):
+            validate_period_code(period_code=0)
+        with self.assertRaises(InvalidPeriodError):
+            validate_period_code(period_code=16)
+
+        end_of_month_info = EndOfMonthStatus.objects.get(
+            archived_period__financial_period_code=4
+        )
+        end_of_month_info.archived = True
+        end_of_month_info.save()
+
+        with self.assertRaises(PeriodAlreadyArchivedError):
+            validate_period_code(period_code=4)
+
+        with self.assertRaises(LaterPeriodAlreadyArchivedError):
+            validate_period_code(period_code=2)
+
+    def test_get_archivable_month(self):
+        first_month_no_actual = FinancialPeriod.financial_period_info.actual_month() + 1
+
+        end_of_month_status = EndOfMonthStatus.objects.filter(
+            archived_period__financial_period_code=first_month_no_actual,
+        ).first()
+        end_of_month_status.archived = True
+        end_of_month_status.save()
+
+        with self.assertRaises(PeriodAlreadyArchivedError):
+            get_archivable_month()

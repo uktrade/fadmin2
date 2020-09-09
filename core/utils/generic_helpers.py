@@ -9,7 +9,6 @@ from django.contrib.admin.models import (
     LogEntry,
 )
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Max
 
 import requests
 
@@ -17,10 +16,10 @@ from core.models import FinancialYear
 
 
 def get_current_financial_year():
-    # Use max for the anomalous case of more than one current year defines
-    y = FinancialYear.objects.filter(current=True).aggregate(Max("financial_year"))
-    current_financial_year = y["financial_year__max"]
-    if current_financial_year is None:
+    y = FinancialYear.objects.filter(current=True)
+    if y:
+        current_financial_year = y.last().financial_year
+    else:
         # If there is a data problem
         # and the current year is not
         # defined, return the financial
@@ -35,7 +34,9 @@ def get_current_financial_year():
             # before 5th April, the financial
             # year it is one year behind the
             # calendar year
-            current_financial_year -= 1
+            current_financial_year -= (
+                1
+            )
 
     return current_financial_year
 
@@ -49,25 +50,28 @@ def get_year_display(year):
 
 
 class GetValidYear:
-    regex = "2017|2018|2019|2020"
+    regex = '2017|2018|2019|2020'
 
     def to_python(self, value):
         return int(value)
 
     def to_url(self, value):
-        return "%04d" % value
+        return '%04d' % value
 
 
 def get_s3_file_body(file_name):
     s3 = boto3.resource(
-        "s3",
+        's3',
         aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
         aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         region_name=settings.AWS_REGION,
     )
 
-    obj = s3.Object(settings.AWS_STORAGE_BUCKET_NAME, file_name,)
-    data = obj.get()["Body"].read()
+    obj = s3.Object(
+        settings.AWS_STORAGE_BUCKET_NAME,
+        file_name,
+    )
+    data = obj.get()['Body'].read()
     # loadworkbook needs a file like object to work. BytesIO transform the stream
     return BytesIO(data)
 
@@ -75,7 +79,7 @@ def get_s3_file_body(file_name):
 def run_anti_virus(file_body):
     # Check file with AV web service
     if settings.IGNORE_ANTI_VIRUS:
-        return {"malware": False}
+        return {'malware': False}
 
     files = {"file": file_body}
 
@@ -83,7 +87,11 @@ def run_anti_virus(file_body):
         settings.CLAM_AV_USERNAME,
         settings.CLAM_AV_PASSWORD,
     )
-    response = requests.post(settings.CLAM_AV_URL, auth=auth, files=files,)
+    response = requests.post(
+        settings.CLAM_AV_URL,
+        auth=auth,
+        files=files,
+    )
 
     return response.json()
 
@@ -99,17 +107,21 @@ GRAND_TOTAL_CLASS = "grand-total"
 
 
 def check_empty(value):
-    if value is not None and value != "":
+    if value is not None and value != '':
         return value
 
     return None
 
 
 def log_object_change(
-    requesting_user_id, message, obj=None,
+    requesting_user_id,
+    message,
+    obj=None,
 ):
     if obj:
-        content_type_id = ContentType.objects.get_for_model(obj).pk
+        content_type_id = ContentType.objects.get_for_model(
+            obj
+        ).pk
 
         LogEntry.objects.log_action(
             user_id=requesting_user_id,

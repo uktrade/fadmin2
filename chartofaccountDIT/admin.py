@@ -629,10 +629,7 @@ class OpDelCategoryAdmin(AdminImportExport):
 
 
 class BudgetTypeAdmin(AdminImportExport):
-    list_display = (
-        "budget_type_key",
-        "budget_type",
-    )
+    list_display = ("budget_type_key", "budget_type",)
 
     # different fields editable if updating or creating the object
     def get_readonly_fields(self, request, obj=None):
