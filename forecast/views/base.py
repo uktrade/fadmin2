@@ -167,9 +167,18 @@ class PeriodView(TemplateView):
 class CostCentreForecastMixin(PeriodView):
     hierarchy_type = SHOW_COSTCENTRE
 
+    @property
+    def cost_centre_code(self):
+        return self.kwargs["cost_centre_code"]
+
+    @property
+    def costcentre_code(self):
+        return self.kwargs["cost_centre_code"]
+
+
     def cost_centre(self):
         return self.field_infos.cost_centre(
-            cost_centre_code=self.cost_centre_code,
+            cost_centre_code=self.costcentre_code,
         )
 
     @property
