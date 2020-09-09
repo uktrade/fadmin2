@@ -33,6 +33,11 @@ class Migration(migrations.Migration):
             name='archived_at',
             field=models.DateTimeField(blank=True, null=True),
         ),
+        migrations.AlterField(
+            model_name='financialyear',
+            name='archived',
+            field=models.BooleanField(default=False),
+        ),
         migrations.DeleteModel(
             name='SimpleHistoryDocument',
         ),
