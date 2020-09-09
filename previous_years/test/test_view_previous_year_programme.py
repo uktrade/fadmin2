@@ -10,6 +10,8 @@ from forecast.views.view_forecast.programme_details import (
     DITProgrammeDetailsView,
 )
 
+from previous_years.test.test_utils import DownloadPastYearForecastSetup
+
 TOTAL_COLUMN = -5
 SPEND_TO_DATE_COLUMN = -2
 UNDERSPEND_COLUMN = -4
@@ -18,8 +20,6 @@ HIERARCHY_TABLE_INDEX = 0
 PROGRAMME_TABLE_INDEX = 1
 EXPENDITURE_TABLE_INDEX = 2
 PROJECT_TABLE_INDEX = 3
-
-from previous_years.test.test_utils import DownloadPastYearForecastSetup
 
 
 class ViewProgrammeDetailsTest(DownloadPastYearForecastSetup):
@@ -115,4 +115,3 @@ class ViewProgrammeDetailsTest(DownloadPastYearForecastSetup):
             period=self.archived_year,
         )
         self.check_response(resp)
-

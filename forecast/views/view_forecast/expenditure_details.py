@@ -7,8 +7,8 @@ from chartofaccountDIT.forms import ExpenditureTypeForm
 from forecast.tables import ForecastSubTotalTable
 from forecast.views.base import (
     CostCentreForecastMixin,
-    DirectorateForecastMixin,
     DITForecastMixin,
+    DirectorateForecastMixin,
     ForecastViewPermissionMixin,
     ForecastViewTableMixin,
     GroupForecastMixin,
@@ -100,7 +100,9 @@ class DITExpenditureDetailsView(
 
 
 class GroupExpenditureDetailsView(
-    ForecastViewPermissionMixin, ForecastExpenditureDetailsMixin, GroupForecastMixin,
+    ForecastViewPermissionMixin,
+    ForecastExpenditureDetailsMixin,
+    GroupForecastMixin,
 ):
     template_name = "forecast/view/expenditure_details/group.html"
     url_name = "expenditure_details_group"
@@ -115,7 +117,9 @@ class GroupExpenditureDetailsView(
 
 
 class DirectorateExpenditureDetailsView(
-    ForecastViewPermissionMixin, ForecastExpenditureDetailsMixin, DirectorateForecastMixin,
+    ForecastViewPermissionMixin,
+    ForecastExpenditureDetailsMixin,
+    DirectorateForecastMixin,
 ):
     template_name = "forecast/view/expenditure_details/directorate.html"
     url_name = "expenditure_details_directorate"
@@ -130,7 +134,9 @@ class DirectorateExpenditureDetailsView(
 
 
 class CostCentreExpenditureDetailsView(
-    ForecastViewPermissionMixin, ForecastExpenditureDetailsMixin, CostCentreForecastMixin,
+    ForecastViewPermissionMixin,
+    ForecastExpenditureDetailsMixin,
+    CostCentreForecastMixin,
 ):
     template_name = "forecast/view/expenditure_details/cost_centre.html"
     url_name = "expenditure_details_cost_centre"

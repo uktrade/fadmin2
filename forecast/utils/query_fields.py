@@ -687,7 +687,6 @@ class ViewForecastFields:
             return ExpenditureCategory.objects.get(pk=expenditure_category_id)
         return ArchivedExpenditureCategory.objects.get(pk=expenditure_category_id)
 
-
     def programme_code(self, programme_code):
         if self.current:
             return ProgrammeCode.objects.get(pk=programme_code)
@@ -696,7 +695,6 @@ class ViewForecastFields:
             programme_code=programme_code,
             financial_year_id=self.period,
         )
-
 
     def project_code(self, project_code):
         if self.current:

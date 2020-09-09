@@ -6,8 +6,8 @@ from chartofaccountDIT.forms import ProgrammeForm
 
 from forecast.tables import ForecastSubTotalTable
 from forecast.views.base import (
-    DirectorateForecastMixin,
     DITForecastMixin,
+    DirectorateForecastMixin,
     ForecastViewPermissionMixin,
     ForecastViewTableMixin,
     GroupForecastMixin,

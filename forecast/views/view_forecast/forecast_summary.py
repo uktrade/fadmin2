@@ -15,8 +15,8 @@ from forecast.utils.query_fields import (
 )
 from forecast.views.base import (
     CostCentreForecastMixin,
-    DirectorateForecastMixin,
     DITForecastMixin,
+    DirectorateForecastMixin,
     ForecastViewPermissionMixin,
     ForecastViewTableMixin,
     GroupForecastMixin,
@@ -204,7 +204,9 @@ class DirectorateView(
 
 
 class CostCentreView(
-    ForecastViewPermissionMixin, ForecastMultiTableMixin,  CostCentreForecastMixin
+    ForecastViewPermissionMixin,
+    ForecastMultiTableMixin,
+    CostCentreForecastMixin
 ):
     template_name = "forecast/view/cost_centre.html"
 
@@ -218,7 +220,6 @@ class CostCentreView(
     @property
     def cost_centre_code(self):
         return self.kwargs['cost_centre_code']
-
 
     def period_form(self):
         return ForecastPeriodForm(selected_period=self.period)

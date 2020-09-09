@@ -159,6 +159,7 @@ class PeriodFormView(FormView):
 
 class PeriodView(TemplateView):
     table_pagination = False
+
     def period_form(self):
         return ForecastPeriodForm(selected_period=self.period)
 
@@ -250,6 +251,3 @@ class GroupForecastMixin(PeriodView):
 
 class DITForecastMixin(PeriodView):
     hierarchy_type = SHOW_DIT
-
-
-

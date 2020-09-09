@@ -67,7 +67,7 @@ class DirectorateCostCentresForm(forms.Form):
                 queryset=cost_centre_queryset,
                 widget=Select(),
                 initial=cost_centre_code,
-                to_field_name = 'cost_centre_code'
+                to_field_name='cost_centre_code'
             )
         else:
             directorate_code = CostCentre.objects.get(
