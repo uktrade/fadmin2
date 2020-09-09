@@ -141,6 +141,10 @@ class CostCentreExpenditureDetailsView(
     template_name = "forecast/view/expenditure_details/cost_centre.html"
     url_name = "expenditure_details_cost_centre"
 
+    @property
+    def cost_centre_code(self):
+        return self.kwargs['cost_centre_code']
+
     def selection_kwargs(self):
         return {
             "cost_centre_code": self.kwargs["cost_centre_code"],

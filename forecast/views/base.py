@@ -175,7 +175,6 @@ class CostCentreForecastMixin(PeriodView):
     def costcentre_code(self):
         return self.kwargs["cost_centre_code"]
 
-
     def cost_centre(self):
         return self.field_infos.cost_centre(
             cost_centre_code=self.costcentre_code,
