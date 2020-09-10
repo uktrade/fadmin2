@@ -132,6 +132,16 @@ class ForecastViewTableMixin(MultiTableMixin):
         return self._month_list
 
     @property
+    def adj_visible_list(self):
+        list = []
+        if self.year:
+            # We need to show the Adj periods
+            list = FinancialPeriod.financial_period_info.all_adj_list()
+        else:
+            list =  FinancialPeriod.financial_period_info.adj_display_list()
+        return list
+
+    @property
     def data_model(self):
         return self.field_infos.datamodel
 

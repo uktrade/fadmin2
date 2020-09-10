@@ -152,7 +152,10 @@ class ForecastSubTotalTable(tables.Table):
         # See if Adjustment periods should be displayed.
         # Add them as extra columns, otherwise they remain visible even after
         # their field 'display_figure' is set to False.
-        adj_list = FinancialPeriod.financial_period_info.adj_display_list()
+        # The list is passed as an argument, because it is different for previous years
+        adj_list = kwargs.pop('adj_visible_list', [])
+
+        # adj_list = FinancialPeriod.financial_period_info.adj_display_list()
         if adj_list:
             for adj in adj_list:
                 extra_column_to_display.extend(

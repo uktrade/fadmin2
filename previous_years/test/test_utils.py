@@ -148,7 +148,7 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
         self.test_user.save()
 
 
-def hide_adjustment_columns(self):
+def hide_adjustment_columns():
     for period_code in range(13,16):
         financial_period_obj = FinancialPeriod.objects.get(financial_period_code=period_code)
         financial_period_obj.display_figure = False
