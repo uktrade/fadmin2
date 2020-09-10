@@ -13,7 +13,10 @@ from forecast.views.view_forecast.expenditure_details import (
     GroupExpenditureDetailsView,
 )
 
-from previous_years.test.test_utils import DownloadPastYearForecastSetup
+from previous_years.test.test_utils import (
+    DownloadPastYearForecastSetup,
+    hide_adjustment_columns
+)
 
 TOTAL_COLUMN = -5
 SPEND_TO_DATE_COLUMN = -2
@@ -147,3 +150,9 @@ class ViewForecastNaturalAccountCodeTest(DownloadPastYearForecastSetup):
         )
 
         self.check_response(resp)
+
+
+class ViewForecastNaturalAccountCodeAdjustmentColumnsTest(ViewForecastNaturalAccountCodeTest):
+    def setUp(self):
+        super().setUp()
+        hide_adjustment_columns()
