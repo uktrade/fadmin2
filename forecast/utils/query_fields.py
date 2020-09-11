@@ -25,11 +25,13 @@ SHOW_COSTCENTRE = 3
 
 
 class ForecastQueryFields:
-    # the 'long string' describing the field is different for previous years
-    # or current year. This class return the correct field using 'current' to decide
-    # what to return. The period for previous year is the integer describing the year.
-    # while for the current year the values are from 0 to 15.
+    # This massive class handles the difference in the tables and field name
+    # between the current chart of account and the archived ones.    #
+    # This class return the correct field using 'current' to decide
+    # what to return.
     def __init__(self, period=0):
+        # period : between 0 and 15 it refers to the current financial year,
+        # otherwise it contains the archived year to be used.
         self.current_year = period < 2000
         self.period = period
         self._datamodel = None
