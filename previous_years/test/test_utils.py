@@ -22,13 +22,15 @@ from previous_years.models import (
 
 
 class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
-
     def setUp(self):
         RequestFactoryBase.__init__(self)
         # 2019 is created when the database is created, so it exists
         self.archived_year = 2019
-        archived_year_obj = FinancialYear.objects.filter(financial_year=self.archived_year).first()
-        assert(archived_year_obj is not None)
+        archived_year_obj = FinancialYear.objects.filter(
+            financial_year=self.archived_year
+        ).first()
+        # Just in case 2019 does not exist
+        assert archived_year_obj is not None
         self.cost_centre_code = "109189"
         self.cost_centre_name = "Test cost centre"
         self.group_code = "1090TT"
@@ -53,7 +55,8 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
             financial_year=archived_year_obj,
         )
         project_obj = HistoricalProjectCodeFactory.create(
-            project_code=self.project_code, financial_year=archived_year_obj,
+            project_code=self.project_code,
+            financial_year=archived_year_obj,
             project_description=self.project_description,
         )
         self.budget_type_id = "AME"
@@ -61,7 +64,7 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
             programme_code=self.programme_code,
             programme_description=self.programme_description,
             budget_type_id=self.budget_type_id,
-            financial_year=archived_year_obj
+            financial_year=archived_year_obj,
         )
 
         expenditure_category_obj = HistoricalExpenditureCategoryFactory.create(
@@ -93,8 +96,9 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
         )
 
         self.expenditure_type_name = financial_code_obj.forecast_expenditure_type
-        self.forecast_expenditure_type_id = \
+        self.forecast_expenditure_type_id = (
             financial_code_obj.forecast_expenditure_type.forecast_expenditure_type_name
+        )
 
         previous_year_obj = ArchivedForecastData.objects.create(
             financial_year=archived_year_obj, financial_code=financial_code_obj,
