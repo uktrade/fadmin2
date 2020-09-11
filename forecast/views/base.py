@@ -186,28 +186,28 @@ class CostCentreForecastMixin(PeriodView):
 
     @property
     def directorate_code(self):
-        if self.field_infos.current:
+        if self.field_infos.current_year:
             return self.cost_centre().directorate.directorate_code
         else:
             return self.cost_centre().directorate_code
 
     @property
     def directorate_name(self):
-        if self.field_infos.current:
+        if self.field_infos.current_year:
             return self.cost_centre().directorate.directorate_name
         else:
             return self.cost_centre().directorate_name
 
     @property
     def group_code(self):
-        if self.field_infos.current:
+        if self.field_infos.current_year:
             return self.cost_centre().directorate.group.group_code
         else:
             return self.cost_centre().group_code
 
     @property
     def group_name(self):
-        if self.field_infos.current:
+        if self.field_infos.current_year:
             return self.cost_centre().directorate.group.group_name
         else:
             return self.cost_centre().group_name
@@ -229,14 +229,14 @@ class DirectorateForecastMixin(PeriodView):
 
     @property
     def group_code(self):
-        if self.field_infos.current:
+        if self.field_infos.current_year:
             return self.directorate().group.group_code
         else:
             return self.directorate().group_code
 
     @property
     def group_name(self):
-        if self.field_infos.current:
+        if self.field_infos.current_year:
             return self.directorate().group.group_name
         else:
             return self.directorate().group_name
