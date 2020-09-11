@@ -242,7 +242,6 @@ class HistoricalAnalysis1Admin(AdminArchived, AdminImportExport):
         else:
             return ["created", "updated", "archived"]
 
-
     @property
     def export_func(self):
         return generic_table_iterator
