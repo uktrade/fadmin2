@@ -7,9 +7,10 @@ from guardian.shortcuts import (
     get_users_with_perms,
 )
 
-from costcentre.models import (ArchivedCostCentre,
-                               CostCentre,
-                               )
+from costcentre.models import (
+    ArchivedCostCentre,
+    CostCentre,
+)
 
 
 class CostCentreViewModeForm(forms.Form):

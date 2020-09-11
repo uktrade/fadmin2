@@ -28,7 +28,11 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
         RequestFactoryBase.__init__(self)
         # 2019 is created when the database is created, so it exists
         self.archived_year = 2019
-        archived_year_obj = FinancialYear.objects.get(pk=self.archived_year)
+        archived_year_obj = FinancialYear.objects.filter(
+            financial_year=self.archived_year
+        ).first()
+        # Just in case 2019 does not exist
+        assert archived_year_obj is not None
         self.cost_centre_code = "109189"
         self.cost_centre_name = "Test cost centre"
         self.group_code = "1090TT"

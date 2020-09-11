@@ -235,7 +235,7 @@ class CostCentreView(
         # changing the period or changing the cost centre
         selected_period = request.POST.get("selected_period", None,)
         if selected_period is None:
-            # Cost contre changed
+            # Cost centre changed
             selected_cost_centre_code = request.POST.get("cost_centre", None,)
             if selected_cost_centre_code:
                 return HttpResponseRedirect(
