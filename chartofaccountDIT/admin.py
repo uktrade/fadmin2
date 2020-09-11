@@ -64,6 +64,7 @@ from core.admin import (
     AdminImportExtraExport,
     AdminReadOnly,
 )
+from core.models import FinancialYear
 from core.utils.export_helpers import generic_table_iterator
 
 
@@ -207,7 +208,7 @@ class Analysis1Admin(AdminActiveField, AdminImportExport):
         return import_a1_class
 
 
-class HistoricalAnalysis1Admin(AdminReadOnly, AdminExport):
+class HistoricalAnalysis1Admin(AdminExport):
     search_fields = ["analysis1_description", "analysis1_code"]
     list_display = (
         "analysis1_code",
@@ -215,6 +216,13 @@ class HistoricalAnalysis1Admin(AdminReadOnly, AdminExport):
         "active",
         "financial_year",
     )
+
+    # limit the entries for specific foreign fields
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "financial_year":
+            kwargs["queryset"] = FinancialYear.objects.filter(archived=True)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
     list_filter = ("active", ("financial_year", RelatedDropdownFilter))
     fields = (
         "financial_year",
