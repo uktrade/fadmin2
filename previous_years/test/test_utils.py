@@ -15,9 +15,7 @@ from core.test.test_base import RequestFactoryBase
 
 from costcentre.test.factories import ArchivedCostCentreFactory
 
-from forecast.models import (
-    FinancialPeriod,
-)
+from forecast.models import FinancialPeriod
 
 from previous_years.models import (
     ArchivedFinancialCode,
@@ -26,7 +24,6 @@ from previous_years.models import (
 
 
 class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
-
     def setUp(self):
         RequestFactoryBase.__init__(self)
         # 2019 is created when the database is created, so it exists
@@ -56,7 +53,8 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
             financial_year=archived_year_obj,
         )
         project_obj = HistoricalProjectCodeFactory.create(
-            project_code=self.project_code, financial_year=archived_year_obj,
+            project_code=self.project_code,
+            financial_year=archived_year_obj,
             project_description=self.project_description,
         )
         self.budget_type_id = "AME"
@@ -64,7 +62,7 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
             programme_code=self.programme_code,
             programme_description=self.programme_description,
             budget_type_id=self.budget_type_id,
-            financial_year=archived_year_obj
+            financial_year=archived_year_obj,
         )
 
         expenditure_category_obj = HistoricalExpenditureCategoryFactory.create(
@@ -96,8 +94,9 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
         )
 
         self.expenditure_type_name = financial_code_obj.forecast_expenditure_type
-        self.forecast_expenditure_type_id = \
+        self.forecast_expenditure_type_id = (
             financial_code_obj.forecast_expenditure_type.forecast_expenditure_type_name
+        )
 
         previous_year_obj = ArchivedForecastData.objects.create(
             financial_year=archived_year_obj, financial_code=financial_code_obj,
@@ -149,7 +148,9 @@ class DownloadPastYearForecastSetup(TestCase, RequestFactoryBase):
 
 
 def hide_adjustment_columns():
-    for period_code in range(13,16):
-        financial_period_obj = FinancialPeriod.objects.get(financial_period_code=period_code)
+    for period_code in range(13, 16):
+        financial_period_obj = FinancialPeriod.objects.get(
+            financial_period_code=period_code
+        )
         financial_period_obj.display_figure = False
         financial_period_obj.save()

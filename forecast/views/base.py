@@ -128,13 +128,12 @@ class ForecastViewTableMixin(MultiTableMixin):
                 period = self.period
                 if period:
                     # We are displaying historical forecast
-                    self._month_list = FinancialPeriod.financial_period_info.month_sublist(
-                        period
-                    )
+                    self._month_list = \
+                        FinancialPeriod.financial_period_info.month_sublist(period)
                 else:
-                    self._month_list = (
+                    self._month_list = \
                         FinancialPeriod.financial_period_info.actual_month_list()
-                    )
+
         return self._month_list
 
     @property
@@ -144,7 +143,7 @@ class ForecastViewTableMixin(MultiTableMixin):
             # We need to show the Adj periods
             list = FinancialPeriod.financial_period_info.all_adj_list()
         else:
-            list =  FinancialPeriod.financial_period_info.adj_display_list()
+            list = FinancialPeriod.financial_period_info.adj_display_list()
         return list
 
     @property
