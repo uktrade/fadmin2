@@ -24,7 +24,7 @@ SHOW_DIRECTORATE = 2
 SHOW_COSTCENTRE = 3
 
 
-class ViewForecastFields:
+class ForecastQueryFields:
     # the 'long string' describing the field is different for previous years
     # or current year. This class return the correct field using 'current' to decide
     # what to return. The period for previous year is the integer describing the year.
@@ -710,7 +710,7 @@ class ViewForecastFields:
 def edit_forecast_order():
     # remove financial_code__ prefix from the
     # fields used in the download order.
-    edit_fields = ViewForecastFields()
+    edit_fields = ForecastQueryFields()
     order_list = []
     prefix_len = len(financial_code_prefix)
     for elem in edit_fields.EDIT_FORECAST_DOWNLOAD_ORDER:

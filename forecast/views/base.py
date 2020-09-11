@@ -16,11 +16,11 @@ from forecast.utils.access_helpers import (
     can_view_forecasts,
 )
 from forecast.utils.query_fields import (
+    ForecastQueryFields,
     SHOW_COSTCENTRE,
     SHOW_DIRECTORATE,
     SHOW_DIT,
     SHOW_GROUP,
-    ViewForecastFields,
 )
 
 
@@ -97,7 +97,7 @@ class ForecastViewTableMixin(MultiTableMixin):
     @property
     def field_infos(self):
         if self._field_infos is None:
-            self._field_infos = ViewForecastFields(self.period)
+            self._field_infos = ForecastQueryFields(self.period)
         return self._field_infos
 
     @property

@@ -6,7 +6,7 @@ from forecast.models import (
     ForecastingDataView,
 )
 from forecast.utils.query_fields import (
-    ViewForecastFields,
+    ForecastQueryFields,
 )
 
 
@@ -108,7 +108,7 @@ def export_mi_iterator(queryset, fields):
 
 def create_mi_source_report():
     title = f"MI Report {today_string()}"
-    fields = ViewForecastFields()
+    fields = ForecastQueryFields()
     queryset = ForecastingDataView.view_data.raw_data_annotated(
         fields.MI_REPORT_DOWNLOAD_COLUMNS
     )
@@ -117,7 +117,7 @@ def create_mi_source_report():
 
 def create_mi_budget_report():
     title = f"MI Budget {today_string()}"
-    fields = ViewForecastFields()
+    fields = ForecastQueryFields()
     queryset = BudgetMonthlyFigure.pivot.pivot_data(
         fields.MI_REPORT_DOWNLOAD_COLUMNS, {"archived_status__isnull": True}
     )
