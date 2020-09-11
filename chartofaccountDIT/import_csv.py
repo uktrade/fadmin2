@@ -3,6 +3,7 @@ import csv
 from chartofaccountDIT.models import (
     Analysis1,
     Analysis2,
+    ArchivedAnalysis1,
     BudgetType,
     CommercialCategory,
     ExpenditureCategory,
@@ -40,13 +41,24 @@ ANALYSIS1_KEY = {
         Analysis1.supplier.field_name: "Supplier",
         Analysis1.pc_reference.field_name: "PC Reference",
     },
-}  # noqa: E501
+}
 
 ANALYSIS2_KEY = {
     IMPORT_CSV_MODEL_KEY: Analysis2,
     IMPORT_CSV_PK_KEY: "Code",
     IMPORT_CSV_FIELDLIST_KEY: {
         Analysis2.analysis2_description.field_name: "Description"
+    },
+}
+
+# TODO add the year
+ANALYSIS1_HISTORICAL_KEY = {
+    IMPORT_CSV_MODEL_KEY: ArchivedAnalysis1,
+    IMPORT_CSV_PK_KEY: "Analysis 1 Code",
+    IMPORT_CSV_FIELDLIST_KEY: {
+        ArchivedAnalysis1.analysis1_description.field_name: "Contract Name",
+        ArchivedAnalysis1.supplier.field_name: "Supplier",
+        ArchivedAnalysis1.pc_reference.field_name: "PC Reference",
     },
 }
 
@@ -61,6 +73,7 @@ def import_Analysis2(csvfile):
 
 import_a1_class = ImportInfo(ANALYSIS1_KEY)
 import_a2_class = ImportInfo(ANALYSIS2_KEY)
+import_archived_analysis1_class = ImportInfo(ANALYSIS1_HISTORICAL_KEY)
 
 PROJECT_KEY = {
     IMPORT_CSV_MODEL_KEY: ProjectCode,
@@ -93,8 +106,8 @@ NAC_KEY = {
     IMPORT_CSV_MODEL_KEY: NaturalCode,
     IMPORT_CSV_PK_KEY: "L6",
     IMPORT_CSV_FIELDLIST_KEY: {
-        NaturalCode.natural_account_code_description.field_name: "L6_NAME",  # noqa: E501
-        NaturalCode.economic_budget_code.field_name: "DFF-Economic Budget",  # noqa: E501
+        NaturalCode.natural_account_code_description.field_name: "L6_NAME",
+        NaturalCode.economic_budget_code.field_name: "DFF-Economic Budget",
         NaturalCode.account_L5_code.field.name: L5_FK_KEY,
         NaturalCode.account_L5_code_upload.field.name: OSCAR_FK_KEY,
     },

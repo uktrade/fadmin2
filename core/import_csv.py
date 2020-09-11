@@ -80,7 +80,7 @@ def get_pk_verbose_name(m):
         pkname = m._meta.pk._verbose_name
     return pkname
 
-
+# TODO modified to handle two fields to make  unique key, for archived tables.
 def get_fk(m, pk_value):
     """Read an object to be used as
     foreign key in another record.

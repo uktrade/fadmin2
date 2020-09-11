@@ -24,6 +24,7 @@ from chartofaccountDIT.import_csv import (
     import_NAC_class,
     import_a1_class,
     import_a2_class,
+    import_archived_analysis1_class,
     import_comm_cat_class,
     import_expenditure_category_class,
     import_fco_mapping_class,
@@ -59,12 +60,12 @@ from chartofaccountDIT.models import (
 
 from core.admin import (
     AdminActiveField,
+    AdminArchived,
     AdminExport,
     AdminImportExport,
     AdminImportExtraExport,
     AdminReadOnly,
 )
-from core.models import FinancialYear
 from core.utils.export_helpers import generic_table_iterator
 
 
@@ -208,7 +209,7 @@ class Analysis1Admin(AdminActiveField, AdminImportExport):
         return import_a1_class
 
 
-class HistoricalAnalysis1Admin(AdminExport):
+class HistoricalAnalysis1Admin(AdminArchived, AdminImportExport):
     search_fields = ["analysis1_description", "analysis1_code"]
     list_display = (
         "analysis1_code",
@@ -216,12 +217,6 @@ class HistoricalAnalysis1Admin(AdminExport):
         "active",
         "financial_year",
     )
-
-    # limit the entries for specific foreign fields
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "financial_year":
-            kwargs["queryset"] = FinancialYear.objects.filter(archived=True)
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     list_filter = ("active", ("financial_year", RelatedDropdownFilter))
     fields = (
@@ -231,11 +226,30 @@ class HistoricalAnalysis1Admin(AdminExport):
         "supplier",
         "pc_reference",
         "active",
+        "archived"
     )
+
+    # different fields editable if updating or creating the object
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return [
+                "financial_year",
+                "analysis1_code",
+                "created",
+                "updated",
+                "archived"
+            ]  # don't allow to edit the code
+        else:
+            return ["created", "updated", "archived"]
+
 
     @property
     def export_func(self):
         return generic_table_iterator
+
+    @property
+    def import_info(self):
+        return import_archived_analysis1_class
 
 
 class Analysis2Admin(AdminActiveField, AdminImportExport):
