@@ -112,16 +112,19 @@ class ForecastSubTotalTable(tables.Table):
     """Define the month columns format.
     Used every time we need to display a forecast"""
     display_view_details = False
+    month_in_year = FinancialPeriod.financial_period_info.month_display_list()
 
     def __init__(self, column_dict={}, *args, **kwargs):
         cols = [
             ("Budget",
              tables.Column(budget_header, empty_values=()))
         ]
+        year_period_list = []
         # Only add the month columns here. If you add the adjustments too,
-        # their columns will be displayed even after 'display_figure' field is False
-        for month in FinancialPeriod.financial_period_info.month_display_list():
+        # their columns will be always be displayed
+        for month in self.month_in_year:
             cols.append((month, tables.Column(month, empty_values=()),))
+            year_period_list.append(month)
 
         self.base_columns.update(OrderedDict(cols))
 
@@ -133,6 +136,7 @@ class ForecastSubTotalTable(tables.Table):
         #  in the displayed table.
         column_dict = {k: v for k, v in column_dict.items() if v != "Hidden"}
         column_list = list(column_dict.keys())
+        self.num_meta_cols = len(column_list)
 
         if self.display_view_details:
             extra_column_to_display = [
@@ -145,8 +149,6 @@ class ForecastSubTotalTable(tables.Table):
                                        column_dict.items()]
 
         actual_month_list = kwargs.pop('actual_month_list', [])
-
-        self.num_meta_cols = len(column_list)
         self.num_actuals = len(actual_month_list)
 
         # See if Adjustment periods should be displayed.
@@ -158,6 +160,7 @@ class ForecastSubTotalTable(tables.Table):
         # adj_list = FinancialPeriod.financial_period_info.adj_display_list()
         if adj_list:
             for adj in adj_list:
+                year_period_list.append(adj)
                 extra_column_to_display.extend(
                     [(
                         adj,
@@ -170,7 +173,7 @@ class ForecastSubTotalTable(tables.Table):
                 (
                     "year_total",
                     SummingMonthCol(
-                        FinancialPeriod.financial_period_info.period_display_list(),
+                        year_period_list,
                         forecast_total_header,
                         empty_values=(),
                     ),

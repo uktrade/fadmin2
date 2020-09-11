@@ -120,6 +120,12 @@ class FinancialPeriodManager(models.Manager):
             .values_list("period_short_name", flat=True)
         )
 
+    def month_adj_display_list(self):
+        return list(
+            self.get_queryset()
+            .values_list("period_short_name", flat=True)
+        )
+
     def adj_display_list(self):
         return list(
             self.get_queryset()
