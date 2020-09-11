@@ -109,7 +109,7 @@ class ForecastViewTableMixin(MultiTableMixin):
     @property
     def year(self):
         if self._year is None:
-            if self.field_infos.current:
+            if self.field_infos.current_year:
                 self._year = 0
             else:
                 self._year = self.period

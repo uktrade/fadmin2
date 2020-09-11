@@ -30,7 +30,7 @@ class ForecastQueryFields:
     # what to return. The period for previous year is the integer describing the year.
     # while for the current year the values are from 0 to 15.
     def __init__(self, period=0):
-        self.current = period < 2000
+        self.current_year = period < 2000
         self.period = period
         self._datamodel = None
 
@@ -56,7 +56,7 @@ class ForecastQueryFields:
 
     @property
     def budget_nac_description_field(self):
-        if self.current:
+        if self.current_year:
             return f"{financial_code_prefix}natural_account_code__expenditure_category__linked_budget_code__natural_account_code_description"  # noqa
         return f"{financial_code_prefix}natural_account_code__expenditure_category__linked_budget_code_description"  # noqa
 
@@ -70,37 +70,37 @@ class ForecastQueryFields:
 
     @property
     def cost_centre_name_field(self):
-        if self.current:
+        if self.current_year:
             return f"{financial_code_prefix}cost_centre__cost_centre_name"
         return f"{financial_code_prefix}cost_centre__cost_centre_name"
 
     @property
     def cost_centre_code_field(self):
-        if self.current:
+        if self.current_year:
             return f"{financial_code_prefix}cost_centre__cost_centre_code"
         return f"{financial_code_prefix}cost_centre__cost_centre_code"
 
     @property
     def directorate_name_field(self):
-        if self.current:
+        if self.current_year:
             return f"{financial_code_prefix}cost_centre__directorate__directorate_name"
         return f"{financial_code_prefix}cost_centre__directorate_name"
 
     @property
     def directorate_code_field(self):
-        if self.current:
+        if self.current_year:
             return f"{financial_code_prefix}cost_centre__directorate__directorate_code"
         return f"{financial_code_prefix}cost_centre__directorate_code"
 
     @property
     def group_name_field(self):
-        if self.current:
+        if self.current_year:
             return f"{financial_code_prefix}cost_centre__directorate__group__group_name"
         return f"{financial_code_prefix}cost_centre__group_name"
 
     @property
     def group_code_field(self):
-        if self.current:
+        if self.current_year:
             return f"{financial_code_prefix}cost_centre__directorate__group__group_code"
         return f"{financial_code_prefix}cost_centre__group_code"
 
@@ -644,7 +644,7 @@ class ForecastQueryFields:
     @property
     def datamodel(self):
         if self._datamodel is None:
-            if self.current:
+            if self.current_year:
                 self._datamodel = forecast_budget_view_model[self.period]
             else:
                 self._datamodel = ArchivedForecastData
@@ -653,7 +653,7 @@ class ForecastQueryFields:
     # The next methods return the correct objects (archived or not)
     # using the period to decide which one to use
     def group(self, group_code):
-        if self.current:
+        if self.current_year:
             return DepartmentalGroup.objects.get(
                 group_code=group_code
             )
@@ -664,7 +664,7 @@ class ForecastQueryFields:
         return queryset.first()
 
     def directorate(self, directorate_code):
-        if self.current:
+        if self.current_year:
             return Directorate.objects.get(
                 directorate_code=directorate_code,
             )
@@ -675,7 +675,7 @@ class ForecastQueryFields:
         return queryset.first()
 
     def cost_centre(self, cost_centre_code):
-        if self.current:
+        if self.current_year:
             return CostCentre.objects.get(cost_centre_code=cost_centre_code, )
         queryset = ArchivedCostCentre.objects.filter(
             cost_centre_code=cost_centre_code,
@@ -684,12 +684,12 @@ class ForecastQueryFields:
         return queryset.first()
 
     def expenditure_category(self, expenditure_category_id):
-        if self.current:
+        if self.current_year:
             return ExpenditureCategory.objects.get(pk=expenditure_category_id)
         return ArchivedExpenditureCategory.objects.get(pk=expenditure_category_id)
 
     def programme_code(self, programme_code):
-        if self.current:
+        if self.current_year:
             return ProgrammeCode.objects.get(pk=programme_code)
 
         return ArchivedProgrammeCode.objects.get(
@@ -698,7 +698,7 @@ class ForecastQueryFields:
         )
 
     def project_code(self, project_code):
-        if self.current:
+        if self.current_year:
             return ProjectCode.objects.get(pk=project_code)
 
         return ArchivedProjectCode.objects.get(
