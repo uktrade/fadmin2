@@ -112,7 +112,6 @@ class ForecastSubTotalTable(tables.Table):
     """Define the month columns format.
     Used every time we need to display a forecast"""
     display_view_details = False
-    month_in_year = FinancialPeriod.financial_period_info.month_display_list()
 
     def __init__(self, column_dict={}, *args, **kwargs):
         cols = [
@@ -122,7 +121,7 @@ class ForecastSubTotalTable(tables.Table):
         year_period_list = []
         # Only add the month columns here. If you add the adjustments too,
         # their columns will be always be displayed
-        for month in self.month_in_year:
+        for month in FinancialPeriod.financial_period_info.month_display_list():
             cols.append((month, tables.Column(month, empty_values=()),))
             year_period_list.append(month)
 
