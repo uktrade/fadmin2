@@ -24,7 +24,6 @@ from chartofaccountDIT.import_csv import (
     import_NAC_class,
     import_analysis1_class,
     import_analysis2_class,
-    import_archived_analysis1_class,
     import_comm_cat_class,
     import_expenditure_category_class,
     import_fco_mapping_class,
@@ -209,7 +208,7 @@ class Analysis1Admin(AdminActiveField, AdminImportExport):
         return import_analysis1_class
 
 
-class HistoricalAnalysis1Admin(AdminArchived, AdminImportExport):
+class HistoricalAnalysis1Admin(AdminArchived, AdminExport):
     search_fields = ["analysis1_description", "analysis1_code"]
     list_display = (
         "analysis1_code",
@@ -245,10 +244,6 @@ class HistoricalAnalysis1Admin(AdminArchived, AdminImportExport):
     @property
     def export_func(self):
         return generic_table_iterator
-
-    @property
-    def import_info(self):
-        return import_archived_analysis1_class
 
 
 class Analysis2Admin(AdminActiveField, AdminImportExport):

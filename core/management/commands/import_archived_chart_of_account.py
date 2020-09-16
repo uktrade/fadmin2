@@ -4,9 +4,7 @@ from django.core.management.base import (
     CommandError,
 )
 
-# from chartofaccountDIT.import_csv import (
-#     import_archived_analysis1,
-# )
+from chartofaccountDIT.import_archived_from_csv import import_archived_analysis1
 
 from core.utils.command_helpers import (
     CommandUpload,
@@ -14,13 +12,13 @@ from core.utils.command_helpers import (
 
 from forecast.import_csv import WrongChartOFAccountCodeException
 
-IMPORT_TYPE = {
+IMPORT_ARCHIVED_TYPE = {
     # "CostCentre": import_cc,
     # # 'Segments' : import_treasury_segments,
     # "Treasury_COA": import_treasury_COA,
     # "Programmes": import_programme,
     # "NAC": import_NAC,  # import from the BICC file
-    # "Analysis1": import_Analysis1,
+    "Analysis1": import_archived_analysis1,
     # "Analysis2": import_Analysis2,
     # "NAC_Dashboard_Group": import_NAC_expenditure_category,
     # "NAC_Dashboard_Budget": import_expenditure_category,
@@ -38,7 +36,7 @@ class Command(CommandUpload):
     def add_arguments(self, parser):
         parser.add_argument("csv_path")
         parser.add_argument("type")
-        parser.add_argument("year", type=int, nargs="?")
+        parser.add_argument("year", type=int)
 
     # pass the file path as an argument
     # second argument will define the content of the file
@@ -46,12 +44,12 @@ class Command(CommandUpload):
     def handle(self, *args, **options):
         path = options.get("csv_path")
         import_type = options.get("type")
-
+        year = options.get("year")
         file_name = self.path_to_upload(path, 'csv')
         # Windows-1252 or CP-1252, used because of a back quote
         csv_file = open(file_name, newline="", encoding="cp1252")
         try:
-            success, msg = IMPORT_TYPE[import_type](csv_file)
+            success, msg = IMPORT_ARCHIVED_TYPE[import_type](csv_file, year)
         except WrongChartOFAccountCodeException as ex:
             csv_file.close()
             raise CommandError(f"Failure import {import_type}: {str(ex)}")

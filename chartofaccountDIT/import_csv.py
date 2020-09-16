@@ -51,17 +51,6 @@ ANALYSIS2_KEY = {
     },
 }
 
-# TODO add the year
-ANALYSIS1_HISTORICAL_KEY = {
-    IMPORT_CSV_MODEL_KEY: ArchivedAnalysis1,
-    IMPORT_CSV_PK_KEY: "Analysis 1 Code",
-    IMPORT_CSV_FIELDLIST_KEY: {
-        "analysis1_description": "Contract Name",
-        "supplier": "Supplier",
-        "pc_reference": "PC Reference",
-    },
-}
-
 
 def import_analysis1(csvfile):
     return import_obj(csvfile, ANALYSIS1_KEY)
@@ -73,7 +62,7 @@ def import_analysis2(csvfile):
 
 import_analysis1_class = ImportInfo(ANALYSIS1_KEY)
 import_analysis2_class = ImportInfo(ANALYSIS2_KEY)
-import_archived_analysis1_class = ImportInfo(ANALYSIS1_HISTORICAL_KEY)
+
 
 PROJECT_KEY = {
     IMPORT_CSV_MODEL_KEY: ProjectCode,
