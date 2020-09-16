@@ -22,8 +22,8 @@ from chartofaccountDIT.import_csv import (
     import_NAC_DIT_class,
     import_NAC_category_class,
     import_NAC_class,
-    import_a1_class,
-    import_a2_class,
+    import_analysis1_class,
+    import_analysis2_class,
     import_archived_analysis1_class,
     import_comm_cat_class,
     import_expenditure_category_class,
@@ -206,7 +206,7 @@ class Analysis1Admin(AdminActiveField, AdminImportExport):
 
     @property
     def import_info(self):
-        return import_a1_class
+        return import_analysis1_class
 
 
 class HistoricalAnalysis1Admin(AdminArchived, AdminImportExport):
@@ -285,7 +285,7 @@ class Analysis2Admin(AdminActiveField, AdminImportExport):
 
     @property
     def import_info(self):
-        return import_a2_class
+        return import_analysis2_class
 
 
 class HistoricalAnalysis2Admin(AdminReadOnly, AdminExport):

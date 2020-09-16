@@ -4,57 +4,41 @@ from django.core.management.base import (
     CommandError,
 )
 
-from chartofaccountDIT.import_csv import (
-    import_analysis1,
-    import_analysis2,
-    import_commercial_category,
-    import_expenditure_category,
-    import_nac,
-    import_nac_category,
-    import_nac_dit_specific_fields,
-    import_nac_expenditure_category,
-    import_programme
-)
+# from chartofaccountDIT.import_csv import (
+#     import_archived_analysis1,
+# )
 
 from core.utils.command_helpers import (
     CommandUpload,
 )
 
-from costcentre.import_csv import import_cc
-
-from forecast.import_csv import (
-    WrongChartOFAccountCodeException,
-    import_adi_file,
-)
-
-from treasuryCOA.import_csv import import_treasury_COA
+from forecast.import_csv import WrongChartOFAccountCodeException
 
 IMPORT_TYPE = {
-    "CostCentre": import_cc,
-    # 'Segments' : import_treasury_segments,
-    "Treasury_COA": import_treasury_COA,
-    "Programmes": import_programme,
-    "NAC": import_nac,  # import from the BICC file
-    "Analysis1": import_analysis1,
-    "Analysis2": import_analysis2,
-    "NAC_Dashboard_Group": import_nac_expenditure_category,
-    "NAC_Dashboard_Budget": import_expenditure_category,
-    "NAC_Category": import_nac_category,
-    "NAC_DIT_Setting": import_nac_dit_specific_fields,
-    "NAC_Dashboard_other": import_expenditure_category,
-    "Commercial_Cat": import_commercial_category,
-    "ADI": import_adi_file,
+    # "CostCentre": import_cc,
+    # # 'Segments' : import_treasury_segments,
+    # "Treasury_COA": import_treasury_COA,
+    # "Programmes": import_programme,
+    # "NAC": import_NAC,  # import from the BICC file
+    # "Analysis1": import_Analysis1,
+    # "Analysis2": import_Analysis2,
+    # "NAC_Dashboard_Group": import_NAC_expenditure_category,
+    # "NAC_Dashboard_Budget": import_expenditure_category,
+    # "NAC_Category": import_NAC_category,
+    # "NAC_DIT_Setting": import_NAC_DIT,  # add extra fields defined by DIT
+    # "NAC_Dashboard_other": import_expenditure_category,
+    # "Commercial_Cat": import_commercial_category,
+    # "ADI": import_adi_file,
 }
 
 
 class Command(CommandUpload):
-    help = "Import data from csv file"
+    help = "Import archived data from csv file"
 
     def add_arguments(self, parser):
         parser.add_argument("csv_path")
         parser.add_argument("type")
-        parser.add_argument("year", type=int, nargs="?", default=None)
-        parser.add_argument("month", nargs="?", default=None)
+        parser.add_argument("year", type=int, nargs="?")
 
     # pass the file path as an argument
     # second argument will define the content of the file
