@@ -14,6 +14,7 @@ from costcentre.test.factories import (
     CostCentreFactory,
     DepartmentalGroupFactory,
     DirectorateFactory,
+    FinanceBusinessPartnerFactory,
 )
 from costcentre.views import FilteredCostListView
 
@@ -43,6 +44,8 @@ class ViewCostCentreTest(TestCase, RequestFactoryBase):
         self.directorate_name = "Test Directorate"
         self.directorate_code = "TestDD"
         self.cost_centre_code = 109076
+        self.name = "Test"
+        self.surname = "FBP"
 
         self.group = DepartmentalGroupFactory(
             group_code=self.group_code, group_name=self.group_name,
@@ -53,7 +56,13 @@ class ViewCostCentreTest(TestCase, RequestFactoryBase):
             group=self.group,
         )
         self.cost_centre = CostCentreFactory(
-            directorate=self.directorate, cost_centre_code=self.cost_centre_code,
+            directorate=self.directorate,
+            cost_centre_code=self.cost_centre_code,
+        )
+
+        self.business_partner = FinanceBusinessPartnerFactory(
+            name=self.name,
+            surname=self.surname,
         )
 
     def test_costcentre_view(self):
@@ -72,3 +81,11 @@ class ViewCostCentreTest(TestCase, RequestFactoryBase):
         print(url)
         response = self.factory_get(url, FilteredCostListView,)
         self.assertEqual(response.status_code, 200)
+
+    def test_fbp_view(self):
+        url = (reverse("cost_centre_filter",),)
+
+        response = self.factory_get(url, FilteredCostListView, )
+        self.assertEqual(response.status_code, 200)
+
+        assert str(self.business_partner) in str(response.rendered_content)

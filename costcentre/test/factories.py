@@ -7,6 +7,7 @@ from costcentre.models import (
     CostCentre,
     DepartmentalGroup,
     Directorate,
+    BusinessPartner,
 )
 
 fake = Faker()
@@ -64,3 +65,13 @@ class ArchivedCostCentreFactory(factory.DjangoModelFactory):
     cost_centre_code = 999999
     cost_centre_name = "Test Cost Centre"
     financial_year = 2019
+
+
+class FinanceBusinessPartnerFactory(factory.DjangoModelFactory):
+
+    class Meta:
+        model = BusinessPartner
+        django_get_or_create = ('name', 'surname')
+
+    name = "test"
+    surname = "FBP"
