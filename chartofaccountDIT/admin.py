@@ -283,11 +283,23 @@ class Analysis2Admin(AdminActiveField, AdminImportExport):
         return import_analysis2_class
 
 
-class HistoricalAnalysis2Admin(AdminReadOnly, AdminExport):
+class HistoricalAnalysis2Admin(AdminArchived, AdminExport):
     search_fields = ["analysis2_description", "analysis2_code"]
     list_display = ("analysis2_code", "analysis2_description", "active")
     list_filter = ("active", ("financial_year", RelatedDropdownFilter))
     fields = ("financial_year", "analysis2_code", "analysis2_description", "active")
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return [
+                "financial_year",
+                "analysis2_code",
+                "created",
+                "updated",
+                "archived"
+            ]  # don't allow to edit the code
+        else:
+            return ["created", "updated", "archived"]
 
     @property
     def export_func(self):
