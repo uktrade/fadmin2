@@ -13,20 +13,7 @@ from core.utils.command_helpers import (
 from forecast.import_csv import WrongChartOFAccountCodeException
 
 IMPORT_ARCHIVED_TYPE = {
-    # "CostCentre": import_cc,
-    # # 'Segments' : import_treasury_segments,
-    # "Treasury_COA": import_treasury_COA,
-    # "Programmes": import_programme,
-    # "NAC": import_NAC,  # import from the BICC file
     "Analysis1": import_archived_analysis1,
-    # "Analysis2": import_Analysis2,
-    # "NAC_Dashboard_Group": import_NAC_expenditure_category,
-    # "NAC_Dashboard_Budget": import_expenditure_category,
-    # "NAC_Category": import_NAC_category,
-    # "NAC_DIT_Setting": import_NAC_DIT,  # add extra fields defined by DIT
-    # "NAC_Dashboard_other": import_expenditure_category,
-    # "Commercial_Cat": import_commercial_category,
-    # "ADI": import_adi_file,
 }
 
 
@@ -40,11 +27,12 @@ class Command(CommandUpload):
 
     # pass the file path as an argument
     # second argument will define the content of the file
-    # importing actual is a special case, because we need to specify the month
+    # third argument is the year
     def handle(self, *args, **options):
         path = options.get("csv_path")
         import_type = options.get("type")
         year = options.get("year")
+        # TODO Check that the year exists in the database
         file_name = self.path_to_upload(path, 'csv')
         # Windows-1252 or CP-1252, used because of a back quote
         csv_file = open(file_name, newline="", encoding="cp1252")
