@@ -3,7 +3,6 @@ import csv
 from chartofaccountDIT.models import (
     Analysis1,
     Analysis2,
-    ArchivedAnalysis1,
     BudgetType,
     CommercialCategory,
     ExpenditureCategory,

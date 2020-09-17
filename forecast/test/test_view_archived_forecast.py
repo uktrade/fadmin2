@@ -109,7 +109,7 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
             format_forecast_figure(self.archive.archived_forecast[period] / 100),
         )
 
-    def check_period_list(self,period_list):
+    def check_period_list(self, period_list):
         self.assertIn("Current", period_list)
         self.assertIn("April", period_list)
         self.assertIn("May", period_list)
@@ -323,7 +323,6 @@ class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
 
         # Check that the periods is in the view
         select_period = soup.find(id="id_selected_period")
-
 
         # Check that all the months are in the dropdown.
         self.check_period_list(str(select_period))

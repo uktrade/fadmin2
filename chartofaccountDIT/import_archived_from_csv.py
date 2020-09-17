@@ -1,8 +1,4 @@
-import csv
-
-from chartofaccountDIT.models import (
-    ArchivedAnalysis1,
-)
+from chartofaccountDIT.models import ArchivedAnalysis1
 
 from core.import_csv import (
     IMPORT_CSV_FIELDLIST_KEY,
@@ -27,14 +23,9 @@ ANALYSIS1_HISTORICAL_KEY = {
 
 
 def import_archived_analysis1(csvfile, year):
-    success, msg = import_obj(csvfile, ANALYSIS1_HISTORICAL_KEY, year = year)
+    success, msg = import_obj(csvfile, ANALYSIS1_HISTORICAL_KEY, year=year)
     if not success:
         raise WrongChartOFAccountCodeException(
-            f"Importing archived Analysis1 (Contract) error: "
-            f"{msg}"
+            f"Importing archived Analysis1 (Contract) error: " f"{msg}"
         )
     return success, msg
-
-
-
-

@@ -117,6 +117,13 @@ def get_fk_from_field(m, f_name, f_value):
     return obj, msg
 
 
+def get_value_from_field(type, row_val):
+    if type == "BooleanField":
+        # convert the value to be True or False
+        return convert_to_bool_string(row_val)
+    return row_val
+
+
 def read_csv_from_dict(d, row, year):
     m = d[IMPORT_CSV_MODEL_KEY]
     if IMPORT_CSV_PK_NAME_KEY in d:
@@ -140,19 +147,19 @@ def read_csv_from_dict(d, row, year):
         if type(v) is dict:
             default_list[k], errormsg = read_csv_from_dict(v, row, year)
         else:
-            if m._meta.get_field(k).get_internal_type() == "BooleanField":
-                # convert the value to be True or False
-                default_list[k] = convert_to_bool_string(row[v].strip())
-            else:
-                default_list[k] = row[v].strip()
+            default_list[k] = get_value_from_field(
+                m._meta.get_field(k).get_internal_type(),
+                row[v].strip()
+            )
     try:
         if pk_header_name == "":
             obj = m.objects.create(**default_list)
         else:
             if year:
-                kwargs = {unique_name: row[pk_header_name].strip(),
-                       'financial_year_id': year}
-                print(kwargs)
+                kwargs = {
+                    unique_name: row[pk_header_name].strip(),
+                    'financial_year_id': year
+                }
                 obj, created = m.objects.update_or_create(
                     **kwargs,
                     defaults=default_list,
@@ -161,7 +168,7 @@ def read_csv_from_dict(d, row, year):
                 obj, created = m.objects.update_or_create(
                     **{unique_name: row[pk_header_name].strip()},
                     defaults=default_list,
-            )
+                )
     except ValueError:
         obj = None
         error_msg = "ValueError"
