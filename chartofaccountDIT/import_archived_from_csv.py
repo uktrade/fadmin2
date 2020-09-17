@@ -6,16 +6,13 @@ from chartofaccountDIT.models import (
 
 from core.import_csv import (
     IMPORT_CSV_FIELDLIST_KEY,
-    IMPORT_CSV_IS_FK,
     IMPORT_CSV_MODEL_KEY,
     IMPORT_CSV_PK_KEY,
     IMPORT_CSV_PK_NAME_KEY,
-    ImportInfo,
-    csv_header_to_dict,
-    import_list_obj,
     import_obj,
 )
 
+from forecast.import_csv import WrongChartOFAccountCodeException
 
 ANALYSIS1_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedAnalysis1,
@@ -30,7 +27,13 @@ ANALYSIS1_HISTORICAL_KEY = {
 
 
 def import_archived_analysis1(csvfile, year):
-    return import_obj(csvfile, ANALYSIS1_HISTORICAL_KEY, year = year)
+    success, msg = import_obj(csvfile, ANALYSIS1_HISTORICAL_KEY, year = year)
+    if not success:
+        raise WrongChartOFAccountCodeException(
+            f"Importing archived Analysis1 (Contract) error: "
+            f"{msg}"
+        )
+    return success, msg
 
 
 
