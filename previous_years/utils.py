@@ -22,7 +22,6 @@ def validate_year_for_archiving(financial_year):
 
 
 def validate_year_for_archiving_actuals(financial_year):
-
     obj = validate_year_for_archiving(financial_year)
 
     # Checks if there are cost centres archived for this year
