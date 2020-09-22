@@ -64,7 +64,7 @@ class UploadArchiveAnalysis2Test(TestCase, RequestFactoryBase):
         assert ArchivedAnalysis2.objects.all().count() == 0
 
 
-class UploadArchiveAnalysis2Test(TestCase, RequestFactoryBase):
+class UploadProjectTest(TestCase, RequestFactoryBase):
     def test_correct_data(self):
         # I could use 'get_col_from_obj_key' to generate the header from the key
         # used to upload the data, but for the sake of clarity I decided to
