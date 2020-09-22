@@ -216,17 +216,27 @@ class HistoricalAnalysis1Admin(AdminArchived, AdminExport):
         "active",
         "financial_year",
     )
-
     list_filter = ("active", ("financial_year", RelatedDropdownFilter))
-    fields = (
-        "financial_year",
-        "analysis1_code",
-        "analysis1_description",
-        "supplier",
-        "pc_reference",
-        "active",
-        "archived"
-    )
+
+    def get_fields(self, request, obj=None):
+        if obj:
+            return[
+                "financial_year",
+                "analysis1_code",
+                "analysis1_description",
+                "supplier",
+                "pc_reference",
+                "active",
+                "archived"
+            ]
+        else:
+            return[
+                "financial_year",
+                "analysis1_code",
+                "analysis1_description",
+                "supplier",
+                "pc_reference",
+            ]
 
     # different fields editable if updating or creating the object
     def get_readonly_fields(self, request, obj=None):
@@ -285,7 +295,12 @@ class Analysis2Admin(AdminActiveField, AdminImportExport):
 
 class HistoricalAnalysis2Admin(AdminArchived, AdminExport):
     search_fields = ["analysis2_description", "analysis2_code"]
-    list_display = ("analysis2_code", "analysis2_description", "active")
+    list_display = (
+        "analysis2_code",
+        "analysis2_description",
+        "active",
+        "financial_year"
+    )
     list_filter = ("active", ("financial_year", RelatedDropdownFilter))
     fields = ("financial_year", "analysis2_code", "analysis2_description", "active")
 
@@ -499,26 +514,35 @@ class HistoricalProgrammeAdmin(AdminArchived, AdminExport):
     def get_readonly_fields(self, request, obj=None):
         if obj:
             return [
+                "financial_year",
                 "programme_code",
                 "budget_type",
+                "created",
+                "archived",
+                "updated",
+            ]
+        else:
+            return ["created", "archived", "updated"]
+
+    def get_fields(self, request, obj=None):
+        if obj:
+            return [
                 "financial_year",
+                "programme_code",
+                "programme_description",
+                "budget_type",
+                "active",
                 "created",
                 "updated",
             ]
         else:
-            return ["created", "updated"]
-
-    def get_fields(self, request, obj=None):
-        return [
-            "programme_code",
-            "financial_year",
-            "programme_description",
-            "budget_type",
-            "active",
-            "created",
-            "updated",
-        ]
-
+            return [
+                "financial_year",
+                "programme_code",
+                "programme_description",
+                "budget_type",
+                "active",
+            ]
 
     @property
     def export_func(self):
@@ -602,11 +626,39 @@ class ProjectCodeAdmin(AdminActiveField, AdminImportExport):
         return import_project_class
 
 
-class HistoricalProjectCodeAdmin(AdminReadOnly, AdminExport):
+class HistoricalProjectCodeAdmin(AdminArchived, AdminExport):
     search_fields = ["project_description", "project_code"]
-    list_display = ("project_code", "project_description", "active")
+    list_display = ("project_code", "project_description", "active", "financial_year")
     list_filter = ["active", ("financial_year", RelatedDropdownFilter)]
     fields = ("financial_year", "project_code", "project_description", "active")
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return [
+                "project_code",
+                "financial_year",
+                "created",
+                "updated",
+            ]
+        else:
+            return ["created", "updated"]
+
+    # different fields visible if updating or creating the object
+    def get_fields(self, request, obj=None):
+        if obj:
+            return [
+                "financial_year",
+                "project_code",
+                "project_description",
+                "active",
+                "created",
+                "updated",
+            ]
+        else:
+            return ["financial_year",
+                    "project_code",
+                    "project_description",
+                    "active"]
 
     @property
     def export_func(self):
