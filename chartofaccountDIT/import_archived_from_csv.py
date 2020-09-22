@@ -69,7 +69,6 @@ def import_archived_analysis1(csvfile, year):
         raise ArchiveYearError(
             f"Failure import Importing archived Analysis1 (Contract) error: {str(ex)}"
         )
-
     success, msg = import_obj(csvfile, ANALYSIS1_HISTORICAL_KEY, year=year)
     if not success:
         raise WrongChartOFAccountCodeException(
