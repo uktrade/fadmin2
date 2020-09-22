@@ -3,11 +3,13 @@ from django.test import TestCase
 from chartofaccountDIT.import_archived_from_csv import (
     import_archived_analysis1,
     import_archived_analysis2,
+    import_archived_programme,
     import_archived_project,
 )
 from chartofaccountDIT.models import (
     ArchivedAnalysis1,
     ArchivedAnalysis2,
+    ArchivedProgrammeCode,
     ArchivedProjectCode,
 )
 
@@ -86,3 +88,27 @@ class UploadProjectTest(TestCase, RequestFactoryBase):
         with self.assertRaises(WrongChartOFAccountCodeException):
             import_archived_project(csvfile, 2019)
         assert ArchivedProjectCode.objects.all().count() == 0
+
+
+class UploadProgrammeTest(TestCase, RequestFactoryBase):
+    def test_correct_data(self):
+        # I could use 'get_col_from_obj_key' to generate the header from the key
+        # used to upload the data, but for the sake of clarity I decided to
+        # define the header here. So, if the object key is changed, this test may fail.
+        header_row = "Programme Code,Programme Description,Type"
+        data_row = "00012,Ame Programme,AME"
+
+        assert ArchivedProgrammeCode.objects.all().count() == 0
+        csvfile = [header_row, data_row]
+        import_archived_programme(csvfile, 2019)
+        assert ArchivedProgrammeCode.objects.all().count() == 1
+
+    def test_wrong_header(self):
+        header_row = "Code,Programme Description,Type"
+        data_row = "00012,Ame Programme,AME"
+
+        assert ArchivedProgrammeCode.objects.all().count() == 0
+        csvfile = [header_row, data_row]
+        with self.assertRaises(WrongChartOFAccountCodeException):
+            import_archived_project(csvfile, 2019)
+        assert ArchivedProgrammeCode.objects.all().count() == 0

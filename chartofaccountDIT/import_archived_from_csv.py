@@ -1,6 +1,8 @@
+from chartofaccountDIT.import_csv import BUDGET_KEY
 from chartofaccountDIT.models import (
     ArchivedAnalysis1,
     ArchivedAnalysis2,
+    ArchivedProgrammeCode,
     ArchivedProjectCode,
 )
 
@@ -49,6 +51,16 @@ PROJECT_HISTORICAL_KEY = {
     },
 }
 
+PROGRAMME_HISTORICAL_KEY = {
+    IMPORT_CSV_MODEL_KEY: ArchivedProgrammeCode,
+    IMPORT_CSV_PK_KEY: "Programme Code",
+    IMPORT_CSV_PK_NAME_KEY: "programme_code",
+    IMPORT_CSV_FIELDLIST_KEY: {
+        "programme_description": "Programme Description",
+        "budget_type": BUDGET_KEY,
+    },
+}
+
 
 def import_archived_analysis1(csvfile, year):
     try:
@@ -80,5 +92,14 @@ def import_archived_project(csvfile, year):
     if not success:
         raise WrongChartOFAccountCodeException(
             f"Importing Project error: " f"{msg}"
+        )
+    return success, msg
+
+
+def import_archived_programme(csvfile, year):
+    success, msg = import_obj(csvfile, PROGRAMME_HISTORICAL_KEY, year=year)
+    if not success:
+        raise WrongChartOFAccountCodeException(
+            f"Importing Programme error: " f"{msg}"
         )
     return success, msg
