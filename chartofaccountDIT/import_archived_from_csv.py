@@ -1,6 +1,7 @@
 from chartofaccountDIT.models import (
     ArchivedAnalysis1,
     ArchivedAnalysis2,
+    ArchivedProjectCode,
 )
 
 from core.import_csv import (
@@ -18,6 +19,7 @@ from previous_years.utils import (
     validate_year_for_archiving,
 )
 
+
 ANALYSIS1_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedAnalysis1,
     IMPORT_CSV_PK_KEY: "Analysis 1 Code",
@@ -29,13 +31,21 @@ ANALYSIS1_HISTORICAL_KEY = {
     },
 }
 
-
 ANALYSIS2_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedAnalysis2,
     IMPORT_CSV_PK_KEY: "Market Code",
     IMPORT_CSV_PK_NAME_KEY: "analysis2_code",
     IMPORT_CSV_FIELDLIST_KEY: {
         "analysis2_description": "Market Description",
+    },
+}
+
+PROJECT_HISTORICAL_KEY = {
+    IMPORT_CSV_MODEL_KEY: ArchivedProjectCode,
+    IMPORT_CSV_PK_KEY: "Project Code",
+    IMPORT_CSV_PK_NAME_KEY: "project_code",
+    IMPORT_CSV_FIELDLIST_KEY: {
+        "project_description": "Project Description"
     },
 }
 
@@ -61,5 +71,14 @@ def import_archived_analysis2(csvfile, year):
     if not success:
         raise WrongChartOFAccountCodeException(
             f"Importing archived Analysis2 (Market) error: " f"{msg}"
+        )
+    return success, msg
+
+
+def import_archived_project(csvfile, year):
+    success, msg = import_obj(csvfile, PROJECT_HISTORICAL_KEY, year=year)
+    if not success:
+        raise WrongChartOFAccountCodeException(
+            f"Importing Project error: " f"{msg}"
         )
     return success, msg
