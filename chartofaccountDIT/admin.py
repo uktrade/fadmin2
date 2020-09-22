@@ -478,8 +478,14 @@ class ProgrammeAdmin(AdminActiveField, AdminImportExtraExport):
         return import_prog_class
 
 
-class HistoricalProgrammeAdmin(AdminReadOnly, AdminExport):
-    list_display = ("programme_code", "programme_description", "budget_type", "active")
+class HistoricalProgrammeAdmin(AdminArchived, AdminExport):
+    list_display = (
+        "programme_code",
+        "programme_description",
+        "budget_type",
+        "active",
+        "financial_year"
+    )
     search_fields = ["programme_code", "programme_description"]
     list_filter = ["budget_type", "active", ("financial_year", RelatedDropdownFilter)]
     fields = (
@@ -489,6 +495,30 @@ class HistoricalProgrammeAdmin(AdminReadOnly, AdminExport):
         "budget_type",
         "active",
     )
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return [
+                "programme_code",
+                "budget_type",
+                "financial_year",
+                "created",
+                "updated",
+            ]
+        else:
+            return ["created", "updated"]
+
+    def get_fields(self, request, obj=None):
+        return [
+            "programme_code",
+            "financial_year",
+            "programme_description",
+            "budget_type",
+            "active",
+            "created",
+            "updated",
+        ]
+
 
     @property
     def export_func(self):
