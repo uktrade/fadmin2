@@ -48,7 +48,6 @@ from core.admin import (
     AdminExport,
     AdminImportExport,
     AdminImportExtraExport,
-    AdminReadOnly,
 )
 from core.utils.export_helpers import generic_table_iterator
 

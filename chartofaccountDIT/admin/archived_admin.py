@@ -10,7 +10,6 @@ from chartofaccountDIT.exportcsv import (
     _export_historical_nac_iterator,
     _export_programme_iterator,
 )
-
 from chartofaccountDIT.models import (
     ArchivedAnalysis1,
     ArchivedAnalysis2,
@@ -21,7 +20,6 @@ from chartofaccountDIT.models import (
     ArchivedNaturalCode,
     ArchivedProgrammeCode,
     ArchivedProjectCode,
-    FCOMapping,
 )
 
 from core.admin import (
@@ -324,4 +322,3 @@ admin.site.register(ArchivedProgrammeCode, HistoricalProgrammeAdmin)
 admin.site.register(ArchivedInterEntity, HistoricalInterEntityAdmin)
 admin.site.register(ArchivedProjectCode, HistoricalProjectCodeAdmin)
 admin.site.register(ArchivedFCOMapping, HistoricalFCOMappingAdmin)
-
