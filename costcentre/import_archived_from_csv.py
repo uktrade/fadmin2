@@ -16,15 +16,17 @@ from previous_years.utils import (
 )
 
 
-
 COST_CENTRE_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedCostCentre,
     IMPORT_CSV_PK_KEY: "Cost Centre",
     IMPORT_CSV_PK_NAME_KEY: ArchivedCostCentre.chart_of_account_code_name,
     IMPORT_CSV_FIELDLIST_KEY: {
-        CostCentre.cost_centre_name.field_name: "Cost Centre Description",
-        CostCentre.active.field_name: "Active",
-    },
+        "cost_centre_name": "Cost Centre Description",
+        "directorate_code":"Directorate Code",
+        "directorate_name": "Directorate Description",
+        "group_code": "Group Code",
+        "group_name": "Group Description",
+   },
 }
 
 
