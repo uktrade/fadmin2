@@ -15,6 +15,8 @@ from core.utils.command_helpers import (
     CommandUpload,
 )
 
+from costcentre.import_archived_from_csv import import_archived_cost_centre
+
 from forecast.import_csv import WrongChartOFAccountCodeException
 
 from previous_years.utils import (
@@ -28,6 +30,7 @@ IMPORT_ARCHIVED_TYPE = {
     "Analysis2": import_archived_analysis2,
     "Programmes": import_archived_programme,
     "Projects": import_archived_project,
+    "CostCentre": import_archived_cost_centre,
 }
 
 
