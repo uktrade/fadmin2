@@ -65,7 +65,7 @@ PROGRAMME_HISTORICAL_KEY = {
 
 EXPENDITURE_CATEGORY_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedExpenditureCategory,
-    IMPORT_CSV_PK_KEY: "Programme Code",
+    IMPORT_CSV_PK_KEY: "Budget Grouping",
     IMPORT_CSV_PK_NAME_KEY: ArchivedExpenditureCategory.chart_of_account_code_name,
     IMPORT_CSV_FIELDLIST_KEY: {
         "NAC_category_description":"Budget Category"

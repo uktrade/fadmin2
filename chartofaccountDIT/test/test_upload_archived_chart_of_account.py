@@ -3,12 +3,15 @@ from django.test import TestCase
 from chartofaccountDIT.import_archived_from_csv import (
     import_archived_analysis1,
     import_archived_analysis2,
+    import_archived_nac,
     import_archived_programme,
     import_archived_project,
 )
 from chartofaccountDIT.models import (
     ArchivedAnalysis1,
     ArchivedAnalysis2,
+    ArchivedExpenditureCategory,
+    ArchivedNaturalCode,
     ArchivedProgrammeCode,
     ArchivedProjectCode,
 )
@@ -160,3 +163,45 @@ class UploadProgrammeTest(TestCase, RequestFactoryBase):
         with self.assertRaises(WrongChartOFAccountCodeException):
             import_archived_project(csvfile, 2019)
         assert ArchivedProgrammeCode.objects.all().count() == 0
+
+class UploadNACTest(TestCase, RequestFactoryBase):
+    def test_correct_data(self):
+        # I could use 'get_col_from_obj_key' to generate the header from the key
+        # used to upload the data, but for the sake of clarity I decided to
+        # define the header here. So, if the object key is changed, this test may fail.
+        header_row = "Expenditure Type,Budget Grouping,Budget Category," \
+                     "Natural Account,NAC desc"
+        data_row = "Resource,Pay,Staff,51111001,Salaries"
+
+        assert ArchivedNaturalCode.objects.all().count() == 0
+        assert ArchivedExpenditureCategory.objects.all().count() == 0
+        csvfile = [header_row, data_row]
+        import_archived_nac(csvfile, 2019)
+        assert ArchivedNaturalCode.objects.all().count() == 1
+        assert ArchivedExpenditureCategory.objects.all().count() == 1
+
+    def test_wrong_year(self):
+        header_row = "Expenditure Type,Budget Grouping,Budget Category," \
+                     "Natural Account,NAC desc"
+        data_row = "Resource,Pay,Staff,51111001,Salaries"
+
+        assert ArchivedNaturalCode.objects.all().count() == 0
+        assert ArchivedExpenditureCategory.objects.all().count() == 0
+        csvfile = [header_row, data_row]
+        with self.assertRaises(ArchiveYearError):
+            import_archived_nac(csvfile, 2000)
+        assert ArchivedNaturalCode.objects.all().count() == 0
+        assert ArchivedExpenditureCategory.objects.all().count() == 0
+
+    def test_wrong_header(self):
+        header_row = "Expenditure Type,Budget Grouping,Budget Category," \
+                     "NAC,NAC desc"
+        data_row = "Resource,Pay,Staff,51111001,Salaries"
+
+        assert ArchivedNaturalCode.objects.all().count() == 0
+        assert ArchivedExpenditureCategory.objects.all().count() == 0
+        csvfile = [header_row, data_row]
+        with self.assertRaises(WrongChartOFAccountCodeException):
+            import_archived_nac(csvfile, 2019)
+        assert ArchivedNaturalCode.objects.all().count() == 0
+        assert ArchivedExpenditureCategory.objects.all().count() == 0
