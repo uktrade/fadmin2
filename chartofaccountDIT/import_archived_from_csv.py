@@ -68,7 +68,7 @@ EXPENDITURE_CATEGORY_HISTORICAL_KEY = {
     IMPORT_CSV_PK_KEY: "Budget Grouping",
     IMPORT_CSV_PK_NAME_KEY: ArchivedExpenditureCategory.chart_of_account_code_name,
     IMPORT_CSV_FIELDLIST_KEY: {
-        "NAC_category_description":"Budget Category"
+        "NAC_category_description": "Budget Category"
     }
 }
 
@@ -83,6 +83,7 @@ NAC_HISTORICAL_KEY = {
         "expenditure_category": EXPENDITURE_CATEGORY_HISTORICAL_KEY,
     },
 }
+
 
 def import_archived_analysis1(csvfile, year):
     msgerror = "Failure importing archived Analysis 1 error:"

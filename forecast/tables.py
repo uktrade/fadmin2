@@ -114,6 +114,7 @@ class ForecastSubTotalTable(tables.Table):
     display_view_details = False
     # Display actual/forecast labels
     is_forecast = True
+    
     def __init__(self, column_dict={}, *args, **kwargs):
         cols = [
             ("Budget",

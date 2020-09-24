@@ -164,6 +164,7 @@ class UploadProgrammeTest(TestCase, RequestFactoryBase):
             import_archived_project(csvfile, 2019)
         assert ArchivedProgrammeCode.objects.all().count() == 0
 
+
 class UploadNACTest(TestCase, RequestFactoryBase):
     def test_correct_data(self):
         # I could use 'get_col_from_obj_key' to generate the header from the key
