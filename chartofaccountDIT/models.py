@@ -220,6 +220,7 @@ class ArchivedExpenditureCategory(
             financial_year=year_obj,
             active=obj.active,
             grouping_description=obj.grouping_description + suffix,
+            NAC_category=obj.NAC_category,
             NAC_category_description=obj.NAC_category.NAC_category_description
             if obj.NAC_category
             else None,

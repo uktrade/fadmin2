@@ -1,3 +1,5 @@
+from django.db import connection
+
 from chartofaccountDIT.import_csv import BUDGET_KEY
 from chartofaccountDIT.models import (
     ArchivedAnalysis1,
@@ -39,18 +41,14 @@ ANALYSIS2_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedAnalysis2,
     IMPORT_CSV_PK_KEY: "Market Code",
     IMPORT_CSV_PK_NAME_KEY: ArchivedAnalysis2.chart_of_account_code_name,
-    IMPORT_CSV_FIELDLIST_KEY: {
-        "analysis2_description": "Market Description",
-    },
+    IMPORT_CSV_FIELDLIST_KEY: {"analysis2_description": "Market Description", },
 }
 
 PROJECT_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedProjectCode,
     IMPORT_CSV_PK_KEY: "Project Code",
     IMPORT_CSV_PK_NAME_KEY: ArchivedProjectCode.chart_of_account_code_name,
-    IMPORT_CSV_FIELDLIST_KEY: {
-        "project_description": "Project Description"
-    },
+    IMPORT_CSV_FIELDLIST_KEY: {"project_description": "Project Description"},
 }
 
 PROGRAMME_HISTORICAL_KEY = {
@@ -63,14 +61,14 @@ PROGRAMME_HISTORICAL_KEY = {
     },
 }
 
+
 EXPENDITURE_CATEGORY_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedExpenditureCategory,
-    IMPORT_CSV_PK_KEY: "Budget Grouping",
+    IMPORT_CSV_PK_KEY: "Budget Category",
     IMPORT_CSV_PK_NAME_KEY: ArchivedExpenditureCategory.chart_of_account_code_name,
-    IMPORT_CSV_FIELDLIST_KEY: {
-        "NAC_category_description": "Budget Category"
-    }
+    IMPORT_CSV_FIELDLIST_KEY: {"NAC_category_description": "Budget Grouping"},
 }
+
 
 NAC_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedNaturalCode,
@@ -78,7 +76,7 @@ NAC_HISTORICAL_KEY = {
     IMPORT_CSV_PK_KEY: "Natural Account",
     IMPORT_CSV_FIELDLIST_KEY: {
         "natural_account_code_description": "NAC desc",
-        "NAC_category": "Budget Category",
+        "NAC_category": "Budget Grouping",
         "economic_budget_code": "Expenditure Type",
         "expenditure_category": EXPENDITURE_CATEGORY_HISTORICAL_KEY,
     },
@@ -90,14 +88,10 @@ def import_archived_analysis1(csvfile, year):
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
-        raise ArchiveYearError(
-            f"{msgerror} {str(ex)}"
-        )
+        raise ArchiveYearError(f"{msgerror} {str(ex)}")
     success, msg = import_obj(csvfile, ANALYSIS1_HISTORICAL_KEY, year=year)
     if not success:
-        raise WrongChartOFAccountCodeException(
-            f"{msgerror} {msg}"
-        )
+        raise WrongChartOFAccountCodeException(f"{msgerror} {msg}")
     return success, msg
 
 
@@ -106,14 +100,10 @@ def import_archived_analysis2(csvfile, year):
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
-        raise ArchiveYearError(
-            f"{msgerror} {str(ex)}"
-        )
+        raise ArchiveYearError(f"{msgerror} {str(ex)}")
     success, msg = import_obj(csvfile, ANALYSIS2_HISTORICAL_KEY, year=year)
     if not success:
-        raise WrongChartOFAccountCodeException(
-            f"{msgerror} {msg}"
-        )
+        raise WrongChartOFAccountCodeException(f"{msgerror} {msg}")
     return success, msg
 
 
@@ -122,14 +112,10 @@ def import_archived_project(csvfile, year):
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
-        raise ArchiveYearError(
-            f"{msgerror} {str(ex)}"
-        )
+        raise ArchiveYearError(f"{msgerror} {str(ex)}")
     success, msg = import_obj(csvfile, PROJECT_HISTORICAL_KEY, year=year)
     if not success:
-        raise WrongChartOFAccountCodeException(
-            f"{msgerror} {msg}"
-        )
+        raise WrongChartOFAccountCodeException(f"{msgerror} {msg}")
     return success, msg
 
 
@@ -138,14 +124,10 @@ def import_archived_programme(csvfile, year):
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
-        raise ArchiveYearError(
-            f"{msgerror} {str(ex)}"
-        )
+        raise ArchiveYearError(f"{msgerror} {str(ex)}")
     success, msg = import_obj(csvfile, PROGRAMME_HISTORICAL_KEY, year=year)
     if not success:
-        raise WrongChartOFAccountCodeException(
-            f"{msgerror} {msg}"
-        )
+        raise WrongChartOFAccountCodeException(f"{msgerror} {msg}")
     return success, msg
 
 
@@ -154,12 +136,17 @@ def import_archived_nac(csvfile, year):
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
-        raise ArchiveYearError(
-            f"{msgerror} {str(ex)}"
-        )
+        raise ArchiveYearError(f"{msgerror} {str(ex)}")
     success, msg = import_obj(csvfile, NAC_HISTORICAL_KEY, year=year)
     if not success:
-        raise WrongChartOFAccountCodeException(
-            f"{msgerror} {msg}"
-        )
+        raise WrongChartOFAccountCodeException(f"{msgerror} {msg}")
+        with connection.cursor() as cursor:
+            cursor.execute(
+                'update "chartofaccountDIT_archivedexpenditurecategory" '
+                'SET "NAC_category_id" = a.id '
+                'FROM "chartofaccountDIT_naccategory" a '
+                'WHERE a."NAC_category_description" = '
+                '"chartofaccountDIT_archivedexpenditurecategory"."NAC_category_description";'  # noqa
+            )
+
     return success, msg
