@@ -2,6 +2,7 @@ from chartofaccountDIT.import_csv import BUDGET_KEY
 from chartofaccountDIT.models import (
     ArchivedAnalysis1,
     ArchivedAnalysis2,
+    ArchivedNaturalCode,
     ArchivedProgrammeCode,
     ArchivedProjectCode,
 )
@@ -25,7 +26,7 @@ from previous_years.utils import (
 ANALYSIS1_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedAnalysis1,
     IMPORT_CSV_PK_KEY: "Analysis 1 Code",
-    IMPORT_CSV_PK_NAME_KEY: "analysis1_code",
+    IMPORT_CSV_PK_NAME_KEY: ArchivedAnalysis1.chart_of_account_code_name,
     IMPORT_CSV_FIELDLIST_KEY: {
         "analysis1_description": "Contract Name",
         "supplier": "Supplier",
@@ -36,7 +37,7 @@ ANALYSIS1_HISTORICAL_KEY = {
 ANALYSIS2_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedAnalysis2,
     IMPORT_CSV_PK_KEY: "Market Code",
-    IMPORT_CSV_PK_NAME_KEY: "analysis2_code",
+    IMPORT_CSV_PK_NAME_KEY: ArchivedAnalysis2.chart_of_account_code_name,
     IMPORT_CSV_FIELDLIST_KEY: {
         "analysis2_description": "Market Description",
     },
@@ -45,7 +46,7 @@ ANALYSIS2_HISTORICAL_KEY = {
 PROJECT_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedProjectCode,
     IMPORT_CSV_PK_KEY: "Project Code",
-    IMPORT_CSV_PK_NAME_KEY: "project_code",
+    IMPORT_CSV_PK_NAME_KEY: ArchivedProjectCode.chart_of_account_code_name,
     IMPORT_CSV_FIELDLIST_KEY: {
         "project_description": "Project Description"
     },
@@ -54,69 +55,103 @@ PROJECT_HISTORICAL_KEY = {
 PROGRAMME_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedProgrammeCode,
     IMPORT_CSV_PK_KEY: "Programme Code",
-    IMPORT_CSV_PK_NAME_KEY: "programme_code",
+    IMPORT_CSV_PK_NAME_KEY: ArchivedProgrammeCode.chart_of_account_code_name,
     IMPORT_CSV_FIELDLIST_KEY: {
         "programme_description": "Programme Description",
         "budget_type": BUDGET_KEY,
     },
 }
 
+EXPENDITURE_CATEGORY_HISTORICAL_KEY = {
+
+}
+NAC_HISTORICAL_KEY = {
+    IMPORT_CSV_MODEL_KEY: ArchivedNaturalCode,
+    IMPORT_CSV_PK_NAME_KEY: ArchivedNaturalCode.chart_of_account_code_name,
+    IMPORT_CSV_PK_KEY: "Natural Account",
+    IMPORT_CSV_FIELDLIST_KEY: {
+        "natural_account_code_description": "NAC desc",
+        "NAC_category": "Budget Category",
+        "economic_budget_code": "Expenditure Type",
+        "expenditure_category": EXPENDITURE_CATEGORY_HISTORICAL_KEY,
+    },
+}
 
 def import_archived_analysis1(csvfile, year):
+    msgerror = "Failure importing archived Analysis 1 error:"
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
         raise ArchiveYearError(
-            f"Failure import Importing archived Analysis1 (Contract) error: {str(ex)}"
+            f"{msgerror} {str(ex)}"
         )
     success, msg = import_obj(csvfile, ANALYSIS1_HISTORICAL_KEY, year=year)
     if not success:
         raise WrongChartOFAccountCodeException(
-            f"Importing archived Analysis1 (Contract) error: " f"{msg}"
+            f"{msgerror} {msg}"
         )
     return success, msg
 
 
 def import_archived_analysis2(csvfile, year):
+    msgerror = "Failure importing archived Analysis 2 error:"
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
         raise ArchiveYearError(
-            f"Failure import Importing archived Analysis2 (Market) error: {str(ex)}"
+            f"{msgerror} {str(ex)}"
         )
     success, msg = import_obj(csvfile, ANALYSIS2_HISTORICAL_KEY, year=year)
     if not success:
         raise WrongChartOFAccountCodeException(
-            f"Importing archived Analysis2 (Market) error: " f"{msg}"
+            f"{msgerror} {msg}"
         )
     return success, msg
 
 
 def import_archived_project(csvfile, year):
+    msgerror = "Failure importing archived Project error:"
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
         raise ArchiveYearError(
-            f"Failure import Importing archived Project error: {str(ex)}"
+            f"{msgerror} {str(ex)}"
         )
     success, msg = import_obj(csvfile, PROJECT_HISTORICAL_KEY, year=year)
     if not success:
         raise WrongChartOFAccountCodeException(
-            f"Importing archived Project error: " f"{msg}"
+            f"{msgerror} {msg}"
         )
     return success, msg
 
 
 def import_archived_programme(csvfile, year):
+    msgerror = "Failure importing archived Programme error:"
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
         raise ArchiveYearError(
-            f"Failure import Importing archived Programme error: {str(ex)}"
+            f"{msgerror} {str(ex)}"
         )
     success, msg = import_obj(csvfile, PROGRAMME_HISTORICAL_KEY, year=year)
     if not success:
         raise WrongChartOFAccountCodeException(
-            f"Importing archived Programme error: " f"{msg}"
+            f"{msgerror} {msg}"
+        )
+    return success, msg
+
+
+def import_archived_nac(csvfile, year):
+    msgerror = "Failure importing archived NAC error:"
+    try:
+        validate_year_for_archiving(year)
+    except ArchiveYearError as ex:
+        raise ArchiveYearError(
+            f"{msgerror} {str(ex)}"
+        )
+    success, msg = import_obj(csvfile, NAC_HISTORICAL_KEY, year=year)
+    if not success:
+        raise WrongChartOFAccountCodeException(
+            f"{msgerror} {msg}"
         )
     return success, msg
