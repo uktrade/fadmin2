@@ -2,6 +2,7 @@ from chartofaccountDIT.import_csv import BUDGET_KEY
 from chartofaccountDIT.models import (
     ArchivedAnalysis1,
     ArchivedAnalysis2,
+    ArchivedExpenditureCategory,
     ArchivedNaturalCode,
     ArchivedProgrammeCode,
     ArchivedProjectCode,
@@ -63,8 +64,14 @@ PROGRAMME_HISTORICAL_KEY = {
 }
 
 EXPENDITURE_CATEGORY_HISTORICAL_KEY = {
-
+    IMPORT_CSV_MODEL_KEY: ArchivedExpenditureCategory,
+    IMPORT_CSV_PK_KEY: "Programme Code",
+    IMPORT_CSV_PK_NAME_KEY: ArchivedExpenditureCategory.chart_of_account_code_name,
+    IMPORT_CSV_FIELDLIST_KEY: {
+        "NAC_category_description":"Budget Category"
+    }
 }
+
 NAC_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedNaturalCode,
     IMPORT_CSV_PK_NAME_KEY: ArchivedNaturalCode.chart_of_account_code_name,
