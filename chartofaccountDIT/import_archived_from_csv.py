@@ -84,7 +84,7 @@ NAC_HISTORICAL_KEY = {
 
 
 def import_archived_analysis1(csvfile, year):
-    msgerror = "Failure importing archived Analysis 1 error:"
+    msgerror = "Failure importing archived Analysis 1. Error:"
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
@@ -96,7 +96,7 @@ def import_archived_analysis1(csvfile, year):
 
 
 def import_archived_analysis2(csvfile, year):
-    msgerror = "Failure importing archived Analysis 2 error:"
+    msgerror = "Failure importing archived Analysis 2. Error:"
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
@@ -108,7 +108,7 @@ def import_archived_analysis2(csvfile, year):
 
 
 def import_archived_project(csvfile, year):
-    msgerror = "Failure importing archived Project error:"
+    msgerror = "Failure importing archived Project. Error:"
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
@@ -120,7 +120,7 @@ def import_archived_project(csvfile, year):
 
 
 def import_archived_programme(csvfile, year):
-    msgerror = "Failure importing archived Programme error:"
+    msgerror = "Failure importing archived Programme. Error:"
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
@@ -132,7 +132,7 @@ def import_archived_programme(csvfile, year):
 
 
 def import_archived_nac(csvfile, year):
-    msgerror = "Failure importing archived NAC error:"
+    msgerror = "Failure importing archived NAC. Error:"
     try:
         validate_year_for_archiving(year)
     except ArchiveYearError as ex:
