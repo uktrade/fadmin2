@@ -141,7 +141,6 @@ def import_archived_nac(csvfile, year):
     if not success:
         raise WrongChartOFAccountCodeException(f"{msgerror} {msg}")
         # Use sql to initialise the NAC_Category_id foreign key in the archived table
-        # it would be more complicated to do it without sql
         # this code will not be used in future, so it is not important
         # to make maintainable
         with connection.cursor() as cursor:

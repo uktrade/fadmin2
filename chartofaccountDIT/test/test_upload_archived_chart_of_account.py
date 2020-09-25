@@ -25,9 +25,6 @@ from previous_years.utils import ArchiveYearError
 
 class UploadArchiveAnalysis1Test(TestCase, RequestFactoryBase):
     def test_correct_data(self):
-        # I could use 'get_col_from_obj_key' to generate the header from the key
-        # used to upload the data, but for the sake of clarity I decided to
-        # define the header here. So, if the object key is changed, this test may fail.
         header_row = "Analysis 1 Code,Contract Name,Supplier,PC Reference"
         data_row = "00012,Test Contract,Test Supplier,Test PC Reference"
 
@@ -59,9 +56,6 @@ class UploadArchiveAnalysis1Test(TestCase, RequestFactoryBase):
 
 class UploadArchiveAnalysis2Test(TestCase, RequestFactoryBase):
     def test_correct_data(self):
-        # I could use 'get_col_from_obj_key' to generate the header from the key
-        # used to upload the data, but for the sake of clarity I decided to
-        # define the header here. So, if the object key is changed, this test may fail.
         header_row = "Market Code,Market Description"
         data_row = "00012,NeverLand"
 
@@ -81,9 +75,6 @@ class UploadArchiveAnalysis2Test(TestCase, RequestFactoryBase):
         assert ArchivedAnalysis2.objects.all().count() == 0
 
     def test_wrong_year(self):
-        # I could use 'get_col_from_obj_key' to generate the header from the key
-        # used to upload the data, but for the sake of clarity I decided to
-        # define the header here. So, if the object key is changed, this test may fail.
         header_row = "Market Code,Market Description"
         data_row = "00012,NeverLand"
 
@@ -96,9 +87,6 @@ class UploadArchiveAnalysis2Test(TestCase, RequestFactoryBase):
 
 class UploadProjectTest(TestCase, RequestFactoryBase):
     def test_correct_data(self):
-        # I could use 'get_col_from_obj_key' to generate the header from the key
-        # used to upload the data, but for the sake of clarity I decided to
-        # define the header here. So, if the object key is changed, this test may fail.
         header_row = "Project Code,Project Description"
         data_row = "00012,Cyber Security"
 
@@ -108,9 +96,6 @@ class UploadProjectTest(TestCase, RequestFactoryBase):
         assert ArchivedProjectCode.objects.all().count() == 1
 
     def test_wrong_year(self):
-        # I could use 'get_col_from_obj_key' to generate the header from the key
-        # used to upload the data, but for the sake of clarity I decided to
-        # define the header here. So, if the object key is changed, this test may fail.
         header_row = "Project Code,Project Description"
         data_row = "00012,Cyber Security"
 
@@ -133,9 +118,6 @@ class UploadProjectTest(TestCase, RequestFactoryBase):
 
 class UploadProgrammeTest(TestCase, RequestFactoryBase):
     def test_correct_data(self):
-        # I could use 'get_col_from_obj_key' to generate the header from the key
-        # used to upload the data, but for the sake of clarity I decided to
-        # define the header here. So, if the object key is changed, this test may fail.
         header_row = "Programme Code,Programme Description,Type"
         data_row = "00012,Ame Programme,AME"
 
@@ -167,9 +149,6 @@ class UploadProgrammeTest(TestCase, RequestFactoryBase):
 
 class UploadNACTest(TestCase, RequestFactoryBase):
     def test_correct_data(self):
-        # I could use 'get_col_from_obj_key' to generate the header from the key
-        # used to upload the data, but for the sake of clarity I decided to
-        # define the header here. So, if the object key is changed, this test may fail.
         header_row = "Expenditure Type,Budget Grouping,Budget Category," \
                      "Natural Account,NAC desc"
         data_row = "Resource,Pay,Staff,51111001,Salaries"
