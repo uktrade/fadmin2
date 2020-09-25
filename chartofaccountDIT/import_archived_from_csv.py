@@ -29,7 +29,7 @@ from previous_years.utils import (
 ANALYSIS1_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedAnalysis1,
     IMPORT_CSV_PK_KEY: "Analysis 1 Code",
-    IMPORT_CSV_PK_NAME_KEY: ArchivedAnalysis1.chart_of_account_code_name,
+    IMPORT_CSV_PK_NAME_KEY: "analysis1_code",
     IMPORT_CSV_FIELDLIST_KEY: {
         "analysis1_description": "Contract Name",
         "supplier": "Supplier",
@@ -40,21 +40,21 @@ ANALYSIS1_HISTORICAL_KEY = {
 ANALYSIS2_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedAnalysis2,
     IMPORT_CSV_PK_KEY: "Market Code",
-    IMPORT_CSV_PK_NAME_KEY: ArchivedAnalysis2.chart_of_account_code_name,
+    IMPORT_CSV_PK_NAME_KEY: "analysis2_code",
     IMPORT_CSV_FIELDLIST_KEY: {"analysis2_description": "Market Description", },
 }
 
 PROJECT_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedProjectCode,
     IMPORT_CSV_PK_KEY: "Project Code",
-    IMPORT_CSV_PK_NAME_KEY: ArchivedProjectCode.chart_of_account_code_name,
+    IMPORT_CSV_PK_NAME_KEY: "project_code",
     IMPORT_CSV_FIELDLIST_KEY: {"project_description": "Project Description"},
 }
 
 PROGRAMME_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedProgrammeCode,
     IMPORT_CSV_PK_KEY: "Programme Code",
-    IMPORT_CSV_PK_NAME_KEY: ArchivedProgrammeCode.chart_of_account_code_name,
+    IMPORT_CSV_PK_NAME_KEY: "programme_code",
     IMPORT_CSV_FIELDLIST_KEY: {
         "programme_description": "Programme Description",
         "budget_type": BUDGET_KEY,
@@ -65,14 +65,14 @@ PROGRAMME_HISTORICAL_KEY = {
 EXPENDITURE_CATEGORY_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedExpenditureCategory,
     IMPORT_CSV_PK_KEY: "Budget Category",
-    IMPORT_CSV_PK_NAME_KEY: ArchivedExpenditureCategory.chart_of_account_code_name,
+    IMPORT_CSV_PK_NAME_KEY: "grouping_description",
     IMPORT_CSV_FIELDLIST_KEY: {"NAC_category_description": "Budget Grouping"},
 }
 
 
 NAC_HISTORICAL_KEY = {
     IMPORT_CSV_MODEL_KEY: ArchivedNaturalCode,
-    IMPORT_CSV_PK_NAME_KEY: ArchivedNaturalCode.chart_of_account_code_name,
+    IMPORT_CSV_PK_NAME_KEY: "natural_account_code",
     IMPORT_CSV_PK_KEY: "Natural Account",
     IMPORT_CSV_FIELDLIST_KEY: {
         "natural_account_code_description": "NAC desc",
