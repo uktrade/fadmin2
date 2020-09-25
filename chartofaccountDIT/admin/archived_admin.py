@@ -62,7 +62,6 @@ class ArchivedNaturalCodeAdmin(AdminArchived, AdminExport):
         else:
             return ["created", "updated", "archived"]
 
-
     search_fields = ["natural_account_code", "natural_account_code_description"]
     list_filter = (
         "active",
@@ -89,17 +88,17 @@ class ArchivedAnalysis1Admin(AdminArchived, AdminExport):
 
     def get_fields(self, request, obj=None):
         if obj:
-            return[
+            return [
                 "financial_year",
                 "analysis1_code",
                 "analysis1_description",
                 "supplier",
                 "pc_reference",
                 "active",
-                "archived"
+                "archived",
             ]
         else:
-            return[
+            return [
                 "financial_year",
                 "analysis1_code",
                 "analysis1_description",
@@ -115,7 +114,7 @@ class ArchivedAnalysis1Admin(AdminArchived, AdminExport):
                 "analysis1_code",
                 "created",
                 "updated",
-                "archived"
+                "archived",
             ]  # don't allow to edit the code
         else:
             return ["created", "updated", "archived"]
@@ -131,7 +130,7 @@ class ArchivedAnalysis2Admin(AdminArchived, AdminExport):
         "analysis2_code",
         "analysis2_description",
         "active",
-        "financial_year"
+        "financial_year",
     )
     list_filter = ("active", ("financial_year", RelatedDropdownFilter))
     fields = ("financial_year", "analysis2_code", "analysis2_description", "active")
@@ -143,7 +142,7 @@ class ArchivedAnalysis2Admin(AdminArchived, AdminExport):
                 "analysis2_code",
                 "created",
                 "updated",
-                "archived"
+                "archived",
             ]  # don't allow to edit the code
         else:
             return ["created", "updated", "archived"]
@@ -175,11 +174,10 @@ class ArchivedExpenditureCategoryAdmin(AdminArchived, AdminExport):
                 "NAC_category_description",
                 "created",
                 "updated",
-                "archived"
+                "archived",
             ]  # don't allow to edit the code
         else:
             return ["created", "updated", "archived"]
-
 
     fields = (
         "financial_year",
@@ -199,7 +197,11 @@ class ArchivedExpenditureCategoryAdmin(AdminArchived, AdminExport):
 
 class ArchivedCommercialCategoryAdmin(AdminReadOnly, AdminExport):
     search_fields = ["commercial_category", "description"]
-    list_display = ["commercial_category", "description", "financial_year",]
+    list_display = [
+        "commercial_category",
+        "description",
+        "financial_year",
+    ]
     list_filter = ("active", ("financial_year", RelatedDropdownFilter))
 
     fields = (
@@ -221,7 +223,7 @@ class ArchivedProgrammeAdmin(AdminArchived, AdminExport):
         "programme_description",
         "budget_type",
         "active",
-        "financial_year"
+        "financial_year",
     )
     search_fields = ["programme_code", "programme_description"]
     list_filter = ["budget_type", "active", ("financial_year", RelatedDropdownFilter)]
@@ -318,10 +320,7 @@ class ArchivedProjectCodeAdmin(AdminArchived, AdminExport):
                 "updated",
             ]
         else:
-            return ["financial_year",
-                    "project_code",
-                    "project_description",
-                    "active"]
+            return ["financial_year", "project_code", "project_description", "active"]
 
     @property
     def export_func(self):
