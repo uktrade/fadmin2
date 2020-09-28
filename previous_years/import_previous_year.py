@@ -1,5 +1,4 @@
 import datetime
-
 import logging
 
 from django.db import connection
