@@ -22,7 +22,10 @@ from core.utils.export_helpers import (
     export_to_csv,
     export_to_excel,
 )
-from core.utils.generic_helpers import log_object_change
+from core.utils.generic_helpers import (
+    get_current_financial_year,
+    log_object_change,
+)
 
 
 class AdminActiveField(admin.ModelAdmin):
@@ -407,7 +410,10 @@ class AdminArchived(admin.ModelAdmin):
     # limit the entries to archived years
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "financial_year":
-            kwargs["queryset"] = FinancialYear.objects.filter(archived=True)
+            current_year = get_current_financial_year()
+            kwargs["queryset"] = FinancialYear.objects.filter(
+                financial_year__lte=current_year
+            )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
