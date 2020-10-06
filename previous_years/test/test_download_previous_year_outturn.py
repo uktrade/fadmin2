@@ -134,7 +134,7 @@ class DownloadPastYearForecastTest(DownloadPastYearForecastSetup):
                 "export_forecast_data_project_detail_dit",
                 kwargs={
                     "project_code_id": self.project_code,
-                    "period": self.archived_year
+                    "period": self.archived_year,
                 },
             ),
             export_forecast_data_project_detail_dit,
@@ -348,10 +348,7 @@ class DownloadPastYearForecastTest(DownloadPastYearForecastSetup):
         self.check_response_content(response.content)
 
 
-
-class DownloadPastYearForecastAdjustmentColumnsTest(
-    DownloadPastYearForecastTest
-):
+class DownloadPastYearForecastAdjustmentColumnsTest(DownloadPastYearForecastTest):
     def setUp(self):
         super().setUp()
         hide_adjustment_columns()
