@@ -4,7 +4,7 @@ from mohawk import Sender
 sender = Sender(
     {
         'id': 'some-sender',
-        'key': 'a long, ddddcomplicated secret',
+        'key': 'a long, complicated secret',
         'algorithm': 'sha256',
     },
     "http://localhost:8000/data-lake/forecast/",
