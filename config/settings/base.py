@@ -267,7 +267,10 @@ CLEAN_FILE_NAME = True
 MAX_FORECAST_FIGURE = 10000000000
 MIN_FORECAST_FIGURE = -10000000000
 
-AUTHBROKER_ANONYMOUS_PATHS = ["/pingdom/ping.xml", ]
+AUTHBROKER_ANONYMOUS_PATHS = [
+    "/pingdom/ping.xml",
+    "/data-lake/forecast/",
+]
 
 # Hawk
 # Incoming

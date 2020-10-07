@@ -38,7 +38,7 @@ class ForecastViewSet(
 
     @decorator_from_middleware(HawkResponseMiddleware)
     def list(self, request):
-        pass
+        return Response("Hello!")
 
 
 def forecast_query_iterator(queryset, keys_dict, period_list, forecast_period, year):
