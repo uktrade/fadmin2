@@ -4,7 +4,7 @@ create-sub-data:
 	docker-compose run fido python manage.py create_stub_forecast_data
 	docker-compose run fido python manage.py create_test_user
 
-setup-new-test-env:
+first-use:
 	docker-compose down
 	docker-compose run fido python manage.py migrate
 	docker-compose run fido python manage.py create_stub_data All
@@ -50,6 +50,11 @@ collectstatic:
 
 bash:
 	docker-compose run fido bash
+
+all-requirements:
+	pip-compile --output-file requirements/base.txt requirements.in/base.in
+	pip-compile --output-file requirements/dev.txt requirements.in/dev.in
+	pip-compile --output-file requirements/prod.txt requirements.in/prod.in
 
 dev-requirements:
 	pip-compile --output-file requirements/base.txt requirements.in/base.in

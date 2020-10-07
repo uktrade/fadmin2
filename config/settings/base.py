@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "upload_file.apps.UploadFileConfig",
     "download_file.apps.DownloadFileConfig",
     "pingdom.apps.PingdomConfig",
+    "data_lake",
     "django_extensions",
     "django_tables2",
     "django_filters",
@@ -267,3 +268,19 @@ MAX_FORECAST_FIGURE = 10000000000
 MIN_FORECAST_FIGURE = -10000000000
 
 AUTHBROKER_ANONYMOUS_PATHS = ["/pingdom/ping.xml", ]
+
+# Hawk
+# Incoming
+HAWK_INCOMING_ACCESS_KEY = env.str('HAWK_INCOMING_ACCESS_KEY', default=None)
+HAWK_INCOMING_SECRET_KEY = env.str('HAWK_INCOMING_SECRET_KEY', default=None)
+HAWK_INCOMING_IP_WHITELIST = env.list('HAWK_INCOMING_IP_WHITELIST', default=[])
+
+# Outoing
+HAWK_OUTGOING_ACCESS_KEY = env.str('HAWK_OUTGOING_ACCESS_KEY', default=None)
+HAWK_OUTGOING_SECRET_KEY = env.str('HAWK_OUTGOING_SECRET_KEY', default=None)
+HAWK_OUTGOING_URL = env.str('HAWK_OUTGOING_URL', default=None)
+HAWK_OUTGOING_IP_WHITELIST = env.str('HAWK_OUTGOING_IP_WHITELIST', default=[])
+
+# HAWK_ACCESS_KEY = env("HAWK_ACCESS_KEY", default=None)
+# HAWK_INCOMING_ACCESS_KEY = env("HAWK_ACCESS_KEY", default=None)
+# HAWK_INCOMING_SECRET_KEY = env("HAWK_ACCESS_KEY", default=None)
