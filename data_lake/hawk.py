@@ -20,7 +20,7 @@ MAX_PER_PAGE = 500
 
 def lookup_credentials(access_key_id):
     """Raises a HawkFail if the passed ID is not equal to
-    settings.ACTIVITY_STREAM_INCOMING_ACCESS_KEY
+    settings.HAWK_INCOMING_ACCESS_KEY
     """
     if not constant_time_compare(
         access_key_id,
@@ -71,7 +71,6 @@ def authorise(request):
 
 
 class HawkAuthentication(BaseAuthentication):
-
     def authenticate_header(self, request):
         """This is returned as the WWW-Authenticate header when
         AuthenticationFailed is raised. DRF also requires this
