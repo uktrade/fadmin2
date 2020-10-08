@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "upload_file.apps.UploadFileConfig",
     "download_file.apps.DownloadFileConfig",
     "pingdom.apps.PingdomConfig",
-    "data_lake",
+    "data_lake.apps.DataLakeConfig",
     "django_extensions",
     "django_tables2",
     "django_filters",

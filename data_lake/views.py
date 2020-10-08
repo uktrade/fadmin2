@@ -1,28 +1,21 @@
 import csv
 
-from django.utils.decorators import decorator_from_middleware
-
-from rest_framework.viewsets import ViewSet
-
-from .hawk import (
+from data_lake.hawk import (
     HawkAuthentication,
     HawkResponseMiddleware,
 )
+
+from django.http import HttpResponse
+from django.utils.decorators import decorator_from_middleware
+
+from rest_framework.viewsets import ViewSet
 
 from core.utils.generic_helpers import get_current_financial_year
 
 from end_of_month.models import forecast_budget_view_model
 
-from forecast.utils.query_fields import ForecastQueryFields
 from forecast.models import FinancialPeriod
-
-from django.http import HttpResponse
-
-
-import logging
-
-
-logger = logging.getLogger(__name__)
+from forecast.utils.query_fields import ForecastQueryFields
 
 
 def forecast_query_iterator(queryset, keys_dict, period_list, forecast_period, year):

@@ -1,10 +1,11 @@
-import requests
 from mohawk import Sender
+
+import requests
 
 sender = Sender(
     {
         'id': 'some-sender',
-        'key': 'a long, complicated secret',
+        'key': 'a long, dcomplicated secret',
         'algorithm': 'sha256',
     },
     "http://localhost:8000/data-lake/forecast/",

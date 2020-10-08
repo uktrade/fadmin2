@@ -6,6 +6,7 @@ from django.utils.crypto import constant_time_compare
 
 from mohawk import Receiver
 from mohawk.exc import HawkFail
+
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 
