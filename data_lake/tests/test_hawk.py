@@ -59,6 +59,26 @@ class HawkTests(TestCase):
         assert response.status_code == status.HTTP_200_OK
 
     @override_settings(
+        HAWK_INCOMING_ACCESS_KEY="wrong-id",
+        HAWK_INCOMING_SECRET_KEY="some-secret",
+    )
+    def test_bad_credentials_mean_401_returned(self):
+        """If the wrong credentials are used,
+        then a 401 is returned
+        """
+        sender = hawk_auth_sender()
+        response = APIClient().get(
+            test_url,
+            content_type='',
+            HTTP_AUTHORIZATION=sender.request_header,
+            HTTP_X_FORWARDED_FOR='1.2.3.4, 123.123.123.123',
+        )
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        error = {'detail': 'Incorrect authentication credentials.'}
+        assert response.json() == error
+
+    @override_settings(
         HAWK_INCOMING_ACCESS_KEY="some-id",
         HAWK_INCOMING_SECRET_KEY="some-secret",
     )
