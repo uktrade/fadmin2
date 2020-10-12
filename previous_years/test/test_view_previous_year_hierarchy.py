@@ -122,8 +122,6 @@ class ViewForecastHierarchyTest(DownloadPastYearForecastSetup):
     def check_expenditure_table(self, table):
         expenditure_rows = table.find_all("tr")
         first_expenditure_cols = expenditure_rows[2].find_all("td")
-
-        print(f"===== {first_expenditure_cols[0]}")
         assert first_expenditure_cols[2].get_text().strip() == format_forecast_figure(
             self.budget
         )
