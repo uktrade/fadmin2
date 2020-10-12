@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import redirect
 from django.urls import reverse
 
+from core.utils.generic_helpers import get_current_financial_year
 from forecast.models import (
     ForecastingDataView,
 )
@@ -26,11 +27,15 @@ def get_period_for_title(period):
     return f"({title})"
 
 
-def export_forecast_data_generic(period, filter, title):
+def export_forecast_data_generic(period, data_filter, title):
     fields = ForecastQueryFields(period)
+    if period > 2000:
+        year = period
+    else:
+        year = get_current_financial_year()
     datamodel = fields.datamodel
     q = datamodel.view_data.raw_data_annotated(
-        fields.VIEW_FORECAST_DOWNLOAD_COLUMNS, filter
+        fields.VIEW_FORECAST_DOWNLOAD_COLUMNS, data_filter, year=year
     )
     return export_query_to_excel(
         q, fields.VIEW_FORECAST_DOWNLOAD_COLUMNS, title, period
