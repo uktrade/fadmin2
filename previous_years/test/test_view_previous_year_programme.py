@@ -133,4 +133,3 @@ class ViewProgrammeDetailsTwoYearDataTest(ViewProgrammeDetailsTest):
     def setUp(self):
         super().setUp()
         self.create_another_year()
-

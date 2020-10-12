@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 
 from core.utils.generic_helpers import get_current_financial_year
+
 from forecast.models import (
     ForecastingDataView,
 )

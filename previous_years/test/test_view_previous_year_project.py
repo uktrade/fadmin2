@@ -145,5 +145,3 @@ class ViewProjectDetailsTwoYearDataTest(ViewProjectDetailsTest):
             def setUp(self):
                 super().setUp()
                 self.create_another_year()
-
-

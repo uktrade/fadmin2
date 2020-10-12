@@ -153,7 +153,7 @@ class PastYearForecastSetup(TestCase, RequestFactoryBase):
         self.test_user.save()
 
     def create_another_year(self):
-        # Create data for another year. Use to check that only one year data is returned.
+        # Create data for another year. Use to test that only one year data is returned.
         another_archived_year = self.archived_year + 1
         another_archived_year_obj = FinancialYear.objects.filter(
             financial_year=another_archived_year
