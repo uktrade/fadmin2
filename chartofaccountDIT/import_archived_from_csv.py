@@ -154,25 +154,3 @@ def import_archived_nac(csvfile, year):
             print(sql_query)
             cursor.execute(sql_query)
         return success, msg
-
-
-def create_historical_contract(year):
-    msgerror = "Failure creating archived Contract codes. Error:"
-    try:
-        validate_year_for_archiving(year)
-    except ArchiveYearError as ex:
-        raise ArchiveYearError(f"{msgerror} {str(ex)}")
-    # Use sql to initialise the NAC_Category_id foreign key in the archived table
-    # this code will not be used in future, so it is not important
-    # to make maintainable
-    with connection.cursor() as cursor:
-        sql_query = f'INSERT INTO public."chartofaccountDIT_archivedanalysis2"' \
-                    f'(created, updated, archived, ' \
-                    f'analysis2_description, ' \
-                    f'analysis2_code, active, financial_year_id) ' \
-                    f'SELECT Now(), Now(), now(),' \
-                    f'analysis2_description, analysis2_code, ' \
-                    f'False, {year} FROM "chartofaccountDIT_analysis2";'
-
-        cursor.execute(sql_query)
-        return True
