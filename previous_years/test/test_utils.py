@@ -212,7 +212,7 @@ class PastYearForecastSetup(TestCase, RequestFactoryBase):
         another_year_obj = ArchivedForecastData.objects.create(
             financial_year=another_archived_year_obj, financial_code=financial_code_obj,
         )
-        
+
         outturn = {
             "budget": 1234500,
             "apr": -1200000,

@@ -127,3 +127,10 @@ class ViewProgrammeDetailsAdjustmentColumnsTest(ViewProgrammeDetailsTest):
     def setUp(self):
         super().setUp()
         hide_adjustment_columns()
+
+
+class ViewProgrammeDetailsTwoYearDataTest(ViewProgrammeDetailsTest):
+    def setUp(self):
+        super().setUp()
+        self.create_another_year()
+

@@ -155,3 +155,11 @@ class ViewForecastNaturalAccountCodeAdjustmentColumnsTest(
     def setUp(self):
         super().setUp()
         hide_adjustment_columns()
+
+
+class ViewForecastNaturalAccountCodeTwoYearDataTest(
+    ViewForecastNaturalAccountCodeTest
+):
+    def setUp(self):
+        super().setUp()
+        self.create_another_year()
