@@ -671,20 +671,25 @@ class DisplaySubTotalManager(models.Manager):
         # Lines with 0 values across the year have no year specified:
         # they come from an outer join in the query.
         # So use financial_year = NULL to filter them in or out.
+        if include_zeros:
+            year_filter = Q(financial_year=year) | Q(financial_year__isnull=True)
+        else:
+            year_filter = Q(financial_year=year)
         raw_data = (
             self.get_queryset()
             .values(*columns)
             .filter(
-                Q(financial_year=year) | Q(financial_year__isnull=include_zeros),
+                year_filter,
                 **filter_dict,
             )
             .annotate(**annotations)
             .order_by(*order_list)
         )
+        print(raw_data.query)
         return raw_data
 
 
-# Does not inherit from BaseModel as it maps to view
+# Does not inherit from BaseModel as it maps to database view
 class ForecastingDataViewAbstract(models.Model):
     """Used for joining budgets and forecast.
     The view adds rows with 0 values across the year (zero-values rows),
