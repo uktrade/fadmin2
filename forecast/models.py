@@ -683,7 +683,6 @@ class DisplaySubTotalManager(models.Manager):
             .annotate(**annotations)
             .order_by(*order_list)
         )
-        print(raw_data.query)
         return raw_data
 
 
