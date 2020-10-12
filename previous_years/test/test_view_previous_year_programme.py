@@ -13,7 +13,7 @@ from forecast.views.view_forecast.programme_details import (
 )
 
 from previous_years.test.test_utils import (
-    DownloadPastYearForecastSetup,
+    PastYearForecastSetup,
     hide_adjustment_columns
 )
 
@@ -28,7 +28,7 @@ EXPENDITURE_TABLE_INDEX = 2
 PROJECT_TABLE_INDEX = 3
 
 
-class ViewProgrammeDetailsTest(DownloadPastYearForecastSetup):
+class ViewProgrammeDetailsTest(PastYearForecastSetup):
 
     def check_programme_details_table(self, table):
         details_rows = table.find_all("tr")
