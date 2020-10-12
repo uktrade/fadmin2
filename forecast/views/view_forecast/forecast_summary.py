@@ -48,7 +48,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             self.field_infos.hierarchy_sub_total,
             hierarchy_columns.keys(),
             pivot_filter,
-            year = self.year,
+            year=self.year,
             order_list=hierarchy_order_list,
         )
         programme_data = self.data_model.view_data.subtotal_data(
@@ -56,7 +56,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             self.field_infos.programme_sub_total,
             self.field_infos.programme_columns.keys(),
             pivot_filter,
-            year = self.year,
+            year=self.year,
             order_list=self.field_infos.programme_order_list,
         )
 
@@ -65,7 +65,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             self.field_infos.expenditure_sub_total,
             self.field_infos.expenditure_columns.keys(),
             pivot_filter,
-            year = self.year,
+            year=self.year,
             order_list=self.field_infos.expenditure_order_list,
         )
 
@@ -77,7 +77,7 @@ class ForecastMultiTableMixin(ForecastViewTableMixin):
             self.field_infos.project_sub_total,
             self.field_infos.project_columns.keys(),
             pivot_filter,
-            year = self.year,
+            year=self.year,
             order_list=self.field_infos.project_order_list,
         )
 

@@ -354,14 +354,13 @@ class FinancialCodeAbstract(models.Model):
 
     def save(self, *args, **kwargs):
         # Override save to calculate the forecast_expenditure_type.
-        if self.pk is None:
+        if self.pk is None or self.forecast_expenditure_type is None:
             # calculate the forecast_expenditure_type
             nac_economic_budget_code = self.natural_account_code.economic_budget_code
             programme_budget_type = self.programme.budget_type
-
             forecast_type = ForecastExpenditureType.objects.filter(
-                programme_budget_type=programme_budget_type,
-                nac_economic_budget_code=nac_economic_budget_code,
+                programme_budget_type__iexact=programme_budget_type,
+                nac_economic_budget_code__iexact=nac_economic_budget_code,
             )
 
             self.forecast_expenditure_type = forecast_type.first()
