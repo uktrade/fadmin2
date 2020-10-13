@@ -151,6 +151,5 @@ def import_archived_nac(csvfile, year):
                         f'WHERE financial_year_id = {year}  ' \
                         f'AND a."NAC_category_description" = ' \
                         f'"chartofaccountDIT_archivedexpenditurecategory"."NAC_category_description";'  # noqa
-            print(sql_query)
             cursor.execute(sql_query)
         return success, msg
