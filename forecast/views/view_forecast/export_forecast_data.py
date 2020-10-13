@@ -2,8 +2,6 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from core.utils.generic_helpers import get_current_financial_year
-
 from forecast.models import (
     ForecastingDataView,
 )
@@ -19,7 +17,6 @@ from forecast.utils.query_fields import ForecastQueryFields
 from forecast.views.base import get_view_forecast_period_name
 
 
-# TODO display ADJ periods for previous years
 def get_period_for_title(period):
     if period:
         title = get_view_forecast_period_name(period)
@@ -30,10 +27,7 @@ def get_period_for_title(period):
 
 def export_forecast_data_generic(period, data_filter, title):
     fields = ForecastQueryFields(period)
-    if period > 2000:
-        year = period
-    else:
-        year = get_current_financial_year()
+    year = fields.selected_year
     datamodel = fields.datamodel
     q = datamodel.view_data.raw_data_annotated(
         fields.VIEW_FORECAST_DOWNLOAD_COLUMNS, data_filter, year=year
