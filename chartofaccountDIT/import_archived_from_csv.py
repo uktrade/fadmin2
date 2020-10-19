@@ -149,7 +149,7 @@ def import_archived_nac(csvfile, year):
                 account_L6_budget_val = nac_obj.expenditure_category.linked_budget_code
                 nac_obj.account_L6_budget = account_L6_budget_val
                 nac_obj.save()
-        category_qs = ArchivedExpenditureCategory.objects.filter(financial_year = year)
+        category_qs = ArchivedExpenditureCategory.objects.filter(financial_year=year)
         # Set the flag 'used_for_budget' in the nac used in ArchivedExpenditureCategory
         for category_obj in category_qs:
             account_L6_budget_val = category_obj.linked_budget_code
@@ -157,10 +157,9 @@ def import_archived_nac(csvfile, year):
             # in such case, the data has to be fixed
             try:
                 nac_obj = ArchivedNaturalCode.objects.get(
-                    financial_year=year,
-                    natural_account_code=account_L6_budget_val
+                    financial_year=year, natural_account_code=account_L6_budget_val
                 )
-                nac_obj.used_for_budget=True
+                nac_obj.used_for_budget = True
                 nac_obj.save()
             except ObjectDoesNotExist as ex:
                 msg = f"NAC {account_L6_budget_val} not defined for year {year}"
