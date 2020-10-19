@@ -1,5 +1,3 @@
-from django.db import connection
-
 from chartofaccountDIT.import_csv import BUDGET_KEY
 from chartofaccountDIT.models import (
     ArchivedAnalysis1,
@@ -141,15 +139,4 @@ def import_archived_nac(csvfile, year):
     if not success:
         raise WrongChartOFAccountCodeException(f"{msgerror} {msg}")
     else:
-        # Use sql to initialise the NAC_Category_id foreign key in the archived table
-        # this code will not be used in future, so it is not important
-        # to make maintainable
-        with connection.cursor() as cursor:
-            sql_query = f'update "chartofaccountDIT_archivedexpenditurecategory" ' \
-                        f'SET "NAC_category_id" = a.id ' \
-                        f'FROM "chartofaccountDIT_naccategory" a ' \
-                        f'WHERE financial_year_id = {year}  ' \
-                        f'AND a."NAC_category_description" = ' \
-                        f'"chartofaccountDIT_archivedexpenditurecategory"."NAC_category_description";'  # noqa
-            cursor.execute(sql_query)
         return success, msg
