@@ -74,6 +74,7 @@ NAC_HISTORICAL_KEY = {
     IMPORT_CSV_PK_KEY: "Natural Account",
     IMPORT_CSV_FIELDLIST_KEY: {
         "natural_account_code_description": "NAC desc",
+        "expenditure_category_description": "Budget Category",
         "NAC_category": "Budget Grouping",
         "economic_budget_code": "Expenditure Type",
         "expenditure_category": EXPENDITURE_CATEGORY_HISTORICAL_KEY,
