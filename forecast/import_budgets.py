@@ -72,6 +72,8 @@ def copy_uploaded_budget(year, month_dict):
 def upload_budget_figures(budget_row, year_obj, financialcode_obj, month_dict):
     for month_idx, period_obj in month_dict.items():
         period_budget = budget_row[month_idx].value
+        if period_budget is None:
+            period_budget = 0
         if period_budget == '-':
             # we accept the '-' as it is a recognised value in Finance for 0
             period_budget = 0
