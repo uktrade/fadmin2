@@ -20,6 +20,9 @@ gift-hospitality-table:
 makemigrations:
 	docker-compose run --rm fido python manage.py makemigrations
 
+migrations:
+	docker-compose run --rm fido python manage.py makemigrations
+
 migrate:
 	docker-compose run --rm fido python manage.py migrate
 
@@ -41,6 +44,9 @@ bdd:
 
 up:
 	docker-compose up
+
+down:
+	docker-compose down
 
 build:
 	docker-compose build

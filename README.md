@@ -107,11 +107,15 @@ docker-compose exec fido bash
 python manage.py behave --settings=config.settings.bdd
 ```
 
-## TODO
-Add setup steps to make file and amend readme
 
 ### Notes
 In order to get the node docker container working, this guide was followed: https://jdlm.info/articles/2019/09/06/lessons-building-node-app-docker.html
+
+#### Migrating the User model (to be removed once complete)
+
+Add username field to HistoricalUser table (max length 150, allow null)
+
+
 
 ### Product URLs
 
