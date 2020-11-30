@@ -142,7 +142,13 @@ def import_archived_nac(csvfile, year):
     if not success:
         raise WrongChartOFAccountCodeException(f"{msgerror} {msg}")
     else:
-        # Update the budget NAC. Not optimised, but used only few times.
+        # The archived NAC is not normalised, and each expenditure NAC row
+        # contains the corresponding budget NAC.
+        # This information is missing from the upload file, so we need to extract it
+        # from the expenditure category: each expenditure category row is linked to
+        # a budget NAC.
+        # The classification of budget and expenditure NAC is internal to DIT:
+        # budgets should be set only using budget NAC, to reduce the number of lines
         nac_qs = ArchivedNaturalCode.objects.filter(financial_year=year)
         for nac_obj in nac_qs:
             if nac_obj.expenditure_category:
