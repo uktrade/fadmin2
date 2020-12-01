@@ -57,9 +57,9 @@ L1_KEY = {
     IMPORT_CSV_MODEL_KEY: L1Account,
     IMPORT_CSV_PK_KEY: "Account L1 Code",
     IMPORT_CSV_FIELDLIST_KEY: {
-        L1Account.account_l1_long_name: "Account L1 Long Name",  # noqa: E501
-        L1Account.account_code: "Accounts Code",
-        L1Account.account_l0_code: "Account L0 Code",
+        L1Account.account_l1_long_name.field.name: "Account L1 Long Name",  # noqa: E501
+        L1Account.account_code.field.name: "Accounts Code",
+        L1Account.account_l0_code.field.name: "Account L0 Code",
     },
 }
 
@@ -67,7 +67,7 @@ L2_KEY = {
     IMPORT_CSV_MODEL_KEY: L2Account,
     IMPORT_CSV_PK_KEY: "Account L2 Code",
     IMPORT_CSV_FIELDLIST_KEY: {
-        L2Account.account_l2_long_name: "Account L2 Long Name",  # noqa: E501
+        L2Account.account_l2_long_name.field.name: "Account L2 Long Name",  # noqa: E501
         L2Account.account_l1.field.name: L1_KEY,
     },
 }
@@ -76,7 +76,7 @@ L3_KEY = {
     IMPORT_CSV_MODEL_KEY: L3Account,
     IMPORT_CSV_PK_KEY: "Account L3 Code",
     IMPORT_CSV_FIELDLIST_KEY: {
-        L3Account.account_l3_long_name: "Account L3 Long Name",  # noqa: E501
+        L3Account.account_l3_long_name.field.name: "Account L3 Long Name",  # noqa: E501
         L3Account.account_l2.field.name: L2_KEY,
     },
 }
@@ -85,7 +85,7 @@ L4_KEY = {
     IMPORT_CSV_MODEL_KEY: L4Account,
     IMPORT_CSV_PK_KEY: "Account L4 Code",
     IMPORT_CSV_FIELDLIST_KEY: {
-        L4Account.account_l4_long_name: "Account L4 Long Name",  # noqa: E501
+        L4Account.account_l4_long_name.field.name: "Account L4 Long Name",  # noqa: E501
         L4Account.account_l3.field.name: L3_KEY,
     },
 }
@@ -94,14 +94,14 @@ L5_KEY = {
     IMPORT_CSV_MODEL_KEY: L5Account,
     IMPORT_CSV_PK_KEY: "Account L5 Code",
     IMPORT_CSV_FIELDLIST_KEY: {
-        L5Account.account_l5_long_name: "Account L5 Long Name",  # noqa: E501
-        L5Account.account_l5_description: "Account L5 Description",
+        L5Account.account_l5_long_name.field.name: "Account L5 Long Name",  # noqa: E501
+        L5Account.account_l5_description.field.name: "Account L5 Description",
         # noqa: E501
-        L5Account.economic_budget_code: "Economic Budget Code",  # noqa: E501
-        L5Account.sector_code: "Sector Code",
-        L5Account.estimates_column_code: "Estimates Column Code",  # noqa: E501
-        L5Account.usage_code: "Usage Code",
-        L5Account.cash_indicator_code: "Cash Indicator Code",  # noqa: E501
+        L5Account.economic_budget_code.field.name: "Economic Budget Code",  # noqa: E501
+        L5Account.sector_code.field.name: "Sector Code",
+        L5Account.estimates_column_code.field.name: "Estimates Column Code",  # noqa: E501
+        L5Account.usage_code.field.name: "Usage Code",
+        L5Account.cash_indicator_code.field.name: "Cash Indicator Code",  # noqa: E501
         L5Account.account_l4.field.name: L4_KEY,
     },
 }
