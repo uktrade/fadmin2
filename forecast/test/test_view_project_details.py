@@ -13,7 +13,6 @@ from chartofaccountDIT.test.factories import (
 )
 
 from core.models import FinancialYear
-from core.test.test_base import RequestFactoryBase
 from core.utils.generic_helpers import get_current_financial_year
 
 from costcentre.test.factories import (
@@ -40,10 +39,8 @@ SPEND_TO_DATE_COLUMN = -2
 UNDERSPEND_COLUMN = -4
 
 
-class ViewForecastProjectDetailsTest(TestCase, RequestFactoryBase):
+class ViewForecastProjectDetailsTest(TestCase):
     def setUp(self):
-        RequestFactoryBase.__init__(self)
-
         self.group_name = "Test Group"
         self.group_code = "TestGG"
         self.directorate_name = "Test Directorate"
@@ -173,7 +170,7 @@ class ViewForecastProjectDetailsTest(TestCase, RequestFactoryBase):
         self.check_project_details_table(tables[0])
 
     def test_view_cost_centre_project_details(self):
-        resp = self.factory_get(
+        resp = self.client.get(
             reverse(
                 "project_details_costcentre",
                 kwargs={
@@ -182,15 +179,11 @@ class ViewForecastProjectDetailsTest(TestCase, RequestFactoryBase):
                     'period': 0,
                 },
             ),
-            CostCentreProjectDetailsView,
-            cost_centre_code=self.cost_centre_code,
-            project_code=self.project_code,
-            period=0,
         )
         self.check_response(resp)
 
     def test_view_directory_project_details(self):
-        resp = self.factory_get(
+        resp = self.client.get(
             reverse(
                 "project_details_directorate",
                 kwargs={
@@ -199,15 +192,11 @@ class ViewForecastProjectDetailsTest(TestCase, RequestFactoryBase):
                     'period': 0,
                 },
             ),
-            DirectorateProjectDetailsView,
-            directorate_code=self.directorate.directorate_code,
-            project_code=self.project_code,
-            period=0,
         )
         self.check_response(resp)
 
     def test_view_group_project_details(self):
-        resp = self.factory_get(
+        resp = self.client.get(
             reverse(
                 "project_details_group",
                 kwargs={
@@ -216,16 +205,12 @@ class ViewForecastProjectDetailsTest(TestCase, RequestFactoryBase):
                     'period': 0,
                 },
             ),
-            GroupProjectDetailsView,
-            group_code=self.group.group_code,
-            project_code=self.project_code,
-            period=0,
         )
 
         self.check_response(resp)
 
     def test_view_dit_project_details(self):
-        resp = self.factory_get(
+        resp = self.client.get(
             reverse(
                 "project_details_dit",
                 kwargs={
@@ -233,9 +218,6 @@ class ViewForecastProjectDetailsTest(TestCase, RequestFactoryBase):
                     'period': 0,
                 },
             ),
-            DITProjectDetailsView,
-            project_code=self.project_code,
-            period=0,
         )
 
         self.check_response(resp)

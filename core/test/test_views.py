@@ -7,13 +7,9 @@ from django.test import (
 )
 from django.urls import reverse
 
-from core.test.test_base import RequestFactoryBase
 
-
-class ViewAdminLink(TestCase, RequestFactoryBase):
+class ViewAdminLink(TestCase):
     def setUp(self):
-        RequestFactoryBase.__init__(self)
-
         self.client.login(
             username=self.test_user_email,
             password=self.test_password,

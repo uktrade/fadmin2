@@ -6,8 +6,6 @@ from django.urls import reverse
 
 from openpyxl import load_workbook
 
-from core.test.test_base import RequestFactoryBase
-
 from end_of_month.test.test_utils import SetFullYearArchive
 
 from forecast.views.view_forecast.export_forecast_data import (
@@ -24,10 +22,8 @@ APR_COL = 26
 ADJ3_COL = 40
 
 
-class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
+class DownloadForecastHierarchyTest(TestCase):
     def setUp(self):
-        RequestFactoryBase.__init__(self)
-
         # Assign forecast view permission
         can_view_forecasts = Permission.objects.get(
             codename='can_view_forecasts'

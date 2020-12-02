@@ -14,7 +14,6 @@ from chartofaccountDIT.test.factories import (
 )
 
 from core.models import FinancialYear
-from core.test.test_base import RequestFactoryBase
 
 from costcentre.test.factories import (
     CostCentreFactory,
@@ -28,12 +27,10 @@ from forecast.models import (
 )
 
 
-class ImportBudgetsTest(TestCase, RequestFactoryBase):
+class ImportBudgetsTest(TestCase):
     def setUp(self):
-        RequestFactoryBase.__init__(self)
         self.test_year = 2019
         self.test_period = 9
-        self.factory = RequestFactory()
         self.cost_centre_code = "109189"
         self.natural_account_code = 52191003
         self.programme_code = "310940"

@@ -13,7 +13,6 @@ from chartofaccountDIT.test.factories import (
 )
 
 from core.models import FinancialYear
-from core.test.test_base import RequestFactoryBase
 from core.utils.generic_helpers import get_current_financial_year
 
 from costcentre.test.factories import (
@@ -32,10 +31,8 @@ from forecast.test.test_utils import create_budget
 from forecast.views.view_forecast.export_forecast_data import export_edit_forecast_data
 
 
-class DownloadEditForecastTest(TestCase, RequestFactoryBase):
+class DownloadEditForecastTest(TestCase):
     def setUp(self):
-        RequestFactoryBase.__init__(self)
-
         self.group_name = "Test Group"
         self.group_code = "TestGG"
         self.directorate_name = "Test Directorate"
@@ -122,13 +119,11 @@ class DownloadEditForecastTest(TestCase, RequestFactoryBase):
         assign_perm("change_costcentre", self.test_user, self.cost_centre)
         self.cost_centre_code = self.cost_centre
 
-        download_forecast_url = self.factory_get(
+        download_forecast_url = self.client.get(
             reverse(
                 "export_edit_forecast_data_cost_centre",
                 kwargs={"cost_centre": self.cost_centre_code},
             ),
-            export_edit_forecast_data,
-            cost_centre=self.cost_centre.cost_centre_code,
         )
         self.assertEqual(download_forecast_url.status_code, 200)
 
@@ -168,13 +163,11 @@ class DownloadEditForecastTest(TestCase, RequestFactoryBase):
         """
         self.cost_centre_code = self.cost_centre
 
-        download_forecast_url = self.factory_get(
+        download_forecast_url = self.client.get(
             reverse(
                 "export_edit_forecast_data_cost_centre",
                 kwargs={"cost_centre": self.cost_centre_code},
             ),
-            export_edit_forecast_data,
-            cost_centre=self.cost_centre.cost_centre_code,
         )
         self.assertEqual(download_forecast_url.status_code, 302)
 
@@ -193,13 +186,11 @@ class DownloadEditForecastTest(TestCase, RequestFactoryBase):
             cost_centre_code=self.cost_centre_code
         )
 
-        download_forecast_url = self.factory_get(
+        download_forecast_url = self.client.get(
             reverse(
                 "export_edit_forecast_data_cost_centre",
                 kwargs={"cost_centre": self.cost_centre_code},
             ),
-            export_edit_forecast_data,
-            cost_centre=self.cost_centre.cost_centre_code,
         )
         self.assertEqual(download_forecast_url.status_code, 302)
 
@@ -207,13 +198,11 @@ class DownloadEditForecastTest(TestCase, RequestFactoryBase):
         assign_perm("change_costcentre", self.test_user, self.cost_centre)
         self.cost_centre_code = self.cost_centre
 
-        download_forecast_url = self.factory_get(
+        download_forecast_url = self.client.get(
             reverse(
                 "export_edit_forecast_data_cost_centre",
                 kwargs={"cost_centre": self.cost_centre_code},
             ),
-            export_edit_forecast_data,
-            cost_centre=self.cost_centre.cost_centre_code,
         )
         self.assertEqual(download_forecast_url.status_code, 200)
         file = io.BytesIO(download_forecast_url.content)

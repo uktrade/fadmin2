@@ -6,8 +6,6 @@ from django.contrib.auth.models import (
 from django.test import TestCase
 from django.urls import reverse
 
-from core.test.test_base import RequestFactoryBase
-
 from end_of_month.test.test_utils import SetFullYearArchive
 
 from forecast.test.test_utils import (
@@ -28,10 +26,8 @@ EXPENDITURE_TABLE_INDEX = 2
 PROJECT_TABLE_INDEX = 3
 
 
-class ViewArchivedForecastHierarchyTest(TestCase, RequestFactoryBase):
+class ViewArchivedForecastHierarchyTest(TestCase):
     def setUp(self):
-        RequestFactoryBase.__init__(self)
-
         # Assign forecast view permission
         can_view_forecasts = Permission.objects.get(codename="can_view_forecasts")
         self.test_user.user_permissions.add(can_view_forecasts)

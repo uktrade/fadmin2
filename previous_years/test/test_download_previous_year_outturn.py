@@ -74,29 +74,27 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
         assert ws["AN2"].value == self.outturn["adj03"]
 
     def test_dit_download(self):
-        response = self.factory_get(
-            reverse("export_forecast_data_dit", kwargs={"period": self.archived_year}),
-            export_forecast_data_dit,
-            period=self.archived_year,
+        response = self.client.get(
+            reverse(
+                "export_forecast_data_dit",
+                kwargs={"period": self.archived_year}
+            ),
         )
         self.assertEqual(response.status_code, 200)
         self.check_response_content(response.content)
 
     def test_group_download(self):
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_group",
                 kwargs={"group_code": self.group_code, "period": self.archived_year, },
             ),
-            export_forecast_data_group,
-            group_code=self.group_code,
-            period=self.archived_year,
         )
         self.assertEqual(response.status_code, 200)
         self.check_response_content(response.content)
 
     def test_directorate_download(self):
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_directorate",
                 kwargs={
@@ -104,15 +102,12 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
                     "period": self.archived_year,
                 },
             ),
-            export_forecast_data_directorate,
-            directorate_code=self.directorate_code,
-            period=self.archived_year,
         )
         self.assertEqual(response.status_code, 200)
         self.check_response_content(response.content)
 
     def test_cost_centre_download(self):
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_cost_centre",
                 kwargs={
@@ -120,16 +115,13 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
                     "period": self.archived_year,
                 },
             ),
-            export_forecast_data_cost_centre,
-            cost_centre=self.cost_centre_code,
-            period=self.archived_year,
         )
 
         self.assertEqual(response.status_code, 200)
         self.check_response_content(response.content)
 
     def test_dit_project_download(self):
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_project_detail_dit",
                 kwargs={
@@ -137,9 +129,6 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
                     "period": self.archived_year,
                 },
             ),
-            export_forecast_data_project_detail_dit,
-            project_code_id=self.project_code,
-            period=self.archived_year,
         )
 
         self.assertEqual(response.status_code, 200)
@@ -147,7 +136,7 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
         self.check_response_content(response.content)
 
     def test_group_project_download(self):
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_project_detail_group",
                 kwargs={
@@ -156,10 +145,6 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
                     "period": self.archived_year,
                 },
             ),
-            export_forecast_data_project_detail_group,
-            group_code=self.group_code,
-            project_code_id=self.project_code,
-            period=self.archived_year,
         )
 
         self.assertEqual(response.status_code, 200)

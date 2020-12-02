@@ -13,7 +13,6 @@ from chartofaccountDIT.test.factories import (
 )
 
 from core.models import FinancialYear
-from core.test.test_base import RequestFactoryBase
 from core.utils.generic_helpers import get_current_financial_year
 
 from costcentre.test.factories import (
@@ -37,10 +36,8 @@ from forecast.views.view_forecast.export_forecast_data import (
 )
 
 
-class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
+class DownloadForecastHierarchyTest(TestCase):
     def setUp(self):
-        RequestFactoryBase.__init__(self)
-
         self.group_name = "Test Group"
         self.group_code = "TestGG"
         self.directorate_name = "Test Directorate"
@@ -112,11 +109,11 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
         self.spend_to_date_total = self.amount_apr
 
     def test_dit_download(self):
-        dit_url = self.factory_get(
-            reverse("export_forecast_data_dit",
-                    kwargs={"period": 0}),
-            export_forecast_data_dit,
-            period=0,
+        dit_url = self.client.get(
+            reverse(
+                "export_forecast_data_dit",
+                kwargs={"period": 0}
+            ),
         )
 
         self.assertEqual(dit_url.status_code, 200)
@@ -134,17 +131,17 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
         )
         self.test_user.user_permissions.remove(can_view_forecasts)
 
-        dit_url = self.factory_get(
-            reverse("export_forecast_data_dit",
-                    kwargs={'period': 0}),
-            export_forecast_data_dit,
-            period=0,
+        dit_url = self.client.get(
+            reverse(
+                "export_forecast_data_dit",
+                kwargs={'period': 0}
+            ),
         )
 
         self.assertEqual(dit_url.status_code, 302)
 
     def test_group_download(self):
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_group",
                 kwargs={
@@ -152,9 +149,6 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
                     'period': 0,
                 },
             ),
-            export_forecast_data_group,
-            group_code=self.group.group_code,
-            period=0,
         )
 
         self.assertEqual(response.status_code, 200)
@@ -172,7 +166,7 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
         )
         self.test_user.user_permissions.remove(can_view_forecasts)
 
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_group",
                 kwargs={
@@ -180,15 +174,12 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
                     'period': 0,
                 },
             ),
-            export_forecast_data_group,
-            group_code=self.group.group_code,
-            period=0,
         )
 
         self.assertEqual(response.status_code, 302)
 
     def test_directorate_download(self):
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_directorate",
                 kwargs={
@@ -196,9 +187,6 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
                     'period': 0,
                 },
             ),
-            export_forecast_data_directorate,
-            directorate_code=self.directorate.directorate_code,
-            period=0,
         )
 
         self.assertEqual(response.status_code, 200)
@@ -216,7 +204,7 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
         )
         self.test_user.user_permissions.remove(can_view_forecasts)
 
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_directorate",
                 kwargs={
@@ -224,9 +212,6 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
                     'period': 0,
                 },
             ),
-            export_forecast_data_directorate,
-            directorate_code=self.directorate.directorate_code,
-            period=0,
         )
 
         self.assertEqual(response.status_code, 302)
@@ -235,7 +220,7 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
         assign_perm("change_costcentre", self.test_user, self.cost_centre)
         self.cost_centre_code = self.cost_centre
 
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_cost_centre",
                 kwargs={
@@ -243,9 +228,6 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
                     'period': 0,
                 },
             ),
-            export_forecast_data_cost_centre,
-            cost_centre=self.cost_centre.cost_centre_code,
-            period=0,
         )
 
         self.assertEqual(response.status_code, 200)
@@ -263,7 +245,7 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
         )
         self.test_user.user_permissions.remove(can_view_forecasts)
 
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_cost_centre",
                 kwargs={
@@ -271,9 +253,6 @@ class DownloadForecastHierarchyTest(TestCase, RequestFactoryBase):
                     'period': 0,
                 },
             ),
-            export_forecast_data_cost_centre,
-            cost_centre=self.cost_centre.cost_centre_code,
-            period=0,
         )
 
         self.assertEqual(response.status_code, 302)

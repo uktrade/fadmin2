@@ -9,14 +9,12 @@ from django.urls import reverse
 from chartofaccountDIT.test.factories import ProgrammeCodeFactory
 from chartofaccountDIT.views import HistoricalFilteredProgrammeView
 
-from core.test.test_base import RequestFactoryBase
 from core.utils.generic_helpers import get_current_financial_year
 
 
-class ArchiveProgrammeCodeTest(TestCase, RequestFactoryBase):
+class ArchiveProgrammeCodeTest(TestCase):
     def setUp(self):
         self.out = StringIO()
-        RequestFactoryBase.__init__(self)
 
         obj = ProgrammeCodeFactory()
         self.programme_code = obj.programme_code
@@ -29,10 +27,11 @@ class ArchiveProgrammeCodeTest(TestCase, RequestFactoryBase):
         )
 
     def test_view_historical_programme(self):
-        response = self.factory_get(
-            reverse("historical_programme_filter", kwargs={"year": self.archive_year},),
-            HistoricalFilteredProgrammeView,
-            year=self.archive_year,
+        response = self.client.get(
+            reverse(
+                "historical_programme_filter",
+                kwargs={"year": self.archive_year},
+            ),
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "govuk-table")
@@ -54,12 +53,9 @@ class ArchiveProgrammeCodeTest(TestCase, RequestFactoryBase):
 
     def test_view_filtered_historical_programme(self):
         filter_parameter = "?search_all=" + self.programme_description
-        response = self.factory_get(
+        response = self.client.get(
             reverse("historical_programme_filter", kwargs={"year": self.archive_year},)
             + filter_parameter,
-            HistoricalFilteredProgrammeView,
-            year=self.archive_year,
-            search_all=self.programme_description,
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "govuk-table")

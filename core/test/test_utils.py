@@ -6,14 +6,10 @@ from django.test import (
 )
 
 from core.models import FinancialYear
-from core.test.test_base import RequestFactoryBase
 from core.utils.generic_helpers import log_object_change
 
 
 class ViewUtils(TestCase):
-    def setUp(self):
-        RequestFactoryBase.__init__(self)
-
     def test_log_object_change_no_object(self):
         log_object_change(
             self.test_user.id,

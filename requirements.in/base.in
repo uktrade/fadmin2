@@ -16,7 +16,7 @@ django-admin-list-filter-dropdown
 django-adv-cache-tag
 django-appconf
 django-autocomplete-light
-django-axes
+django-axes==5.9.0
 django-compressor
 django-environ
 django-extensions

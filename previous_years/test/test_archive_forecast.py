@@ -16,7 +16,6 @@ from chartofaccountDIT.test.factories import (
 )
 
 from core.models import FinancialYear
-from core.test.test_base import RequestFactoryBase
 
 from costcentre.test.factories import ArchivedCostCentreFactory
 
@@ -41,10 +40,8 @@ from previous_years.models import (
 from upload_file.models import FileUpload
 
 
-class ImportPreviousYearForecastTest(TestCase, RequestFactoryBase):
+class ImportPreviousYearForecastTest(TestCase):
     def setUp(self):
-        RequestFactoryBase.__init__(self)
-        self.factory = RequestFactory()
         # 2019 is created when the database is created, so it exists
         self.archived_year = 2019
         self.archived_year_obj = FinancialYear.objects.get(pk=self.archived_year)

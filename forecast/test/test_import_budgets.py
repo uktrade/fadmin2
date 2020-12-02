@@ -20,7 +20,6 @@ from chartofaccountDIT.test.factories import (
 )
 
 from core.models import FinancialYear
-from core.test.test_base import RequestFactoryBase
 
 from costcentre.test.factories import (
     CostCentreFactory,
@@ -57,16 +56,14 @@ TEST_PROGRAMME_CODE = "310940"
     ],
     DEFAULT_FILE_STORAGE="django.core.files.storage.FileSystemStorage",
 )
-class ImportBudgetsTest(TestCase, RequestFactoryBase):
+class ImportBudgetsTest(TestCase):
     def setUp(self):
-        RequestFactoryBase.__init__(self)
         self.test_year = 2019
         self.test_period = 9
 
         self.file_mock = MagicMock(spec=File)
         self.file_mock.name = 'test.txt'
 
-        self.factory = RequestFactory()
         self.cost_centre_code = TEST_COST_CENTRE
         self.cost_centre_code_1 = 888888
         self.valid_natural_account_code = TEST_VALID_NATURAL_ACCOUNT_CODE
@@ -263,9 +260,8 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
 
         # Should have been redirected (no permission)
         with self.assertRaises(PermissionDenied):
-            self.factory_get(
+            self.client.get(
                 uploaded_actuals_url,
-                UploadBudgetView,
             )
 
         finance_admins = Group.objects.get(
@@ -274,21 +270,19 @@ class ImportBudgetsTest(TestCase, RequestFactoryBase):
         finance_admins.user_set.add(self.test_user)
         finance_admins.save()
 
-        resp = self.factory_get(
+        resp = self.client.get(
             uploaded_actuals_url,
-            UploadBudgetView,
         )
 
         # Should have been permission now
         self.assertEqual(resp.status_code, 200)
 
-        resp = self.factory_post(
+        resp = self.client.get(
             uploaded_actuals_url,
             {
                 "year": self.test_year,
                 'file': self.file_mock,
             },
-            UploadBudgetView,
         )
 
         # Make sure upload was process was kicked off
