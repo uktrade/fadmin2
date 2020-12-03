@@ -1,10 +1,10 @@
 from django.core.exceptions import PermissionDenied
-from upload_file.utils import has_upload_permission
+from upload_file.utils import user_has_upload_permission
 
 
 def has_upload_permission(function):
     def wrap(view_func, *args, **kwargs):
-        if has_upload_permission(
+        if user_has_upload_permission(
             view_func.request.user,
         ):
             return function(view_func, *args, **kwargs)

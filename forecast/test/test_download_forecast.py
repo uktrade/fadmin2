@@ -1,7 +1,6 @@
 import io
 
 from django.contrib.auth.models import Permission
-from django.test import TestCase
 from django.urls import reverse
 
 from openpyxl import load_workbook
@@ -13,6 +12,7 @@ from chartofaccountDIT.test.factories import (
 )
 
 from core.models import FinancialYear
+from core.test.test_base import BaseTestCase
 from core.utils.generic_helpers import get_current_financial_year
 
 from costcentre.test.factories import (
@@ -28,16 +28,11 @@ from forecast.models import (
 )
 from forecast.permission_shortcuts import assign_perm
 from forecast.test.test_utils import create_budget
-from forecast.views.view_forecast.export_forecast_data import (
-    export_forecast_data_cost_centre,
-    export_forecast_data_directorate,
-    export_forecast_data_dit,
-    export_forecast_data_group,
-)
 
 
-class DownloadForecastHierarchyTest(TestCase):
+class DownloadForecastHierarchyTest(BaseTestCase):
     def setUp(self):
+        self.client.force_login(self.test_user)
         self.group_name = "Test Group"
         self.group_code = "TestGG"
         self.directorate_name = "Test Directorate"
@@ -113,7 +108,7 @@ class DownloadForecastHierarchyTest(TestCase):
             reverse(
                 "export_forecast_data_dit",
                 kwargs={"period": 0}
-            ),
+            )
         )
 
         self.assertEqual(dit_url.status_code, 200)
@@ -135,7 +130,7 @@ class DownloadForecastHierarchyTest(TestCase):
             reverse(
                 "export_forecast_data_dit",
                 kwargs={'period': 0}
-            ),
+            )
         )
 
         self.assertEqual(dit_url.status_code, 302)
@@ -148,7 +143,7 @@ class DownloadForecastHierarchyTest(TestCase):
                     'group_code': self.group.group_code,
                     'period': 0,
                 },
-            ),
+            )
         )
 
         self.assertEqual(response.status_code, 200)
@@ -173,7 +168,7 @@ class DownloadForecastHierarchyTest(TestCase):
                     'group_code': self.group.group_code,
                     'period': 0,
                 },
-            ),
+            )
         )
 
         self.assertEqual(response.status_code, 302)
@@ -186,7 +181,7 @@ class DownloadForecastHierarchyTest(TestCase):
                     'directorate_code': self.directorate.directorate_code,
                     'period': 0,
                 },
-            ),
+            )
         )
 
         self.assertEqual(response.status_code, 200)
@@ -211,7 +206,7 @@ class DownloadForecastHierarchyTest(TestCase):
                     'directorate_code': self.directorate.directorate_code,
                     'period': 0,
                 },
-            ),
+            )
         )
 
         self.assertEqual(response.status_code, 302)
@@ -227,7 +222,7 @@ class DownloadForecastHierarchyTest(TestCase):
                     'cost_centre': self.cost_centre.cost_centre_code,
                     'period': 0,
                 },
-            ),
+            )
         )
 
         self.assertEqual(response.status_code, 200)
@@ -252,7 +247,7 @@ class DownloadForecastHierarchyTest(TestCase):
                     'cost_centre': self.cost_centre.cost_centre_code,
                     'period': 0,
                 },
-            ),
+            )
         )
 
         self.assertEqual(response.status_code, 302)

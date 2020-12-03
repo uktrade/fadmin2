@@ -3,17 +3,17 @@ from io import StringIO
 from bs4 import BeautifulSoup
 
 from django.core.management import call_command
-from django.test import TestCase
 from django.urls import reverse
 
 from chartofaccountDIT.test.factories import ExpenditureCategoryFactory
-from chartofaccountDIT.views import HistoricalFilteredExpenditureCategoryListView
 
+from core.test.test_base import BaseTestCase
 from core.utils.generic_helpers import get_current_financial_year
 
 
-class ArchiveExpenditureCategoryTest(TestCase):
+class ArchiveExpenditureCategoryTest(BaseTestCase):
     def setUp(self):
+        self.client.force_login(self.test_user)
         self.out = StringIO()
 
         obj = ExpenditureCategoryFactory()

@@ -6,10 +6,11 @@ from django.test import (
 )
 
 from core.models import FinancialYear
+from core.test.test_base import BaseTestCase
 from core.utils.generic_helpers import log_object_change
 
 
-class ViewUtils(TestCase):
+class ViewUtils(BaseTestCase):
     def test_log_object_change_no_object(self):
         log_object_change(
             self.test_user.id,

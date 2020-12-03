@@ -1,6 +1,7 @@
 import logging
 
 from django.conf import settings
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 
@@ -10,21 +11,22 @@ from forecast.forms import (
 )
 from forecast.tasks import process_uploaded_file
 
-from upload_file.decorators import has_upload_permission
 from upload_file.models import FileUpload
-
+from upload_file.utils import user_has_upload_permission
 
 logger = logging.getLogger(__name__)
 
 
-class UploadActualsView(FormView):
+class UploadActualsView(UserPassesTestMixin, FormView):
     template_name = "forecast/file_upload.html"
     form_class = UploadActualsForm
     success_url = reverse_lazy("uploaded_files")
 
-    @has_upload_permission
-    def dispatch(self, *args, **kwargs):
-        return super(UploadActualsView, self).dispatch(*args, **kwargs)
+    def test_func(self):
+        print("TEST OUTPUT")
+        print("self.request.user", self.request.user)
+        print("user_has_upload_permission(self.request.user)", user_has_upload_permission(self.request.user))
+        return user_has_upload_permission(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -58,6 +60,8 @@ class UploadActualsView(FormView):
 
             logger.info("Saved file to S3")
 
+            print("HELLLLOOOOO!!")
+
             # Process file async
             if settings.ASYNC_FILE_UPLOAD:
                 logger.info("Using worker to upload file")
@@ -76,14 +80,13 @@ class UploadActualsView(FormView):
             return self.form_invalid(form)
 
 
-class UploadBudgetView(FormView):
+class UploadBudgetView(UserPassesTestMixin, FormView):
     template_name = "forecast/file_upload.html"
     form_class = UploadBudgetsForm
     success_url = reverse_lazy("uploaded_files")
 
-    @has_upload_permission
-    def dispatch(self, *args, **kwargs):
-        return super(UploadBudgetView, self).dispatch(*args, **kwargs)
+    def test_func(self):
+        return user_has_upload_permission(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -110,6 +113,9 @@ class UploadBudgetView(FormView):
             )
             file_upload.save()
             # Process file async
+
+            print("settings.ASYNC_FILE_UPLOAD", settings.ASYNC_FILE_UPLOAD)
+            print("process_uploaded_file", process_uploaded_file)
 
             if settings.ASYNC_FILE_UPLOAD:
                 process_uploaded_file.delay(

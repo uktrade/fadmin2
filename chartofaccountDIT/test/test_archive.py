@@ -3,7 +3,6 @@ from io import StringIO
 from bs4 import BeautifulSoup
 
 from django.core.management import call_command
-from django.test import TestCase
 from django.urls import reverse
 
 from chartofaccountDIT.test.factories import (
@@ -13,19 +12,14 @@ from chartofaccountDIT.test.factories import (
     ExpenditureCategoryFactory,
     ProgrammeCodeFactory,
 )
-from chartofaccountDIT.views import (
-    HistoricalFilteredAnalysis1ListView,
-    HistoricalFilteredAnalysis2ListView,
-    HistoricalFilteredCommercialCategoryListView,
-    HistoricalFilteredExpenditureCategoryListView,
-    HistoricalFilteredProgrammeView,
-)
 
+from core.test.test_base import BaseTestCase
 from core.utils.generic_helpers import get_current_financial_year
 
 
-class ArchiveAnalysis1Test(TestCase):
+class ArchiveAnalysis1Test(BaseTestCase):
     def setUp(self):
+        self.client.force_login(self.test_user)
         self.out = StringIO()
 
         self.analysis1_code = 123456
@@ -89,8 +83,9 @@ class ArchiveAnalysis1Test(TestCase):
         assert first_cols[1].get_text().strip() == self.analysis1_description
 
 
-class ArchiveAnalysis2Test(TestCase):
+class ArchiveAnalysis2Test(BaseTestCase):
     def setUp(self):
+        self.client.force_login(self.test_user)
         self.out = StringIO()
 
         self.analysis2_code = 123456
@@ -154,8 +149,9 @@ class ArchiveAnalysis2Test(TestCase):
         assert first_cols[1].get_text().strip() == self.analysis2_description
 
 
-class ArchiveExpenditureCategoryTest(TestCase):
+class ArchiveExpenditureCategoryTest(BaseTestCase):
     def setUp(self):
+        self.client.force_login(self.test_user)
         self.out = StringIO()
 
         self.grouping_description = "grouping description"
@@ -169,7 +165,10 @@ class ArchiveExpenditureCategoryTest(TestCase):
 
     def show_historical_view(self):
         response = self.client.get(
-            reverse("historical_finance_category", kwargs={"year": self.archive_year},)
+            reverse(
+                "historical_finance_category",
+                kwargs={"year": self.archive_year},
+            )
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "govuk-table")
@@ -222,8 +221,10 @@ class ArchiveExpenditureCategoryTest(TestCase):
         assert first_cols[2].get_text().strip() == self.category_description
 
 
-class ArchiveCommercialCategoryTest(TestCase):
+class ArchiveCommercialCategoryTest(BaseTestCase):
     def setUp(self):
+        self.client.force_login(self.test_user)
+
         self.out = StringIO()
 
         self.commercial_category = "commercial category"
@@ -293,8 +294,9 @@ class ArchiveCommercialCategoryTest(TestCase):
         assert first_cols[1].get_text().strip() == self.description
 
 
-class ArchiveProgrammeTest(TestCase):
+class ArchiveProgrammeTest(BaseTestCase):
     def setUp(self):
+        self.client.force_login(self.test_user)
         self.out = StringIO()
 
         obj = ProgrammeCodeFactory()

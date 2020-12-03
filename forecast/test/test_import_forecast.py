@@ -14,6 +14,7 @@ from chartofaccountDIT.test.factories import (
 )
 
 from core.models import FinancialYear
+from core.test.test_base import BaseTestCase
 
 from costcentre.test.factories import (
     CostCentreFactory,
@@ -27,8 +28,9 @@ from forecast.models import (
 )
 
 
-class ImportBudgetsTest(TestCase):
+class ImportBudgetsTest(BaseTestCase):
     def setUp(self):
+        self.client.force_login(self.test_user)
         self.test_year = 2019
         self.test_period = 9
         self.cost_centre_code = "109189"

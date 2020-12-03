@@ -7,12 +7,9 @@ from django.contrib.auth.models import (
     Group,
     Permission,
 )
-from django.core.exceptions import PermissionDenied
 from django.core.files import File
 from django.db.models import Sum
 from django.test import (
-    RequestFactory,
-    TestCase,
     override_settings,
 )
 from django.urls import reverse
@@ -27,6 +24,7 @@ from chartofaccountDIT.test.factories import (
 )
 
 from core.models import FinancialYear
+from core.test.test_base import BaseTestCase
 from core.utils.excel_test_helpers import (
     FakeCell,
     FakeWorkSheet
@@ -83,8 +81,9 @@ TEST_PROGRAMME_CODE = '310940'
     ],
     DEFAULT_FILE_STORAGE="django.core.files.storage.FileSystemStorage",
 )
-class ImportActualsTest(TestCase):
+class ImportActualsTest(BaseTestCase):
     def setUp(self):
+        self.client.force_login(self.test_user)
         self.test_year = 2019
         self.test_period = 9
 
@@ -563,9 +562,9 @@ class ImportActualsTest(TestCase):
         "django.core.files.uploadhandler.TemporaryFileUploadHandler",
     ]
 )
-class UploadActualsTest(TestCase):
+class UploadActualsTest(BaseTestCase):
     def setUp(self):
-
+        self.client.force_login(self.test_user)
         self.financial_period_code = 1
         self.financial_year_id = 2019
 
@@ -582,10 +581,12 @@ class UploadActualsTest(TestCase):
         )
 
         # Should have been redirected (no permission)
-        with self.assertRaises(PermissionDenied):
-            self.client.get(
-                uploaded_actuals_url,
-            )
+        resp = self.client.get(
+            uploaded_actuals_url,
+            follow=False,
+        )
+
+        assert resp.status_code == 403
 
         can_upload_files = Permission.objects.get(
             codename='can_upload_files'
@@ -630,15 +631,15 @@ class UploadActualsTest(TestCase):
             name="Finance Administrator"
         )
 
-        uploaded_actuals_url = reverse(
-            "upload_actuals_file",
-        )
+        uploaded_actuals_url = reverse("upload_actuals_file")
 
         # Should have been redirected (no permission)
-        with self.assertRaises(PermissionDenied):
-            self.client.get(
-                uploaded_actuals_url,
-            )
+        resp = self.client.get(
+            uploaded_actuals_url,
+            follow=False,
+        )
+
+        assert resp.status_code == 403
 
         finance_admins = Group.objects.get(
             name='Finance Administrator',
@@ -646,9 +647,7 @@ class UploadActualsTest(TestCase):
         finance_admins.user_set.add(self.test_user)
         finance_admins.save()
 
-        resp = self.client.get(
-            uploaded_actuals_url,
-        )
+        resp = self.client.get(uploaded_actuals_url)
 
         # Should have been permission now
         self.assertEqual(resp.status_code, 200)

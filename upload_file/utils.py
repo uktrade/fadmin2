@@ -1,7 +1,7 @@
 from upload_file.models import FileUpload
 
 
-def has_upload_permission(user):
+def user_has_upload_permission(user):
     if user.is_superuser:
         return True
     elif user.has_perm(

@@ -5,11 +5,8 @@ from zipfile import BadZipFile
 from django.contrib.auth.models import (
     Group,
 )
-from django.core.exceptions import PermissionDenied
 from django.core.files import File
 from django.test import (
-    RequestFactory,
-    TestCase,
     override_settings,
 )
 from django.urls import reverse
@@ -20,6 +17,7 @@ from chartofaccountDIT.test.factories import (
 )
 
 from core.models import FinancialYear
+from core.test.test_base import BaseTestCase
 
 from costcentre.test.factories import (
     CostCentreFactory,
@@ -33,9 +31,6 @@ from forecast.models import (
 )
 from forecast.utils.import_helpers import (
     UploadFileFormatError,
-)
-from forecast.views.upload_file import (
-    UploadBudgetView,
 )
 
 from upload_file.models import FileUpload
@@ -56,8 +51,9 @@ TEST_PROGRAMME_CODE = "310940"
     ],
     DEFAULT_FILE_STORAGE="django.core.files.storage.FileSystemStorage",
 )
-class ImportBudgetsTest(TestCase):
+class ImportBudgetsTest(BaseTestCase):
     def setUp(self):
+        self.client.force_login(self.test_user)
         self.test_year = 2019
         self.test_period = 9
 
@@ -255,14 +251,16 @@ class ImportBudgetsTest(TestCase):
         )
 
         uploaded_actuals_url = reverse(
-            "upload_actuals_file",
+            "upload_budget_file"
         )
 
         # Should have been redirected (no permission)
-        with self.assertRaises(PermissionDenied):
-            self.client.get(
-                uploaded_actuals_url,
-            )
+        resp = self.client.get(
+            uploaded_actuals_url,
+            follow=False,
+        )
+
+        assert resp.status_code == 403
 
         finance_admins = Group.objects.get(
             name='Finance Administrator',
@@ -271,18 +269,18 @@ class ImportBudgetsTest(TestCase):
         finance_admins.save()
 
         resp = self.client.get(
-            uploaded_actuals_url,
+            uploaded_actuals_url
         )
 
         # Should have been permission now
         self.assertEqual(resp.status_code, 200)
 
-        resp = self.client.get(
+        resp = self.client.post(
             uploaded_actuals_url,
-            {
+            data={
                 "year": self.test_year,
                 'file': self.file_mock,
-            },
+            }
         )
 
         # Make sure upload was process was kicked off

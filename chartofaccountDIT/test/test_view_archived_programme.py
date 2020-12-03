@@ -7,13 +7,15 @@ from django.test import TestCase
 from django.urls import reverse
 
 from chartofaccountDIT.test.factories import ProgrammeCodeFactory
-from chartofaccountDIT.views import HistoricalFilteredProgrammeView
 
+from core.test.test_base import BaseTestCase
 from core.utils.generic_helpers import get_current_financial_year
 
 
-class ArchiveProgrammeCodeTest(TestCase):
+class ArchiveProgrammeCodeTest(BaseTestCase):
     def setUp(self):
+        self.client.force_login(self.test_user)
+
         self.out = StringIO()
 
         obj = ProgrammeCodeFactory()

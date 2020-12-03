@@ -47,29 +47,7 @@ from forecast.test.test_utils import (
     create_budget,
     format_forecast_figure,
 )
-from forecast.views.edit_forecast import (
-    AddRowView,
-    ChooseCostCentreView,
-    EditForecastFigureView,
-    EditForecastView,
-)
-from forecast.views.view_forecast.expenditure_details import (
-    CostCentreExpenditureDetailsView,
-    DITExpenditureDetailsView,
-    DirectorateExpenditureDetailsView,
-    GroupExpenditureDetailsView,
-)
-from forecast.views.view_forecast.forecast_summary import (
-    CostCentreView,
-    DITView,
-    DirectorateView,
-    GroupView,
-)
-from forecast.views.view_forecast.programme_details import (
-    DITProgrammeDetailsView,
-    DirectorateProgrammeDetailsView,
-    GroupProgrammeDetailsView,
-)
+
 
 TOTAL_COLUMN = -5
 SPEND_TO_DATE_COLUMN = -2
@@ -152,8 +130,9 @@ class ViewPermissionsTest(BaseTestCase):
         self.assertEqual(resp.status_code, 200)
 
 
-class AddForecastRowTest(TestCase):
+class AddForecastRowTest(BaseTestCase):
     def setUp(self):
+        self.client.force_login(self.test_user)
         self.nac_code = 999999
         self.cost_centre_code = 888812
         self.analysis_1_code = "1111111"
@@ -172,8 +151,11 @@ class AddForecastRowTest(TestCase):
     def add_row_get_response(self, url):
         return self.client.get(url)
 
-    def add_row_post_response(self, url, post_content, cost_centre_code):
-        return self.client.post(url)
+    def add_row_post_response(self, url, post_content):
+        return self.client.post(
+            url,
+            data=post_content,
+        )
 
     def edit_row_get_response(self):
         edit_view_url = reverse(
@@ -213,7 +195,6 @@ class AddForecastRowTest(TestCase):
                 "programme": self.programme.programme_code,
                 "natural_account_code": self.nac.natural_account_code,
             },
-            cost_centre_code=self.cost_centre_code,
         )
 
         self.assertEqual(add_row_resp.status_code, 302)
@@ -244,7 +225,6 @@ class AddForecastRowTest(TestCase):
                 "programme": self.programme.programme_code,
                 "natural_account_code": self.nac.natural_account_code,
             },
-            cost_centre_code=self.cost_centre_code,
         )
 
         self.assertEqual(add_row_resp.status_code, 302)
@@ -273,7 +253,6 @@ class AddForecastRowTest(TestCase):
                 "analysis2_code": self.analysis_2_code,
                 "project_code": self.project_code,
             },
-            cost_centre_code=self.cost_centre_code,
         )
 
         self.assertEqual(response.status_code, 302)
@@ -293,7 +272,6 @@ class AddForecastRowTest(TestCase):
                 "analysis2_code": self.analysis_2_code,
                 "project_code": self.project_code,
             },
-            cost_centre_code=self.cost_centre_code,
         )
 
         self.assertEqual(response_2.status_code, 200)
@@ -328,7 +306,6 @@ class AddForecastRowTest(TestCase):
                 "analysis2_code": self.analysis_2_code,
                 "project_code": self.project_code,
             },
-            cost_centre_code=self.cost_centre_code,
         )
 
         self.assertEqual(response.status_code, 302)
@@ -348,7 +325,6 @@ class AddForecastRowTest(TestCase):
                 "analysis2_code": self.analysis_2_code,
                 "project_code": self.project_code,
             },
-            cost_centre_code=cost_centre_code_2,
         )
 
         self.assertEqual(response_2.status_code, 302)
@@ -1322,15 +1298,14 @@ class EditForecastFigureViewTest(BaseTestCase):
         amount = 999999999999999999
         assert amount > settings.MAX_FORECAST_FIGURE
 
-        resp = self.factory_post(
-            update_forecast_figure_url, {
+        resp = self.client.post(
+            update_forecast_figure_url,
+            data={
                 "natural_account_code": self.nac_code,
                 "programme_code": self.programme.programme_code,
                 "month": 5,
                 "amount": amount,
             },
-            EditForecastFigureView,
-            cost_centre_code=self.cost_centre_code,
         )
 
         self.assertEqual(resp.status_code, 200)
@@ -1348,15 +1323,14 @@ class EditForecastFigureViewTest(BaseTestCase):
         amount = -999999999999999999
         assert amount < settings.MIN_FORECAST_FIGURE
 
-        resp = self.factory_post(
-            update_forecast_figure_url, {
+        resp = self.client.post(
+            update_forecast_figure_url,
+            data={
                 "natural_account_code": self.nac_code,
                 "programme_code": self.programme.programme_code,
                 "month": 5,
                 "amount": amount,
             },
-            EditForecastFigureView,
-            cost_centre_code=self.cost_centre_code,
         )
 
         self.assertEqual(resp.status_code, 200)

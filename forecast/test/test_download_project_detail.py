@@ -126,7 +126,7 @@ class DownloadProjectDetailTest(BaseTestCase):
                     "project_code_id": self.project_code,
                     "period": 0,
                 },
-            ),
+            )
         )
 
         self.assertEqual(response.status_code, 200)

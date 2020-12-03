@@ -5,14 +5,14 @@ from django.views.generic.base import TemplateView
 from django.urls import reverse
 
 from upload_file.models import FileUpload
-from upload_file.utils import has_upload_permission
+from upload_file.utils import user_has_upload_permission
 
 
 class UploadedView(UserPassesTestMixin, TemplateView):
     template_name = "upload_file/uploaded_files.html"
 
     def test_func(self):
-        return has_upload_permission(self.request.user)
+        return user_has_upload_permission(self.request.user)
 
     def handle_no_permission(self):
         return redirect(reverse("index",))

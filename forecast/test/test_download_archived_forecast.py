@@ -1,19 +1,14 @@
 import io
 
 from django.contrib.auth.models import Permission
-from django.test import TestCase
 from django.urls import reverse
 
 from openpyxl import load_workbook
 
+from core.test.test_base import BaseTestCase
+
 from end_of_month.test.test_utils import SetFullYearArchive
 
-from forecast.views.view_forecast.export_forecast_data import (
-    export_forecast_data_cost_centre,
-    export_forecast_data_directorate,
-    export_forecast_data_dit,
-    export_forecast_data_group,
-)
 
 BUDGET_CELL = "Y2"
 GROUP_HEADING_CELL = "A1"
@@ -22,8 +17,10 @@ APR_COL = 26
 ADJ3_COL = 40
 
 
-class DownloadForecastHierarchyTest(TestCase):
+class DownloadForecastHierarchyTest(BaseTestCase):
     def setUp(self):
+        self.client.force_login(self.test_user)
+
         # Assign forecast view permission
         can_view_forecasts = Permission.objects.get(
             codename='can_view_forecasts'
@@ -53,11 +50,11 @@ class DownloadForecastHierarchyTest(TestCase):
                          self.archive.archived_forecast[period] / 100)
 
     def dit_download(self, test_period):
-        response = self.factory_get(
-            reverse("export_forecast_data_dit",
-                    kwargs={"period": test_period}),
-            export_forecast_data_dit,
-            period=test_period,
+        response = self.client.get(
+            reverse(
+                "export_forecast_data_dit",
+                kwargs={"period": test_period}
+            )
         )
         self.assertEqual(response.status_code, 200)
         self.check_workbook(response.content, test_period)
@@ -102,17 +99,14 @@ class DownloadForecastHierarchyTest(TestCase):
         self.dit_download(0)
 
     def group_download(self, test_period):
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_group",
                 kwargs={
                     'group_code': self.archive.group_code,
                     'period': test_period,
                 },
-            ),
-            export_forecast_data_group,
-            group_code=self.archive.group_code,
-            period=test_period,
+            )
         )
         self.assertEqual(response.status_code, 200)
         self.check_workbook(response.content, test_period)
@@ -157,17 +151,14 @@ class DownloadForecastHierarchyTest(TestCase):
         self.group_download(0)
 
     def directorate_download(self, test_period):
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_directorate",
                 kwargs={
                     'directorate_code': self.archive.directorate_code,
                     'period': test_period,
                 },
-            ),
-            export_forecast_data_directorate,
-            directorate_code=self.archive.directorate_code,
-            period=test_period,
+            )
         )
         self.assertEqual(response.status_code, 200)
         self.check_workbook(response.content, test_period)
@@ -212,17 +203,14 @@ class DownloadForecastHierarchyTest(TestCase):
         self.directorate_download(0)
 
     def cost_centre_download(self, test_period):
-        response = self.factory_get(
+        response = self.client.get(
             reverse(
                 "export_forecast_data_cost_centre",
                 kwargs={
                     'cost_centre': self.archive.cost_centre_code,
                     'period': test_period,
                 },
-            ),
-            export_forecast_data_cost_centre,
-            cost_centre=self.archive.cost_centre_code,
-            period=test_period,
+            )
         )
         self.assertEqual(response.status_code, 200)
         self.check_workbook(response.content, test_period)
