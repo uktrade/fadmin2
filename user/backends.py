@@ -39,8 +39,8 @@ class CustomAuthbrokerBackend(AuthbrokerBackend):
                 username=profile["email_user_id"],
                 email=profile["email"],
                 sso_contact_email=profile["contact_email"],
-                first_name=profile["first_name"],  # might change over time
-                last_name=profile["last_name"],  # might change over time
+                first_name=profile["first_name"],
+                last_name=profile["last_name"],
             )
             user.set_unusable_password()
 
