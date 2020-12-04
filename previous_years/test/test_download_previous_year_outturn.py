@@ -54,7 +54,6 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
         assert ws["J1"].value == "Budget Type"
         assert ws["J2"].value == self.budget_type_id
 
-        # print(f'{ws["G2"].value} {ws["H2"].value} {ws["J2"].value}')
         # check the figures
         assert ws["Y2"].value == self.outturn["budget"]
         assert ws["Z2"].value == self.outturn["apr"]
@@ -81,6 +80,11 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
             ),
         )
         self.assertEqual(response.status_code, 200)
+
+        print("|=========|")
+        print(response.content)
+        print("|=========|")
+
         self.check_response_content(response.content)
 
     def test_group_download(self):
@@ -193,6 +197,9 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
                 },
             )
         )
+
+        print("response.content")
+        print(response.content)
 
         self.assertEqual(response.status_code, 200)
         self.check_response_content(response.content)

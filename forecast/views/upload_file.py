@@ -23,9 +23,6 @@ class UploadActualsView(UserPassesTestMixin, FormView):
     success_url = reverse_lazy("uploaded_files")
 
     def test_func(self):
-        print("TEST OUTPUT")
-        print("self.request.user", self.request.user)
-        print("user_has_upload_permission(self.request.user)", user_has_upload_permission(self.request.user))
         return user_has_upload_permission(self.request.user)
 
     def get_context_data(self, **kwargs):
@@ -59,8 +56,6 @@ class UploadActualsView(UserPassesTestMixin, FormView):
             file_upload.save()
 
             logger.info("Saved file to S3")
-
-            print("HELLLLOOOOO!!")
 
             # Process file async
             if settings.ASYNC_FILE_UPLOAD:
@@ -113,9 +108,6 @@ class UploadBudgetView(UserPassesTestMixin, FormView):
             )
             file_upload.save()
             # Process file async
-
-            print("settings.ASYNC_FILE_UPLOAD", settings.ASYNC_FILE_UPLOAD)
-            print("process_uploaded_file", process_uploaded_file)
 
             if settings.ASYNC_FILE_UPLOAD:
                 process_uploaded_file.delay(

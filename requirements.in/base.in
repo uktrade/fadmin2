@@ -22,7 +22,7 @@ django-environ
 django-extensions
 django-filter
 django-guardian
-django-import-export
+django-import-export==2.4.0
 django-ipware
 django-log-formatter-ecs
 django-pivot
@@ -34,7 +34,6 @@ django-simple-history
 django-staff-sso-client
 django-storages
 django-tables2
-django-tablib
 django-webpack-loader
 django-bootstrap-breadcrumbs
 djangorestframework
@@ -58,7 +57,7 @@ mccabe==0.6.1
 more-itertools==4.3.0
 oauthlib==2.1.0
 odfpy==1.3.6
-openpyxl==2.4.9
+openpyxl
 parso==0.1.1
 pexpect==4.4.0
 pickleshare==0.7.4
@@ -90,7 +89,6 @@ sentry-sdk==0.10.2
 simplegeneric==0.8.1
 six>=1.11.0
 sqlparse==0.2.4
-tablib==0.12.1
 text-unidecode>=1.2
 unicodecsv==0.14.1
 urllib3==1.24.2

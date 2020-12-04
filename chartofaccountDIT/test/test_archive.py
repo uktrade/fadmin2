@@ -248,7 +248,6 @@ class ArchiveCommercialCategoryTest(BaseTestCase):
         soup = BeautifulSoup(response.content, features="html.parser")
         # Check that there is 1 table
         tables = soup.find_all("table", class_="govuk-table")
-        print()
         assert len(tables) == 1
         return soup
 
