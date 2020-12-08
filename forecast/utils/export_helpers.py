@@ -126,7 +126,7 @@ def export_forecast_to_excel(
     ws.append(header)
 
     print("queryset before forecast_query_iterator")
-    print(queryset)
+    print(queryset.query)
 
     for data_row in forecast_query_iterator(
         queryset, columns_dict, extra_columns_dict, period_list

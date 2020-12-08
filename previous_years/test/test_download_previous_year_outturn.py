@@ -179,6 +179,30 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
         self.check_response_content(response.content)
 
     def test_directorate_programme_download(self):
+
+        print("self.directorate_code", self.directorate_code)
+        print("self.project_code", self.project_code)
+        print("self.expenditure_type_name", self.expenditure_type_name)
+        print("self.archived_year", self.archived_year)
+
+        from previous_years.models import ArchivedForecastData
+
+        test = ArchivedForecastData.objects.count()
+        print("ArchivedForecastData.objects.count: ", test)
+
+        url = reverse(
+            "export_programme_details_directorate",
+            kwargs={
+                "directorate_code": self.directorate_code,
+                "programme_code_id": self.project_code,
+                "forecast_expenditure_type_name": self.expenditure_type_name,
+                "period": self.archived_year,
+            },
+        )
+
+        print("url")
+        print(url)
+
         response = self.client.get(
             reverse(
                 "export_programme_details_directorate",
