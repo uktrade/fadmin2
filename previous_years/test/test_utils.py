@@ -26,6 +26,7 @@ from previous_years.models import (
 
 class PastYearForecastSetup(BaseTestCase):
     def setUp(self):
+        print("running PastYearForecastSetup setUp")
         self.client.force_login(self.test_user)
 
         # 2019 is created when the database is created, so it exists

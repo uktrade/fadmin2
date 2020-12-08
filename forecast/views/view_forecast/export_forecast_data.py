@@ -29,6 +29,14 @@ def export_forecast_data_generic(period, data_filter, title):
     fields = ForecastQueryFields(period)
     year = fields.selected_year
     datamodel = fields.datamodel
+
+    print("fields.VIEW_FORECAST_DOWNLOAD_COLUMNS")
+    print(fields.VIEW_FORECAST_DOWNLOAD_COLUMNS)
+    print("]]]]]")
+
+    print("data_filter 2")
+    print(data_filter)
+
     q = datamodel.view_data.raw_data_annotated(
         fields.VIEW_FORECAST_DOWNLOAD_COLUMNS, data_filter, year=year
     )
@@ -128,11 +136,19 @@ def export_forecast_data_programme_detail_directorate(
     request, directorate_code, programme_code_id, forecast_expenditure_type_name, period
 ):
     fields = ForecastQueryFields(period)
+
+    print("FIELDS")
+    print(fields)
+
     filter = {
         fields.directorate_code_field: directorate_code,
         fields.programme_code_field: f"{programme_code_id}",
         fields.expenditure_type_name_field: f"{forecast_expenditure_type_name}",
     }
+
+    print("FILTER")
+    print(filter)
+
     title = f"{directorate_code} {programme_code_id} {get_period_for_title(period)}"
     return export_forecast_data_generic(period, filter, title)
 

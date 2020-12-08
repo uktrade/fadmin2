@@ -115,8 +115,6 @@ In order to get the node docker container working, this guide was followed: http
 
 Add username field to HistoricalUser table (max length 150, allow null)
 
-
-
 ### Product URLs
 
 #### Dev URL

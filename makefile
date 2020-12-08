@@ -97,5 +97,8 @@ test:
 pytest:
 	docker-compose run --rm fido pytest --capture=sys --ignore=node_modules --ignore=front_end --ignore=features --ignore=staticfiles -n 4
 
+pytest_test:
+	docker-compose run --rm fido pytest previous_years/test/test_download_previous_year_outturn.py::DownloadPastYearForecastTest::test_directorate_programme_download --capture=sys --ignore=node_modules --ignore=front_end --ignore=features --ignore=staticfiles
+
 black:
 	docker-compose run --rm fido black .

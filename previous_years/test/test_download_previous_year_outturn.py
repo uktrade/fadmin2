@@ -29,11 +29,23 @@ from previous_years.test.test_utils import (
 
 
 class DownloadPastYearForecastTest(PastYearForecastSetup):
+    def setUp(self):
+        super().setUp()
+
     def check_response_content(self, content):
         file = io.BytesIO(content)
+
+        f = open("test_output.xlsx", 'wb')
+        f.write(content)
+        f.close()
+
         wb = load_workbook(filename=file)
         ws = wb.active
         # Check group
+
+        print("B2", ws["B2"].value)
+        print("self.group_code", self.group_code)
+
         assert ws["B1"].value == "Group code"
         assert ws["B2"].value == self.group_code
         assert ws["D1"].value == "Directorate code"
@@ -77,13 +89,9 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
             reverse(
                 "export_forecast_data_dit",
                 kwargs={"period": self.archived_year}
-            ),
+            )
         )
         self.assertEqual(response.status_code, 200)
-
-        print("|=========|")
-        print(response.content)
-        print("|=========|")
 
         self.check_response_content(response.content)
 
@@ -91,8 +99,11 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
         response = self.client.get(
             reverse(
                 "export_forecast_data_group",
-                kwargs={"group_code": self.group_code, "period": self.archived_year, },
-            ),
+                kwargs={
+                    "group_code": self.group_code,
+                    "period": self.archived_year,
+                },
+            )
         )
         self.assertEqual(response.status_code, 200)
         self.check_response_content(response.content)
@@ -105,7 +116,7 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
                     "directorate_code": self.directorate_code,
                     "period": self.archived_year,
                 },
-            ),
+            )
         )
         self.assertEqual(response.status_code, 200)
         self.check_response_content(response.content)
@@ -118,7 +129,7 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
                     "cost_centre": self.cost_centre_code,
                     "period": self.archived_year,
                 },
-            ),
+            )
         )
 
         self.assertEqual(response.status_code, 200)
@@ -132,7 +143,7 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
                     "project_code_id": self.project_code,
                     "period": self.archived_year,
                 },
-            ),
+            )
         )
 
         self.assertEqual(response.status_code, 200)
@@ -148,7 +159,7 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
                     "project_code_id": self.project_code,
                     "period": self.archived_year,
                 },
-            ),
+            )
         )
 
         self.assertEqual(response.status_code, 200)
@@ -198,8 +209,9 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
             )
         )
 
-        print("response.content")
+        print("|=========|")
         print(response.content)
+        print("|=========|")
 
         self.assertEqual(response.status_code, 200)
         self.check_response_content(response.content)
