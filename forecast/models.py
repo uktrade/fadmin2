@@ -648,14 +648,6 @@ class DisplaySubTotalManager(models.Manager):
     def raw_data_annotated(
         self, columns, filter_dict={}, year=0, order_list=[], include_zeros=False
     ):
-
-
-        print("raw_data_annotated")
-        print(columns)
-
-        print("raw_data_annotated YEAR")
-        print(year)
-
         annotations = {
             "Budget": Sum("budget"),
             "Apr": Sum("apr"),

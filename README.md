@@ -142,3 +142,9 @@ The names of the management commands denote their function.
  * Download Oscar report file
  * View forecast (permission to view all forecast data)
  * Edit 1 - n cost centres (specific user can edit cost centre data)
+
+#### Migrating to new user model
+ * Take the system off line
+ * Amend the custom_usermodel table to be the same as the new User app one
+ * Add the user app initial migration to the list of django migrations that have been run
+ * Deploy new codebase

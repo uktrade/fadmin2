@@ -33,8 +33,6 @@ def unlock_forecast_cells(ws, row, start, end):
 
 
 def forecast_query_iterator(queryset, keys_dict, columns_dict, period_list):
-    print("queryset")
-    print(queryset)
     for obj in queryset:
         row = []
         for field in keys_dict.keys():
@@ -125,13 +123,9 @@ def export_forecast_to_excel(
     year_to_date_col = get_column_letter(last_month_index + 3)
     ws.append(header)
 
-    print("queryset before forecast_query_iterator")
-    print(queryset.query)
-
     for data_row in forecast_query_iterator(
         queryset, columns_dict, extra_columns_dict, period_list
     ):
-        print("In forecast_query_iterator...")
         ws.append(data_row)
         row_count += 1
         # Formula for Year To Date. Don't use it if there are no actuals

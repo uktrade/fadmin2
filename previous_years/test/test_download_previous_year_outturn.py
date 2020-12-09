@@ -17,10 +17,6 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
     def check_response_content(self, content):
         file = io.BytesIO(content)
 
-        f = open("test_output.xlsx", 'wb')
-        f.write(content)
-        f.close()
-
         wb = load_workbook(filename=file)
         ws = wb.active
         # Check group
@@ -179,45 +175,17 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
         self.check_response_content(response.content)
 
     def test_directorate_programme_download(self):
-
-        print("self.directorate_code", self.directorate_code)
-        print("self.project_code", self.project_code)
-        print("self.expenditure_type_name", self.expenditure_type_name)
-        print("self.archived_year", self.archived_year)
-
-        from previous_years.models import ArchivedForecastData
-
-        test = ArchivedForecastData.objects.count()
-        print("ArchivedForecastData.objects.count: ", test)
-
-        url = reverse(
-            "export_programme_details_directorate",
-            kwargs={
-                "directorate_code": self.directorate_code,
-                "programme_code_id": self.project_code,
-                "forecast_expenditure_type_name": self.expenditure_type_name,
-                "period": self.archived_year,
-            },
-        )
-
-        print("url")
-        print(url)
-
         response = self.client.get(
             reverse(
                 "export_programme_details_directorate",
                 kwargs={
                     "directorate_code": self.directorate_code,
-                    "programme_code_id": self.project_code,
+                    "programme_code_id": self.programme_code,
                     "forecast_expenditure_type_name": self.expenditure_type_name,
                     "period": self.archived_year,
                 },
             )
         )
-
-        print("|=========|")
-        print(response.content)
-        print("|=========|")
 
         self.assertEqual(response.status_code, 200)
         self.check_response_content(response.content)
@@ -228,7 +196,7 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
                 "export_programme_details_group",
                 kwargs={
                     "group_code": self.group_code,
-                    "programme_code_id": self.project_code,
+                    "programme_code_id": self.programme_code,
                     "forecast_expenditure_type_name": self.expenditure_type_name,
                     "period": self.archived_year,
                 },
@@ -243,7 +211,7 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
             reverse(
                 "export_programme_details_dit",
                 kwargs={
-                    "programme_code_id": self.project_code,
+                    "programme_code_id": self.programme_code,
                     "forecast_expenditure_type_name": self.expenditure_type_name,
                     "period": self.archived_year,
                 },
