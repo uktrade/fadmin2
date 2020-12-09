@@ -21,9 +21,6 @@ class DownloadPastYearForecastTest(PastYearForecastSetup):
         ws = wb.active
         # Check group
 
-        print("B2", ws["B2"].value)
-        print("self.group_code", self.group_code)
-
         assert ws["B1"].value == "Group code"
         assert ws["B2"].value == self.group_code
         assert ws["D1"].value == "Directorate code"
