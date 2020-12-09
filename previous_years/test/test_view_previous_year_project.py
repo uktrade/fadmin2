@@ -1,15 +1,8 @@
 from bs4 import BeautifulSoup
 
-
 from django.urls import reverse
 
 from forecast.test.test_utils import format_forecast_figure
-from forecast.views.view_forecast.project_details import (
-    CostCentreProjectDetailsView,
-    DITProjectDetailsView,
-    DirectorateProjectDetailsView,
-    GroupProjectDetailsView,
-)
 
 from previous_years.test.test_utils import (
     PastYearForecastSetup,
@@ -127,6 +120,6 @@ class ViewProjectDetailsAdjustmentColumnsTest(ViewProjectDetailsTest):
 
 
 class ViewProjectDetailsTwoYearDataTest(ViewProjectDetailsTest):
-            def setUp(self):
-                super().setUp()
-                self.create_another_year()
+    def setUp(self):
+        super().setUp()
+        self.create_another_year()

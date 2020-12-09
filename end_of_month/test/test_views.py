@@ -1,7 +1,6 @@
 from django.contrib.auth.models import (
     Group,
 )
-from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 
 from core.test.test_base import BaseTestCase

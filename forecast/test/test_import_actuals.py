@@ -60,9 +60,6 @@ from forecast.utils.import_helpers import (
     CheckFinancialCode,
     VALID_ECONOMIC_CODE_LIST,
 )
-from forecast.views.upload_file import (
-    UploadActualsView,
-)
 
 from upload_file.models import FileUpload
 

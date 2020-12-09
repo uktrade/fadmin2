@@ -3,7 +3,6 @@ from io import StringIO
 from bs4 import BeautifulSoup
 
 from django.core.management import call_command
-from django.test import TestCase
 from django.urls import reverse
 
 from chartofaccountDIT.test.factories import ProgrammeCodeFactory

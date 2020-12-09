@@ -101,7 +101,7 @@ L5_KEY = {
     IMPORT_CSV_PK_KEY: "Account L5 Code",
     IMPORT_CSV_FIELDLIST_KEY: {
         "account_l5_long_name": "Account L5 Long Name",  # noqa: E501
-        "account_l5_description": "Account L5 Description", # noqa: E501
+        "account_l5_description": "Account L5 Description",  # noqa: E501
         "economic_budget_code": "Economic Budget Code",  # noqa: E501
         "sector_code": "Sector Code",
         "estimates_column_code": "Estimates Column Code",  # noqa: E501

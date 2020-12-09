@@ -9,9 +9,6 @@ from django.contrib.auth.models import (
     Group,
     Permission,
 )
-from django.test import (
-    TestCase,
-)
 from django.urls import reverse
 
 from chartofaccountDIT.test.factories import (

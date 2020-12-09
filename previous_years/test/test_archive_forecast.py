@@ -1,7 +1,6 @@
 import os
 
 from django.test import (
-    RequestFactory,
     TestCase,
 )
 
@@ -35,7 +34,6 @@ from previous_years.models import (
     ArchivedFinancialCode,
     ArchivedForecastData,
 )
-
 
 from upload_file.models import FileUpload
 

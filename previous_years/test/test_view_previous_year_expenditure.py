@@ -1,15 +1,8 @@
 from bs4 import BeautifulSoup
 
-
 from django.urls import reverse
 
 from forecast.test.test_utils import format_forecast_figure
-from forecast.views.view_forecast.expenditure_details import (
-    CostCentreExpenditureDetailsView,
-    DITExpenditureDetailsView,
-    DirectorateExpenditureDetailsView,
-    GroupExpenditureDetailsView,
-)
 
 from previous_years.test.test_utils import (
     PastYearForecastSetup,

@@ -94,7 +94,6 @@ class UserAdmin(UserAdmin):
             "last_login",
             "is_superuser",
             "user_permissions",
-            #"is_active",
             "is_staff",
             "date_joined",
         ]

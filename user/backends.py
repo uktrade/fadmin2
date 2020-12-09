@@ -22,9 +22,13 @@ class CustomAuthbrokerBackend(AuthbrokerBackend):
         User = get_user_model()
 
         user = User.objects.filter(
-            Q(email=profile["user_id"]) |
-            Q(username=profile["user_id"]) |
-            Q(username=profile["email_user_id"])
+            Q(
+                email=profile["user_id"]
+            ) | Q(
+                username=profile["user_id"]
+            ) | Q(
+                username=profile["email_user_id"]
+            )
         ).first()
 
         if user:

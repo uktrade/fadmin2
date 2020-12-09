@@ -47,8 +47,7 @@ djangorestframework==3.11.0  # via -r requirements.in/base.in
 docutils==0.14            # via -r requirements.in/base.in, botocore
 elastic-apm==5.6.0        # via -r requirements.in/base.in
 et-xmlfile==1.0.1         # via -r requirements.in/base.in, openpyxl
-flake8-import-order==0.18  # via -r requirements.in/base.in
-flake8==3.5.0             # via -r requirements.in/base.in
+flake8==3.8.4             # via -r requirements.in/base.in
 future==0.18.2            # via -r requirements.in/base.in
 gunicorn==19.9.0          # via -r requirements.in/base.in
 idna==2.7                 # via -r requirements.in/base.in, requests
@@ -76,9 +75,9 @@ psycopg2==2.8.6           # via -r requirements.in/base.in
 ptyprocess==0.5.2         # via -r requirements.in/base.in, pexpect
 public==1.0.3             # via -r requirements.in/base.in, query-string
 py==1.6.0                 # via -r requirements.in/base.in
-pycodestyle==2.3.1        # via -r requirements.in/base.in, flake8, flake8-import-order
+pycodestyle==2.6.0        # via -r requirements.in/base.in, flake8
 pydot==1.2.4              # via -r requirements.in/base.in
-pyflakes==1.6.0           # via -r requirements.in/base.in, flake8
+pyflakes==2.2.0           # via flake8
 pygments==2.2.0           # via -r requirements.in/base.in
 pyparsing==2.2.0          # via -r requirements.in/base.in, pydot
 python-dateutil==2.7.3    # via -r requirements.in/base.in, botocore
