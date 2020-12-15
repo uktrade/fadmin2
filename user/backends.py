@@ -46,8 +46,8 @@ class CustomAuthbrokerBackend(AuthbrokerBackend):
                 first_name=profile["first_name"],
                 last_name=profile["last_name"],
             )
-            user.set_unusable_password()
 
+        user.set_unusable_password()
         user.save()
 
         return user
