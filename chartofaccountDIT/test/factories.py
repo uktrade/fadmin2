@@ -183,7 +183,7 @@ class HistoricalProgrammeCodeFactory(factory.DjangoModelFactory):
     Define ArchivedProgrammeCode Factory
     """
     active = True
-    programme_code = "123456"
+    programme_code = "654321"
     programme_description = "Programme Test description"
     budget_type = factory.Iterator(BudgetType.objects.all())
     financial_year = FinancialYear.objects.get(pk=2019)

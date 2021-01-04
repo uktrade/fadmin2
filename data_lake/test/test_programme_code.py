@@ -10,22 +10,22 @@ from django.test import (
 from rest_framework.test import APIClient
 
 from chartofaccountDIT.test.factories import (
-    HistoricalNaturalCodeFactory,
-    NaturalCodeFactory,
+    HistoricalProgrammeCodeFactory,
+    ProgrammeCodeFactory,
 )
 
 
-class NaturalCodeTests(TestCase):
+class ProgrammeCodeTests(TestCase):
     @override_settings(
         HAWK_INCOMING_ACCESS_KEY="some-id", HAWK_INCOMING_SECRET_KEY="some-secret",
     )
     def test_data_returned_in_response(self):
-        natural_account_code = "12345678"
-        NaturalCodeFactory.create(natural_account_code=natural_account_code)
-        archived_natural_account_code = \
-            HistoricalNaturalCodeFactory.create().natural_account_code
+        programme_code = "123456"
+        ProgrammeCodeFactory.create(programme_code=programme_code)
+        archived_programme_code = \
+            HistoricalProgrammeCodeFactory.create().programme_code
 
-        test_url = "http://testserver" + reverse("data_lake_natural_code")
+        test_url = "http://testserver" + reverse("data_lake_programme_code")
         sender = hawk_auth_sender(url=test_url)
         response = APIClient().get(
             test_url,
@@ -38,11 +38,10 @@ class NaturalCodeTests(TestCase):
         rows = response.content.decode("utf-8").split("\n")
 
         cols = rows[0].split(",")
-        assert len(cols) == 9
+        assert len(cols) == 4
 
         cols = rows[1].split(",")
-        assert str(cols[6]) == str(natural_account_code)
-
+        assert str(cols[0]) == str(programme_code)
         # Check the archived value
         cols = rows[2].split(",")
-        assert str(cols[6]) == str(archived_natural_account_code)
+        assert str(cols[0]) == str(archived_programme_code)
