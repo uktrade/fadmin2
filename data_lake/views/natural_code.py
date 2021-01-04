@@ -90,7 +90,7 @@ class NaturalCodeViewSet(DataLakeViewSet,):
             row = [
                 obj.economic_budget_code,
                 obj.NAC_category,
-                obj.budget_description,
+                obj.expenditure_category_description,
                 obj.commercial_category,
                 obj.op_delivery_plan,
                 obj.account_L6_budget,

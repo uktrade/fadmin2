@@ -25,6 +25,8 @@ from chartofaccountDIT.models import (
     ProjectCode,
 )
 
+from core.models import FinancialYear
+
 
 class Analysis1Factory(factory.DjangoModelFactory):
     """
@@ -136,7 +138,7 @@ class NaturalCodeFactory(factory.DjangoModelFactory):
         django_get_or_create = ('natural_account_code',)
 
     active = True
-    natural_account_code = 999999
+    natural_account_code = 12345678
     natural_account_code_description = "NAC description"
     used_for_budget = False
 
@@ -144,12 +146,16 @@ class NaturalCodeFactory(factory.DjangoModelFactory):
 class HistoricalNaturalCodeFactory(factory.DjangoModelFactory):
 
     active = True
-    natural_account_code = 999999
-    natural_account_code_description = "NAC description"
+    natural_account_code = 87654321
+    natural_account_code_description = "Historical NAC description"
     used_for_budget = False
-
+    financial_year = FinancialYear.objects.get(pk=2019)
     class Meta:
         model = ArchivedNaturalCode
+        django_get_or_create = (
+            "natural_account_code",
+            "financial_year",
+        )
 
 
 class ProgrammeCodeFactory(factory.DjangoModelFactory):
