@@ -1,56 +1,49 @@
 from core.utils.generic_helpers import get_current_financial_year
 
 from chartofaccountDIT.models import (
-    ArchivedProgrammeCode,
-    ProgrammeCode,
+    ArchivedProjectCode,
+    ProjectCode,
 )
 
 from data_lake.views.data_lake_view import DataLakeViewSet
 
 
-class ProgrammeCodeViewSet(DataLakeViewSet,):
-    filename = "programme_code"
+class ProjectCodeViewSet(DataLakeViewSet,):
+    filename = "project_code"
     title_list = [
-        "Programme Code",
-        "Programme Name",
-        "Budget Type",
+        "Project Code",
+        "Project Description",
         "Year",
     ]
 
     def write_data(self, writer):
         current_year = get_current_financial_year()
         current_queryset = (
-            ProgrammeCode.objects.filter(active=True)
+            ProjectCode.objects.filter(active=True)
             .order_by(
-                "programme_code",
-                "programme_description",
-                "budget_type__budget_type"
+                "project_code",
             )
         )
         historical_queryset = (
-            ArchivedProgrammeCode.objects.filter(active=True)
+            ArchivedProjectCode.objects.filter(active=True)
             .select_related("financial_year")
             .order_by(
                 "-financial_year",
-                "programme_code",
-                "programme_description",
-                "budget_type__budget_type"
+                "project_code",
             )
         )
         for obj in current_queryset:
             row = [
-                obj.programme_code,
-                obj.programme_description,
-                obj.budget_type.budget_type,
+                obj.project_code,
+                obj.project_description,
                 current_year,
             ]
             writer.writerow(row)
 
         for obj in historical_queryset:
             row = [
-                obj.programme_code,
-                obj.programme_description,
-                obj.budget_type.budget_type,
+                obj.project_code,
+                obj.project_description,
                 obj.financial_year.financial_year,
             ]
             writer.writerow(row)

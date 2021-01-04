@@ -229,6 +229,7 @@ class ProjectCodeFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = ProjectCode
+        django_get_or_create = ('project_code',)
 
     active = True
     project_code = "5000"
@@ -246,6 +247,7 @@ class HistoricalProjectCodeFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = ArchivedProjectCode
+        django_get_or_create = ('project_code', 'financial_year')
 
 
 class FCOMappingFactory(factory.DjangoModelFactory):
