@@ -4,6 +4,7 @@ from data_lake.views.forecast import ForecastViewSet
 
 from data_lake.views.cost_centre_hierarchy import HierarchyViewSet
 from data_lake.views.natural_code import NaturalCodeViewSet
+from data_lake.views.programme_code import ProgrammeCodeViewSet
 
 urlpatterns = [
     path(
@@ -20,5 +21,10 @@ urlpatterns = [
         "naturalcode/",
         NaturalCodeViewSet.as_view({"get": "list"}),
         name="data_lake_natural_code",
+    ),
+    path(
+        "programmecode/",
+        ProgrammeCodeViewSet.as_view({"get": "list"}),
+        name="data_lake_programme_code",
     ),
 ]
