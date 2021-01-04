@@ -17,7 +17,8 @@ class HierarchyTests(TestCase):
         HAWK_INCOMING_ACCESS_KEY="some-id", HAWK_INCOMING_SECRET_KEY="some-secret",
     )
     def test_hierarchy_data_returned_in_response(self):
-        cost_centre = CostCentreFactory.create().cost_centre_code
+        cost_centre = "123456"
+        CostCentreFactory.create(cost_centre_code=cost_centre)
         archived_cost_centre = ArchivedCostCentreFactory.create().cost_centre_code
         print(f"cost_centre = {cost_centre}")
         print(f"archived_cost_centre = {archived_cost_centre}")
@@ -34,8 +35,12 @@ class HierarchyTests(TestCase):
         rows = response.content.decode("utf-8").split("\n")
 
         cols = rows[0].split(",")
-        print(f"rows[0] = {rows[0]}")
-        print(f"rows[1] = {rows[1]}")
-        print(f"rows[2] = {rows[2]}")
-        print(f"rows[3] = {rows[3]}")
         assert len(cols) == 11
+        
+        cols = rows[1].split(",")
+        assert str(cols[4]) == str(cost_centre)
+
+        # Check the archived value
+        cols = rows[2].split(",")
+        returned_archived_cost_centre = cols[4]
+        assert str(cols[4]) == str(archived_cost_centre)
