@@ -394,6 +394,7 @@ class ArchivedNaturalCode(NaturalCodeAbstract, ArchivedModel):
     )
     active = models.BooleanField(default=True)
     chart_of_account_code_name = "natural_account_code"
+
     def __str__(self):
         return super().__str__() + " " + self.financial_year.financial_year_display
 
@@ -415,7 +416,8 @@ class ArchivedNaturalCode(NaturalCodeAbstract, ArchivedModel):
                 obj.expenditure_category.linked_budget_code.natural_account_code
             )
             if obj.expenditure_category.op_del_category:
-                op_delivery_plan_value = obj.expenditure_category.op_del_category.operating_delivery_description
+                op_delivery_plan_value = obj.expenditure_category.\
+                    op_del_category.operating_delivery_description
         else:
             expenditure_category_id = None
             expenditure_category_value = None

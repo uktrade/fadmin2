@@ -36,11 +36,10 @@ class HierarchyTests(TestCase):
 
         cols = rows[0].split(",")
         assert len(cols) == 11
-        
+
         cols = rows[1].split(",")
         assert str(cols[4]) == str(cost_centre)
 
         # Check the archived value
         cols = rows[2].split(",")
-        returned_archived_cost_centre = cols[4]
         assert str(cols[4]) == str(archived_cost_centre)

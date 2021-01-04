@@ -52,7 +52,8 @@ class NaturalCodeViewSet(DataLakeViewSet,):
         for obj in current_queryset:
             op_delivery_plan_value = None
             if obj.expenditure_category:
-                expenditure_category_value = obj.expenditure_category.grouping_description
+                expenditure_category_value = obj.expenditure_category.\
+                    grouping_description
                 NAC_category_value = (
                     obj.expenditure_category.NAC_category.NAC_category_description
                 )
@@ -60,9 +61,10 @@ class NaturalCodeViewSet(DataLakeViewSet,):
                     obj.expenditure_category.linked_budget_code.natural_account_code
                 )
                 if obj.expenditure_category.op_del_category:
-                    op_delivery_plan_value = obj.expenditure_category.op_del_category.operating_delivery_description
+                    op_delivery_plan_value = obj.expenditure_category.\
+                        op_del_category.operating_delivery_description
             else:
-                expenditure_category_valueue = None
+                expenditure_category_value = None
                 NAC_category_value = None
                 account_L6_budget_value = None
 
