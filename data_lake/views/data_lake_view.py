@@ -11,9 +11,7 @@ from django.utils.decorators import decorator_from_middleware
 from rest_framework.viewsets import ViewSet
 
 
-class DataLakeViewSet(
-    ViewSet,
-):
+class DataLakeViewSet(ViewSet,):
     authentication_classes = (HawkAuthentication,)
     permission_classes = ()
 
