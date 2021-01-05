@@ -24,8 +24,8 @@ class DepartmentalGroupFactory(factory.DjangoModelFactory):
     class Meta:
         model = DepartmentalGroup
         django_get_or_create = ("group_code",)
-
-    group_name = fake.company()
+    # Remove commas, because they break the test exporting csv data.
+    group_name = fake.company().replace("'", " ")
     group_code = str(fake.pyint())
     active = True
 
@@ -35,7 +35,7 @@ class DirectorateFactory(factory.DjangoModelFactory):
         model = Directorate
         django_get_or_create = ("directorate_code",)
 
-    directorate_name = fake.company()
+    directorate_name = fake.company().replace("'", " ")
     directorate_code = str(fake.pyint())
     group = factory.SubFactory(DepartmentalGroupFactory)
     active = True

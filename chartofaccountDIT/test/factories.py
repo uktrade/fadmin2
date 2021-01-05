@@ -142,7 +142,7 @@ class NaturalCodeFactory(factory.DjangoModelFactory):
         django_get_or_create = ('natural_account_code',)
 
     active = True
-    natural_account_code = 12345678
+    natural_account_code = 999999
     natural_account_code_description = "NAC description"
     used_for_budget = False
 

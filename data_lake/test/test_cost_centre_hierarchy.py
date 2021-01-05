@@ -20,8 +20,7 @@ class HierarchyTests(TestCase):
         HAWK_INCOMING_ACCESS_KEY="some-id", HAWK_INCOMING_SECRET_KEY="some-secret",
     )
     def test_hierarchy_data_returned_in_response(self):
-        cost_centre = "123456"
-        CostCentreFactory.create(cost_centre_code=cost_centre)
+        cost_centre = CostCentreFactory.create().cost_centre_code
         archived_cost_centre = ArchivedCostCentreFactory.create().cost_centre_code
 
         test_url = "http://testserver" + reverse("data_lake_hierachy")
@@ -34,6 +33,7 @@ class HierarchyTests(TestCase):
         )
 
         assert response["Content-Type"] == "text/csv"
+
         rows = response.content.decode("utf-8").split("\n")
 
         cols = rows[0].split(",")
@@ -42,6 +42,5 @@ class HierarchyTests(TestCase):
         cols = rows[1].split(",")
         assert str(cols[4]) == str(cost_centre)
 
-        # Check the archived value
-        cols = rows[2].split(",")
+        # # Check the archived value
         assert str(cols[4]) == str(archived_cost_centre)
