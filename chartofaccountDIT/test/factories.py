@@ -106,7 +106,7 @@ class HistoricalExpenditureCategoryFactory(factory.DjangoModelFactory):
     """
     Define ArchivedExpenditureCategory Factory
     """
-    grouping_description = 'Test Budget Category'
+    grouping_description = 'Test Archived Budget Category'
     financial_year = FinancialYear.objects.get(pk=2019)
 
     class Meta:

@@ -8,6 +8,7 @@ from data_lake.views.programme_code import ProgrammeCodeViewSet
 from data_lake.views.project_code import ProjectCodeViewSet
 from data_lake.views.analysis1_code import Analysis1CodeViewSet
 from data_lake.views.analysis2_code import Analysis2CodeViewSet
+from data_lake.views.expenditure_category import ExpenditureCategoryViewSet
 
 urlpatterns = [
     path(
@@ -44,5 +45,10 @@ urlpatterns = [
         "analysis2code/",
         Analysis2CodeViewSet.as_view({"get": "list"}),
         name="data_lake_analysis2_code",
+    ),
+    path(
+        "expenditurecategory/",
+        ExpenditureCategoryViewSet.as_view({"get": "list"}),
+        name="data_lake_expenditure_category",
     ),
 ]
