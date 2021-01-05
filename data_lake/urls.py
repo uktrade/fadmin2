@@ -6,6 +6,7 @@ from data_lake.views.cost_centre_hierarchy import HierarchyViewSet
 from data_lake.views.natural_code import NaturalCodeViewSet
 from data_lake.views.programme_code import ProgrammeCodeViewSet
 from data_lake.views.project_code import ProjectCodeViewSet
+from data_lake.views.analysis1_code import Analysis1CodeViewSet
 
 urlpatterns = [
     path(
@@ -32,5 +33,10 @@ urlpatterns = [
         "projectcode/",
         ProjectCodeViewSet.as_view({"get": "list"}),
         name="data_lake_project_code",
+    ),
+    path(
+        "analysis1code/",
+        Analysis1CodeViewSet.as_view({"get": "list"}),
+        name="data_lake_analysis1_code",
     ),
 ]
