@@ -1,5 +1,3 @@
-from rest_framework.reverse import reverse
-
 from data_lake.test.utils import DataLakeTesting
 
 from costcentre.test.factories import (
@@ -15,7 +13,7 @@ class HierarchyTests(DataLakeTesting):
             financial_year_id=2019
         ).cost_centre_code
 
-        self.test_url = "http://testserver" + reverse("data_lake_hierachy")
+        self.url_name = "data_lake_hierachy"
         self.row_lenght = 11
         self.code_position = 4
         self.check_data()

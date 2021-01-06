@@ -1,5 +1,3 @@
-from rest_framework.reverse import reverse
-
 from data_lake.test.utils import DataLakeTesting
 
 from chartofaccountDIT.test.factories import (
@@ -15,7 +13,7 @@ class ExpenditureCategoryTests(DataLakeTesting):
             financial_year_id=2019
         ).grouping_description
 
-        self.test_url = "http://testserver" + reverse("data_lake_expenditure_category")
+        self.url_name = "data_lake_expenditure_category"
         self.row_lenght = 5
         self.code_position = 1
         self.check_data()

@@ -1,5 +1,3 @@
-from rest_framework.reverse import reverse
-
 from data_lake.test.utils import DataLakeTesting
 
 from chartofaccountDIT.test.factories import (
@@ -16,7 +14,7 @@ class NaturalCodeTests(DataLakeTesting):
             financial_year_id=2019
         ).natural_account_code
 
-        self.test_url = "http://testserver" + reverse("data_lake_natural_code")
+        self.url_name = "data_lake_natural_code"
         self.row_lenght = 9
         self.code_position = 6
         self.check_data()

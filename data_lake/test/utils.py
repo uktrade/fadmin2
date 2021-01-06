@@ -2,6 +2,8 @@ import csv
 
 import io
 
+from rest_framework.reverse import reverse
+
 from data_lake.test.test_hawk import hawk_auth_sender
 
 from django.test import (
@@ -17,9 +19,11 @@ class DataLakeTesting(TestCase):
         HAWK_INCOMING_ACCESS_KEY="some-id", HAWK_INCOMING_SECRET_KEY="some-secret",
     )
     def check_data(self):
-        sender = hawk_auth_sender(url=self.test_url)
+        test_url = f"http://testserver{reverse(self.url_name)}"
+
+        sender = hawk_auth_sender(url=test_url)
         response = APIClient().get(
-            self.test_url,
+            test_url,
             content_type="",
             HTTP_AUTHORIZATION=sender.request_header,
             HTTP_X_FORWARDED_FOR="1.2.3.4, 123.123.123.123",
