@@ -22,8 +22,9 @@ class ProjectCodeTests(TestCase):
     def test_data_returned_in_response(self):
         project_code = "4000"
         ProjectCodeFactory.create(project_code=project_code)
-        archived_project_code = \
-            HistoricalProjectCodeFactory.create(financial_year_id=2019).project_code
+        archived_project_code = HistoricalProjectCodeFactory.create(
+            financial_year_id=2019
+        ).project_code
 
         test_url = "http://testserver" + reverse("data_lake_project_code")
         sender = hawk_auth_sender(url=test_url)

@@ -20,21 +20,13 @@ class Analysis1CodeViewSet(DataLakeViewSet,):
 
     def write_data(self, writer):
         current_year = get_current_financial_year()
-        current_queryset = (
-            Analysis1.objects.filter(active=True)
-            .order_by(
-                "analysis1_code",
-                "analysis1_description",
-            )
+        current_queryset = Analysis1.objects.filter(active=True).order_by(
+            "analysis1_code", "analysis1_description",
         )
         historical_queryset = (
             ArchivedAnalysis1.objects.filter(active=True)
             .select_related("financial_year")
-            .order_by(
-                "-financial_year",
-                "analysis1_code",
-                "analysis1_description",
-            )
+            .order_by("-financial_year", "analysis1_code", "analysis1_description",)
         )
         for obj in current_queryset:
             row = [

@@ -21,8 +21,9 @@ class HierarchyTests(TestCase):
     )
     def test_hierarchy_data_returned_in_response(self):
         cost_centre = CostCentreFactory.create().cost_centre_code
-        archived_cost_centre = ArchivedCostCentreFactory.\
-            create(financial_year_id=2019).cost_centre_code
+        archived_cost_centre = ArchivedCostCentreFactory.create(
+            financial_year_id=2019
+        ).cost_centre_code
 
         test_url = "http://testserver" + reverse("data_lake_hierachy")
         sender = hawk_auth_sender(url=test_url)

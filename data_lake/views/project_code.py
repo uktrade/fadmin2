@@ -18,19 +18,13 @@ class ProjectCodeViewSet(DataLakeViewSet,):
 
     def write_data(self, writer):
         current_year = get_current_financial_year()
-        current_queryset = (
-            ProjectCode.objects.filter(active=True)
-            .order_by(
-                "project_code",
-            )
+        current_queryset = ProjectCode.objects.filter(active=True).order_by(
+            "project_code",
         )
         historical_queryset = (
             ArchivedProjectCode.objects.filter(active=True)
             .select_related("financial_year")
-            .order_by(
-                "-financial_year",
-                "project_code",
-            )
+            .order_by("-financial_year", "project_code",)
         )
         for obj in current_queryset:
             row = [

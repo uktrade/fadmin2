@@ -20,14 +20,11 @@ class ExpenditureCategoryViewSet(DataLakeViewSet,):
 
     def write_data(self, writer):
         current_year = get_current_financial_year()
-        current_queryset = (
-            ExpenditureCategory.objects.all()
-            .order_by(
-                "-NAC_category__NAC_category_description",
-                "grouping_description",
-                "description",
-                "further_description",
-            )
+        current_queryset = ExpenditureCategory.objects.all().order_by(
+            "-NAC_category__NAC_category_description",
+            "grouping_description",
+            "description",
+            "further_description",
         )
         historical_queryset = (
             ArchivedExpenditureCategory.objects.all()

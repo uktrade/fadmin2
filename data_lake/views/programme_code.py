@@ -19,13 +19,8 @@ class ProgrammeCodeViewSet(DataLakeViewSet,):
 
     def write_data(self, writer):
         current_year = get_current_financial_year()
-        current_queryset = (
-            ProgrammeCode.objects.filter(active=True)
-            .order_by(
-                "programme_code",
-                "programme_description",
-                "budget_type__budget_type"
-            )
+        current_queryset = ProgrammeCode.objects.filter(active=True).order_by(
+            "programme_code", "programme_description", "budget_type__budget_type"
         )
         historical_queryset = (
             ArchivedProgrammeCode.objects.filter(active=True)
@@ -34,7 +29,7 @@ class ProgrammeCodeViewSet(DataLakeViewSet,):
                 "-financial_year",
                 "programme_code",
                 "programme_description",
-                "budget_type__budget_type"
+                "budget_type__budget_type",
             )
         )
         for obj in current_queryset:

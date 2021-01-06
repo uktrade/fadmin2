@@ -22,8 +22,9 @@ class ProgrammeCodeTests(TestCase):
     def test_data_returned_in_response(self):
         programme_code = "123456"
         ProgrammeCodeFactory.create(programme_code=programme_code)
-        archived_programme_code = \
-            HistoricalProgrammeCodeFactory.create(financial_year_id=2019).programme_code
+        archived_programme_code = HistoricalProgrammeCodeFactory.create(
+            financial_year_id=2019
+        ).programme_code
 
         test_url = "http://testserver" + reverse("data_lake_programme_code")
         sender = hawk_auth_sender(url=test_url)
