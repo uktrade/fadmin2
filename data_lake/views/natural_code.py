@@ -31,7 +31,6 @@ class NaturalCodeViewSet(DataLakeViewSet,):
             .order_by(
                 "-economic_budget_code",
                 "-expenditure_category__NAC_category__NAC_category_description",
-                # noqa: E501
                 "-expenditure_category__grouping_description",
                 "commercial_category__commercial_category",
                 "natural_account_code",
