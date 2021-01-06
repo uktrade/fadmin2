@@ -1,13 +1,6 @@
 from rest_framework.reverse import reverse
 
-from data_lake.test.test_hawk import hawk_auth_sender
-
-from django.test import (
-    TestCase,
-    override_settings,
-)
-
-from rest_framework.test import APIClient
+from data_lake.test.utils import DataLakeTesting
 
 from chartofaccountDIT.test.factories import (
     ExpenditureCategoryFactory,
@@ -15,33 +8,14 @@ from chartofaccountDIT.test.factories import (
 )
 
 
-class ExpenditureCategoryTests(TestCase):
-    @override_settings(
-        HAWK_INCOMING_ACCESS_KEY="some-id", HAWK_INCOMING_SECRET_KEY="some-secret",
-    )
+class ExpenditureCategoryTests(DataLakeTesting):
     def test_data_returned_in_response(self):
-        grouping_description = ExpenditureCategoryFactory.create().grouping_description
-        archived_grouping_description = HistoricalExpenditureCategoryFactory.create(
+        self.current_code = ExpenditureCategoryFactory.create().grouping_description
+        self.archived_code = HistoricalExpenditureCategoryFactory.create(
             financial_year_id=2019
         ).grouping_description
 
-        test_url = "http://testserver" + reverse("data_lake_expenditure_category")
-        sender = hawk_auth_sender(url=test_url)
-        response = APIClient().get(
-            test_url,
-            content_type="",
-            HTTP_AUTHORIZATION=sender.request_header,
-            HTTP_X_FORWARDED_FOR="1.2.3.4, 123.123.123.123",
-        )
-
-        assert response["Content-Type"] == "text/csv"
-        rows = response.content.decode("utf-8").split("\n")
-
-        cols = rows[0].split(",")
-        assert len(cols) == 5
-
-        cols = rows[1].split(",")
-        assert str(cols[1]) == str(grouping_description)
-        # Check the archived value
-        cols = rows[2].split(",")
-        assert str(cols[1]) == str(archived_grouping_description)
+        self.test_url = "http://testserver" + reverse("data_lake_expenditure_category")
+        self.row_lenght = 5
+        self.code_position = 1
+        self.check_data()
