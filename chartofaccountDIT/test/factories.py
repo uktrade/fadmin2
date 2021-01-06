@@ -185,7 +185,7 @@ class InterEntityFactory(factory.DjangoModelFactory):
 
 
 class HistoricalInterEntityFactory(factory.DjangoModelFactory):
-     class Meta:
+    class Meta:
         model = ArchivedInterEntity
 
 
