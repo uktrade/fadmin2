@@ -1,3 +1,6 @@
+import csv
+import io
+
 from rest_framework.reverse import reverse
 
 from data_lake.test.test_hawk import hawk_auth_sender
@@ -35,14 +38,13 @@ class HierarchyTests(TestCase):
         )
 
         assert response["Content-Type"] == "text/csv"
+        content = response.content.decode('utf-8')
+        data = csv.reader(io.StringIO(content))
+        rows = list(data)
+        assert len(rows[0]) == 11
+        current_row = rows[1]
+        archive_row = rows[2]
+        assert str(current_row[4]) == str(cost_centre)
 
-        rows = response.content.decode("utf-8").split("\n")
-
-        cols = rows[0].split(",")
-        assert len(cols) == 11
-
-        cols = rows[1].split(",")
-        assert str(cols[4]) == str(cost_centre)
-
-        # # Check the archived value
-        assert str(cols[4]) == str(archived_cost_centre)
+        # Check the archived value
+        assert str(archive_row[4]) == str(archived_cost_centre)
