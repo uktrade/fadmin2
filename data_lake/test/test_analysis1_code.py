@@ -22,7 +22,7 @@ class Analysis1CodeTests(TestCase):
     def test_data_returned_in_response(self):
         analysis1_code = Analysis1Factory.create().analysis1_code
         archived_analysis1_code = \
-            HistoricalAnalysis1Factory.create().analysis1_code
+            HistoricalAnalysis1Factory.create(financial_year_id=2019).analysis1_code
 
         test_url = "http://testserver" + reverse("data_lake_analysis1_code")
         sender = hawk_auth_sender(url=test_url)

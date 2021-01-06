@@ -25,8 +25,6 @@ from chartofaccountDIT.models import (
     ProjectCode,
 )
 
-from core.models import FinancialYear
-
 
 class Analysis1Factory(factory.DjangoModelFactory):
     """
@@ -40,10 +38,6 @@ class Analysis1Factory(factory.DjangoModelFactory):
 
 
 class HistoricalAnalysis1Factory(factory.DjangoModelFactory):
-    """
-    Define ArchivedAnalysis1 Factory
-    """
-    financial_year = FinancialYear.objects.get(pk=2019)
 
     class Meta:
         model = ArchivedAnalysis1
@@ -61,11 +55,6 @@ class Analysis2Factory(factory.DjangoModelFactory):
 
 
 class HistoricalAnalysis2Factory(factory.DjangoModelFactory):
-    """
-    Define ArchivedAnalysis2 Factory
-    """
-    financial_year = FinancialYear.objects.get(pk=2019)
-
     class Meta:
         model = ArchivedAnalysis2
 
@@ -103,11 +92,7 @@ class ExpenditureCategoryFactory(factory.DjangoModelFactory):
 
 
 class HistoricalExpenditureCategoryFactory(factory.DjangoModelFactory):
-    """
-    Define ArchivedExpenditureCategory Factory
-    """
     grouping_description = 'Test Archived Budget Category'
-    financial_year = FinancialYear.objects.get(pk=2019)
 
     class Meta:
         model = ArchivedExpenditureCategory
@@ -123,11 +108,6 @@ class CommercialCategoryFactory(factory.DjangoModelFactory):
 
 
 class HistoricalCommercialCategoryFactory(factory.DjangoModelFactory):
-    """
-    Define ArchivedCommercialCategory Factory
-    """
-    financial_year = FinancialYear.objects.get(pk=2019)
-
     class Meta:
         model = ArchivedCommercialCategory
 
@@ -153,14 +133,9 @@ class HistoricalNaturalCodeFactory(factory.DjangoModelFactory):
     natural_account_code = 87654321
     natural_account_code_description = "Historical NAC description"
     used_for_budget = False
-    financial_year = FinancialYear.objects.get(pk=2019)
 
     class Meta:
         model = ArchivedNaturalCode
-        django_get_or_create = (
-            "natural_account_code",
-            "financial_year",
-        )
 
 
 class ProgrammeCodeFactory(factory.DjangoModelFactory):
@@ -186,12 +161,9 @@ class HistoricalProgrammeCodeFactory(factory.DjangoModelFactory):
     programme_code = "654321"
     programme_description = "Programme Test description"
     budget_type = factory.Iterator(BudgetType.objects.all())
-    financial_year = FinancialYear.objects.get(pk=2019)
 
     class Meta:
         model = ArchivedProgrammeCode
-        django_get_or_create = ('programme_code',
-                                'financial_year')
 
 
 class InterEntityL1Factory(factory.DjangoModelFactory):
@@ -213,12 +185,7 @@ class InterEntityFactory(factory.DjangoModelFactory):
 
 
 class HistoricalInterEntityFactory(factory.DjangoModelFactory):
-    """
-    Define ArchivedInterEntity Factory
-    """
-    financial_year = FinancialYear.objects.get(pk=2019)
-
-    class Meta:
+     class Meta:
         model = ArchivedInterEntity
 
 
@@ -243,11 +210,9 @@ class HistoricalProjectCodeFactory(factory.DjangoModelFactory):
     active = True
     project_code = "5000"
     project_description = "Project Description"
-    financial_year = FinancialYear.objects.get(pk=2019)
 
     class Meta:
         model = ArchivedProjectCode
-        django_get_or_create = ('project_code', 'financial_year')
 
 
 class FCOMappingFactory(factory.DjangoModelFactory):
@@ -263,7 +228,5 @@ class HistoricalFCOMappingFactory(factory.DjangoModelFactory):
     """
     Define ArchivedFCOMapping Factory
     """
-    financial_year = FinancialYear.objects.get(pk=2019)
-
     class Meta:
         model = ArchivedFCOMapping

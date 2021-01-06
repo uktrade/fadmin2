@@ -22,7 +22,9 @@ class ExpenditureCategoryTests(TestCase):
     def test_data_returned_in_response(self):
         grouping_description = ExpenditureCategoryFactory.create().grouping_description
         archived_grouping_description = \
-            HistoricalExpenditureCategoryFactory.create().grouping_description
+            HistoricalExpenditureCategoryFactory.create(
+                financial_year_id=2019
+            ).grouping_description
 
         test_url = "http://testserver" + reverse("data_lake_expenditure_category")
         sender = hawk_auth_sender(url=test_url)

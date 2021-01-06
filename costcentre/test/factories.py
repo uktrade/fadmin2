@@ -86,12 +86,7 @@ class CostCentreFactory(factory.DjangoModelFactory):
 class ArchivedCostCentreFactory(factory.DjangoModelFactory):
     class Meta:
         model = ArchivedCostCentre
-        django_get_or_create = (
-            "cost_centre_code",
-            "financial_year",
-        )
 
     active = True
     cost_centre_code = 999999
     cost_centre_name = "Test Cost Centre"
-    financial_year = FinancialYear.objects.get(pk=2019)

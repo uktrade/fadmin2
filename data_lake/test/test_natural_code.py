@@ -23,7 +23,9 @@ class NaturalCodeTests(TestCase):
         natural_account_code = "12345678"
         NaturalCodeFactory.create(natural_account_code=natural_account_code)
         archived_natural_account_code = \
-            HistoricalNaturalCodeFactory.create().natural_account_code
+            HistoricalNaturalCodeFactory.create(
+                financial_year_id=2019
+            ).natural_account_code
 
         test_url = "http://testserver" + reverse("data_lake_natural_code")
         sender = hawk_auth_sender(url=test_url)
