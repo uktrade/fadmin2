@@ -9,7 +9,6 @@ from chartofaccountDIT.test.factories import (
 
 
 class ProjectCodeTests(DataLakeTesting):
-
     def test_data_returned_in_response(self):
         self.current_code = "4000"
         ProjectCodeFactory.create(project_code=self.current_code)

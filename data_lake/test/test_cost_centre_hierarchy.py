@@ -9,7 +9,6 @@ from costcentre.test.factories import (
 
 
 class HierarchyTests(DataLakeTesting):
-
     def test_hierarchy_data_returned_in_response(self):
         self.current_code = CostCentreFactory.create().cost_centre_code
         self.archived_code = ArchivedCostCentreFactory.create(

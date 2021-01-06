@@ -16,7 +16,6 @@ class DataLakeTesting(TestCase):
     @override_settings(
         HAWK_INCOMING_ACCESS_KEY="some-id", HAWK_INCOMING_SECRET_KEY="some-secret",
     )
-
     def check_data(self):
         sender = hawk_auth_sender(url=self.test_url)
         response = APIClient().get(
@@ -27,7 +26,7 @@ class DataLakeTesting(TestCase):
         )
 
         assert response["Content-Type"] == "text/csv"
-        content = response.content.decode('utf-8')
+        content = response.content.decode("utf-8")
         data = csv.reader(io.StringIO(content))
         rows = list(data)
         assert len(rows[0]) == self.row_lenght

@@ -2,8 +2,6 @@ from rest_framework.reverse import reverse
 
 from data_lake.test.utils import DataLakeTesting
 
-from rest_framework.test import APIClient
-
 from chartofaccountDIT.test.factories import (
     HistoricalProgrammeCodeFactory,
     ProgrammeCodeFactory,
@@ -11,7 +9,6 @@ from chartofaccountDIT.test.factories import (
 
 
 class ProgrammeCodeTests(DataLakeTesting):
-
     def test_data_returned_in_response(self):
         self.current_code = "123456"
         ProgrammeCodeFactory.create(programme_code=self.current_code)

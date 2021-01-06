@@ -9,7 +9,6 @@ from chartofaccountDIT.test.factories import (
 
 
 class NaturalCodeTests(DataLakeTesting):
-
     def test_data_returned_in_response(self):
         self.current_code = "12345678"
         NaturalCodeFactory.create(natural_account_code=self.current_code)
