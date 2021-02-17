@@ -35,7 +35,7 @@ services:
      - "6379:6379"
  selenium-hub:
     image: selenium/hub:3.141.59-vanadium
-    container_name: selenium-hub
+    container_name: selenium-hub_1
     ports:
       - "4444:4444"
  chrome:
