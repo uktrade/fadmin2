@@ -46,7 +46,7 @@ from forecast.import_actuals import (
     TITLE_CELL,
     UploadFileFormatError,
     check_trial_balance_format,
-    copy_actuals_to_monthly_figure,
+    copy_current_year_actuals_to_monthly_figure,
     save_trial_balance_row,
     upload_trial_balance_report,
 )
@@ -428,7 +428,7 @@ class ImportActualsTest(BaseTestCase):
             1,
         )
 
-        copy_actuals_to_monthly_figure(self.period_obj, self.test_year)
+        copy_current_year_actuals_to_monthly_figure(self.period_obj, self.test_year)
         self.assertEqual(
             ForecastMonthlyFigure.objects.filter(
                 financial_code__cost_centre=cost_centre_code_1,
