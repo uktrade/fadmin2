@@ -568,7 +568,6 @@ class ImportActualsTest(BaseTestCase):
             )
         )
 
-
     def test_check_trial_balance_format_dec(self):
         upload_month = 12
         fake_work_sheet = FakeWorkSheet()
@@ -583,7 +582,6 @@ class ImportActualsTest(BaseTestCase):
                 2019,
             )
         )
-
 
     def test_check_trial_balance_format_feb(self):
         # The year on the trial balance is the calendar year,
