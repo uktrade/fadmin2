@@ -17,7 +17,12 @@ from forecast.utils.import_helpers import (
     validate_excel_file,
 )
 
-from previous_years.import_previous_year import CheckArchivedFinancialCode
+from previous_years.previous_years.utils import (
+    CheckArchivedFinancialCode,
+)
+from previous_years.import_actuals import (
+    copy_previous_year_actuals_to_monthly_figure,
+)
 
 from upload_file.models import FileUpload
 from upload_file.utils import (
@@ -53,35 +58,23 @@ CHART_ACCOUNT_SEPARATOR = "-"
 GENERIC_PROGRAMME_CODE = 310940
 
 
-def copy_previous_year_actuals_to_monthly_figure(period_obj, year):
-    # Now copy the newly uploaded actuals to the previous year figure table
-    ForecastMonthlyFigure.objects.filter(
-        financial_year=year, financial_period=period_obj, archived_status__isnull=True,
-    ).update(amount=0, starting_amount=0)
-    sql_update, sql_insert = sql_for_data_copy(FileUpload.ACTUALS, period_obj.pk, year)
-    with connection.cursor() as cursor:
-        cursor.execute(sql_insert)
-        cursor.execute(sql_update)
-    ForecastMonthlyFigure.objects.filter(
-        financial_year=year,
-        financial_period=period_obj,
-        amount=0,
-        starting_amount=0,
-        archived_status__isnull=True,
-    ).delete()
-
-
-def copy_current_year_actuals_to_monthly_figure(period_obj, year):
+def copy_current_year_actuals_to_monthly_figure(period_obj, financial_year):
     # Now copy the newly uploaded actuals to the monthly figure table
     ForecastMonthlyFigure.objects.filter(
-        financial_year=year, financial_period=period_obj, archived_status__isnull=True,
+        financial_year=financial_year,
+        financial_period=period_obj,
+        archived_status__isnull=True,
     ).update(amount=0, starting_amount=0)
-    sql_update, sql_insert = sql_for_data_copy(FileUpload.ACTUALS, period_obj.pk, year)
+    sql_update, sql_insert = sql_for_data_copy(
+        FileUpload.ACTUALS,
+        period_obj.pk,
+        financial_year
+    )
     with connection.cursor() as cursor:
         cursor.execute(sql_insert)
         cursor.execute(sql_update)
     ForecastMonthlyFigure.objects.filter(
-        financial_year=year,
+        financial_year=financial_year,
         financial_period=period_obj,
         amount=0,
         starting_amount=0,
@@ -205,24 +198,24 @@ def validate_trial_balance_report(file_upload, month_number, year):
     return workbook, worksheet
 
 
-def upload_trial_balance_report(file_upload, month_number, year):
-    workbook, worksheet = validate_trial_balance_report(file_upload, month_number, year)
+def upload_trial_balance_report(file_upload, month_number, financial_year):
+    workbook, worksheet = validate_trial_balance_report(file_upload, month_number, financial_year)
 
-    year_obj, _ = get_fk(FinancialYear, year)
+    year_obj, _ = get_fk(FinancialYear, financial_year)
     period_obj, _ = get_fk_from_field(
         FinancialPeriod, "period_calendar_code", month_number
     )
     if year_obj.current:
         check_financial_code = CheckFinancialCode(file_upload)
     else:
-        check_financial_code = CheckArchivedFinancialCode(year, file_upload)
+        check_financial_code = CheckArchivedFinancialCode(financial_year, file_upload)
 
     # Clear the table used to upload the actuals.
     # The actuals are uploaded to to a temporary storage, and copied
     # to the MonthlyFigure when the upload is completed successfully.
     # This means that we always have a full upload.
     ActualUploadMonthlyFigure.objects.filter(
-        financial_year=year, financial_period=period_obj,
+        financial_year=financial_year, financial_period=period_obj,
     ).delete()
     rows_to_process = worksheet.max_row + 1
     row = 0
@@ -264,20 +257,24 @@ def upload_trial_balance_report(file_upload, month_number, year):
     else:
         if year_obj.current:
             # Now copy the newly uploaded actuals to the monthly figure table
-            copy_current_year_actuals_to_monthly_figure(period_obj, year)
+            copy_current_year_actuals_to_monthly_figure(period_obj, financial_year)
+            FinancialPeriod.objects.filter(
+                financial_period_code__lte=period_obj.financial_period_code
+            ).update(actual_loaded=True)
         else:
-            pass
+            # Don't update the flag of actuals uploaded if we are loading
+            # data to previous year.
+            # The flag is used to differenciate between actuals and forecasts
+            # when displaying the figures, and for the previous years everything is
+            # marked as actuals. It may need changing in the future.
+            copy_previous_year_actuals_to_monthly_figure(period_obj, financial_year)
 
         if check_financial_code.warning_found:
             final_status = FileUpload.PROCESSEDWITHWARNING
 
         ActualUploadMonthlyFigure.objects.filter(
-            financial_year=year, financial_period=period_obj
+            financial_year=financial_year, financial_period=period_obj
         ).delete()
-
-        FinancialPeriod.objects.filter(
-            financial_period_code__lte=period_obj.financial_period_code
-        ).update(actual_loaded=True)
 
     set_file_upload_feedback(
         file_upload, f"Processed {rows_to_process} rows.", final_status
