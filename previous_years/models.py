@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models import (
+     UniqueConstraint,
+)
 
 from chartofaccountDIT.models import (
     ArchivedAnalysis1,
@@ -19,6 +22,7 @@ from forecast.models import (
     FinancialCodeAbstract,
     ForecastExpenditureType,
     ForecastingDataViewAbstract,
+    MonthlyFigureAbstract,
 )
 
 
@@ -65,3 +69,21 @@ class ArchivedForecastDataUpload(ArchivedForecastDataAbstract):
 
 class ArchivedForecastData(ArchivedForecastDataAbstract):
     pass
+
+
+class ArchivedActualUploadMonthlyFigure(MonthlyFigureAbstract):
+    financial_code = models.ForeignKey(
+        ArchivedFinancialCode,
+        on_delete=models.CASCADE,
+        related_name="%(app_label)s_%(class)ss",
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["financial_code", "financial_year", "financial_period", ],
+                name="ArchivedActualUploadMonthlyFigure_unique1",
+            ),
+        ]
+
+

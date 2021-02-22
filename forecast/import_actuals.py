@@ -23,6 +23,9 @@ from previous_years.previous_years.utils import (
 from previous_years.import_actuals import (
     copy_previous_year_actuals_to_monthly_figure,
 )
+ from previous_years.models import (
+    ArchivedActualUploadMonthlyFigure,
+)
 
 from upload_file.models import FileUpload
 from upload_file.utils import (
@@ -83,7 +86,7 @@ def copy_current_year_actuals_to_monthly_figure(period_obj, financial_year):
 
 
 def save_trial_balance_row(
-    chart_of_account, value, period_obj, year_obj, check_financial_code, row
+    chart_of_account, value, period_obj, year_obj, check_financial_code, row, save_to=ActualUploadMonthlyFigure
 ):
     """Parse the long strings containing the
     chart of account information. Return errors
@@ -112,7 +115,7 @@ def save_trial_balance_row(
 
     if not check_financial_code.error_found:
         financialcode_obj = check_financial_code.get_financial_code()
-        monthlyfigure_obj, created = ActualUploadMonthlyFigure.objects.get_or_create(
+        monthlyfigure_obj, created = save_to.objects.get_or_create(
             financial_year=year_obj,
             financial_code=financialcode_obj,
             financial_period=period_obj,
@@ -207,8 +210,10 @@ def upload_trial_balance_report(file_upload, month_number, financial_year):
     )
     if year_obj.current:
         check_financial_code = CheckFinancialCode(file_upload)
+        save_to = ActualUploadMonthlyFigure
     else:
         check_financial_code = CheckArchivedFinancialCode(financial_year, file_upload)
+        save_to = ArchivedActualUploadMonthlyFigure
 
     # Clear the table used to upload the actuals.
     # The actuals are uploaded to to a temporary storage, and copied
@@ -225,7 +230,7 @@ def upload_trial_balance_report(file_upload, month_number, financial_year):
         row += 1
         if row < TRIAL_BALANCE_FIRST_DATA_ROW:
             # There is no way to start reading rows from a specific place.
-            # so keep reading until the first row
+            # so keep reading until the first row with data
             continue
 
         if not row % 100:
@@ -236,8 +241,8 @@ def upload_trial_balance_report(file_upload, month_number, financial_year):
         chart_of_account = actual_row[CHART_OF_ACCOUNT_COL].value
         if chart_of_account:
             actual = actual_row[ACTUAL_FIGURE_COL].value
-            # No need to save 0 values, because the data has been cleared
-            # before starting the upload
+            # No need to save 0 values, because the data is cleared
+            # before copying the new actuals
             if actual:
                 save_trial_balance_row(
                     chart_of_account,
@@ -246,8 +251,10 @@ def upload_trial_balance_report(file_upload, month_number, financial_year):
                     year_obj,
                     check_financial_code,
                     row,
+                    save_to,
                 )
         else:
+            # needed to avoid processing empty rows at the end of the file
             break
     workbook.close
 
