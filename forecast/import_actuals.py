@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 from django.db import connection
@@ -17,13 +18,14 @@ from forecast.utils.import_helpers import (
     validate_excel_file,
 )
 
-from previous_years.previous_years.utils import (
+from previous_years.utils import (
     CheckArchivedFinancialCode,
 )
 from previous_years.import_actuals import (
     copy_previous_year_actuals_to_monthly_figure,
 )
- from previous_years.models import (
+
+from previous_years.models import (
     ArchivedActualUploadMonthlyFigure,
 )
 
@@ -91,6 +93,7 @@ def save_trial_balance_row(
     """Parse the long strings containing the
     chart of account information. Return errors
     if the elements of the chart of account are missing from database."""
+
     # Don't save zero values
     if not value:
         return True, ""
@@ -151,6 +154,20 @@ def check_trial_balance_format(worksheet, calendar_month_number, financial_year)
 
     try:
         report_date = worksheet[MONTH_CELL].value
+        if isinstance(report_date, datetime.date):
+            report_year = report_date.year
+            report_period = report_date.month
+        else:
+            # if the report is run for the adjustment periods, there is no date,
+            # but a string like 'ADJ_3_2019'
+            # the file
+            # the last 4 characters are the year
+            report_year = int(report_date[-4:])
+            # the 5 char of the string indicates the adjustment period (1, 2 or 3)
+            # in the forecast period table, the adjustment periods are
+            # after the month, so their value is 13, 14 or 15.
+            report_period = 12 + int(report_date[4:5])
+
         # The year on the trial balance is the calendar year,
         # and the upload year is the financial year
         # They don't match in Jan, Feb, March
@@ -159,7 +176,7 @@ def check_trial_balance_format(worksheet, calendar_month_number, financial_year)
         else:
             year_to_check = financial_year
 
-        if report_date.year != year_to_check:
+        if report_year != year_to_check:
             # wrong date
             raise UploadFileFormatError("File is for wrong year")
     except TypeError:
@@ -172,9 +189,9 @@ def check_trial_balance_format(worksheet, calendar_month_number, financial_year)
             "This file appears to be corrupt and it cannot be read"
         )
 
-    if report_date.month != calendar_month_number:
+    if report_period != calendar_month_number:
         # wrong date
-        raise UploadFileFormatError("File is for wrong month")
+        raise UploadFileFormatError("File is for wrong month/period")
 
     return True
 

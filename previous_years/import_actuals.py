@@ -35,8 +35,7 @@ def copy_previous_year_actuals_to_monthly_figure(period_obj, year_obj):
     # of the period, but in lowercase
     period_name = period_obj.period_short_name.lower()
 
-    ArchivedForecastData.objects.filter(financial_year=year_obj)
-            .update(**{period_name: 0})
+    ArchivedForecastData.objects.filter(financial_year=year_obj).update(**{period_name: 0})
 
     sql_update = (
         f"UPDATE previous_years_archivedforecastdata t "
@@ -45,7 +44,7 @@ def copy_previous_year_actuals_to_monthly_figure(period_obj, year_obj):
         f"WHERE  "
         f"t.financial_code_id = u.financial_code_id and "
         f"t.financial_year_id = u.financial_year_id and "
-        f"t.financial_year_id = {financial_year};"
+        f"t.financial_year_id = {year_obj.id};"
     )
 
     sql_insert = (
@@ -56,12 +55,11 @@ def copy_previous_year_actuals_to_monthly_figure(period_obj, year_obj):
         f"financial_year_id "
         f"FROM previous_years_archivedactualuploadmonthlyfigure "
         f"WHERE "
-        f"financial_period_id = {financial_period_id} and "
-        f"financial_year_id = {financial_year_id}  and "
+        f"financial_year_id = {year_obj.id}  and "
         f" financial_code_id "
         f"not in (select financial_code_id "
         f"from previous_years_archivedforecastdata where "
-        f"financial_year_id = {financial_year_id});"
+        f"financial_year_id = {year_obj.id});"
     )
 
     with connection.cursor() as cursor:
