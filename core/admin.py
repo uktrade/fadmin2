@@ -333,6 +333,3 @@ class AdminArchived(admin.ModelAdmin):
 
 admin.site.register(LogEntry, LogEntryAdmin)
 admin.site.register(FinancialYear, FinancialYearAdmin)
-
-# Remove default group administration
-admin.site.unregister(Group)
