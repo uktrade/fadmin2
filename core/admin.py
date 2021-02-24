@@ -4,7 +4,6 @@ from django import forms
 from django.contrib import admin, messages
 from django.contrib.admin.models import LogEntry
 
-from django.contrib.auth.models import Group
 from django.core.files.uploadhandler import (
     MemoryFileUploadHandler,
     TemporaryFileUploadHandler,
