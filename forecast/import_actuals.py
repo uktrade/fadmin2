@@ -86,6 +86,10 @@ def copy_current_year_actuals_to_monthly_figure(period_obj, financial_year):
         archived_status__isnull=True,
     ).delete()
 
+    ActualUploadMonthlyFigure.objects.filter(
+        financial_year=financial_year, financial_period=period_obj
+    ).delete()
+
 
 def save_trial_balance_row(
     chart_of_account, value, period_obj, year_obj, check_financial_code, row, save_to=ActualUploadMonthlyFigure
