@@ -11,13 +11,10 @@ from core.utils.generic_helpers import get_current_financial_year
 
 from costcentre.models import ArchivedCostCentre
 
-from forecast.utils.import_helpers import (
-    CheckFinancialCode,
-)
+from forecast.utils.import_helpers import CheckFinancialCode
 
-from previous_years.models import (
-    ArchivedFinancialCode,
-)
+from previous_years.models import ArchivedFinancialCode
+
 
 class CheckArchivedFinancialCode(CheckFinancialCode):
     """Uses the logic in CheckFinancialCode, but extract
@@ -86,7 +83,6 @@ class CheckArchivedFinancialCode(CheckFinancialCode):
         return financial_code_obj
 
 
-
 class ArchiveYearError(Exception):
     pass
 
@@ -133,5 +129,3 @@ def validate_year_for_archiving_actuals(financial_year):
                 f"Error(s) in chart of account for {financial_year}: f{error_msg}"
             )
         )
-
-

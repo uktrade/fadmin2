@@ -92,7 +92,13 @@ def copy_current_year_actuals_to_monthly_figure(period_obj, financial_year):
 
 
 def save_trial_balance_row(
-    chart_of_account, value, period_obj, year_obj, check_financial_code, row, save_to=ActualUploadMonthlyFigure
+    chart_of_account,
+        value,
+        period_obj,
+        year_obj,
+        check_financial_code,
+        row,
+        save_to=ActualUploadMonthlyFigure
 ):
     """Parse the long strings containing the
     chart of account information. Return errors
@@ -223,7 +229,10 @@ def validate_trial_balance_report(file_upload, month_number, year):
 
 
 def upload_trial_balance_report(file_upload, month_number, financial_year):
-    workbook, worksheet = validate_trial_balance_report(file_upload, month_number, financial_year)
+    workbook, worksheet = validate_trial_balance_report(
+        file_upload,
+        month_number,
+        financial_year)
 
     year_obj, _ = get_fk(FinancialYear, financial_year)
     period_obj, _ = get_fk_from_field(
@@ -245,7 +254,6 @@ def upload_trial_balance_report(file_upload, month_number, financial_year):
     ).delete()
     rows_to_process = worksheet.max_row + 1
     row = 0
-
 
     for actual_row in worksheet.rows:
         row += 1

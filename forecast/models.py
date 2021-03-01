@@ -695,7 +695,7 @@ class DisplaySubTotalManager(models.Manager):
 
                 if raw_data:
                     return raw_data
-            except:
+            except:     # noqa E722
                 pass
 
             raw_data = (
@@ -716,7 +716,7 @@ class DisplaySubTotalManager(models.Manager):
                     raw_data,
                     cache_invalidation_time,
                 )
-            except:
+            except:     # noqa E722
                 pass
 
         return raw_data

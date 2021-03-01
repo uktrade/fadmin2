@@ -52,6 +52,7 @@ class ArchivedFinancialCode(ArchivedModel, FinancialCodeAbstract):
         blank=True,
         null=True,
     )
+
     class Meta:
         # Several constraints required, to cover all the permutations of
         # fields that can be Null
@@ -187,5 +188,3 @@ class ArchivedActualUploadMonthlyFigure(MonthlyFigureAbstract):
                 name="ArchivedActualUploadMonthlyFigure_unique1",
             ),
         ]
-
-
