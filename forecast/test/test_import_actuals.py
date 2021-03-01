@@ -29,6 +29,7 @@ from core.utils.excel_test_helpers import (
     FakeCell,
     FakeWorkSheet
 )
+from core.utils.generic_helpers import make_financial_year_current
 
 from costcentre.models import (
     CostCentre,
@@ -82,6 +83,7 @@ class ImportActualsTest(BaseTestCase):
     def setUp(self):
         self.client.force_login(self.test_user)
         self.test_year = 2019
+        make_financial_year_current(self.test_year)
         self.test_period = 9
 
         self.cost_centre_code = TEST_COST_CENTRE
@@ -633,7 +635,7 @@ class UploadActualsTest(BaseTestCase):
         self.client.force_login(self.test_user)
         self.financial_period_code = 1
         self.financial_year_id = 2019
-
+        make_financial_year_current(self.financial_year_id)
         self.file_mock = MagicMock(spec=File)
         self.file_mock.name = 'test.txt'
 
