@@ -20,6 +20,7 @@ from previous_years.models import (
 )
 from previous_years.utils import (
     ArchiveYearError,
+    CheckArchivedFinancialCode,
     validate_year_for_archiving_actuals,
 )
 
