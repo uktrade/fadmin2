@@ -79,6 +79,11 @@ class ImportPastYearActualTest(PastYearForecastSetup):
         self.assertEqual(
             getattr(data_obj, period_name), new_value_in_pence,
         )
+        # and the temporary table has been cleared
+        self.assertEqual(
+            ArchivedActualUploadMonthlyFigure.objects.all().count(), 0,
+        )
+
 
     def test_import_apr(self):
         self.import_period(1)

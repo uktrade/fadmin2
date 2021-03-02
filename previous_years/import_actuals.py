@@ -2,7 +2,10 @@ import logging
 
 from django.db import connection
 
-from previous_years.models import ArchivedForecastData
+from previous_years.models import (
+    ArchivedActualUploadMonthlyFigure,
+    ArchivedForecastData,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -51,3 +54,5 @@ def copy_previous_year_actuals_to_monthly_figure(period_obj, financial_year):
     with connection.cursor() as cursor:
         cursor.execute(sql_insert)
         cursor.execute(sql_update)
+
+    ArchivedActualUploadMonthlyFigure.objects.filter(financial_year=financial_year).delete()
