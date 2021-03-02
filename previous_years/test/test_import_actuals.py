@@ -27,9 +27,10 @@ class ImportPastYearActualTest(PastYearForecastSetup):
         self.check_financial_code = CheckArchivedFinancialCode(
             self.archived_year, dummy_upload
         )
-
-    def test_import_adj_2(self):
-        chart_of_account_line_correct = (
+        self.year_obj = FinancialYear.objects.get(financial_year=self.archived_year)
+        self.year_obj.current = False
+        self.year_obj.save()
+        self.chart_of_account_line_correct = (
             f"3000-30000-"
             f"{self.cost_centre_code}-"
             f"{self.natural_account_code}-"
@@ -41,11 +42,9 @@ class ImportPastYearActualTest(PastYearForecastSetup):
             f"0000-0000"
         )
 
+    def test_import_adj_2(self):
         period_obj = FinancialPeriod.objects.get(period_calendar_code=13)
-        year_obj = FinancialYear.objects.get(financial_year=self.archived_year)
-        year_obj.current = False
-        year_obj.save()
-
+        period_name = period_obj.period_short_name.lower()
         self.assertEqual(
             ArchivedActualUploadMonthlyFigure.objects.all().count(), 0,
         )
@@ -53,16 +52,16 @@ class ImportPastYearActualTest(PastYearForecastSetup):
             ArchivedForecastData.objects.all().count(), 1,
         )
         data_obj = ArchivedForecastData.objects.all().first()
-        new_value_in_pounds = 10000
+        new_value_in_pence = 23456700
         self.assertNotEqual(
-            data_obj.adj1, new_value_in_pounds,
+            getattr(data_obj, period_name), new_value_in_pence,
         )
 
         save_trial_balance_row(
-            chart_of_account_line_correct,
-            new_value_in_pounds,
+            self.chart_of_account_line_correct,
+            new_value_in_pence/100,
             period_obj,
-            year_obj,
+            self.year_obj,
             self.check_financial_code,
             2,
             ArchivedActualUploadMonthlyFigure,
@@ -76,8 +75,7 @@ class ImportPastYearActualTest(PastYearForecastSetup):
             ArchivedForecastData.objects.all().count(), 1,
         )
         data_obj = ArchivedForecastData.objects.all().first()
-        # Check that the adjustment has been updated with the new value
-        # Multiple by 100 because values are stored in pence
+        # Check that the field has been updated with the new value
         self.assertEqual(
-            data_obj.adj1, new_value_in_pounds * 100,
+            getattr(data_obj, period_name), new_value_in_pence,
         )
