@@ -42,9 +42,10 @@ class ImportPastYearActualTest(PastYearForecastSetup):
             f"0000-0000"
         )
 
-    def test_import_adj_2(self):
-        period_obj = FinancialPeriod.objects.get(period_calendar_code=13)
+    def import_period(self, period_code):
+        period_obj = FinancialPeriod.objects.get(financial_period_code=period_code)
         period_name = period_obj.period_short_name.lower()
+
         self.assertEqual(
             ArchivedActualUploadMonthlyFigure.objects.all().count(), 0,
         )
@@ -56,10 +57,9 @@ class ImportPastYearActualTest(PastYearForecastSetup):
         self.assertNotEqual(
             getattr(data_obj, period_name), new_value_in_pence,
         )
-
         save_trial_balance_row(
             self.chart_of_account_line_correct,
-            new_value_in_pence/100,
+            new_value_in_pence / 100,
             period_obj,
             self.year_obj,
             self.check_financial_code,
@@ -79,3 +79,48 @@ class ImportPastYearActualTest(PastYearForecastSetup):
         self.assertEqual(
             getattr(data_obj, period_name), new_value_in_pence,
         )
+
+    def test_import_apr(self):
+        self.import_period(1)
+
+    def test_import_may(self):
+        self.import_period(2)
+
+    def test_import_jun(self):
+        self.import_period(3)
+
+    def test_import_jul(self):
+        self.import_period(4)
+
+    def test_import_aug(self):
+        self.import_period(5)
+
+    def test_import_sep(self):
+        self.import_period(6)
+
+    def test_import_oct(self):
+        self.import_period(7)
+
+    def test_import_nov(self):
+        self.import_period(8)
+
+    def test_import_dec(self):
+        self.import_period(9)
+
+    def test_import_jan(self):
+        self.import_period(10)
+
+    def test_import_feb(self):
+        self.import_period(11)
+
+    def test_import_mar(self):
+        self.import_period(12)
+
+    def test_import_adj1(self):
+        self.import_period(13)
+
+    def test_import_adj2(self):
+        self.import_period(14)
+
+    def test_import_adj3(self):
+        self.import_period(15)
