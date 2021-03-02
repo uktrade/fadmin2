@@ -55,4 +55,6 @@ def copy_previous_year_actuals_to_monthly_figure(period_obj, financial_year):
         cursor.execute(sql_insert)
         cursor.execute(sql_update)
 
-    ArchivedActualUploadMonthlyFigure.objects.filter(financial_year=financial_year).delete()
+    ArchivedActualUploadMonthlyFigure.objects.filter(
+        financial_year=financial_year
+    ).delete()
