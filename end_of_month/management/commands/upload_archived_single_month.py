@@ -16,6 +16,7 @@ from end_of_month.upload_archived_month import (
 from forecast.import_csv import WrongChartOFAccountCodeException
 from forecast.models import MAX_PERIOD_CODE
 
+
 class Command(CommandUpload):
     help = "Overwrite a specific month in a specific archive"
 
@@ -39,7 +40,9 @@ class Command(CommandUpload):
 
         if archive_period > MAX_PERIOD_CODE or archive_period < 1:
             self.stdout.write(
-                self.style.ERROR("Valid archive Period is between 1 and MAX_PERIOD_CODE.")
+                self.style.ERROR(
+                    "Valid archive Period is between 1 and MAX_PERIOD_CODE."
+                )
             )
             return
         file_name = self.path_to_upload(path, 'csv')

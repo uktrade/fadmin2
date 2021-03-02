@@ -34,6 +34,7 @@ from costcentre.models import CostCentre
 GRAND_TOTAL_ROW = "grand_total"
 MAX_PERIOD_CODE = 15
 
+
 class SubTotalFieldDoesNotExistError(Exception):
     pass
 
