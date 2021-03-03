@@ -49,6 +49,12 @@ def get_year_display(year):
         return "Invalid year"
 
 
+def create_financial_year_display(year):
+    if year < 2000:
+        return "Invalid year"
+    return f"{year}/{year - 1999}"
+
+
 class GetValidYear:
     regex = r'20\d{2}'
 
