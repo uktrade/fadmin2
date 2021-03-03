@@ -21,7 +21,9 @@ class Command(BaseCommand):
             today = datetime.datetime.now()
             calendar_year = today.year
         if calendar_year < 2000:
-            raise CommandError(f"Invalid {calendar_year} argument. Use xxxx format.")
+            raise CommandError(
+                f"argument year '{calendar_year}' invalid. " f"Use xxxx format."
+            )
 
         # Clear the current flag
         year_obj = FinancialYear.objects.filter(current=True)
@@ -44,6 +46,6 @@ class Command(BaseCommand):
             self.style.SUCCESS(
                 f"Current financial year changed from "
                 f"'{previous_financial_year}'"
-                f"to '{new_financial_year}'."
+                f" to '{new_financial_year}'."
             )
         )
