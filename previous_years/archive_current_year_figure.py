@@ -1,4 +1,3 @@
-import datetime
 import logging
 
 from core.models import FinancialYear
@@ -13,70 +12,61 @@ from previous_years.import_previous_year import (
     copy_previous_year_figure_from_temp_table,
 )
 from previous_years.models import (
-    ArchivedForecastData,
     ArchivedForecastDataUpload,
 )
 from previous_years.utils import (
     ArchiveYearError,
     CheckArchivedFinancialCode,
-    validate_year_for_archiving_actuals,
 )
 
 from upload_file.models import FileUpload
-from upload_file.utils import (
-    set_file_upload_fatal_error,
-    set_file_upload_feedback,
-)
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 
 
 def archive_to_temp_previous_year_figures(
     row_to_archive, financial_year_obj, financialcode_obj
 ):
-        (
-            previous_year_obj,
-            created,
-        ) = ArchivedForecastDataUpload.objects.get_or_create(
-            financial_year=financial_year_obj, financial_code=financialcode_obj,
-        )
-        # to avoid problems with precision,
-        # we store the figures in pence
-        if created:
-            previous_year_obj.budget = row_to_archive["Budget"]
-            previous_year_obj.apr = row_to_archive["Apr"]
-            previous_year_obj.may = row_to_archive["May"]
-            previous_year_obj.jun = row_to_archive["Jun"]
-            previous_year_obj.jul = row_to_archive["Jul"]
-            previous_year_obj.aug = row_to_archive["Aug"]
-            previous_year_obj.sep = row_to_archive["Sep"]
-            previous_year_obj.oct = row_to_archive["Oct"]
-            previous_year_obj.nov = row_to_archive["Nov"]
-            previous_year_obj.dec = row_to_archive["Dec"]
-            previous_year_obj.jan = row_to_archive["Jan"]
-            previous_year_obj.feb = row_to_archive["Feb"]
-            previous_year_obj.mar = row_to_archive["Mar"]
-            previous_year_obj.adj1 = row_to_archive["Adj1"]
-            previous_year_obj.adj2 = row_to_archive["Adj2"]
-            previous_year_obj.adj3 = row_to_archive["Adj3"]
-        else:
-            previous_year_obj.budget += row_to_archive["Budget"]
-            previous_year_obj.apr += row_to_archive["Apr"]
-            previous_year_obj.may += row_to_archive["May"]
-            previous_year_obj.jun += row_to_archive["Jun"]
-            previous_year_obj.jul += row_to_archive["Jul"]
-            previous_year_obj.aug += row_to_archive["Aug"]
-            previous_year_obj.sep += row_to_archive["Sep"]
-            previous_year_obj.oct += row_to_archive["Oct"]
-            previous_year_obj.nov += row_to_archive["Nov"]
-            previous_year_obj.dec += row_to_archive["Dec"]
-            previous_year_obj.jan += row_to_archive["Jan"]
-            previous_year_obj.feb += row_to_archive["Feb"]
-            previous_year_obj.mar += row_to_archive["Mar"]
-            previous_year_obj.adj1 += row_to_archive["Adj1"]
-            previous_year_obj.adj2 += row_to_archive["Adj2"]
-            previous_year_obj.adj3 += row_to_archive["Adj3"]
-        previous_year_obj.save()
+    (previous_year_obj, created,) = ArchivedForecastDataUpload.objects.get_or_create(
+        financial_year=financial_year_obj, financial_code=financialcode_obj,
+    )
+    # to avoid problems with precision,
+    # we store the figures in pence
+    if created:
+        previous_year_obj.budget = row_to_archive["Budget"]
+        previous_year_obj.apr = row_to_archive["Apr"]
+        previous_year_obj.may = row_to_archive["May"]
+        previous_year_obj.jun = row_to_archive["Jun"]
+        previous_year_obj.jul = row_to_archive["Jul"]
+        previous_year_obj.aug = row_to_archive["Aug"]
+        previous_year_obj.sep = row_to_archive["Sep"]
+        previous_year_obj.oct = row_to_archive["Oct"]
+        previous_year_obj.nov = row_to_archive["Nov"]
+        previous_year_obj.dec = row_to_archive["Dec"]
+        previous_year_obj.jan = row_to_archive["Jan"]
+        previous_year_obj.feb = row_to_archive["Feb"]
+        previous_year_obj.mar = row_to_archive["Mar"]
+        previous_year_obj.adj1 = row_to_archive["Adj1"]
+        previous_year_obj.adj2 = row_to_archive["Adj2"]
+        previous_year_obj.adj3 = row_to_archive["Adj3"]
+    else:
+        previous_year_obj.budget += row_to_archive["Budget"]
+        previous_year_obj.apr += row_to_archive["Apr"]
+        previous_year_obj.may += row_to_archive["May"]
+        previous_year_obj.jun += row_to_archive["Jun"]
+        previous_year_obj.jul += row_to_archive["Jul"]
+        previous_year_obj.aug += row_to_archive["Aug"]
+        previous_year_obj.sep += row_to_archive["Sep"]
+        previous_year_obj.oct += row_to_archive["Oct"]
+        previous_year_obj.nov += row_to_archive["Nov"]
+        previous_year_obj.dec += row_to_archive["Dec"]
+        previous_year_obj.jan += row_to_archive["Jan"]
+        previous_year_obj.feb += row_to_archive["Feb"]
+        previous_year_obj.mar += row_to_archive["Mar"]
+        previous_year_obj.adj1 += row_to_archive["Adj1"]
+        previous_year_obj.adj2 += row_to_archive["Adj2"]
+        previous_year_obj.adj3 += row_to_archive["Adj3"]
+    previous_year_obj.save()
 
 
 def archive_current_year():
@@ -106,10 +96,9 @@ def archive_current_year():
     analysis2_field = fields.analysis2_code_field
     project_code = fields.project_code_field
 
-
     for row_to_archive in data_to_archive_list:
         if not row_number % 100:
-             logger.info(f"Processing row {row_number} of {rows_to_process}.")
+            logger.info(f"Processing row {row_number} of {rows_to_process}.")
 
         cost_centre = row_to_archive[cost_centre_field]
         nac = row_to_archive[nac_field]
@@ -131,9 +120,7 @@ def archive_current_year():
             financialcode_obj = check_financial_code.get_financial_code()
             try:
                 archive_to_temp_previous_year_figures(
-                    row_to_archive,
-                    financial_year_obj,
-                    financialcode_obj,
+                    row_to_archive, financial_year_obj, financialcode_obj,
                 )
             except (UploadFileFormatError, ArchiveYearError) as ex:
                 # set_file_upload_fatal_error(
@@ -148,8 +135,8 @@ def archive_current_year():
         # No errors, so we can copy the figures
         # from the temporary table to the previous_years
         copy_previous_year_figure_from_temp_table(financial_year)
-        if check_financial_code.warning_found:
-            final_status = FileUpload.PROCESSEDWITHWARNING
+        # if check_financial_code.warning_found:
+        #     final_status = FileUpload.PROCESSEDWITHWARNING
 
     # set_file_upload_feedback(
     #     file_upload, f"Processed {rows_to_process} rows.", final_status
