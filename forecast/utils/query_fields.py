@@ -598,6 +598,17 @@ class ForecastQueryFields:
         }
 
     @property
+    def ARCHIVE_FORECAST_COLUMNS(self):
+        return {
+            self.cost_centre_code_field: "cost_centre",
+            self.nac_code_field: "nac",
+            self.programme_code_field: "programme_code",
+            self.analysis1_code_field: "analysis1_code",
+            self.analysis2_code_field: "analysis1_code",
+            self.project_code_field: "project_code",
+        }
+
+    @property
     def EDIT_KEYS_DOWNLOAD(self):
         return {
             self.programme_code_field: "Programme code",

@@ -92,7 +92,7 @@ def validate_year_for_archiving(financial_year):
     if financial_year == current_year:
         raise (ArchiveYearError(f"{financial_year} is the current year."))
 
-    if financial_year == current_year:
+    if financial_year > current_year:
         raise (ArchiveYearError(f"{financial_year} is in the future."))
 
     try:
