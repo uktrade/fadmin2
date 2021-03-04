@@ -43,39 +43,39 @@ def archive_to_temp_previous_year_figures(
         # to avoid problems with precision,
         # we store the figures in pence
         if created:
-            previous_year_obj.budget = row_to_archive["budget"]
-            previous_year_obj.apr = row_to_archive["apr"]
-            previous_year_obj.may = row_to_archive["may"]
-            previous_year_obj.jun = row_to_archive["jun"]
-            previous_year_obj.jul = row_to_archive["jul"]
-            previous_year_obj.aug = row_to_archive["aug"]
-            previous_year_obj.sep = row_to_archive["sep"]
-            previous_year_obj.oct = row_to_archive["oct"]
-            previous_year_obj.nov = row_to_archive["nov"]
-            previous_year_obj.dec = row_to_archive["dec"]
-            previous_year_obj.jan = row_to_archive["jan"]
-            previous_year_obj.feb = row_to_archive["feb"]
-            previous_year_obj.mar = row_to_archive["mar"]
-            previous_year_obj.adj1 = row_to_archive["adj01"]
-            previous_year_obj.adj2 = row_to_archive["adj02"]
-            previous_year_obj.adj3 = row_to_archive["adj03"]
+            previous_year_obj.budget = row_to_archive["Budget"]
+            previous_year_obj.apr = row_to_archive["Apr"]
+            previous_year_obj.may = row_to_archive["May"]
+            previous_year_obj.jun = row_to_archive["Jun"]
+            previous_year_obj.jul = row_to_archive["Jul"]
+            previous_year_obj.aug = row_to_archive["Aug"]
+            previous_year_obj.sep = row_to_archive["Sep"]
+            previous_year_obj.oct = row_to_archive["Oct"]
+            previous_year_obj.nov = row_to_archive["Nov"]
+            previous_year_obj.dec = row_to_archive["Dec"]
+            previous_year_obj.jan = row_to_archive["Jan"]
+            previous_year_obj.feb = row_to_archive["Feb"]
+            previous_year_obj.mar = row_to_archive["Mar"]
+            previous_year_obj.adj1 = row_to_archive["Adj1"]
+            previous_year_obj.adj2 = row_to_archive["Adj2"]
+            previous_year_obj.adj3 = row_to_archive["Adj3"]
         else:
-            previous_year_obj.budget += row_to_archive["budget"]
-            previous_year_obj.apr += row_to_archive["apr"]
-            previous_year_obj.may += row_to_archive["may"]
-            previous_year_obj.jun += row_to_archive["jun"]
-            previous_year_obj.jul += row_to_archive["jul"]
-            previous_year_obj.aug += row_to_archive["aug"]
-            previous_year_obj.sep += row_to_archive["sep"]
-            previous_year_obj.oct += row_to_archive["oct"]
-            previous_year_obj.nov += row_to_archive["nov"]
-            previous_year_obj.dec += row_to_archive["dec"]
-            previous_year_obj.jan += row_to_archive["jan"]
-            previous_year_obj.feb += row_to_archive["feb"]
-            previous_year_obj.mar += row_to_archive["mar"]
-            previous_year_obj.adj1 += row_to_archive["adj01"]
-            previous_year_obj.adj2 += row_to_archive["adj02"]
-            previous_year_obj.adj3 += row_to_archive["adj03"]
+            previous_year_obj.budget += row_to_archive["Budget"]
+            previous_year_obj.apr += row_to_archive["Apr"]
+            previous_year_obj.may += row_to_archive["May"]
+            previous_year_obj.jun += row_to_archive["Jun"]
+            previous_year_obj.jul += row_to_archive["Jul"]
+            previous_year_obj.aug += row_to_archive["Aug"]
+            previous_year_obj.sep += row_to_archive["Sep"]
+            previous_year_obj.oct += row_to_archive["Oct"]
+            previous_year_obj.nov += row_to_archive["Nov"]
+            previous_year_obj.dec += row_to_archive["Dec"]
+            previous_year_obj.jan += row_to_archive["Jan"]
+            previous_year_obj.feb += row_to_archive["Feb"]
+            previous_year_obj.mar += row_to_archive["Mar"]
+            previous_year_obj.adj1 += row_to_archive["Adj1"]
+            previous_year_obj.adj2 += row_to_archive["Adj2"]
+            previous_year_obj.adj3 += row_to_archive["Adj3"]
         previous_year_obj.save()
 
 
@@ -86,7 +86,7 @@ def archive_current_year():
     datamodel = fields.datamodel
 
     data_to_archive_list = datamodel.view_data.raw_data_annotated(
-        fields.ARCHIVE_FORECAST_COLUMNS, {}, year=financial_year
+        fields.archive_forecast_columns, {}, year=financial_year
     )
     financial_year_obj = FinancialYear.objects.get(pk=financial_year)
 
@@ -99,19 +99,25 @@ def archive_current_year():
 
     check_financial_code = CheckArchivedFinancialCode(financial_year)
     row_number = 0
+    cost_centre_field = fields.cost_centre_code_field
+    nac_field = fields.nac_code_field
+    programme_field = fields.programme_code_field
+    analysis1_field = fields.analysis1_code_field
+    analysis2_field = fields.analysis2_code_field
+    project_code = fields.project_code_field
+
+
     for row_to_archive in data_to_archive_list:
         if not row_number % 100:
              logger.info(f"Processing row {row_number} of {rows_to_process}.")
 
-        cost_centre = row_to_archive["cost_centre"]
-        if not cost_centre:
-            # protection against empty rows
-            break
-        nac = row_to_archive["nac"]
-        programme_code = row_to_archive["pogramme_code"]
-        analysis1 = row_to_archive["analysis1"]
-        analysis2 = row_to_archive["analysis2"]
-        project_code = row_to_archive["project_code"]
+        cost_centre = row_to_archive[cost_centre_field]
+        nac = row_to_archive[nac_field]
+        programme_code = row_to_archive[programme_field]
+        analysis1 = row_to_archive[analysis1_field]
+        analysis2 = row_to_archive[analysis2_field]
+        project_code = row_to_archive[project_code]
+
         check_financial_code.validate(
             cost_centre,
             nac,
@@ -130,9 +136,9 @@ def archive_current_year():
                     financialcode_obj,
                 )
             except (UploadFileFormatError, ArchiveYearError) as ex:
-                set_file_upload_fatal_error(
-                    file_upload, str(ex), str(ex),
-                )
+                # set_file_upload_fatal_error(
+                #     file_upload, str(ex), str(ex),
+                # )
                 raise ex
 
     final_status = FileUpload.PROCESSED
@@ -145,9 +151,9 @@ def archive_current_year():
         if check_financial_code.warning_found:
             final_status = FileUpload.PROCESSEDWITHWARNING
 
-    set_file_upload_feedback(
-        file_upload, f"Processed {rows_to_process} rows.", final_status
-    )
+    # set_file_upload_feedback(
+    #     file_upload, f"Processed {rows_to_process} rows.", final_status
+    # )
 
     if check_financial_code.error_found:
         raise UploadFileDataError(

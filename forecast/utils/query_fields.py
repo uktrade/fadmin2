@@ -598,7 +598,7 @@ class ForecastQueryFields:
         }
 
     @property
-    def ARCHIVE_FORECAST_COLUMNS(self):
+    def archive_forecast_columns(self):
         return {
             self.cost_centre_code_field: "cost_centre",
             self.nac_code_field: "nac",
