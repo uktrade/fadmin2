@@ -15,7 +15,7 @@ from previous_years.models import ArchivedForecastDataUpload
 from previous_years.utils import (
     ArchiveYearError,
     CheckArchivedFinancialCode,
-    validate_year_for_archiving,
+    validate_year_for_archiving_actuals,
 )
 
 from upload_file.models import FileUpload
@@ -90,7 +90,7 @@ def archive_current_year():
     financial_year = fields.selected_year
 
     try:
-        validate_year_for_archiving(financial_year, True)
+        validate_year_for_archiving_actuals(financial_year, False)
     except ArchiveYearError as ex:
         raise ex
 
@@ -114,16 +114,17 @@ def archive_current_year():
         file_location=FileUpload.LOCALFILE,
     )
 
-    check_financial_code = CheckArchivedFinancialCode(financial_year)
+    check_financial_code = CheckArchivedFinancialCode(financial_year, file_upload)
     row_number = 0
     cost_centre_field = fields.cost_centre_code_field
     nac_field = fields.nac_code_field
     programme_field = fields.programme_code_field
     analysis1_field = fields.analysis1_code_field
     analysis2_field = fields.analysis2_code_field
-    project_code = fields.project_code_field
+    project_code_field = fields.project_code_field
 
     for row_to_archive in data_to_archive_list:
+        row_number += 1
         if not row_number % 100:
             # Display the number of rows processed every 100 rows
             set_file_upload_feedback(
@@ -136,7 +137,7 @@ def archive_current_year():
         programme_code = row_to_archive[programme_field]
         analysis1 = row_to_archive[analysis1_field]
         analysis2 = row_to_archive[analysis2_field]
-        project_code = row_to_archive[project_code]
+        project_code = row_to_archive[project_code_field]
 
         check_financial_code.validate(
             cost_centre,
