@@ -168,14 +168,16 @@ def check_trial_balance_format(worksheet, calendar_month_number, financial_year)
             report_year = report_date.year
             report_period = report_date.month
         else:
-            # if the report is run for the adjustment periods, there is no date,
-            # but a string like 'ADJ_3_2019'
-            # the file
-            # the last 4 characters are the year
+            # If the report is run for an adjustment period,
+            # 'worksheet[MONTH_CELL].value' will not contain a date
+            # but a string like 'ADJ_3_2019' instead.
+            # The fifth character indicates the adjustment period (1, 2 or 3).
+            # The last four characters of the string indicate the year.
+            # In the forecast period table,
+            # the adjustment periods are considered to be
+            # after the twelfth month of the financial year,
+            # so their value is 13, 14 or 15.
             report_year = int(report_date[-4:])
-            # the 5 char of the string indicates the adjustment period (1, 2 or 3)
-            # in the forecast period table, the adjustment periods are
-            # after the month, so their value is 13, 14 or 15.
             report_period = 12 + int(report_date[4:5])
 
         # The year on the trial balance is the calendar year,
@@ -291,18 +293,16 @@ def upload_trial_balance_report(file_upload, month_number, financial_year):
     if check_financial_code.error_found:
         final_status = FileUpload.PROCESSEDWITHERROR
     else:
+        # Now copy the newly uploaded actuals to the correct table
         if year_obj.current:
-            # Now copy the newly uploaded actuals to the monthly figure table
             copy_current_year_actuals_to_monthly_figure(period_obj, financial_year)
             FinancialPeriod.objects.filter(
                 financial_period_code__lte=period_obj.financial_period_code
             ).update(actual_loaded=True)
         else:
-            # Don't update the flag of actuals uploaded if we are loading
-            # data to previous year.
-            # The flag is used to differenciate between actuals and forecasts
-            # when displaying the figures, and for the previous years everything is
-            # marked as actuals. It may need changing in the future.
+            # When uploading data for a previous year, all data is actuals
+            # (we cannot forecast for the previous year).
+            # Therefore we don't update the actuals flag.
             copy_previous_year_actuals_to_monthly_figure(period_obj, financial_year)
 
         if check_financial_code.warning_found:
