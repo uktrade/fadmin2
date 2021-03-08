@@ -17,6 +17,7 @@ from previous_years.models import (
 from previous_years.utils import (
     ArchiveYearError,
     CheckArchivedFinancialCode,
+    validate_year_for_archiving,
 )
 
 from upload_file.models import FileUpload
@@ -79,7 +80,10 @@ def archive_current_year():
         fields.archive_forecast_columns, {}, year=financial_year
     )
     financial_year_obj = FinancialYear.objects.get(pk=financial_year)
-
+    try:
+        validate_year_for_archiving(financial_year, True)
+    except ArchiveYearError as ex:
+        raise ex
     # Clear the table used to upload the previous_years.
     # The previous_years are uploaded to to a temporary storage,
     # and copied when the upload is completed successfully.

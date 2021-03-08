@@ -21,7 +21,7 @@ from previous_years.models import (
 from previous_years.utils import (
     ArchiveYearError,
     CheckArchivedFinancialCode,
-    validate_year_for_archiving_actuals,
+    validate_year_for_archiving,
 )
 
 from upload_file.models import FileUpload
@@ -207,7 +207,7 @@ def upload_previous_year(worksheet, financial_year, file_upload):  # noqa
     check_header(header_dict, expected_headers)
 
     try:
-        validate_year_for_archiving_actuals(financial_year)
+        validate_year_for_archiving(financial_year)
     except ArchiveYearError as ex:
         set_file_upload_fatal_error(
             file_upload, str(ex), str(ex),
