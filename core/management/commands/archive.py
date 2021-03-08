@@ -40,8 +40,8 @@ class Command(BaseCommand):
         "Allowed arguments are - All - {} - ".format(" - ".join(ARCHIVE_TYPE.keys()))
     )
     arg_name = "type"
-    def add_arguments(self, parser):
 
+    def add_arguments(self, parser):
         parser.add_argument(self.arg_name, nargs="*", default=["All"])
         parser.add_argument("--year", type=int, nargs="?", default=0)
 
@@ -51,8 +51,6 @@ class Command(BaseCommand):
         if financial_year == 0:
             financial_year = get_current_financial_year()
         archive_type = options.get("type")
-        print(f"financial_year = {financial_year}")
-        print(f"archive_type = {archive_type}")
         for arg in options[self.arg_name]:
             archive_type = arg
 

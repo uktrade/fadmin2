@@ -51,7 +51,7 @@ class FinancialPeriodAdmin(AdminReadOnly):
                 "financial_period_code",
                 "period_calendar_code",
                 "actual_loaded",
-             ]
+            ]
 
 
 class ForecastEditStateAdmin(AdminEditOnly, SimpleHistoryAdmin):

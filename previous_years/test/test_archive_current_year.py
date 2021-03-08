@@ -3,8 +3,6 @@ from django.core.management.base import CommandError
 
 from django.test import TestCase
 
-from core.models import FinancialYear
-
 from end_of_month.test.test_utils import MonthlyFigureSetup
 
 from previous_years.archive_current_year_figure import archive_current_year
@@ -61,7 +59,6 @@ class ArchiveCurrentYearTest(TestCase):
         self.assertEqual(ArchivedForecastData_obj.adj2, value_dict[14])
         self.assertEqual(ArchivedForecastData_obj.adj3, value_dict[15])
 
-
     def test_archive_budget(self):
         self.assertEqual(ArchivedFinancialCode.objects.count(), 0)
         self.assertEqual(ArchivedForecastData.objects.count(), 0)
@@ -70,4 +67,3 @@ class ArchiveCurrentYearTest(TestCase):
         self.assertEqual(ArchivedForecastData.objects.count(), 1)
         ArchivedForecastData_obj = ArchivedForecastData.objects.all().first()
         self.assertEqual(ArchivedForecastData_obj.budget, self.init_data.total_budget)
-
