@@ -27,6 +27,7 @@ SHOW_COSTCENTRE = 3
 
 CURRENT_PERIOD = 0
 
+
 class ForecastQueryFields:
     # This massive class handles the difference in the tables and field name
     # between the current chart of account and the archived ones.    #

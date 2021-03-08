@@ -90,7 +90,7 @@ class ArchiveYearError(Exception):
 def validate_year_for_archiving(financial_year, exclude_current=True):
     current_year = get_current_financial_year()
     if exclude_current and financial_year == current_year:
-            raise (ArchiveYearError(f"{financial_year} is the current year."))
+        raise (ArchiveYearError(f"{financial_year} is the current year."))
 
     if financial_year > current_year:
         raise (ArchiveYearError(f"{financial_year} is in the future."))

@@ -40,6 +40,6 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Current financial year archived. "
+                "Current financial year archived. "
             )
         )

@@ -11,9 +11,7 @@ from forecast.utils.query_fields import ForecastQueryFields
 from previous_years.import_previous_year import (
     copy_previous_year_figure_from_temp_table,
 )
-from previous_years.models import (
-    ArchivedForecastDataUpload,
-)
+from previous_years.models import ArchivedForecastDataUpload
 from previous_years.utils import (
     ArchiveYearError,
     CheckArchivedFinancialCode,
@@ -21,6 +19,11 @@ from previous_years.utils import (
 )
 
 from upload_file.models import FileUpload
+from upload_file.utils import (
+    set_file_upload_fatal_error,
+    set_file_upload_feedback,
+)
+
 
 logger = logging.getLogger(__name__)
 
@@ -70,29 +73,42 @@ def archive_to_temp_previous_year_figures(
     previous_year_obj.save()
 
 
+def set_final_status(check_financial_code):
+    final_status = FileUpload.PROCESSED
+    if check_financial_code.warning_found:
+        final_status = FileUpload.PROCESSEDWITHWARNING
+
+    if check_financial_code.error_found:
+        final_status = FileUpload.PROCESSEDWITHERROR
+
+    return final_status
+
+
 def archive_current_year():
     # Get the latest period for archiving
     fields = ForecastQueryFields()
     financial_year = fields.selected_year
-    datamodel = fields.datamodel
-    # Check that the chart of account have been archived. If not, abort
-    data_to_archive_list = datamodel.view_data.raw_data_annotated(
-        fields.archive_forecast_columns, {}, year=financial_year
-    )
-    financial_year_obj = FinancialYear.objects.get(pk=financial_year)
+
     try:
         validate_year_for_archiving(financial_year, True)
     except ArchiveYearError as ex:
         raise ex
+
+    datamodel = fields.datamodel
+    data_to_archive_list = datamodel.view_data.raw_data_annotated(
+        fields.archive_forecast_columns, {}, year=financial_year
+    )
+    financial_year_obj = FinancialYear.objects.get(pk=financial_year)
     # Clear the table used to upload the previous_years.
     # The previous_years are uploaded to to a temporary storage,
     # and copied when the upload is completed successfully.
     # This means that we always have a full upload.
     ArchivedForecastDataUpload.objects.filter(financial_year=financial_year,).delete()
     rows_to_process = data_to_archive_list.count()
+
     # Create an entry in the file upload table, even if it is not a file.
     # It is useful for keeping the log of errors
-    file_upload_obj = FileUpload(
+    file_upload = FileUpload(
         document_file_name="dummy",
         document_type=FileUpload.PREVIOUSYEAR,
         file_location=FileUpload.LOCALFILE,
@@ -143,21 +159,18 @@ def archive_current_year():
                 )
                 raise ex
 
-    final_status = FileUpload.PROCESSED
-    if check_financial_code.error_found:
-        final_status = FileUpload.PROCESSEDWITHERROR
-    else:
+    final_status = set_final_status(check_financial_code)
+
+    if final_status != FileUpload.PROCESSEDWITHERROR:
         # No errors, so we can copy the figures
         # from the temporary table to the previous_years
         copy_previous_year_figure_from_temp_table(financial_year)
-        if check_financial_code.warning_found:
-            final_status = FileUpload.PROCESSEDWITHWARNING
 
     set_file_upload_feedback(
         file_upload, f"Processed {rows_to_process} rows.", final_status
     )
 
-    if check_financial_code.error_found:
+    if final_status == FileUpload.PROCESSEDWITHERROR:
         raise UploadFileDataError(
             "No data archived. Check the log in the file upload record."
         )
