@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def copy_previous_year_actuals_to_monthly_figure(period_obj, financial_year):
-    # # Now copy the newly uploaded actuals to the previous year figure table
+    # Now copy the newly uploaded actuals to the previous year figure table
     # hack alert: the name of the fields in the model are identical to the short name
     # of the period, but in lowercase
     # Use direct sql for speed.
