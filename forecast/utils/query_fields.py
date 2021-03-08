@@ -25,13 +25,14 @@ SHOW_GROUP = 1
 SHOW_DIRECTORATE = 2
 SHOW_COSTCENTRE = 3
 
+CURRENT_PERIOD = 0
 
 class ForecastQueryFields:
     # This massive class handles the difference in the tables and field name
     # between the current chart of account and the archived ones.    #
     # This class return the correct field using 'current' to decide
     # what to return.
-    def __init__(self, period=0):
+    def __init__(self, period=CURRENT_PERIOD):
         # period : between 0 and 15 it refers to the current financial year,
         # otherwise it contains the archived year to be used.
         self.current_year = period < 2000
