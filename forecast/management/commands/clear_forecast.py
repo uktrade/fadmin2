@@ -1,7 +1,5 @@
 from django.core.management.base import BaseCommand
-from django.core.management.base import (
-    CommandError,
-)
+from django.core.management.base import CommandError
 
 from core.utils.generic_helpers import (
     get_current_financial_year,
@@ -36,16 +34,21 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--noinput', '--no-input', action='store_false', dest='interactive',
-            help='Tells Django to NOT prompt the user for input of any kind.',
+            "--noinput",
+            "--no-input",
+            action="store_false",
+            dest="interactive",
+            help="Tells Django to NOT prompt the user for input of any kind.",
         )
 
     def handle(self, *args, **options):
-        self.interactive = options['interactive']
+        self.interactive = options["interactive"]
         current_year = get_current_financial_year()
         current_year_display = get_year_display(current_year)
-        error_message = f"forecast/actual/budget figures " \
-                             f"for {current_year_display} not deleted."
+        error_message = (
+            f"forecast/actual/budget figures "
+            f"for {current_year_display} not deleted."
+        )
 
         if not ArchivedFinancialCode.objects.filter(
             financial_year=current_year
@@ -53,25 +56,30 @@ class Command(BaseCommand):
             # If the archive does not exists, ask the users if they want to proceed.
             # If we are not asking questions, consider it a fatal error and exit.
             if self.interactive:
-                prompt = f"The figures for the financial year {current_year_display} " \
-                         f"are not archived.\n"
+                prompt = (
+                    f"The figures for the financial year {current_year_display} "
+                    f"are not archived.\n"
+                )
                 self.stdout.write(self.style.WARNING(prompt))
                 abort = get_no_answer()
             else:
                 abort = True
-                error_message = f"ABORT (--noinput) - forecast/actual/budget figures " \
-                                f"for {current_year_display} not deleted."
+                error_message = (
+                    f"ABORT (--noinput) - forecast/actual/budget figures "
+                    f"for {current_year_display} not deleted."
+                )
 
             if abort:
                 self.stdout.write(self.style.ERROR(error_message))
                 raise CommandError(error_message)
                 return
 
-
         if self.interactive:
-            prompt = f"All the forecast/actual/budget figures " \
-                  f"for {current_year_display} will be deleted.\n" \
-                  f"This operation cannot be undone.\n"
+            prompt = (
+                f"All the forecast/actual/budget figures "
+                f"for {current_year_display} will be deleted.\n"
+                f"This operation cannot be undone.\n"
+            )
 
             self.stdout.write(self.style.WARNING(prompt))
             if get_no_answer():
