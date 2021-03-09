@@ -59,18 +59,14 @@ class Command(BaseCommand):
                 abort = get_no_answer()
             else:
                 abort = True
+                error_message = f"ABORT (--noinput) - forecast/actual/budget figures " \
+                                f"for {current_year_display} not deleted."
+
             if abort:
                 self.stdout.write(self.style.ERROR(error_message))
                 raise CommandError(error_message)
                 return
 
-            prompt = f"The figures for the financial year {current_year_display} " \
-                  f"are not archived.\n"
-            self.stdout.write(self.style.WARNING(prompt))
-            if get_no_answer():
-                self.stdout.write(self.style.ERROR(error_message))
-                raise CommandError(error_message)
-                return
 
         if self.interactive:
             prompt = f"All the forecast/actual/budget figures " \
