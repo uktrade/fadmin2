@@ -45,14 +45,14 @@ class Command(BaseCommand):
             return
 
 
-        # if not self.run_command("Archiving chart of account", "archive"):
-        #     return
-        # if not self.run_command("Archiving forecast/actual/budget", "archive_current_year"):
-        #     return
-        # if not self.run_command("Deleting forecast/actual/budget", "clear_forecast", "--noinput"):
-        #     return
-        # if not self.run_command(f"Setting current financial year to {new_financial_year_display}", "set_current_year"):
-        #     return
+        if not self.run_command("Archiving chart of account", "archive"):
+            return
+        if not self.run_command("Archiving forecast/actual/budget", "archive_current_year"):
+            return
+        if not self.run_command("Deleting forecast/actual/budget", "clear_forecast", "--noinput"):
+            return
+        if not self.run_command(f"Setting current financial year to {new_financial_year_display}", "set_current_year"):
+            return
         if not self.run_command("Clear actual flags", "set_actual_period", "--clear", 1):
             return
 
