@@ -12,10 +12,10 @@ from core.utils.generic_helpers import (
 class Command(BaseCommand):
     help = "Run all the operations required to prepare for the new financial year"
 
-    def run_command(self, command_name, message):
+    def run_command(self, message, command_name, *arg, **options):
         self.stdout.write(self.style.WARNING(f"{message}..."))
         try:
-            call_command(command_name)
+            call_command(command_name, *arg, **options)
         except CommandError:
             full_error_message = f"{message} failed. \n {self.error_message}"
             self.stdout.write(self.style.ERROR(full_error_message))
@@ -27,7 +27,7 @@ class Command(BaseCommand):
         current_financial_year = get_current_financial_year()
         current_financial_year_display = get_year_display(current_financial_year)
         new_financial_year = current_financial_year + 1
-        new_financial_year_display = get_year_display(new_financial_year)
+        new_financial_year_display = create_financial_year_display(new_financial_year)
         self.error_message = (
             f"Financial year {current_financial_year_display} not changed."
         )
@@ -45,28 +45,19 @@ class Command(BaseCommand):
             return
 
 
-        if not call_command("archive", "Archiving chart of account"):
+        # if not self.run_command("Archiving chart of account", "archive"):
+        #     return
+        # if not self.run_command("Archiving forecast/actual/budget", "archive_current_year"):
+        #     return
+        # if not self.run_command("Deleting forecast/actual/budget", "clear_forecast", "--noinput"):
+        #     return
+        # if not self.run_command(f"Setting current financial year to {new_financial_year_display}", "set_current_year"):
+        #     return
+        if not self.run_command("Clear actual flags", "set_actual_period", "--clear", 1):
             return
-        if not call_command("archive_current_year", "Archiving forecast/actual/budget"):
-            return
-        if not call_command("archive", "Archiving chart of account"):
-            return
-        if not call_command("archive", "Archiving chart of account"):
-            return
-        if not call_command("archive", "Archiving chart of account"):
-            return
-
-        self.stdout.write(self.style.WARNING("..."))
-        call_command("archive_current_year")
-        self.stdout.write(self.style.WARNING("Deleting forecast/actual/budget..."))
-        call_command("clear_forecast", "--noinput")
-        self.stdout.write(self.style.WARNING("Set the current financial year to ..."))
-        call_command("set_current_year")
-        call_command("set_actual_period", "--clear", 1)
 
         self.stdout.write(
                 self.style.SUCCESS(
-                    f"FFT ready for  {current_financial_year_display} "
-                    f"deleted."
+                    f"FFT ready for {current_financial_year_display} "
                 )
             )
