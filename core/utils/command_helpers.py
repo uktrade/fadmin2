@@ -61,4 +61,3 @@ def get_no_answer():
         else:
             answer = answer[0].lower()
     return answer != "y"
-

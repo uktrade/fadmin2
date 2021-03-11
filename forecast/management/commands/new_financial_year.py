@@ -44,20 +44,26 @@ class Command(BaseCommand):
             raise CommandError(self.error_message)
             return
 
-
         if not self.run_command("Archiving chart of account", "archive"):
             return
-        if not self.run_command("Archiving forecast/actual/budget", "archive_current_year"):
+        if not self.run_command(
+            "Archiving forecast/actual/budget", "archive_current_year"
+        ):
             return
-        if not self.run_command("Deleting forecast/actual/budget", "clear_forecast", "--noinput"):
+        if not self.run_command(
+            "Deleting forecast/actual/budget", "clear_forecast", "--noinput"
+        ):
             return
-        if not self.run_command(f"Setting current financial year to {new_financial_year_display}", "set_current_year"):
+        if not self.run_command(
+            f"Setting current financial year to {new_financial_year_display}",
+            "set_current_year",
+        ):
             return
-        if not self.run_command("Clear actual flags", "set_actual_period", "--clear", 1):
+        if not self.run_command(
+            "Clear actual flags", "set_actual_period", "--clear", 1
+        ):
             return
 
         self.stdout.write(
-                self.style.SUCCESS(
-                    f"FFT ready for {current_financial_year_display} "
-                )
-            )
+            self.style.SUCCESS(f"FFT ready for {current_financial_year_display} ")
+        )

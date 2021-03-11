@@ -9,9 +9,7 @@ from core.utils.generic_helpers import (
     get_year_display,
 )
 
-from end_of_month.models import (
-    EndOfMonthStatus,
-)
+from end_of_month.models import EndOfMonthStatus
 
 from previous_years.models import ArchivedFinancialCode
 
@@ -75,9 +73,7 @@ class Command(BaseCommand):
                 return
 
         EndOfMonthStatus.objects.all().update(
-            archived = False,
-            archived_by = None,
-            archived_date = None,
+            archived=False, archived_by=None, archived_date=None,
         )
 
         # Use sql to delete the figure for performance reason.
@@ -87,23 +83,33 @@ class Command(BaseCommand):
         # the deletion.
         with connection.cursor() as cursor:
             self.stdout.write(self.style.WARNING("Deleting budget figures...."))
-            sql_delete = f"DELETE FROM forecast_budgetmonthlyfigure " \
-                         f"WHERE financial_year_id = {current_year} OR financial_year_id IS NULL;"
+            sql_delete = (
+                f"DELETE FROM forecast_budgetmonthlyfigure "
+                f"WHERE financial_year_id = {current_year} "
+                f"OR financial_year_id IS NULL;"
+            )
             cursor.execute(sql_delete)
-            sql_delete = f"DELETE FROM end_of_month_monthlytotalbudget " \
-                         f"WHERE financial_year_id = {current_year} OR financial_year_id IS NULL;"
+            sql_delete = (
+                f"DELETE FROM end_of_month_monthlytotalbudget "
+                f"WHERE financial_year_id = {current_year} "
+                f"OR financial_year_id IS NULL;"
+            )
             cursor.execute(sql_delete)
             self.stdout.write(self.style.SUCCESS("Budget figures deleted."))
 
-            self.stdout.write(self.style.WARNING("Deleting forecast/actual figures...."))
-            sql_delete = f"DELETE FROM forecast_forecastmonthlyfigure " \
-                         f"WHERE financial_year_id = {current_year} OR financial_year_id IS NULL;"
-
+            self.stdout.write(
+                self.style.WARNING("Deleting forecast/actual figures....")
+            )
+            sql_delete = (
+                f"DELETE FROM forecast_forecastmonthlyfigure "
+                f"WHERE financial_year_id = {current_year} "
+                f"OR financial_year_id IS NULL;"
+            )
             cursor.execute(sql_delete)
 
-            sql_delete = f"DELETE FROM forecast_financialcode;"
+            sql_delete = "DELETE FROM forecast_financialcode;"
             cursor.execute(sql_delete)
- 
+
         self.stdout.write(
             self.style.SUCCESS(
                 f"forecast/actual/budget figures for for {current_year_display} "
