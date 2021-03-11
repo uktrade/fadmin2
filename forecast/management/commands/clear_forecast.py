@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 
+from django.db import connection
+
 from core.utils.command_helpers import get_no_answer
 from core.utils.generic_helpers import (
     get_current_financial_year,
@@ -9,13 +11,6 @@ from core.utils.generic_helpers import (
 
 from end_of_month.models import (
     EndOfMonthStatus,
-    MonthlyTotalBudget,
-)
-
-from forecast.models import (
-    BudgetMonthlyFigure,
-    FinancialCode,
-    ForecastMonthlyFigure,
 )
 
 from previous_years.models import ArchivedFinancialCode
@@ -79,22 +74,36 @@ class Command(BaseCommand):
                 raise CommandError(error_message)
                 return
 
-        self.stdout.write(self.style.WARNING("Deleting budget figures...."))
-        BudgetMonthlyFigure.objects.filter(financial_year=current_year).delete()
-        BudgetMonthlyFigure.objects.filter(financial_year__isnull=True).delete()
-        MonthlyTotalBudget.objects.all().delete()
-        self.stdout.write(self.style.SUCCESS("Budget figures deleted."))
-
-        self.stdout.write(self.style.WARNING("Deleting forecast/actual figures...."))
-        ForecastMonthlyFigure.objects.filter(financial_year=current_year).delete()
-        ForecastMonthlyFigure.objects.filter(financial_year__isnull=True).delete()
         EndOfMonthStatus.objects.all().update(
             archived = False,
             archived_by = None,
             archived_date = None,
         )
-        FinancialCode.objects.all().delete()
 
+        # Use sql to delete the figure for performance reason.
+        # The sql is 1000 times faster than queryset.delete()
+        # The displayed forecast is in a strange state during the deletion, so
+        # the performance is important. Otherwise we will need to switch FFT during
+        # the deletion.
+        with connection.cursor() as cursor:
+            self.stdout.write(self.style.WARNING("Deleting budget figures...."))
+            sql_delete = f"DELETE FROM forecast_budgetmonthlyfigure " \
+                         f"WHERE financial_year_id = {current_year} OR financial_year_id IS NULL;"
+            cursor.execute(sql_delete)
+            sql_delete = f"DELETE FROM end_of_month_monthlytotalbudget " \
+                         f"WHERE financial_year_id = {current_year} OR financial_year_id IS NULL;"
+            cursor.execute(sql_delete)
+            self.stdout.write(self.style.SUCCESS("Budget figures deleted."))
+
+            self.stdout.write(self.style.WARNING("Deleting forecast/actual figures...."))
+            sql_delete = f"DELETE FROM forecast_forecastmonthlyfigure " \
+                         f"WHERE financial_year_id = {current_year} OR financial_year_id IS NULL;"
+
+            cursor.execute(sql_delete)
+
+            sql_delete = f"DELETE FROM forecast_financialcode;"
+            cursor.execute(sql_delete)
+ 
         self.stdout.write(
             self.style.SUCCESS(
                 f"forecast/actual/budget figures for for {current_year_display} "
