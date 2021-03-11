@@ -7,7 +7,10 @@ from core.utils.generic_helpers import (
     get_year_display,
 )
 
-from end_of_month.models import MonthlyTotalBudget
+from end_of_month.models import (
+    EndOfMonthStatus,
+    MonthlyTotalBudget,
+)
 
 from forecast.models import (
     BudgetMonthlyFigure,
@@ -76,16 +79,20 @@ class Command(BaseCommand):
                 raise CommandError(error_message)
                 return
 
-        self.stdout.write(self.style.WARNING("Removing budget figures...."))
+        self.stdout.write(self.style.WARNING("Deleting budget figures...."))
         BudgetMonthlyFigure.objects.filter(financial_year=current_year).delete()
         BudgetMonthlyFigure.objects.filter(financial_year__isnull=True).delete()
         MonthlyTotalBudget.objects.all().delete()
-        self.stdout.write(self.style.SUCCESS("Budget figures removed."))
+        self.stdout.write(self.style.SUCCESS("Budget figures deleted."))
 
-        self.stdout.write(self.style.WARNING("Removing forecast/actual figures...."))
+        self.stdout.write(self.style.WARNING("Deleting forecast/actual figures...."))
         ForecastMonthlyFigure.objects.filter(financial_year=current_year).delete()
         ForecastMonthlyFigure.objects.filter(financial_year__isnull=True).delete()
-
+        EndOfMonthStatus.objects.all().update(
+            archived = False,
+            archived_by = None,
+            archived_date = None,
+        )
         FinancialCode.objects.all().delete()
 
         self.stdout.write(
