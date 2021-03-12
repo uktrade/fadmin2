@@ -124,12 +124,17 @@ class ForecastViewTableMixin(MultiTableMixin):
         if self._month_list is None:
             if self.year:
                 if self.year == get_current_financial_year() - 1:
+                    # We are displaying the last year before the current one.
+                    # It is possible that the actuals for march and the adjustments
+                    # have not been loaded yet, so get the list from
+                    # the FinancialPaeriod
                     self._month_list = (
-                        FinancialPeriod.financial_period_info.actual_month_previous_year_list()
+                        FinancialPeriod.financial_period_info.
+                            actual_month_previous_year_list()
                     )
-
                 else:
-                    # We are displaying historical data, so we need to include the Adj
+                    # We are displaying historical data, so we need to include the Adj,
+                    # and everything is actuals
                     self._month_list = (
                         FinancialPeriod.financial_period_info.month_adj_display_list()
                     )

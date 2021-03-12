@@ -1,8 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.db.models import F
 
-from end_of_month.utils import InvalidPeriodError
-
 from forecast.models import FinancialPeriod
 
 
