@@ -47,11 +47,11 @@ class Command(BaseCommand):
         if not self.run_command("Archiving chart of account", "archive"):
             return
         if not self.run_command(
-            "Archiving forecast/actual/budget", "archive_current_year"
+            "Archiving current financial year", "archive_current_year"
         ):
             return
         if not self.run_command(
-            "Deleting forecast/actual/budget", "clear_forecast", "--noinput"
+            "Deleting current year figures", "clear_forecast", "--noinput"
         ):
             return
         if not self.run_command(

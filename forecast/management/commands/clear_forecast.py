@@ -82,7 +82,6 @@ class Command(BaseCommand):
         # the performance is important. Otherwise we will need to switch FFT during
         # the deletion.
         with connection.cursor() as cursor:
-            self.stdout.write(self.style.WARNING("Deleting budget figures...."))
             sql_delete = (
                 f"DELETE FROM forecast_budgetmonthlyfigure "
                 f"WHERE financial_year_id = {current_year} "
@@ -95,11 +94,7 @@ class Command(BaseCommand):
                 f"OR financial_year_id IS NULL;"
             )
             cursor.execute(sql_delete)
-            self.stdout.write(self.style.SUCCESS("Budget figures deleted."))
 
-            self.stdout.write(
-                self.style.WARNING("Deleting forecast/actual figures....")
-            )
             sql_delete = (
                 f"DELETE FROM forecast_forecastmonthlyfigure "
                 f"WHERE financial_year_id = {current_year} "
