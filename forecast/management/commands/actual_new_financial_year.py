@@ -1,17 +1,9 @@
 from django.core.management.base import BaseCommand
+from django.db.models import F
 
 from end_of_month.utils import InvalidPeriodError
 
-
-from forecast.models import (
-    MAX_PERIOD_CODE,
-    FinancialPeriod,
-)
-
-
-def validate_period_code(period_code):
-    if period_code > MAX_PERIOD_CODE or period_code < 1:
-        raise InvalidPeriodError()
+from forecast.models import FinancialPeriod
 
 
 class Command(BaseCommand):
@@ -19,15 +11,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-
-            
-                FinancialPeriod.objects.filter(
-                    financial_period_code__gte=period_code
-                ).update(actual_loaded=False)
-                FinancialPeriod.objects.filter(
-                    financial_period_code__lt=period_code
-                ).update(actual_loaded=True)
-                msg = f"Actual flag cleared up to {month_name}"
-             self.stdout.write(self.style.SUCCESS(msg))
+            FinancialPeriod.objects.all().update(
+                actual_loaded_previous_year=F("actual_loaded")
+            )
+            FinancialPeriod.financial_period_info.reset_actuals()
+            self.stdout.write(self.style.SUCCESS("Actual flag cleared."))
         except Exception as ex:
             self.stdout.write(self.style.ERROR(f"An error occured: {ex}"))

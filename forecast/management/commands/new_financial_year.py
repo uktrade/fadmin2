@@ -60,7 +60,7 @@ class Command(BaseCommand):
         ):
             return
         if not self.run_command(
-            "Clear actual flags", "set_actual_period", "--clear", 1
+            "Clear actual flags", "actual_new_financial_period"
         ):
             return
 

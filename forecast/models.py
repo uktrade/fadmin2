@@ -187,8 +187,21 @@ class FinancialPeriodManager(models.Manager):
         )
         return m["financial_period_code__max"] or 0
 
+    def actual_month_previous_year(self):
+        # use the Max to protect us from the situation of
+        # non contiguous actual month.
+        m = (
+            self.get_queryset()
+            .filter(actual_loaded_previous_year=True)
+            .aggregate(Max("financial_period_code"))
+        )
+        return m["financial_period_code__max"] or 0
+
     def actual_month_list(self):
         return self.month_sublist(self.actual_month())
+
+    def actual_month_previous_year_list(self):
+        return self.month_sublist(self.actual_month_previous_year())
 
     def periods(self):
         return (
