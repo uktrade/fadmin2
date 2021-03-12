@@ -132,6 +132,7 @@ class ForecastViewTableMixin(MultiTableMixin):
                         FinancialPeriod.financial_period_info.
                             actual_month_previous_year_list()
                     )
+                    print(f"{self._month_list}")
                 else:
                     # We are displaying historical data, so we need to include the Adj,
                     # and everything is actuals
