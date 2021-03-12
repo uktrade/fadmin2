@@ -232,6 +232,7 @@ class FinancialPeriod(BaseModel):
     # the "actuals" are manually uploaded, so it is not
     # guaranteed on which date they are uploaded
     actual_loaded = models.BooleanField(default=False)
+    actual_loaded_previous_year = models.BooleanField(default=False)
     display_figure = models.BooleanField(default=True)
 
     objects = models.Manager()  # The default manager.
