@@ -107,7 +107,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"forecast/actual/budget figures for for {current_year_display} "
+                f"forecast/actual/budget figures for {current_year_display} "
                 f"deleted."
             )
         )
