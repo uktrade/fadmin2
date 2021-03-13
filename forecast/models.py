@@ -201,7 +201,9 @@ class FinancialPeriodManager(models.Manager):
         return self.month_sublist(self.actual_month())
 
     def actual_month_previous_year_list(self):
-        return self.month_sublist(self.actual_month_previous_year())
+        # use period_display_all_list because ADJ periods must be included
+        # in previous year displays
+        return self.period_display_all_list()[: self.actual_month_previous_year()]
 
     def periods(self):
         return (
