@@ -158,3 +158,7 @@ test_*.txt
 
 # Webpack config
 front_end/config/*
+
+# NPM
+front_end/.eslintcache
+
