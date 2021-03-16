@@ -61,3 +61,32 @@ def get_no_answer():
         else:
             answer = answer[0].lower()
     return answer != "y"
+
+
+class CheckUserCommand(BaseCommand):
+    command_name  = __name__
+
+    def create_parser(self, prog_name, subcommand, **kwargs):
+        parser = super().create_parser( prog_name, subcommand, **kwargs)
+        parser.add_argument(
+            '--username',
+            type=str,
+            help='Username',
+        )
+        return parser
+
+
+    def handle_user(self):
+        pass
+
+
+    def handle(self, *args, **options):
+        username = options["username"]
+        if username:
+            print(f"Username is {username}")
+        else:
+            print(f"no username supplied by {self.command_name}")
+        return self.handle_user(*args, **options)
+
+    def validate_user_email(self, user_email):
+        print(f"__name__ = {self.command_name}")
