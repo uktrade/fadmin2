@@ -17,6 +17,7 @@ class CommandLog(BaseModel):
     executed_at = models.DateTimeField(auto_now_add=True)
     executed_by = models.CharField(max_length=500)
     comment = models.CharField(max_length=500, blank=True, null=True)
+
     def __str__(self):
         return str(self.command_name)
 

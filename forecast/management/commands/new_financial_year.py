@@ -14,14 +14,14 @@ from core.utils.generic_helpers import (
 
 class Command(CheckUserCommand):
     help = "Run all the operations required to prepare for the new financial year"
-    command_name  = __name__
+    command_name = __name__
 
     def run_command(self, message, command_name, *arg, **options):
         self.stdout.write(self.style.WARNING(f"{message}..."))
         try:
             call_command(command_name, *arg, **options)
         except CommandError as ex:
-            full_error_message = f"{message} failed. \n {self.error_message}"
+            full_error_message = f"{message} failed. {ex}\n {self.error_message}"
             self.stdout.write(self.style.ERROR(full_error_message))
             raise CommandError(full_error_message)
             return False
@@ -63,9 +63,7 @@ class Command(CheckUserCommand):
             "set_current_year",
         ):
             return
-        if not self.run_command(
-            "Clear actual flags", "actual_new_financial_year"
-        ):
+        if not self.run_command("Clear actual flags", "actual_new_financial_year"):
             return
 
         self.stdout.write(

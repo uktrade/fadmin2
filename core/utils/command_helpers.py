@@ -6,11 +6,15 @@ import botocore
 
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
+
 from django.core.management.base import (
     BaseCommand,
     CommandError,
 )
 
+
+from core.models import CommandLog
 
 
 session = boto3.Session(
@@ -18,7 +22,7 @@ session = boto3.Session(
     aws_secret_access_key=settings.TEMP_FILE_AWS_SECRET_ACCESS_KEY,
 )
 
-s3 = session.resource('s3')
+s3 = session.resource("s3")
 
 
 class CommandUpload(BaseCommand):
@@ -29,25 +33,23 @@ class CommandUpload(BaseCommand):
 
             try:
                 s3.Bucket(settings.TEMP_FILE_AWS_STORAGE_BUCKET_NAME).download_file(
-                    path,
-                    file_name,
+                    path, file_name,
                 )
             except botocore.exceptions.ClientError as e:
-                if e.response['Error']['Code'] == "404":
+                if e.response["Error"]["Code"] == "404":
                     raise CommandError("The object does not exist.")
                 else:
                     raise
 
             self.stdout.write(
-                self.style.SUCCESS(f"Downloaded file {path} from S3, "
-                                   f"starting processing.")
+                self.style.SUCCESS(
+                    f"Downloaded file {path} from S3, " f"starting processing."
+                )
             )
         else:
             file_name = path
             self.upload_s3 = False
-            self.stdout.write(
-                self.style.SUCCESS(f"Using local file {path}.")
-            )
+            self.stdout.write(self.style.SUCCESS(f"Using local file {path}."))
 
         return file_name
 
@@ -64,39 +66,31 @@ def get_no_answer():
     return answer != "y"
 
 
-
-from django.contrib.auth import get_user_model
-
-from core.models import CommandLog
-
-
-
 class CheckUserCommand(BaseCommand):
     """
     Process the user email. If the user has admin right, log the action and continue,
     otherwise exit.
     """
-    command_name  = __name__
+
+    command_name = __name__
     user_validated = False
 
     def create_parser(self, prog_name, subcommand, **kwargs):
-        parser = super().create_parser( prog_name, subcommand, **kwargs)
+        parser = super().create_parser(prog_name, subcommand, **kwargs)
         parser.add_argument(
-            '--useremail',
-            type=str,
-            help='Email for validation',
+            "--useremail", type=str, help="Email for validation",
         )
         return parser
-
 
     def handle_validated_user(self):
         """
         The actual logic of the command. Subclasses must implement
         this method.
         """
-        raise NotImplementedError('subclasses of CheckUserCommand must provide '
-                                  'a handle_validated_user() method')
-
+        raise NotImplementedError(
+            "subclasses of CheckUserCommand must provide "
+            "a handle_validated_user() method"
+        )
 
     def handle(self, *args, **options):
         UserModel = get_user_model()
@@ -114,7 +108,7 @@ class CheckUserCommand(BaseCommand):
             CommandLog.objects.create(
                 command_name=self.command_name,
                 executed_by=user_email,
-                comment=f"FAILURE: User {user_email} does not exist."
+                comment=f"FAILURE: User {user_email} does not exist.",
             )
             raise CommandError(error_message)
 
@@ -122,25 +116,22 @@ class CheckUserCommand(BaseCommand):
             CommandLog.objects.create(
                 command_name=self.command_name,
                 executed_by=user_email,
-                comment=f"FAILURE: User {user_email} is not superuser."
+                comment=f"FAILURE: User {user_email} is not superuser.",
             )
             raise CommandError(error_message)
 
         try:
             self.handle_user(*args, **options)
             CommandLog.objects.create(
-                command_name = self.command_name,
-                executed_by = user_email,
-                comment = "Completed successfully."
+                command_name=self.command_name,
+                executed_by=user_email,
+                comment="Completed successfully.",
             )
 
         except CommandError as ex:
             CommandLog.objects.create(
-                command_name = self.command_name,
-                executed_by = user_email,
-                comment = f"FAILURE. Error = {ex}"
+                command_name=self.command_name,
+                executed_by=user_email,
+                comment=f"FAILURE. Error = {ex}",
             )
             raise CommandError(ex)
-
-
-

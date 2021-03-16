@@ -364,7 +364,6 @@ class CustomLogModelAdmin(AdminReadOnly, AdminExport):
         return False
 
 
-
 admin.site.register(LogEntry, LogEntryAdmin)
 admin.site.register(FinancialYear, FinancialYearAdmin)
 admin.site.register(CommandLog, CustomLogModelAdmin)
