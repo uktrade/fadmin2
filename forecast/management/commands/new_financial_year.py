@@ -16,7 +16,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.WARNING(f"{message}..."))
         try:
             call_command(command_name, *arg, **options)
-        except CommandError:
+        except CommandError as ex:
             full_error_message = f"{message} failed. \n {self.error_message}"
             self.stdout.write(self.style.ERROR(full_error_message))
             raise CommandError(full_error_message)

@@ -12,6 +12,7 @@ from django.core.management.base import (
 )
 
 
+
 session = boto3.Session(
     aws_access_key_id=settings.TEMP_FILE_AWS_ACCESS_KEY_ID,
     aws_secret_access_key=settings.TEMP_FILE_AWS_SECRET_ACCESS_KEY,
@@ -63,30 +64,69 @@ def get_no_answer():
     return answer != "y"
 
 
+
+from django.contrib.auth import get_user_model
+
+from core.models import CommandLog
+
+
+
 class CheckUserCommand(BaseCommand):
+    """
+    Process the user email. If the user has admin right, log the action and continue,
+    otherwise exit.
+    """
     command_name  = __name__
+    user_validated = False
 
     def create_parser(self, prog_name, subcommand, **kwargs):
         parser = super().create_parser( prog_name, subcommand, **kwargs)
         parser.add_argument(
-            '--username',
+            '--useremail',
             type=str,
-            help='Username',
+            help='Email for validation',
         )
         return parser
 
 
-    def handle_user(self):
-        pass
+    def handle_validated_user(self):
+        """
+        The actual logic of the command. Subclasses must implement
+        this method.
+        """
+        raise NotImplementedError('subclasses of CheckUserCommand must provide '
+                                  'a handle_validated_user() method')
 
 
     def handle(self, *args, **options):
-        username = options["username"]
-        if username:
-            print(f"Username is {username}")
+        UserModel = get_user_model()
+        user_email = options["useremail"]
+        if user_email:
+            print(f"Username is {user_email}")
         else:
-            print(f"no username supplied by {self.command_name}")
-        return self.handle_user(*args, **options)
+            while not user_email:
+                user_email = input("Please enter your email: (exit to stop) ")
 
-    def validate_user_email(self, user_email):
-        print(f"__name__ = {self.command_name}")
+        user_obj = UserModel.objects.get(email=user_email)
+        if user_obj and user_obj.is_superuser:
+            try:
+                self.handle_user(*args, **options)
+                CommandLog.objects.create(
+                    command_name = self.command_name,
+                    executed_by = user_email,
+                    comment = "Completed successfully."
+                )
+
+            except CommandError as ex:
+                CommandLog.objects.create(
+                    command_name = self.command_name,
+                    executed_by = user_email,
+                    comment = f"FAILURE. Error = {ex}"
+                )
+                raise CommandError
+        else:
+            self.stdout.write(
+                self.style.ERROR(f"User {user_email} does not exist or not authorised.")
+            )
+
+
