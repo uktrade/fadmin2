@@ -14,6 +14,7 @@ from core.utils.generic_helpers import (
 
 class Command(CheckUserCommand):
     help = "Run all the operations required to prepare for the new financial year"
+    command_name  = __name__
 
     def run_command(self, message, command_name, *arg, **options):
         self.stdout.write(self.style.WARNING(f"{message}..."))
