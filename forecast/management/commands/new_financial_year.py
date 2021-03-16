@@ -1,7 +1,10 @@
 from django.core.management import call_command
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import CommandError
 
-from core.utils.command_helpers import get_no_answer
+from core.utils.command_helpers import (
+    CheckUserCommand,
+    get_no_answer,
+)
 from core.utils.generic_helpers import (
     create_financial_year_display,
     get_current_financial_year,
@@ -9,7 +12,7 @@ from core.utils.generic_helpers import (
 )
 
 
-class Command(BaseCommand):
+class Command(CheckUserCommand):
     help = "Run all the operations required to prepare for the new financial year"
 
     def run_command(self, message, command_name, *arg, **options):
@@ -23,7 +26,7 @@ class Command(BaseCommand):
             return False
         return True
 
-    def handle(self, *args, **options):
+    def handle_user(self, *args, **options):
         current_financial_year = get_current_financial_year()
         current_financial_year_display = get_year_display(current_financial_year)
         new_financial_year = current_financial_year + 1

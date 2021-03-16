@@ -101,32 +101,46 @@ class CheckUserCommand(BaseCommand):
     def handle(self, *args, **options):
         UserModel = get_user_model()
         user_email = options["useremail"]
+        error_message = f"User '{user_email}' does not exist or not authorised."
         if user_email:
             print(f"Username is {user_email}")
         else:
             while not user_email:
                 user_email = input("Please enter your email: (exit to stop) ")
 
-        user_obj = UserModel.objects.get(email=user_email)
-        if user_obj and user_obj.is_superuser:
-            try:
-                self.handle_user(*args, **options)
-                CommandLog.objects.create(
-                    command_name = self.command_name,
-                    executed_by = user_email,
-                    comment = "Completed successfully."
-                )
-
-            except CommandError as ex:
-                CommandLog.objects.create(
-                    command_name = self.command_name,
-                    executed_by = user_email,
-                    comment = f"FAILURE. Error = {ex}"
-                )
-                raise CommandError
-        else:
-            self.stdout.write(
-                self.style.ERROR(f"User {user_email} does not exist or not authorised.")
+        try:
+            user_obj = UserModel.objects.get(email=user_email)
+        except UserModel.DoesNotExist:
+            CommandLog.objects.create(
+                command_name=self.command_name,
+                executed_by=user_email,
+                comment=f"FAILURE: User {user_email} does not exist."
             )
+            raise CommandError(error_message)
+
+        if not user_obj.is_superuser:
+            CommandLog.objects.create(
+                command_name=self.command_name,
+                executed_by=user_email,
+                comment=f"FAILURE: User {user_email} is not superuser."
+            )
+            raise CommandError(error_message)
+
+        try:
+            self.handle_user(*args, **options)
+            CommandLog.objects.create(
+                command_name = self.command_name,
+                executed_by = user_email,
+                comment = "Completed successfully."
+            )
+
+        except CommandError as ex:
+            CommandLog.objects.create(
+                command_name = self.command_name,
+                executed_by = user_email,
+                comment = f"FAILURE. Error = {ex}"
+            )
+            raise CommandError(ex)
+
 
 
