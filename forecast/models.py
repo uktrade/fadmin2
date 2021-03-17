@@ -180,12 +180,12 @@ class FinancialPeriodManager(models.Manager):
     def actual_month(self):
         # use the Max to protect us from the situation of
         # non contiguous actual month.
-        m = (
+        aggregate_queryset = (
             self.get_queryset()
             .filter(actual_loaded=True)
             .aggregate(Max("financial_period_code"))
         )
-        return m["financial_period_code__max"] or 0
+        return aggregate_queryset["financial_period_code__max"] or 0
 
     def actual_month_previous_year(self):
         # use the Max to protect us from the situation of
@@ -201,8 +201,8 @@ class FinancialPeriodManager(models.Manager):
         return self.month_sublist(self.actual_month())
 
     def actual_month_previous_year_list(self):
-        # use period_display_all_list because ADJ periods must be included
-        # in previous year displays
+        # use period_display_all_list because adjustement (ADJxx) periods
+        # must be included when showing  previous year data
         return self.period_display_all_list()[: self.actual_month_previous_year()]
 
     def periods(self):

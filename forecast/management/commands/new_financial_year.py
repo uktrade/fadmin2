@@ -2,7 +2,7 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 
 from core.utils.command_helpers import (
-    CheckUserCommand,
+    CommandWithUserCheck,
     get_no_answer,
 )
 from core.utils.generic_helpers import (
@@ -12,7 +12,7 @@ from core.utils.generic_helpers import (
 )
 
 
-class Command(CheckUserCommand):
+class Command(CommandWithUserCheck):
     help = "Run all the operations required to prepare for the new financial year"
     command_name = __name__
 
@@ -21,7 +21,8 @@ class Command(CheckUserCommand):
         try:
             call_command(command_name, *arg, **options)
         except CommandError as ex:
-            full_error_message = f"{message} failed. {ex}\n {self.error_message}"
+            full_error_message = f"{message} failed. " \
+                                 f"Ex '{ex}'\nMessage: '{self.error_message}'"
             self.stdout.write(self.style.ERROR(full_error_message))
             raise CommandError(full_error_message)
             return False

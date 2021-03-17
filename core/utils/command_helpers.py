@@ -16,6 +16,8 @@ from django.core.management.base import (
 
 from core.models import CommandLog
 
+UserModel = get_user_model()
+
 
 session = boto3.Session(
     aws_access_key_id=settings.TEMP_FILE_AWS_ACCESS_KEY_ID,
@@ -66,12 +68,13 @@ def get_no_answer():
     return answer != "y"
 
 
-class CheckUserCommand(BaseCommand):
+class CommandWithUserCheck(BaseCommand):
     """
-    Process the user email. If the user has admin right, log the action and continue,
-    otherwise exit.
+    Augments management command logic to record the user who executed the function.
+    If a user will not be provide an email to the command to use in identification,
+    the command will exit.
+    When using this class, implement handle_validated_user() instead of handle().
     """
-
     command_name = __name__
     user_validated = False
 
@@ -85,22 +88,19 @@ class CheckUserCommand(BaseCommand):
     def handle_validated_user(self):
         """
         The actual logic of the command. Subclasses must implement
-        this method.
+        this method instead of handle()
         """
         raise NotImplementedError(
-            "subclasses of CheckUserCommand must provide "
+            "subclasses of CommandWithUserCheck must provide "
             "a handle_validated_user() method"
         )
 
     def handle(self, *args, **options):
-        UserModel = get_user_model()
         user_email = options["useremail"]
-        error_message = f"User '{user_email}' does not exist or not authorised."
-        if user_email:
-            print(f"Username is {user_email}")
-        else:
-            while not user_email:
-                user_email = input("Please enter your email: (exit to stop) ")
+        error_message = f"User with email '{user_email}' " \
+                        f"does not exist or not authorised."
+        while not user_email:
+            user_email = input("Please enter your email: (exit to stop) ")
 
         try:
             user_obj = UserModel.objects.get(email=user_email)
@@ -108,7 +108,7 @@ class CheckUserCommand(BaseCommand):
             CommandLog.objects.create(
                 command_name=self.command_name,
                 executed_by=user_email,
-                comment=f"FAILURE: User {user_email} does not exist.",
+                comment=f"FAILURE: User with email '{user_email}' does not exist.",
             )
             raise CommandError(error_message)
 
