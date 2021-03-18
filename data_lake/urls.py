@@ -10,8 +10,14 @@ from data_lake.views.project_code import ProjectCodeViewSet
 from data_lake.views.analysis1_code import Analysis1CodeViewSet
 from data_lake.views.analysis2_code import Analysis2CodeViewSet
 from data_lake.views.expenditure_category import ExpenditureCategoryViewSet
+from data_lake.views.fco_mapping import FCOMappingViewSet
 
 urlpatterns = [
+    path(
+        "fcomapping/",
+        FCOMappingViewSet.as_view({"get": "list"}),
+        name="fco_mapping",
+    ),
     path(
         "commercialcategory/",
         CommercialCategoryViewSet.as_view({"get": "list"}),

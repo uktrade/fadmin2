@@ -103,12 +103,14 @@ class CommercialCategoryFactory(factory.DjangoModelFactory):
     Define CommercialCategory Factory
     """
     active = True
+
     class Meta:
         model = CommercialCategory
 
 
 class HistoricalCommercialCategoryFactory(factory.DjangoModelFactory):
     active = True
+
     class Meta:
         model = ArchivedCommercialCategory
 
@@ -180,12 +182,15 @@ class InterEntityFactory(factory.DjangoModelFactory):
     """
     Define InterEntity Factory
     """
+    active = True
 
     class Meta:
         model = InterEntity
 
 
 class HistoricalInterEntityFactory(factory.DjangoModelFactory):
+    active = True
+
     class Meta:
         model = ArchivedInterEntity
 
@@ -220,6 +225,7 @@ class FCOMappingFactory(factory.DjangoModelFactory):
     """
     Define FCOMapping Factory
     """
+    active = True
 
     class Meta:
         model = FCOMapping
@@ -229,5 +235,7 @@ class HistoricalFCOMappingFactory(factory.DjangoModelFactory):
     """
     Define ArchivedFCOMapping Factory
     """
+    active = True
+
     class Meta:
         model = ArchivedFCOMapping
