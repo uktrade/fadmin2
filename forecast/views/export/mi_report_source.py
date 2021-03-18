@@ -40,8 +40,6 @@ def export_mi_previous_year_report(request):
     return mi_report_source
 
 
-
-
 @user_passes_test(can_download_mi_reports, login_url='index')
 def export_mi_budget_report(request):
     file_download = FileDownload(

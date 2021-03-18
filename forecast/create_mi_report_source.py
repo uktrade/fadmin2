@@ -7,13 +7,10 @@ from core.utils.generic_helpers import (
 
 from forecast.models import (
     BudgetMonthlyFigure,
-    ForecastingDataView,
 )
 from forecast.utils.query_fields import (
     ForecastQueryFields,
 )
-
-from previous_years.models import ArchivedForecastData
 
 
 def get_obj_value(obj, name):

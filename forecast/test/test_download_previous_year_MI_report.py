@@ -72,5 +72,3 @@ class DownloadPreviousYearMIReportTest(PastYearForecastSetup):
         assert ws["U2"].value == self.outturn["adj02"]
         assert ws["V1"].value == "ADJ03"
         assert ws["V2"].value == self.outturn["adj03"]
-
-
