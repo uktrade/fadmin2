@@ -16,7 +16,7 @@ urlpatterns = [
     path(
         "fcomapping/",
         FCOMappingViewSet.as_view({"get": "list"}),
-        name="fco_mapping",
+        name="data_lake_fco_mapping",
     ),
     path(
         "commercialcategory/",

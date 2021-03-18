@@ -13,7 +13,7 @@ class FCOMappingFactoryTests(DataLakeTesting):
             financial_year_id=2019
         ).fco_code
 
-        self.url_name = "data_lake_expenditure_category"
+        self.url_name = "data_lake_fco_mapping"
         self.row_lenght = 7
-        self.code_position = 6
+        self.code_position = 3
         self.check_data()
