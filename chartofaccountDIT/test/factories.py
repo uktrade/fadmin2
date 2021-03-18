@@ -102,12 +102,13 @@ class CommercialCategoryFactory(factory.DjangoModelFactory):
     """
     Define CommercialCategory Factory
     """
-
+    active = True
     class Meta:
         model = CommercialCategory
 
 
 class HistoricalCommercialCategoryFactory(factory.DjangoModelFactory):
+    active = True
     class Meta:
         model = ArchivedCommercialCategory
 
