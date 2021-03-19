@@ -119,6 +119,7 @@ class NaturalCodeFactory(factory.DjangoModelFactory):
     """
     Define NaturalCode Factory
     """
+    expenditure_category = factory.SubFactory(ExpenditureCategoryFactory)
 
     class Meta:
         model = NaturalCode

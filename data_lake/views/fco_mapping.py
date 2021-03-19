@@ -23,19 +23,26 @@ class FCOMappingViewSet(DataLakeViewSet,):
 
     def write_data(self, writer):
         current_year = get_current_financial_year()
-        current_queryset = FCOMapping.objects.all().order_by(
-            "account_L6_code_fk.economic_budget_code",
-            "account_L6_code_fk.expenditure_category.NAC_category.NAC_category_description",  # noqa",
-            "account_L6_code_fk.natural_account_code_description",
+        current_queryset = (FCOMapping.objects.all()
+            .select_related(
+            "account_L6_code_fk",
+            "account_L6_code_fk__expenditure_category",
+            "account_L6_code_fk__expenditure_category__NAC_category",
+        )
+            .order_by(
+            "account_L6_code_fk__economic_budget_code",
+            "account_L6_code_fk__expenditure_category__NAC_category__NAC_category_description",  # noqa",
+            "account_L6_code_fk__natural_account_code_description",
             "fco_code",
+            )
         )
         historical_queryset = (
             ArchivedFCOMapping.objects.all()
             .select_related("financial_year")
             .order_by(
-                "account_L6_code_fk.economic_budget_code",
-                "account_L6_code_fk.expenditure_category.NAC_category.NAC_category_description",  # noqa",
-                "account_L6_code_fk.natural_account_code_description",
+                "economic_budget_code",
+                "nac_category_description",
+                "account_L6_description",
                 "fco_code",
             )
         )
@@ -55,7 +62,7 @@ class FCOMappingViewSet(DataLakeViewSet,):
         for obj in historical_queryset:
             row = [
                 obj.economic_budget_code,
-                obj.NAC_category_description,
+                obj.nac_category_description,
                 obj.budget_description,
                 obj.account_L6_code,
                 obj.account_L6_description,
