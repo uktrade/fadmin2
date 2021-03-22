@@ -15,5 +15,5 @@ class FCOMappingTests(DataLakeTesting):
 
         self.url_name = "data_lake_fco_mapping"
         self.row_lenght = 8
-        self.code_position = 4
+        self.code_position = 5
         self.check_data()

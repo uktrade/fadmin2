@@ -33,6 +33,8 @@ class DataLakeTesting(TestCase):
         content = response.content.decode("utf-8")
         data = csv.reader(io.StringIO(content))
         rows = list(data)
+        print(rows)
+        print(f"self.current_code = {self.current_code}")
         assert len(rows[0]) == self.row_lenght
         current_row = rows[1]
         archive_row = rows[2]
