@@ -11,8 +11,15 @@ from data_lake.views.analysis1_code import Analysis1CodeViewSet
 from data_lake.views.analysis2_code import Analysis2CodeViewSet
 from data_lake.views.expenditure_category import ExpenditureCategoryViewSet
 from data_lake.views.fco_mapping import FCOMappingViewSet
+from data_lake.views.inter_entity import InterEntityViewSet
+
 
 urlpatterns = [
+    path(
+        "interentity/",
+        InterEntityViewSet.as_view({"get": "list"}),
+        name="data_lake_inter_entity",
+    ),
     path(
         "fcomapping/",
         FCOMappingViewSet.as_view({"get": "list"}),
