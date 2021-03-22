@@ -6,7 +6,7 @@ from chartofaccountDIT.test.factories import (
 )
 
 
-class FCOMappingFactoryTests(DataLakeTesting):
+class InterEntityTests(DataLakeTesting):
     def test_data_returned_in_response(self):
         self.current_code = InterEntityFactory.create().l2_value
         self.archived_code = HistoricalInterEntityFactory.create(
@@ -15,5 +15,5 @@ class FCOMappingFactoryTests(DataLakeTesting):
 
         self.url_name = "data_lake_inter_entity"
         self.row_lenght = 6
-        self.code_position = 5
+        self.code_position = 3
         self.check_data()

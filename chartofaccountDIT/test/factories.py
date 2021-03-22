@@ -184,6 +184,7 @@ class InterEntityFactory(factory.DjangoModelFactory):
     Define InterEntity Factory
     """
     active = True
+    l1_value = factory.SubFactory(InterEntityL1Factory)
 
     class Meta:
         model = InterEntity
