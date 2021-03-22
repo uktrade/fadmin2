@@ -228,6 +228,7 @@ class FCOMappingFactory(factory.DjangoModelFactory):
     fco_code = 123456
     active = True
     account_L6_code_fk = factory.SubFactory(NaturalCodeFactory)
+
     class Meta:
         model = FCOMapping
 

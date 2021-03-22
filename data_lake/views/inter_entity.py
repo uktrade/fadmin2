@@ -21,23 +21,15 @@ class InterEntityViewSet(DataLakeViewSet,):
 
     def write_data(self, writer):
         current_year = get_current_financial_year()
-        current_queryset = (InterEntity.objects.filter(active=True)
+        current_queryset = (
+            InterEntity.objects.filter(active=True)
             .select_related("l1_value")
-            .order_by(
-            "l1_value__l1_value",
-            "l1_value__l1_description",
-            "l2_value"
-        )
+            .order_by("l1_value__l1_value", "l1_value__l1_description", "l2_value")
         )
         historical_queryset = (
             ArchivedInterEntity.objects.filter(active=True)
             .select_related("financial_year")
-            .order_by(
-                "-financial_year",
-                "l1_value",
-                "l1_description",
-                "l2_value",
-            )
+            .order_by("-financial_year", "l1_value", "l1_description", "l2_value",)
         )
         for obj in current_queryset:
             row = [

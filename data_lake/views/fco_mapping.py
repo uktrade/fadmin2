@@ -23,17 +23,18 @@ class FCOMappingViewSet(DataLakeViewSet,):
 
     def write_data(self, writer):
         current_year = get_current_financial_year()
-        current_queryset = (FCOMapping.objects.all()
+        current_queryset = (
+            FCOMapping.objects.all()
             .select_related(
-            "account_L6_code_fk",
-            "account_L6_code_fk__expenditure_category",
-            "account_L6_code_fk__expenditure_category__NAC_category",
-        )
+                "account_L6_code_fk",
+                "account_L6_code_fk__expenditure_category",
+                "account_L6_code_fk__expenditure_category__NAC_category",
+            )
             .order_by(
-            "account_L6_code_fk__economic_budget_code",
-            "account_L6_code_fk__expenditure_category__NAC_category__NAC_category_description",  # noqa",
-            "account_L6_code_fk__natural_account_code_description",
-            "fco_code",
+                "account_L6_code_fk__economic_budget_code",
+                "account_L6_code_fk__expenditure_category__NAC_category__NAC_category_description",  # noqa",
+                "account_L6_code_fk__natural_account_code_description",
+                "fco_code",
             )
         )
         historical_queryset = (
