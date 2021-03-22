@@ -47,10 +47,21 @@ class FCOMappingViewSet(DataLakeViewSet,):
             )
         )
         for obj in current_queryset:
+            if obj.account_L6_code_fk.expenditure_category:
+                expenditure_category_value = (
+                    obj.expenditure_category.grouping_description
+                )
+                NAC_category_value = (
+                    obj.expenditure_category.NAC_category.NAC_category_description
+                )
+            else:
+                expenditure_category_value = None
+                NAC_category_value = None
+
             row = [
                 obj.account_L6_code_fk.economic_budget_code,
-                obj.account_L6_code_fk.expenditure_category.NAC_category.NAC_category_description,  # noqa
-                obj.account_L6_code_fk.expenditure_category.grouping_description,
+                NAC_category_value,
+                expenditure_category_value,
                 obj.account_L6_code_fk.natural_account_code,
                 obj.account_L6_code_fk.natural_account_code_description,
                 obj.fco_code,

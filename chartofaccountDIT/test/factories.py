@@ -119,8 +119,6 @@ class NaturalCodeFactory(factory.DjangoModelFactory):
     """
     Define NaturalCode Factory
     """
-    expenditure_category = factory.SubFactory(ExpenditureCategoryFactory)
-
     class Meta:
         model = NaturalCode
         django_get_or_create = ('natural_account_code',)
