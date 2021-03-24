@@ -8,7 +8,7 @@ from chartofaccountDIT.models import (
 from data_lake.views.data_lake_view import DataLakeViewSet
 
 
-class CommercialCategoryViewSet(DataLakeViewSet,):
+class CommercialCategoryViewSet(DataLakeViewSet):
     filename = "commercial_category"
     title_list = [
         "Commercial Category",

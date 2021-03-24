@@ -8,7 +8,7 @@ from chartofaccountDIT.models import (
 from data_lake.views.data_lake_view import DataLakeViewSet
 
 
-class FCOMappingViewSet(DataLakeViewSet,):
+class FCOMappingViewSet(DataLakeViewSet):
     filename = "fco_mapping"
     title_list = [
         "Expenditure Type",
