@@ -62,3 +62,7 @@ class PreviousYearProjectSplitCoefficient(ProjectSplitCoefficientAbstract):
 
 class ProjectSplitCoefficient(ProjectSplitCoefficientAbstract):
     pass
+
+
+class UploadProjectSplitCoefficient(ProjectSplitCoefficientAbstract):
+    pass
