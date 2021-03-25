@@ -24,7 +24,7 @@ class ProjectSplitCoefficientAbstract(BaseModel):
         on_delete=models.PROTECT,
         related_name="to_%(app_label)s_%(class)ss",
     )
-    coefficient = models.DecimalField(max_digits=5, decimal_places=4)
+    split_coefficient = models.DecimalField(max_digits=5, decimal_places=4)
     class Meta:
         abstract=True
         unique_together = (
@@ -34,7 +34,7 @@ class ProjectSplitCoefficientAbstract(BaseModel):
         )
 
 
-class ArchivedProjectSplitCoefficient(ProjectSplitCoefficientAbstract):
+class PreviousYearProjectSplitCoefficient(ProjectSplitCoefficientAbstract):
     financial_year = models.ForeignKey(FinancialYear, on_delete=models.PROTECT,)
     financial_period = models.ForeignKey(
         FinancialPeriod,

@@ -821,7 +821,11 @@ class MonthlyFigureAbstract(BaseModel):
 
 
 class ForecastMonthlyFigure(MonthlyFigureAbstract):
+    # The value at the beginning of the period
     starting_amount = models.BigIntegerField(default=0)
+    # The actual value read from Oracle.
+    # It changes when the corrections for the projects are introduced
+    oracle_amount = models.BigIntegerField(default=0)
     # If archived_status is null, the record is the current one.
     # Because EndOfMonthStatus uses FinancialPeriod,
     #  it cannot be imported from the end_of_month models: it gives
