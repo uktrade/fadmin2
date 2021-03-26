@@ -66,3 +66,13 @@ class ProjectSplitCoefficient(ProjectSplitCoefficientAbstract):
 
 class UploadProjectSplitCoefficient(ProjectSplitCoefficientAbstract):
     pass
+
+class TemporaryCalculatedValues(BaseModel):
+    # temporary storage for the value calculated.
+    financial_code = models.ForeignKey(
+        FinancialCode,
+        on_delete=models.Case,
+        related_name="to_%(app_label)s_%(class)ss",
+        unique=True,
+    )
+    calculated_amount = models.BigIntegerField(null=True, blank=True)

@@ -29,6 +29,8 @@ from previous_years.models import (
     ArchivedActualUploadMonthlyFigure,
 )
 
+from split_project.split_figure import handle_split_project
+
 from upload_file.models import FileUpload
 from upload_file.utils import (
     set_file_upload_fatal_error,
@@ -299,6 +301,7 @@ def upload_trial_balance_report(file_upload, month_number, financial_year):
             FinancialPeriod.objects.filter(
                 financial_period_code__lte=period_obj.financial_period_code
             ).update(actual_loaded=True)
+            handle_split_project(period_obj.financial_period_code)
         else:
             FinancialPeriod.objects.filter(
                 financial_period_code__lte=period_obj.financial_period_code
