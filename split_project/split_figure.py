@@ -2,11 +2,14 @@ from django.db import connection
 
 from django.db.models import F
 
+from core.utils.generic_helpers import get_current_financial_year
+
 from forecast.models import ForecastMonthlyFigure
 
 from split_project.models import ProjectSplitCoefficient, TemporaryCalculatedValues
 
 def copy_values(period_id):
+    financial_year_id = get_current_financial_year()
     # clear the previously calculated values
     #  add  the newly calculated values to the current values
     sql_reset_amount = f"UPDATE forecast_forecastmonthlyfigure  " \
@@ -17,9 +20,30 @@ def copy_values(period_id):
                  f"FROM split_project_temporarycalculatedvalues c " \
                  f"WHERE forecast_forecastmonthlyfigure.financial_period_id = {period_id} " \
                  f"AND forecast_forecastmonthlyfigure.financial_code_id = c.financial_code_id;"
+
+    sql_insert = (
+        f"INSERT INTO forecast_forecastmonthlyfigure "
+        f"(created, "
+        f"updated, amount, starting_amount, oracle_amount, "
+        f"financial_code_id,  "
+        f"financial_period_id, financial_year_id) "
+        f"SELECT now(), now(), calculated_amount, calculated_amount, calculated_amount, "
+        f"financial_code_id, "
+        f"{period_id}, {financial_year_id} "
+        f"FROM split_project_temporarycalculatedvalues "
+        f"WHERE "
+        f" financial_code_id "
+        f"not in (select financial_code_id "
+        f"from forecast_forecastmonthlyfigure where "
+        f"financial_period_id = {period_id} and "
+        f"archived_status_id is NULL and "
+        f"financial_year_id = {financial_year_id});"
+    )
+
     with connection.cursor() as cursor:
         cursor.execute(sql_reset_amount)
         cursor.execute(sql_update)
+        cursor.execute(sql_insert)
 
 
 def transfer_value(amount, financial_code_id):
