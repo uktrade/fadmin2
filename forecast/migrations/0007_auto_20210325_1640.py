@@ -13,11 +13,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='forecastmonthlyfigure',
             name='oracle_amount',
-            field=models.BigIntegerField(default=0),
+            field=models.BigIntegerField(default=0, null=True, blank=True),
         ),
         migrations.AddField(
             model_name='simplehistoryforecastmonthlyfigure',
             name='oracle_amount',
-            field=models.BigIntegerField(default=0),
+            field=models.BigIntegerField(default=0, null=True, blank=True),
         ),
     ]
