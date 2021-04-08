@@ -21,6 +21,13 @@ def copy_previous_year_actuals_to_monthly_figure(period_obj, financial_year):
         **{period_name: 0}
     )
 
+    sql_clear = (
+        f"UPDATE previous_years_archivedforecastdata  "
+        f"SET  updated=now(), {period_name}=0	"
+        f"WHERE  "
+        f"financial_year_id = {financial_year};"
+    )
+
     sql_update = (
         f"UPDATE previous_years_archivedforecastdata t "
         f"SET  updated=now(), {period_name}=u.amount	"
@@ -52,6 +59,7 @@ def copy_previous_year_actuals_to_monthly_figure(period_obj, financial_year):
     )
 
     with connection.cursor() as cursor:
+        cursor.execute(sql_clear)
         cursor.execute(sql_insert)
         cursor.execute(sql_update)
 
