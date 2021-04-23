@@ -43,6 +43,13 @@ def sql_for_actual_copy(financial_period_id, financial_year_id):
         f"SET  updated=now(), "
         f"amount=u.amount, starting_amount=u.amount, oracle_amount=u.oracle_amount "
         f"FROM forecast_actualuploadmonthlyfigure u "
+        f"WHERE  "
+        f"t.financial_code_id = u.financial_code_id and "
+        f"t.financial_period_id = u.financial_period_id and "
+        f"t.financial_year_id = u.financial_year_id and "
+        f"t.financial_period_id = {financial_period_id} and "
+        f"t.archived_status_id is NULL and "
+        f"t.financial_year_id = {financial_year_id};"
     )
 
     sql_insert = (
@@ -71,6 +78,13 @@ def sql_for_budget_copy(financial_period_id, financial_year_id):
         f"UPDATE forecast_budgetmonthlyfigure t "
         f"SET  updated=now(), amount=u.amount, starting_amount=u.amount	"
         f"FROM forecast_budgetuploadmonthlyfigure u "
+        f"WHERE  "
+        f"t.financial_code_id = u.financial_code_id and "
+        f"t.financial_period_id = u.financial_period_id and "
+        f"t.financial_year_id = u.financial_year_id and "
+        f"t.financial_period_id = {financial_period_id} and "
+        f"t.archived_status_id is NULL and "
+        f"t.financial_year_id = {financial_year_id};"
     )
 
     sql_insert = (
