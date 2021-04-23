@@ -36,11 +36,6 @@ class ProjectSplitCoefficientAbstract(BaseModel):
 
 class PreviousYearProjectSplitCoefficient(ProjectSplitCoefficientAbstract):
     financial_year = models.ForeignKey(FinancialYear, on_delete=models.PROTECT,)
-    financial_period = models.ForeignKey(
-        FinancialPeriod,
-        on_delete=models.PROTECT,
-        related_name="%(app_label)s_%(class)ss",
-    )
     financial_code_from = models.ForeignKey(
         ArchivedFinancialCode,
         on_delete=models.PROTECT,

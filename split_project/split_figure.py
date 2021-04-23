@@ -8,6 +8,10 @@ from forecast.models import ForecastMonthlyFigure
 
 from split_project.models import ProjectSplitCoefficient, TemporaryCalculatedValues
 
+class TransferTooLargeError(Exception):
+    pass
+
+
 def copy_values(period_id):
     financial_year_id = get_current_financial_year()
     # clear the previously calculated values
@@ -27,7 +31,7 @@ def copy_values(period_id):
         f"updated, amount, starting_amount, oracle_amount, "
         f"financial_code_id,  "
         f"financial_period_id, financial_year_id) "
-        f"SELECT now(), now(), calculated_amount, calculated_amount, calculated_amount, "
+        f"SELECT now(), now(), calculated_amount, calculated_amount, 0, "
         f"financial_code_id, "
         f"{period_id}, {financial_year_id} "
         f"FROM split_project_temporarycalculatedvalues "
@@ -53,9 +57,9 @@ def transfer_value(amount, financial_code_id):
     )
     obj.save()
 
+
 def handle_split_project(financial_period_id):
-    # Check that we are splitting actuals
-    # Clear the table used to stored the results while doing the calculations
+     # Clear the table used to stored the results while doing the calculations
     TemporaryCalculatedValues.objects.all().delete()
     # First, calculate the new values
     coefficient_queryset = ProjectSplitCoefficient.objects.filter(financial_period_id=financial_period_id).order_by('financial_code_from')
@@ -66,6 +70,7 @@ def handle_split_project(financial_period_id):
     print(coefficient_queryset.count())
     for coefficient in coefficient_queryset:
         financial_code_from_id = coefficient.financial_code_from_id
+        financial_code_from_obj = coefficient.financial_code_from
         if prev_financial_code_from_id != financial_code_from_id:
             if do_split:
                 # complete the transaction we initiated before
@@ -90,8 +95,16 @@ def handle_split_project(financial_period_id):
             value_to_transfer = total_value * coefficient.split_coefficient
             transferred_value += value_to_transfer
             print(f"value_to_transfer {value_to_transfer}, transferred_value = {transferred_value}")
+            if transferred_value > total_value:
+                # This error should never happen, because the percentages are checked
+                # when uploading the data file.
+                raise TransferTooLargeError(
+                    f"Project split percentage higher that 100% "
+                    f"for row f{financial_code_from_obj.human_readable_format()}"
+                )
+                return
+
             transfer_value(value_to_transfer, coefficient.financial_code_to_id)
-    #  To do: Raise error if the money transferred is more than the money available
 
     # processed all the rows, copy the last value
     if do_split:

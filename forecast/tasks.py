@@ -12,6 +12,8 @@ from forecast.import_budgets import upload_budget_from_file
 
 from previous_years.import_previous_year import upload_previous_year_from_file
 
+from split_project.upload_file import upload_project_percentage_file
+
 from upload_file.models import FileUpload
 from upload_file.utils import set_file_upload_finished
 
@@ -56,6 +58,8 @@ def process_uploaded_file(*args):
                 upload_budget_from_file(latest_unprocessed, *args)
             if latest_unprocessed.document_type == FileUpload.PREVIOUSYEAR:
                 upload_previous_year_from_file(latest_unprocessed, *args)
+            if latest_unprocessed.document_type == FileUpload.PROJECTPERCENTAGE:
+                upload_project_percentage_file(latest_unprocessed, *args)
 
         set_file_upload_finished(latest_unprocessed)
         logger.info("File upload process complete")
