@@ -13,39 +13,38 @@ class TransferTooLargeError(Exception):
     pass
 
 
-def copy_values(period_id):
+def copy_values(period_id, table_name):
     financial_year_id = get_current_financial_year()
     # clear the previously calculated values
     #  add  the newly calculated values to the current values
     sql_reset_amount = (
-        f"UPDATE forecast_forecastmonthlyfigure  "
+        f"UPDATE {table_name}  "
         f"SET amount=oracle_amount "
         f"WHERE financial_period_id = {period_id};"
     )
     sql_update = (
-        f"UPDATE forecast_forecastmonthlyfigure "
+        f"UPDATE {table_name} "
         f"SET amount = amount + c.calculated_amount "
         f"FROM split_project_temporarycalculatedvalues c "
-        f"WHERE forecast_forecastmonthlyfigure.financial_period_id = {period_id} "
-        f"AND forecast_forecastmonthlyfigure.financial_code_id = c.financial_code_id;"
+        f"WHERE {table_name}.financial_period_id = {period_id} "
+        f"AND {table_name}.financial_code_id = c.financial_code_id;"
     )
 
     sql_insert = (
-        f"INSERT INTO forecast_forecastmonthlyfigure "
+        f"INSERT INTO {table_name} "
         f"(created, "
-        f"updated, amount, starting_amount, oracle_amount, "
+        f"updated, amount, oracle_amount, "
         f"financial_code_id,  "
         f"financial_period_id, financial_year_id) "
-        f"SELECT now(), now(), calculated_amount, calculated_amount, 0, "
+        f"SELECT now(), now(),  calculated_amount, 0, "
         f"financial_code_id, "
         f"{period_id}, {financial_year_id} "
         f"FROM split_project_temporarycalculatedvalues "
         f"WHERE "
         f" financial_code_id "
         f"not in (select financial_code_id "
-        f"from forecast_forecastmonthlyfigure where "
+        f"from {table_name} where "
         f"financial_period_id = {period_id} and "
-        f"archived_status_id is NULL and "
         f"financial_year_id = {financial_year_id});"
     )
 
@@ -62,7 +61,7 @@ def transfer_value(amount, financial_code_id):
     obj.save()
 
 
-def handle_split_project(financial_period_id):
+def handle_split_project(financial_period_id, monthly_figure = ForecastMonthlyFigure):
     # Clear the table used to stored the results while doing the calculations
     TemporaryCalculatedValues.objects.all().delete()
     # First, calculate the new values
@@ -74,6 +73,7 @@ def handle_split_project(financial_period_id):
     transferred_value = 0
     do_split = False
     print(coefficient_queryset.count())
+
     for coefficient in coefficient_queryset:
         financial_code_from_id = coefficient.financial_code_from_id
         financial_code_from_obj = coefficient.financial_code_from
@@ -81,7 +81,7 @@ def handle_split_project(financial_period_id):
             if do_split:
                 # complete the transaction we initiated before
                 transfer_value(-transferred_value, prev_financial_code_from_id)
-            monthly_figure_queryset = ForecastMonthlyFigure.objects.filter(
+            monthly_figure_queryset = monthly_figure.objects.filter(
                 financial_period_id=financial_period_id,
                 financial_code_id=financial_code_from_id,
             )
@@ -120,5 +120,5 @@ def handle_split_project(financial_period_id):
     if do_split:
         transfer_value(-transferred_value, prev_financial_code_from_id)
 
-    # The next two steps use raw sql, for speed
-    copy_values(financial_period_id)
+    # The next  step use raw sql, for speed
+    copy_values(financial_period_id, monthly_figure._meta.db_table)
