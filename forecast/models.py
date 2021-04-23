@@ -407,26 +407,34 @@ class FinancialCode(FinancialCodeAbstract, BaseModel):
         blank=True,
         null=True,
     )
+
     def human_readable_format(self):
-        cost_centre = f"(Cost Centre: {self.cost_centre.cost_centre_code}-{self.cost_centre.cost_centre_name})"
-        nac = f"(NAC: {self.natural_account_code.natural_account_code}-{self.natural_account_code.natural_account_code_description})"
-        programme = f"(Programme: {self.programme.programme_code}-{self.programme.programme_description})"
+        cost_centre = f"(Cost Centre: {self.cost_centre.cost_centre_code}" \
+                      f"-{self.cost_centre.cost_centre_name})"
+        nac = f"(NAC: {self.natural_account_code.natural_account_code}" \
+              f"-{self.natural_account_code.natural_account_code_description})"
+        programme = f"(Programme: {self.programme.programme_code}" \
+                    f"-{self.programme.programme_description})"
         if self.project_code:
-            project = f"(Project: {self.project_code.project_code}-{self.project_code.project_description})"
+            project = f"(Project: {self.project_code.project_code}" \
+                      f"-{self.project_code.project_description})"
         else:
-            project= ""
+            project = ""
         if self.analysis1_code:
-            analysis1 = f"(Contract: {self.analysis1_code.analysis1_code}-{self.analysis1_code.analysis1_description})"
+            analysis1 = f"(Contract: {self.analysis1_code.analysis1_code}" \
+                        f"-{self.analysis1_code.analysis1_description})"
         else:
             analysis1 = ""
         if self.analysis2_code:
-            analysis2 = f"(Market: {self.analysis2_code.analysis2_code}-{self.analysis2_code.analysis2_description})"
+            analysis2 = f"(Market: {self.analysis2_code.analysis2_code}" \
+                        f"-{self.analysis2_code.analysis2_description})"
         else:
             analysis2 = ""
         return f"{cost_centre}{nac}{programme}{analysis1}{analysis2}{project}"
 
     def __str__(self):
         return self.human_readable_format()
+
 
 class SubTotalForecast:
     result_table = []
@@ -880,6 +888,7 @@ class ForecastMonthlyFigure(MonthlyFigureAbstract):
 class ActualUploadMonthlyFigure(MonthlyFigureAbstract):
     # The actual value read from Oracle.
     oracle_amount = models.BigIntegerField(default=0, null=True, blank=True)
+
     class Meta:
         constraints = [
             UniqueConstraint(

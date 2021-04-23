@@ -301,7 +301,10 @@ def upload_trial_balance_report(file_upload, month_number, financial_year):
             FinancialPeriod.objects.filter(
                 financial_period_code__lte=period_obj.financial_period_code
             ).update(actual_loaded=True)
-            handle_split_project(period_obj.financial_period_code, ActualUploadMonthlyFigure)
+            handle_split_project(
+                period_obj.financial_period_code,
+                ActualUploadMonthlyFigure
+            )
         else:
             FinancialPeriod.objects.filter(
                 financial_period_code__lte=period_obj.financial_period_code

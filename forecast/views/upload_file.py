@@ -79,8 +79,8 @@ class UploadActualsView(UploadViewBase):
 
     def get_args(data):
         return [data['period'].period_calendar_code,
-            data['year'].financial_year,
-        ]
+                data['year'].financial_year,
+                ]
 
 
 class UploadBudgetView(UploadViewBase):
@@ -91,4 +91,4 @@ class UploadBudgetView(UploadViewBase):
     upload_type = FileUpload.BUDGET
 
     def get_args(data):
-        return [data['year'].financial_year,]
+        return [data['year'].financial_year, ]
