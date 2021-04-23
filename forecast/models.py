@@ -407,7 +407,26 @@ class FinancialCode(FinancialCodeAbstract, BaseModel):
         blank=True,
         null=True,
     )
+    def human_readable_format(self):
+        cost_centre = f"(Cost Centre: {self.cost_centre.cost_centre_code}-{self.cost_centre.cost_centre_name})"
+        nac = f"(NAC: {self.natural_account_code.natural_account_code}-{self.natural_account_code.natural_account_code_description})"
+        programme = f"(Programme: {self.programme.programme_code}-{self.programme.programme_description})"
+        if self.project_code:
+            project = f"(Project: {self.project_code.project_code}-{self.project_code.project_description})"
+        else:
+            project= ""
+        if self.analysis1_code:
+            analysis1 = f"(Contract: {self.analysis1_code.analysis1_code}-{self.analysis1_code.analysis1_description})"
+        else:
+            analysis1 = ""
+        if self.analysis2_code:
+            analysis2 = f"(Market: {self.analysis2_code.analysis2_code}-{self.analysis2_code.analysis2_description})"
+        else:
+            analysis2 = ""
+        return f"{cost_centre}{nac}{programme}{analysis1}{analysis2}{project}"
 
+    def __str__(self):
+        return self.human_readable_format()
 
 class SubTotalForecast:
     result_table = []
@@ -821,7 +840,11 @@ class MonthlyFigureAbstract(BaseModel):
 
 
 class ForecastMonthlyFigure(MonthlyFigureAbstract):
+    # The value at the beginning of the period
     starting_amount = models.BigIntegerField(default=0)
+    # The actual value read from Oracle.
+    # It changes when the corrections for the projects are introduced
+    oracle_amount = models.BigIntegerField(default=0, null=True, blank=True)
     # If archived_status is null, the record is the current one.
     # Because EndOfMonthStatus uses FinancialPeriod,
     #  it cannot be imported from the end_of_month models: it gives

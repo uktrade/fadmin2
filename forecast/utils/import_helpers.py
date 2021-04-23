@@ -369,7 +369,7 @@ class CheckFinancialCode:
             return None
 
     def validate_project(self, project):
-        if project and int(project):
+        if FileUpload.PROJECTPERCENTAGE or (project and int(project)):
             project_code = get_id(project, PROJECT_CODE_LENGTH)
             return self.get_obj_code(
                 self.project_dict, project_code, self.project_code_model
@@ -425,6 +425,20 @@ class CheckFinancialCode:
             analysis1_code=self.analysis1_obj,
             analysis2_code=self.analysis2_obj,
             project_code=self.project_obj,
+        )
+        financial_code_obj.save()
+        return financial_code_obj
+
+    def get_financial_code_no_project(self):
+        if self.error_found:
+            return None
+        financial_code_obj, created = FinancialCode.objects.get_or_create(
+            programme=self.programme_obj,
+            cost_centre=self.cc_obj,
+            natural_account_code=self.nac_obj,
+            analysis1_code=self.analysis1_obj,
+            analysis2_code=self.analysis2_obj,
+            project_code=None,
         )
         financial_code_obj.save()
         return financial_code_obj
