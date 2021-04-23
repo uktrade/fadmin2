@@ -56,10 +56,13 @@ class PreviousYearProjectSplitCoefficient(ProjectSplitCoefficientAbstract):
 
 
 class ProjectSplitCoefficient(ProjectSplitCoefficientAbstract):
-    pass
+    permissions = [
+        ("can_upload_files", "Can upload files"),
+    ]
 
 
 class UploadProjectSplitCoefficient(ProjectSplitCoefficientAbstract):
+    row_number = models.IntegerField(default=0)
     pass
 
 class TemporaryCalculatedValues(BaseModel):
