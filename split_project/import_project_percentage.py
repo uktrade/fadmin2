@@ -16,7 +16,6 @@ from forecast.utils.import_helpers import (
     UploadFileFormatError,
     check_header,
     get_forecast_month_dict,
-    sql_for_data_copy,
     validate_excel_file,
 )
 

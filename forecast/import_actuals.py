@@ -14,7 +14,7 @@ from forecast.models import (
 from forecast.utils.import_helpers import (
     CheckFinancialCode,
     UploadFileFormatError,
-    sql_for_data_copy,
+    sql_for_actual_copy,
     validate_excel_file,
 )
 
@@ -71,9 +71,8 @@ def copy_current_year_actuals_to_monthly_figure(period_obj, financial_year):
         financial_year=financial_year,
         financial_period=period_obj,
         archived_status__isnull=True,
-    ).update(amount=0, starting_amount=0)
-    sql_update, sql_insert = sql_for_data_copy(
-        FileUpload.ACTUALS,
+    ).update(amount=0, starting_amount=0, oracle_amount=0)
+    sql_update, sql_insert = sql_for_actual_copy(
         period_obj.pk,
         financial_year
     )
@@ -85,6 +84,7 @@ def copy_current_year_actuals_to_monthly_figure(period_obj, financial_year):
         financial_period=period_obj,
         amount=0,
         starting_amount=0,
+        oracle_amount=0,
         archived_status__isnull=True,
     ).delete()
 
@@ -141,7 +141,7 @@ def save_trial_balance_row(
             monthlyfigure_obj.amount = value * 100
         else:
             monthlyfigure_obj.amount += value * 100
-
+        monthlyfigure_obj.oracle_amount = monthlyfigure_obj.amount
         monthlyfigure_obj.save()
 
 
@@ -301,7 +301,7 @@ def upload_trial_balance_report(file_upload, month_number, financial_year):
             FinancialPeriod.objects.filter(
                 financial_period_code__lte=period_obj.financial_period_code
             ).update(actual_loaded=True)
-            handle_split_project(period_obj.financial_period_code)
+            # handle_split_project(period_obj.financial_period_code)
         else:
             FinancialPeriod.objects.filter(
                 financial_period_code__lte=period_obj.financial_period_code

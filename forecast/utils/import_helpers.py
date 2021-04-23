@@ -37,48 +37,59 @@ ANALYSIS2_CODE_LENGTH = 5
 PROJECT_CODE_LENGTH = 4
 
 
-def sql_for_data_copy(data_type, financial_period_id, financial_year_id):
-    if data_type == FileUpload.ACTUALS:
-        temp_data_file = "forecast_actualuploadmonthlyfigure"
-        target = "forecast_forecastmonthlyfigure"
-    else:
-        if data_type == FileUpload.BUDGET:
-            temp_data_file = "forecast_budgetuploadmonthlyfigure"
-            target = "forecast_budgetmonthlyfigure"
-        else:
-            raise UploadFileDataError("Unknown upload type.")
-
+def sql_for_actual_copy(financial_period_id, financial_year_id):
     sql_update = (
-        f"UPDATE {target} t "
-        f"SET  updated=now(), amount=u.amount, starting_amount=u.amount	"
-        f"FROM {temp_data_file} u "
-        f"WHERE  "
-        f"t.financial_code_id = u.financial_code_id and "
-        f"t.financial_period_id = u.financial_period_id and "
-        f"t.financial_year_id = u.financial_year_id and "
-        f"t.financial_period_id = {financial_period_id} and "
-        f"t.archived_status_id is NULL and "
-        f"t.financial_year_id = {financial_year_id};"
+        f"UPDATE forecast_forecastmonthlyfigure t "
+        f"SET  updated=now(), "
+        f"amount=u.amount, starting_amount=u.amount, oracle_amount=u.oracle_amount "
+        f"FROM forecast_actualuploadmonthlyfigure u "
     )
 
     sql_insert = (
-        f"INSERT INTO {target}(created, "
-        f"updated, amount, starting_amount, financial_code_id, "
+        f"INSERT INTO forecast_forecastmonthlyfigure(created, updated, "
+        f"amount, starting_amount, oracle_amount, financial_code_id, "
         f"financial_period_id, financial_year_id) "
-        f"SELECT now(), now(), amount, amount, financial_code_id, "
+        f"SELECT now(), now(), "
+        f"amount, amount, oracle_amount, financial_code_id, "
         f"financial_period_id, financial_year_id "
-        f"FROM {temp_data_file} "
+        f"FROM forecast_actualuploadmonthlyfigure "
         f"WHERE "
         f"financial_period_id = {financial_period_id} and "
         f"financial_year_id = {financial_year_id}  and "
         f" financial_code_id "
         f"not in (select financial_code_id "
-        f"from {target} where "
+        f"from forecast_forecastmonthlyfigure where "
         f"financial_period_id = {financial_period_id} and "
         f"archived_status_id is NULL and "
         f"financial_year_id = {financial_year_id});"
     )
+    return sql_update, sql_insert
 
+
+def sql_for_budget_copy(financial_period_id, financial_year_id):
+    sql_update = (
+        f"UPDATE forecast_budgetmonthlyfigure t "
+        f"SET  updated=now(), amount=u.amount, starting_amount=u.amount	"
+        f"FROM forecast_budgetuploadmonthlyfigure u "
+    )
+
+    sql_insert = (
+        f"INSERT INTO forecast_budgetmonthlyfigure(created, "
+        f"updated, amount, starting_amount, financial_code_id, "
+        f"financial_period_id, financial_year_id) "
+        f"SELECT now(), now(), amount, amount, financial_code_id, "
+        f"financial_period_id, financial_year_id "
+        f"FROM forecast_budgetuploadmonthlyfigure "
+        f"WHERE "
+        f"financial_period_id = {financial_period_id} and "
+        f"financial_year_id = {financial_year_id}  and "
+        f" financial_code_id "
+        f"not in (select financial_code_id "
+        f"from forecast_budgetmonthlyfigure where "
+        f"financial_period_id = {financial_period_id} and "
+        f"archived_status_id is NULL and "
+        f"financial_year_id = {financial_year_id});"
+    )
     return sql_update, sql_insert
 
 
