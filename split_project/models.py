@@ -25,12 +25,13 @@ class ProjectSplitCoefficientAbstract(BaseModel):
         related_name="to_%(app_label)s_%(class)ss",
     )
     split_coefficient = models.DecimalField(max_digits=5, decimal_places=4)
+
     class Meta:
-        abstract=True
+        abstract = True
         unique_together = (
             "financial_period",
             "financial_code_from",
-            "financial_code_to"
+            "financial_code_to",
         )
 
 
@@ -46,12 +47,13 @@ class PreviousYearProjectSplitCoefficient(ProjectSplitCoefficientAbstract):
         on_delete=models.PROTECT,
         related_name="to_%(app_label)s_%(class)ss",
     )
+
     class Meta:
         unique_together = (
             "financial_year",
             "financial_period",
             "financial_code_from",
-            "financial_code_to"
+            "financial_code_to",
         )
 
 
@@ -65,10 +67,8 @@ class UploadProjectSplitCoefficient(ProjectSplitCoefficientAbstract):
     row_number = models.IntegerField(default=0)
     pass
 
+
 class TemporaryCalculatedValues(BaseModel):
     # temporary storage for the value calculated.
-    financial_code = models.OneToOneField(
-        FinancialCode,
-        on_delete=models.CASCADE,
-    )
+    financial_code = models.OneToOneField(FinancialCode, on_delete=models.CASCADE,)
     calculated_amount = models.BigIntegerField(null=True, blank=True)

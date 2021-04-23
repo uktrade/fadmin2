@@ -2,12 +2,8 @@ from django.db import connection
 
 from core.import_csv import xslx_header_to_dict
 
-from split_project.models import (
-    UploadProjectSplitCoefficient,
-)
-from forecast.models import (
-    FinancialPeriod,
-)
+from split_project.models import UploadProjectSplitCoefficient
+from forecast.models import FinancialPeriod
 
 
 from forecast.utils.import_helpers import (
@@ -71,7 +67,9 @@ def copy_uploaded_percentage(month_dict):
     UploadProjectSplitCoefficient.objects.delete()
 
 
-def upload_project_percentage_row(percentage_row, financialcode_obj_to, financialcode_obj_from, month_dict):
+def upload_project_percentage_row(
+    percentage_row, financialcode_obj_to, financialcode_obj_from, month_dict
+):
     for month_idx, period_obj in month_dict.items():
         period_percentage = percentage_row[month_idx].value
         if period_percentage is None:
@@ -79,28 +77,30 @@ def upload_project_percentage_row(percentage_row, financialcode_obj_to, financia
         # We import from Excel, and the user may have entered spaces in an empty cell.
         if type(period_percentage) == str:
             period_percentage = period_percentage.strip()
-        if period_percentage == '-':
+        if period_percentage == "-":
             # we accept the '-' as it is a recognised value in Finance for 0
             period_percentage = 0
         try:
             period_percentage = period_percentage * 100.00
         except ValueError:
             raise UploadFileDataError(
-                f"Non-numeric value in {percentage_row[month_idx].coordinate}:{period_percentage}"# noqa
+                f"Non-numeric value in {percentage_row[month_idx].coordinate}:{period_percentage}"  # noqa
             )
         if period_percentage:
-            (percentage_obj, created,) = UploadProjectSplitCoefficient.objects.get_or_create(
+            (
+                percentage_obj,
+                created,
+            ) = UploadProjectSplitCoefficient.objects.get_or_create(
                 financial_period=period_obj,
                 financial_code_from=financialcode_obj_from,
-                financial_code_to = financialcode_obj_to
+                financial_code_to=financialcode_obj_to,
             )
             if created:
                 percentage_obj.amount = period_percentage
                 percentage_obj.save()
             else:
-                raise UploadFileDataError(
-                    f"Duplicate row."
-                )
+                raise UploadFileDataError(f"Duplicate row.")
+
 
 def create_month_dict(header_dict):
     month_dict = {}
@@ -143,8 +143,7 @@ def upload_project_percentage(worksheet, header_dict, file_upload):
         if not row_number % 100:
             # Display the number of rows processed every 100 rows
             set_file_upload_feedback(
-                file_upload,
-                f"Processing row {row_number} of {rows_to_process}."
+                file_upload, f"Processing row {row_number} of {rows_to_process}."
             )
         cost_centre = percentage_row[cc_index].value
         if not cost_centre:
@@ -157,7 +156,7 @@ def upload_project_percentage(worksheet, header_dict, file_upload):
             percentage_row[a1_index].value,
             percentage_row[a2_index].value,
             percentage_row[proj_index].value,
-            row_number
+            row_number,
         )
         if not check_financial_code.error_found:
             try:
@@ -181,8 +180,7 @@ def upload_project_percentage(worksheet, header_dict, file_upload):
             final_status = FileUpload.PROCESSEDWITHWARNING
 
     set_file_upload_feedback(
-        file_upload,
-        f"Processed {rows_to_process} rows.", final_status
+        file_upload, f"Processed {rows_to_process} rows.", final_status
     )
     return not check_financial_code.error_found
 
@@ -205,7 +203,7 @@ def upload_project_percentage_from_file(file_upload):
         workbook.close
         raise ex
     try:
-        upload_project_percentage(worksheet,header_dict, file_upload)
+        upload_project_percentage(worksheet, header_dict, file_upload)
     except (UploadFileDataError) as ex:
         set_file_upload_fatal_error(
             file_upload, str(ex), str(ex),

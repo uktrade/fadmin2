@@ -8,6 +8,7 @@ from forecast.models import ForecastMonthlyFigure
 
 from split_project.models import ProjectSplitCoefficient, TemporaryCalculatedValues
 
+
 class TransferTooLargeError(Exception):
     pass
 
@@ -16,14 +17,18 @@ def copy_values(period_id):
     financial_year_id = get_current_financial_year()
     # clear the previously calculated values
     #  add  the newly calculated values to the current values
-    sql_reset_amount = f"UPDATE forecast_forecastmonthlyfigure  " \
-                       f"SET amount=oracle_amount " \
-                       f"WHERE financial_period_id = {period_id};"
-    sql_update = f"UPDATE forecast_forecastmonthlyfigure " \
-                 f"SET amount = amount + c.calculated_amount " \
-                 f"FROM split_project_temporarycalculatedvalues c " \
-                 f"WHERE forecast_forecastmonthlyfigure.financial_period_id = {period_id} " \
-                 f"AND forecast_forecastmonthlyfigure.financial_code_id = c.financial_code_id;"
+    sql_reset_amount = (
+        f"UPDATE forecast_forecastmonthlyfigure  "
+        f"SET amount=oracle_amount "
+        f"WHERE financial_period_id = {period_id};"
+    )
+    sql_update = (
+        f"UPDATE forecast_forecastmonthlyfigure "
+        f"SET amount = amount + c.calculated_amount "
+        f"FROM split_project_temporarycalculatedvalues c "
+        f"WHERE forecast_forecastmonthlyfigure.financial_period_id = {period_id} "
+        f"AND forecast_forecastmonthlyfigure.financial_code_id = c.financial_code_id;"
+    )
 
     sql_insert = (
         f"INSERT INTO forecast_forecastmonthlyfigure "
@@ -52,17 +57,18 @@ def copy_values(period_id):
 
 def transfer_value(amount, financial_code_id):
     obj = TemporaryCalculatedValues.objects.create(
-        financial_code_id=financial_code_id,
-        calculated_amount=amount
+        financial_code_id=financial_code_id, calculated_amount=amount
     )
     obj.save()
 
 
 def handle_split_project(financial_period_id):
-     # Clear the table used to stored the results while doing the calculations
+    # Clear the table used to stored the results while doing the calculations
     TemporaryCalculatedValues.objects.all().delete()
     # First, calculate the new values
-    coefficient_queryset = ProjectSplitCoefficient.objects.filter(financial_period_id=financial_period_id).order_by('financial_code_from')
+    coefficient_queryset = ProjectSplitCoefficient.objects.filter(
+        financial_period_id=financial_period_id
+    ).order_by("financial_code_from")
     prev_financial_code_from_id = 0
     total_value = 0
     transferred_value = 0
@@ -75,8 +81,10 @@ def handle_split_project(financial_period_id):
             if do_split:
                 # complete the transaction we initiated before
                 transfer_value(-transferred_value, prev_financial_code_from_id)
-            monthly_figure_queryset = ForecastMonthlyFigure.objects.filter(financial_period_id=financial_period_id,
-                                                                           financial_code_id=financial_code_from_id)
+            monthly_figure_queryset = ForecastMonthlyFigure.objects.filter(
+                financial_period_id=financial_period_id,
+                financial_code_id=financial_code_from_id,
+            )
             # we cannot transfer money if there is no money in the actuals to be split
             if monthly_figure_queryset.count():
                 # Found monthly figure
@@ -94,7 +102,9 @@ def handle_split_project(financial_period_id):
 
             value_to_transfer = total_value * coefficient.split_coefficient
             transferred_value += value_to_transfer
-            print(f"value_to_transfer {value_to_transfer}, transferred_value = {transferred_value}")
+            print(
+                f"value_to_transfer {value_to_transfer}, transferred_value = {transferred_value}"
+            )
             if transferred_value > total_value:
                 # This error should never happen, because the percentages are checked
                 # when uploading the data file.

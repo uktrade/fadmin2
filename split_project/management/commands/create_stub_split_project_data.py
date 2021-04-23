@@ -16,15 +16,18 @@ from forecast.models import (
     ForecastMonthlyFigure,
 )
 
-COST_CENTRE_CODE=87654
+COST_CENTRE_CODE = 87654
 
 from split_project.models import ProjectSplitCoefficient
+
 
 def project_split_clear():
     try:
         ProjectSplitCoefficient.objects.all().delete()
         cost_centre_obj = CostCentre.objects.get(pk=COST_CENTRE_CODE)
-        financial_codes_queryset = FinancialCode.objects.filter(cost_centre=cost_centre_obj)
+        financial_codes_queryset = FinancialCode.objects.filter(
+            cost_centre=cost_centre_obj
+        )
         for financial_code in financial_codes_queryset:
             ForecastMonthlyFigure.objects.filter(financial_code=financial_code).delete()
             financial_code.delete()
@@ -32,15 +35,16 @@ def project_split_clear():
     except CostCentre.DoesNotExist:
         pass
 
+
 def monthly_split_create():
     project_split_clear()
     current_financial_year = FinancialYear.objects.get(current=True)
     cost_centre_obj = CostCentre.objects.create(
-            cost_centre_code=COST_CENTRE_CODE,
-            active=True,
-            cost_centre_name="Cost Centre for split project",
-            directorate=Directorate.objects.all().first(),
-     )
+        cost_centre_code=COST_CENTRE_CODE,
+        active=True,
+        cost_centre_name="Cost Centre for split project",
+        directorate=Directorate.objects.all().first(),
+    )
     programme_obj = ProgrammeCode.objects.all().first()
     project_list = ProjectCode.objects.all()
     natural_account_obj = NaturalCode.objects.all().first()
@@ -63,7 +67,7 @@ def monthly_split_create():
             financial_period=period,
             financial_code=financial_code_from,
             amount=monthly_amount,
-            oracle_amount=monthly_amount
+            oracle_amount=monthly_amount,
         )
 
     coefficient = 1
@@ -83,7 +87,7 @@ def monthly_split_create():
                 financial_period=period,
                 financial_code_from=financial_code_from,
                 financial_code_to=financial_code_to,
-                split_coefficient=coefficient*period.period_calendar_code/10000,
+                split_coefficient=coefficient * period.period_calendar_code / 10000,
             )
     ForecastMonthlyFigure.objects.all().update(oracle_amount=F("amount"))
 
@@ -107,6 +111,4 @@ class Command(BaseCommand):
         else:
             monthly_split_create()
             msg = "created"
-        self.stdout.write(
-            self.style.SUCCESS( f"Successfully {msg} stub forecast data.")
-        )
+        self.stdout.write(self.style.SUCCESS(f"Successfully {msg} stub forecast data."))

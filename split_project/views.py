@@ -41,7 +41,7 @@ class UploadPercentageView(UserPassesTestMixin, FormView):
             # name attribute of the file rather than
             # passing the request file var directly as this is the
             # required when using the chunk uploader project
-            s3_file_name = request.FILES['file'].name
+            s3_file_name = request.FILES["file"].name
 
             logger.info(f"s3_file_name is f{s3_file_name}")
 
@@ -64,4 +64,3 @@ class UploadPercentageView(UserPassesTestMixin, FormView):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
-
