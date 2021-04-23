@@ -27,5 +27,3 @@ def has_project_percentage_permission(user):
         return True
     else:
         return False
-
-

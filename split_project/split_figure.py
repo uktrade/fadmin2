@@ -1,10 +1,6 @@
 from django.db import connection
 
-from django.db.models import F
-
 from core.utils.generic_helpers import get_current_financial_year
-
-from forecast.models import ForecastMonthlyFigure
 
 from split_project.models import ProjectSplitCoefficient, TemporaryCalculatedValues
 
@@ -61,7 +57,7 @@ def transfer_value(amount, financial_code_id):
     obj.save()
 
 
-def handle_split_project(financial_period_id, monthly_figure = ForecastMonthlyFigure):
+def handle_split_project(financial_period_id, monthly_figure):
     # Clear the table used to stored the results while doing the calculations
     TemporaryCalculatedValues.objects.all().delete()
     # First, calculate the new values
@@ -103,7 +99,8 @@ def handle_split_project(financial_period_id, monthly_figure = ForecastMonthlyFi
             value_to_transfer = total_value * coefficient.split_coefficient
             transferred_value += value_to_transfer
             print(
-                f"value_to_transfer {value_to_transfer}, transferred_value = {transferred_value}"
+                f"value_to_transfer {value_to_transfer}, "
+                f"transferred_value = {transferred_value}"
             )
             if transferred_value > total_value:
                 # This error should never happen, because the percentages are checked
