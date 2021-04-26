@@ -35,7 +35,6 @@ class UploadPercentageView(UserPassesTestMixin, FormView):
 
         if form.is_valid():
             logger.info("File upload form is valid")
-            data = form.cleaned_data
 
             # When using a model form, you must use the
             # name attribute of the file rather than

@@ -1,4 +1,4 @@
-from django.db import connection
+# from django.db import connection
 
 from core.import_csv import xslx_header_to_dict
 
@@ -11,7 +11,6 @@ from forecast.utils.import_helpers import (
     UploadFileDataError,
     UploadFileFormatError,
     check_header,
-    get_forecast_month_dict,
     validate_excel_file,
 )
 
@@ -99,7 +98,7 @@ def upload_project_percentage_row(
                 percentage_obj.amount = period_percentage
                 percentage_obj.save()
             else:
-                raise UploadFileDataError(f"Duplicate row.")
+                raise UploadFileDataError("Duplicate row.")
 
 
 def create_month_dict(header_dict):

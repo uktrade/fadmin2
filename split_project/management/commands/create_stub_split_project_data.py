@@ -16,9 +16,9 @@ from forecast.models import (
     ForecastMonthlyFigure,
 )
 
-COST_CENTRE_CODE = 87654
-
 from split_project.models import ProjectSplitCoefficient
+
+COST_CENTRE_CODE = 87654
 
 
 def project_split_clear():
