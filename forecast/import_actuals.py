@@ -66,6 +66,11 @@ GENERIC_PROGRAMME_CODE = 310940
 
 
 def copy_current_year_actuals_to_monthly_figure(period_obj, financial_year):
+    # See if the actuals should be split to different projects
+    handle_split_project(
+        period_obj.financial_period_code,
+        ActualUploadMonthlyFigure
+    )
     # Now copy the newly uploaded actuals to the monthly figure table
     ForecastMonthlyFigure.objects.filter(
         financial_year=financial_year,
@@ -301,10 +306,6 @@ def upload_trial_balance_report(file_upload, month_number, financial_year):
             FinancialPeriod.objects.filter(
                 financial_period_code__lte=period_obj.financial_period_code
             ).update(actual_loaded=True)
-            handle_split_project(
-                period_obj.financial_period_code,
-                ActualUploadMonthlyFigure
-            )
         else:
             FinancialPeriod.objects.filter(
                 financial_period_code__lte=period_obj.financial_period_code
