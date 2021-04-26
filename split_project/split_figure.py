@@ -96,7 +96,7 @@ def handle_split_project(financial_period_id, monthly_figure):
         if do_split:
             print(f"coefficient.split_coefficient = {coefficient.split_coefficient}")
 
-            value_to_transfer = total_value * coefficient.split_coefficient
+            value_to_transfer = (total_value * coefficient.split_coefficient)/10000
             transferred_value += value_to_transfer
             print(
                 f"value_to_transfer {value_to_transfer}, "

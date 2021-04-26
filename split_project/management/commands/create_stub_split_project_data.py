@@ -87,7 +87,7 @@ def monthly_split_create():
                 financial_period=period,
                 financial_code_from=financial_code_from,
                 financial_code_to=financial_code_to,
-                split_coefficient=coefficient * period.period_calendar_code / 10000,
+                split_coefficient=coefficient * period.period_calendar_code % 10000,
             )
     ForecastMonthlyFigure.objects.all().update(oracle_amount=F("amount"))
 

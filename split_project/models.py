@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from core.metamodels import BaseModel
@@ -26,7 +27,10 @@ class ProjectSplitCoefficientAbstract(BaseModel):
     )
     # The coefficient is passed as a percentage with 2 decimal figure
     # store it as integer to avoid rounding problems
-    split_coefficient = models.IntegerField(default=0)
+    split_coefficient = models.IntegerField(
+        default=0,
+        validators=[ MinValueValidator(0), MaxValueValidator(9999)],
+    )
 
     class Meta:
         abstract = True
