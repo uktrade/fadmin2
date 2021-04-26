@@ -24,7 +24,9 @@ class ProjectSplitCoefficientAbstract(BaseModel):
         on_delete=models.PROTECT,
         related_name="to_%(app_label)s_%(class)ss",
     )
-    split_coefficient = models.DecimalField(max_digits=5, decimal_places=4)
+    # The coefficient is passed as a percentage with 2 decimal figure
+    # store it as integer to avoid rounding problems
+    split_coefficient = models.IntegerField(default=0)
 
     class Meta:
         abstract = True
