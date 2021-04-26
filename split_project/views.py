@@ -1,65 +1,53 @@
 import logging
-
-from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.urls import reverse_lazy
-from django.views.generic.edit import FormView
+from django.db.models import Q
+from django.shortcuts import redirect
+from django.views.generic.base import TemplateView
+from django.urls import reverse
 
-from forecast.tasks import process_uploaded_file
+from forecast.views.upload_file import UploadViewBase
 
 from split_project.forms import UploadPercentageForm
+
 from upload_file.models import FileUpload
 from upload_file.utils import user_has_upload_permission
+
 
 logger = logging.getLogger(__name__)
 
 
-class UploadPercentageView(UserPassesTestMixin, FormView):
-    template_name = "forecast/file_upload.html"
+class UploadPercentageView(UploadViewBase):
     form_class = UploadPercentageForm
-    success_url = reverse_lazy("uploaded_files")
+
+    context = "Upload Percentages"
+    upload_type = FileUpload.PROJECTPERCENTAGE
+
 
     def test_func(self):
         return user_has_upload_permission(self.request.user)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["section_name"] = "Upload Actuals"
-        return context
 
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
 
-        logger.info("Received file upload attempt")
+class UploadedPercentageView(UserPassesTestMixin, TemplateView):
+    template_name = "split_projects.html"
 
-        if form.is_valid():
-            logger.info("File upload form is valid")
+    def test_func(self):
+        return user_has_upload_permission(self.request.user)
 
-            # When using a model form, you must use the
-            # name attribute of the file rather than
-            # passing the request file var directly as this is the
-            # required when using the chunk uploader project
-            s3_file_name = request.FILES["file"].name
+    def handle_no_permission(self):
+        return redirect(reverse("index",))
 
-            logger.info(f"s3_file_name is f{s3_file_name}")
+    def uploaded_files(self):
+        uploaded_files = FileUpload.objects.filter(
+            Q(document_type=FileUpload.PROJECTPERCENTAGE)
+        ).order_by("-created")
 
-            file_upload = FileUpload(
-                s3_document_file=s3_file_name,
-                uploading_user=request.user,
-                document_type=FileUpload.ACTUALS,
-            )
-            file_upload.save()
+        return uploaded_files
 
-            logger.info("Saved file to S3")
 
-            # Process file async
-            if settings.ASYNC_FILE_UPLOAD:
-                logger.info("Using worker to upload file")
-                process_uploaded_file.delay()
-            else:
-                process_uploaded_file()
+def export_split_percentage_data(request):
+    print("Called export split percentage")
 
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+
+def export_split_percentage_template(request):
+    print("Called export template")
