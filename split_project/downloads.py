@@ -3,7 +3,10 @@ from core.utils.export_helpers import export_to_excel
 from forecast.models import FinancialPeriod
 from forecast.utils.export_helpers import get_obj_value
 
-from split_project.import_project_percentage import EXPECTED_PERCENTAGE_HEADERS
+from split_project.import_project_percentage import (
+    EXPECTED_PERCENTAGE_HEADERS,
+    WORKSHEET_PROJECT_TITLE
+)
 from split_project.models import ProjectSplitCoefficient
 
 
@@ -12,8 +15,7 @@ def export_template(queryset):
 
 
 def create_template():
-    title = "Percentage split"
-    return export_to_excel(None, export_template, title)
+    return export_to_excel(None, export_template, WORKSHEET_PROJECT_TITLE)
 
 
 def export_percentage(queryset, fields):
@@ -32,7 +34,7 @@ def export_percentage(queryset, fields):
 
 
 def create_percentage_download():
-    title = "Percentage split"
+    title = WORKSHEET_PROJECT_TITLE
 
     columns = {
         "financial_code_to__cost_centre__cost_centre_code":
