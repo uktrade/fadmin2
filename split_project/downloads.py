@@ -17,45 +17,18 @@ def create_template():
 
 
 def export_percentage(queryset, fields):
+    month_list = FinancialPeriod.financial_period_info.period_display_all_list()
     yield list(
         fields.values()
-    ) + FinancialPeriod.financial_period_info.period_display_all_list()
+    ) + month_list
+
     for obj in queryset:
-        apr = get_obj_value(obj, "Apr")
-        may = get_obj_value(obj, "May")
-        jun = get_obj_value(obj, "Jun")
-        jul = get_obj_value(obj, "Jul")
-        aug = get_obj_value(obj, "Aug")
-        sep = get_obj_value(obj, "Sep")
-        oct = get_obj_value(obj, "Oct")
-        nov = get_obj_value(obj, "Nov")
-        dec = get_obj_value(obj, "Dec")
-        jan = get_obj_value(obj, "Jan")
-        feb = get_obj_value(obj, "Feb")
-        mar = get_obj_value(obj, "Mar")
-        adj1 = get_obj_value(obj, "Adj1")
-        adj2 = get_obj_value(obj, "Adj2")
-        adj3 = get_obj_value(obj, "Adj3")
         data_list = []
         for f in fields.keys():
             data_list.append(obj[f])
-        yield data_list + [
-            apr / 10000,
-            may / 10000,
-            jun / 10000,
-            jul / 10000,
-            aug / 10000,
-            sep / 10000,
-            oct / 10000,
-            nov / 10000,
-            dec / 10000,
-            jan / 10000,
-            feb / 10000,
-            mar / 10000,
-            adj1 / 10000,
-            adj2 / 10000,
-            adj3 / 10000,
-        ]
+        for month in month_list:
+            data_list.append(get_obj_value(obj, month) / 10000)
+        yield data_list
 
 
 def create_percentage_download():
@@ -93,4 +66,5 @@ def create_percentage_download():
         export_percentage,
         title,
         columns,
+        "Percent",
     )
