@@ -69,11 +69,7 @@ class PivotManager(models.Manager):
 
     def pivot_data(self, columns, filter_dict={}, order_list=[]):
 
-        q1 = (
-            self.get_queryset()
-            .filter(**filter_dict)
-            .order_by(*order_list)
-        )
+        q1 = self.get_queryset().filter(**filter_dict).order_by(*order_list)
         pivot_data = pivot(
             q1, columns, "financial_period__period_short_name", "split_coefficient",
         )

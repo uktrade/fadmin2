@@ -21,6 +21,7 @@ from forecast.utils.view_header_definition import (
     year_to_date_header,
 )
 
+
 def get_obj_value(obj, name):
     value = 0
     if name in obj:

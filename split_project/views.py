@@ -51,5 +51,6 @@ class UploadedPercentageView(UserPassesTestMixin, TemplateView):
 def export_split_percentage_data(request):
     return create_percentage_download()
 
+
 def export_split_percentage_template(request):
     return create_template()
