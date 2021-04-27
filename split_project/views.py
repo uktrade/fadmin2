@@ -7,6 +7,11 @@ from django.urls import reverse
 
 from forecast.views.upload_file import UploadViewBase
 
+from split_project.downloads import (
+    create_percentage_download,
+    create_template,
+)
+
 from split_project.forms import UploadPercentageForm
 
 from upload_file.models import FileUpload
@@ -44,8 +49,7 @@ class UploadedPercentageView(UserPassesTestMixin, TemplateView):
 
 
 def export_split_percentage_data(request):
-    print("Called export split percentage")
-
+    return create_percentage_download()
 
 def export_split_percentage_template(request):
-    print("Called export template")
+    return create_template()

@@ -39,6 +39,9 @@ EXPECTED_PERCENTAGE_HEADERS = [
     "jan",
     "feb",
     "mar",
+    "adj1",
+    "adj2",
+    "adj3",
 ]
 
 
