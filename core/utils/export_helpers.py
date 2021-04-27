@@ -161,7 +161,7 @@ def export_to_excel(queryset, func, title="", field_list=None, style_name=""):
     if style_name:
         for row in range(0, ws.max_row):
             for col in range(0, ws.max_column):
-                ws.cell(column=col+1, row=row+1,).style = style_name
+                ws.cell(column=col + 1, row=row + 1,).style = style_name
 
     wb.save(resp)
     return resp
