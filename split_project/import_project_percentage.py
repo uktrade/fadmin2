@@ -2,8 +2,11 @@ from django.db import connection
 
 from core.import_csv import xslx_header_to_dict
 
+from end_of_month.models import (
+    EndOfMonthStatus,
+)
+
 from forecast.models import (
-    FinancialPeriod,
     ForecastMonthlyFigure,
 )
 
@@ -52,13 +55,18 @@ def copy_uploaded_percentage(month_dict):
             ProjectSplitCoefficient.objects.filter(
                 financial_period=period_obj,
             ).delete()
-            sql_insert = f"INSERT INTO public.split_project_projectsplitcoefficient" \
-                         f"(created, updated, split_coefficient, financial_code_from_id, " \
-                         f"financial_code_to_id, financial_period_id)	" \
-                         f"SELECT now(), now(), split_coefficient, financial_code_from_id, " \
-                         f"financial_code_to_id, financial_period_id " \
-                         f"FROM public.split_project_uploadprojectsplitcoefficient " \
-                         f"WHERE financial_period_id = {period_obj.financial_period_code};"
+            sql_insert = (
+                f"INSERT INTO public.split_project_projectsplitcoefficient"
+                f"(created, updated, "
+                f"split_coefficient, financial_code_from_id, "
+                f"financial_code_to_id, financial_period_id)	"
+                f"SELECT now(), now(), "
+                f"split_coefficient, financial_code_from_id, "
+                f"financial_code_to_id, financial_period_id "
+                f"FROM public.split_project_uploadprojectsplitcoefficient "
+                f"WHERE financial_period_id = "
+                f"{period_obj.financial_period_code};"
+            )
 
             with connection.cursor() as cursor:
                 cursor.execute(sql_insert)
@@ -107,16 +115,17 @@ def upload_project_percentage_row(
 
 def create_month_dict(header_dict):
     # Not all months are available in the excel file
+    # And we are only able to change month that have not yet been archived.
     # Also, we may have the case of a month header, and no data in the columns
     # The dictionary has this format {month_index : [period_obj, data_found]}
     month_dict = {}
-    for month in FinancialPeriod.objects.all():
-        month_name = month.period_short_name.lower()
+    for month in EndOfMonthStatus.objects.filter(archived=False):
+        month_name = month.archived_period.period_short_name.lower()
         if month_name in header_dict:
-            month_dict[header_dict[month_name]] = [month, False]
+            month_dict[header_dict[month_name]] = [month.archived_period, False]
     if month_dict:
         return month_dict
-    raise UploadFileFormatError(f"Error: no month data")
+    raise UploadFileFormatError("Error: no month data")
 
 
 def upload_project_percentage(worksheet, header_dict, month_dict, file_upload):
@@ -188,33 +197,26 @@ def upload_project_percentage(worksheet, header_dict, month_dict, file_upload):
                 data_found = True
                 break
         if not data_found:
-           final_status = FileUpload.PROCESSEDWITHERROR
-           set_file_upload_fatal_error(
-               file_upload,
-               f"Error: no data specified.",
-               "Upload aborted: Data error.",
-           )
-
+            final_status = FileUpload.PROCESSEDWITHERROR
+            set_file_upload_fatal_error(
+                file_upload, "Error: no data specified.", "Upload aborted: Data error.",
+            )
         else:
             # so we can copy the figures
             # from the temporary table to the percentages
             copy_uploaded_percentage(month_dict)
             if check_financial_code.warning_found:
                 final_status = FileUpload.PROCESSEDWITHWARNING
-        # TODO only apply it to the last actual column
         try:
             for month_info in month_dict.values():
-                if month_info[1]:
+                if month_info[1] and month_info[0].actual_loaded:
                     handle_split_project(
-                        month_info[0].financial_period_code,
-                        ForecastMonthlyFigure
+                        month_info[0].financial_period_code, ForecastMonthlyFigure
                     )
         except UploadFileDataError as ex:
             final_status = FileUpload.PROCESSEDWITHERROR
             set_file_upload_fatal_error(
-                file_upload,
-                f"Error: {ex}.",
-                "Upload aborted: Data error.",
+                file_upload, f"Error: {ex}.", "Upload aborted: Data error.",
             )
 
     set_file_upload_feedback(

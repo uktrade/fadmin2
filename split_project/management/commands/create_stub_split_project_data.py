@@ -70,26 +70,26 @@ def monthly_split_create():
             oracle_amount=monthly_amount,
         )
 
-    coefficient = 1
-    count1 = 1
-    for project_code in project_list:
-        coefficient = 100 * count1
-        count1 += 1
-        financial_code_to = FinancialCode.objects.create(
-            programme=programme_obj,
-            cost_centre=cost_centre_obj,
-            natural_account_code=natural_account_obj,
-            project_code=project_code,
-        )
-        financial_code_to.save()
-        for period in financial_periods:
-            ProjectSplitCoefficient.objects.create(
-                financial_period=period,
-                financial_code_from=financial_code_from,
-                financial_code_to=financial_code_to,
-                split_coefficient=coefficient * period.period_calendar_code % 10000,
-            )
-    ForecastMonthlyFigure.objects.all().update(oracle_amount=F("amount"))
+    # coefficient = 1
+    # count1 = 1
+    # for project_code in project_list:
+    #     coefficient = 100 * count1
+    #     count1 += 1
+    #     financial_code_to = FinancialCode.objects.create(
+    #         programme=programme_obj,
+    #         cost_centre=cost_centre_obj,
+    #         natural_account_code=natural_account_obj,
+    #         project_code=project_code,
+    #     )
+    #     financial_code_to.save()
+    #     for period in financial_periods:
+    #         ProjectSplitCoefficient.objects.create(
+    #             financial_period=period,
+    #             financial_code_from=financial_code_from,
+    #             financial_code_to=financial_code_to,
+    #             split_coefficient=coefficient * period.period_calendar_code % 10000,
+    #         )
+    # ForecastMonthlyFigure.objects.all().update(oracle_amount=F("amount"))
 
 
 class Command(BaseCommand):
