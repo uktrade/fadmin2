@@ -41,52 +41,39 @@ EXPECTED_PERCENTAGE_HEADERS = [
     ANALYSIS1_CODE,
     ANALYSIS2_CODE,
     PROJECT_CODE,
-    "apr",
-    "may",
-    "jun",
-    "jul",
-    "aug",
-    "sep",
-    "oct",
-    "nov",
-    "dec",
-    "jan",
-    "feb",
-    "mar",
-    "adj1",
-    "adj2",
-    "adj3",
 ]
 
 
 def copy_uploaded_percentage(month_dict):
-    for period_obj in month_dict.values():
-        # Now copy the newly uploaded budgets to the monthly figure table
-        ProjectSplitCoefficient.objects.filter(
-            financial_period=period_obj,
-        ).delete()
-        sql_insert = f"INSERT INTO public.split_project_projectsplitcoefficient" \
-                     f"(created, updated, split_coefficient, financial_code_from_id, " \
-                     f"financial_code_to_id, financial_period_id)	" \
-                     f"SELECT now(), now(), split_coefficient, financial_code_from_id, " \
-                     f"financial_code_to_id, financial_period_id " \
-                     f"FROM public.split_project_uploadprojectsplitcoefficient " \
-                     f"WHERE financial_period_id = {period_obj.financial_period_code};"
+    for month_info in month_dict.values():
+        if month_info[1]:
+            period_obj = month_info[0]
+            # Now copy the newly uploaded budgets to the monthly figure table
+            ProjectSplitCoefficient.objects.filter(
+                financial_period=period_obj,
+            ).delete()
+            sql_insert = f"INSERT INTO public.split_project_projectsplitcoefficient" \
+                         f"(created, updated, split_coefficient, financial_code_from_id, " \
+                         f"financial_code_to_id, financial_period_id)	" \
+                         f"SELECT now(), now(), split_coefficient, financial_code_from_id, " \
+                         f"financial_code_to_id, financial_period_id " \
+                         f"FROM public.split_project_uploadprojectsplitcoefficient " \
+                         f"WHERE financial_period_id = {period_obj.financial_period_code};"
 
-        with connection.cursor() as cursor:
-            cursor.execute(sql_insert)
-        UploadProjectSplitCoefficient.objects.filter(
-            financial_period=period_obj,
-        ).delete()
+            with connection.cursor() as cursor:
+                cursor.execute(sql_insert)
+            UploadProjectSplitCoefficient.objects.filter(
+                financial_period=period_obj,
+            ).delete()
 
 
 def upload_project_percentage_row(
     percentage_row, financialcode_obj_to, financialcode_obj_from, month_dict
 ):
-    for month_idx, period_obj in month_dict.items():
+    for month_idx, month_info in month_dict.items():
         period_percentage = percentage_row[month_idx].value
         if period_percentage is None:
-            period_percentage = 0
+            continue
         # We import from Excel, and the user may have entered spaces in an empty cell.
         if type(period_percentage) == str:
             period_percentage = period_percentage.strip()
@@ -95,16 +82,19 @@ def upload_project_percentage_row(
             period_percentage = 0
         try:
             period_percentage = int(period_percentage * 10000)
+            # there is a numeric value for this month.
+            month_info[1] = True
         except ValueError:
             raise UploadFileDataError(
-                f"Non-numeric value in {percentage_row[month_idx].coordinate}:{period_percentage}"  # noqa
+                f"Non-numeric value in {percentage_row[month_idx].coordinate}:"
+                f"{period_percentage}"
             )
         if period_percentage:
             (
                 percentage_obj,
                 created,
             ) = UploadProjectSplitCoefficient.objects.get_or_create(
-                financial_period=period_obj,
+                financial_period=month_info[0],
                 financial_code_from=financialcode_obj_from,
                 financial_code_to=financialcode_obj_to,
             )
@@ -116,15 +106,20 @@ def upload_project_percentage_row(
 
 
 def create_month_dict(header_dict):
+    # Not all months are available in the excel file
+    # Also, we may have the case of a month header, and no data in the columns
+    # The dictionary has this format {month_index : [period_obj, data_found]}
     month_dict = {}
     for month in FinancialPeriod.objects.all():
         month_name = month.period_short_name.lower()
         if month_name in header_dict:
-            month_dict[header_dict[month_name]] = month
-    return month_dict
+            month_dict[header_dict[month_name]] = [month, False]
+    if month_dict:
+        return month_dict
+    raise UploadFileFormatError(f"Error: no month data")
 
 
-def upload_project_percentage(worksheet, header_dict, file_upload):
+def upload_project_percentage(worksheet, header_dict, month_dict, file_upload):
     # Clear the table used to upload the percentages.
     # The percentages are uploaded to to a temporary storage, and copied
     # when the upload is completed successfully.
@@ -132,7 +127,6 @@ def upload_project_percentage(worksheet, header_dict, file_upload):
     # But we ignored previous periods
     UploadProjectSplitCoefficient.objects.all().delete()
     rows_to_process = worksheet.max_row + 1
-    month_dict = create_month_dict(header_dict)
     check_financial_code = CheckFinancialCode(file_upload)
     cc_index = header_dict[COST_CENTRE_CODE]
     nac_index = header_dict[NAC_CODE]
@@ -187,20 +181,45 @@ def upload_project_percentage(worksheet, header_dict, file_upload):
     if check_financial_code.error_found:
         final_status = FileUpload.PROCESSEDWITHERROR
     else:
-        # No errors, so we can copy the figures
-        # from the temporary table to the percentages
-        copy_uploaded_percentage()
-        if check_financial_code.warning_found:
-            final_status = FileUpload.PROCESSEDWITHWARNING
+        # No errors, but check that are data to be used
+        data_found = False
+        for month_info in month_dict.values():
+            if month_info[1]:
+                data_found = True
+                break
+        if not data_found:
+           final_status = FileUpload.PROCESSEDWITHERROR
+           set_file_upload_fatal_error(
+               file_upload,
+               f"Error: no data specified.",
+               "Upload aborted: Data error.",
+           )
+
+        else:
+            # so we can copy the figures
+            # from the temporary table to the percentages
+            copy_uploaded_percentage(month_dict)
+            if check_financial_code.warning_found:
+                final_status = FileUpload.PROCESSEDWITHWARNING
+        # TODO only apply it to the last actual column
+        try:
+            for month_info in month_dict.values():
+                if month_info[1]:
+                    handle_split_project(
+                        month_info[0].financial_period_code,
+                        ForecastMonthlyFigure
+                    )
+        except UploadFileDataError as ex:
+            final_status = FileUpload.PROCESSEDWITHERROR
+            set_file_upload_fatal_error(
+                file_upload,
+                f"Error: {ex}.",
+                "Upload aborted: Data error.",
+            )
 
     set_file_upload_feedback(
         file_upload, f"Processed {rows_to_process} rows.", final_status
     )
-    # use the project split for the last actuals if needed
-    # handle_split_project(
-    #     period_obj.financial_period_code,
-    #     ForecastMonthlyFigure
-    # )
 
     return not check_financial_code.error_found
 
@@ -215,7 +234,6 @@ def upload_project_percentage_from_file(file_upload):
         raise ex
     header_dict = xslx_header_to_dict(worksheet[1])
     try:
-        # TODO change it to upload just one month or more
         check_header(header_dict, EXPECTED_PERCENTAGE_HEADERS)
     except UploadFileFormatError as ex:
         set_file_upload_fatal_error(
@@ -224,7 +242,16 @@ def upload_project_percentage_from_file(file_upload):
         workbook.close
         raise ex
     try:
-        upload_project_percentage(worksheet, header_dict, file_upload)
+        month_dict = create_month_dict(header_dict)
+    except UploadFileFormatError as ex:
+        set_file_upload_fatal_error(
+            file_upload, str(ex), str(ex),
+        )
+        workbook.close
+        raise ex
+
+    try:
+        upload_project_percentage(worksheet, header_dict, month_dict, file_upload)
     except (UploadFileDataError) as ex:
         set_file_upload_fatal_error(
             file_upload, str(ex), str(ex),

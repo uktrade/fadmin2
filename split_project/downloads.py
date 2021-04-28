@@ -11,7 +11,8 @@ from split_project.models import ProjectSplitCoefficient
 
 
 def export_template(queryset):
-    yield EXPECTED_PERCENTAGE_HEADERS
+    month_list = FinancialPeriod.financial_period_info.period_display_all_list()
+    yield EXPECTED_PERCENTAGE_HEADERS + month_list
 
 
 def create_template():

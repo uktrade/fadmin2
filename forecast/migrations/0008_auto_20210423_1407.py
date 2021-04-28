@@ -20,4 +20,14 @@ class Migration(migrations.Migration):
             name='oracle_amount',
             field=models.BigIntegerField(blank=True, default=0, null=True),
         ),
+        migrations.AlterField(
+            model_name='forecastmonthlyfigure',
+            name='starting_amount',
+            field=models.BigIntegerField(blank=True, default=0, null=True),
+        ),
+        migrations.AlterField(
+            model_name='simplehistoryforecastmonthlyfigure',
+            name='starting_amount',
+            field=models.BigIntegerField(blank=True, default=0, null=True),
+        ),
     ]

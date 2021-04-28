@@ -849,7 +849,7 @@ class MonthlyFigureAbstract(BaseModel):
 
 class ForecastMonthlyFigure(MonthlyFigureAbstract):
     # The value at the beginning of the period
-    starting_amount = models.BigIntegerField(default=0)
+    starting_amount = models.BigIntegerField(default=0, null=True, blank=True)
     # The actual value read from Oracle.
     # The amount changes when the corrections for the projects are introduced
     oracle_amount = models.BigIntegerField(default=0, null=True, blank=True)
