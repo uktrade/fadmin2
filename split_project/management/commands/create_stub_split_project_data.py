@@ -70,6 +70,8 @@ def monthly_split_create():
             oracle_amount=monthly_amount,
         )
 
+    # Now initialise oracle_amount in every field
+    ForecastMonthlyFigure.objects.update(oracle_amount=F('amount'))
     # coefficient = 1
     # count1 = 1
     # for project_code in project_list:

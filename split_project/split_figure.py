@@ -16,14 +16,15 @@ def copy_values(period_id, table_name):
     sql_reset_amount = (
         f"UPDATE {table_name}  "
         f"SET amount=oracle_amount "
-        f"WHERE financial_period_id = {period_id};"
+        f"WHERE financial_period_id = {period_id} and archived_status_id is null;"
     )
     sql_update = (
         f"UPDATE {table_name} "
         f"SET amount = amount + c.calculated_amount "
         f"FROM split_project_temporarycalculatedvalues c "
         f"WHERE {table_name}.financial_period_id = {period_id} "
-        f"AND {table_name}.financial_code_id = c.financial_code_id;"
+        f"AND {table_name}.financial_code_id = c.financial_code_id "
+        f"AND archived_status_id is null;"
     )
 
     sql_insert = (
