@@ -1,7 +1,10 @@
 from django.core.management.base import BaseCommand
 from django.db.models import F
 
-from chartofaccountDIT.models import NaturalCode, ProgrammeCode, ProjectCode
+from chartofaccountDIT.models import (
+    NaturalCode,
+    ProgrammeCode,
+)
 
 from core.models import FinancialYear
 
@@ -49,7 +52,6 @@ def monthly_split_create():
         directorate=Directorate.objects.all().first(),
     )
     programme_obj = ProgrammeCode.objects.all().first()
-    project_list = ProjectCode.objects.all()
     natural_account_obj = NaturalCode.objects.all().first()
     financial_periods = FinancialPeriod.objects.exclude(
         period_long_name__icontains="adj"
@@ -75,26 +77,6 @@ def monthly_split_create():
 
     # Now initialise oracle_amount in every field
     ForecastMonthlyFigure.objects.update(oracle_amount=F('amount'))
-    # coefficient = 1
-    # count1 = 1
-    # for project_code in project_list:
-    #     coefficient = 100 * count1
-    #     count1 += 1
-    #     financial_code_to = FinancialCode.objects.create(
-    #         programme=programme_obj,
-    #         cost_centre=cost_centre_obj,
-    #         natural_account_code=natural_account_obj,
-    #         project_code=project_code,
-    #     )
-    #     financial_code_to.save()
-    #     for period in financial_periods:
-    #         ProjectSplitCoefficient.objects.create(
-    #             financial_period=period,
-    #             financial_code_from=financial_code_from,
-    #             financial_code_to=financial_code_to,
-    #             split_coefficient=coefficient * period.period_calendar_code % 10000,
-    #         )
-    # ForecastMonthlyFigure.objects.all().update(oracle_amount=F("amount"))
 
 
 class Command(BaseCommand):

@@ -43,120 +43,6 @@ EXPECTED_PERCENTAGE_HEADERS = [
 ]
 
 
-def create_month_dict(header_dict):
-    # Not all months are available in the excel file
-    # And we are only able to change month that have not yet been archived.
-    # Also, we may have the case of a month header, and no data in the columns
-    month_dict = {}
-    month_data_found_dict = {}
-    for month in EndOfMonthStatus.objects.filter(archived=False):
-        month_name = month.archived_period.period_short_name.lower()
-        if month_name in header_dict:
-            month_dict[header_dict[month_name]] = month.archived_period
-            month_data_found_dict[header_dict[month_name]] = False
-    if month_dict:
-        return month_dict, month_data_found_dict
-    raise UploadFileFormatError("Error: no month data")
-
-
-# def upload_project_percentage(worksheet, header_dict, month_dict, file_upload):
-#     # Clear the table used to upload the percentages.
-#     # The percentages are uploaded to to a temporary storage, and copied
-#     # when the upload is completed successfully.
-#     # This means that we always have a full upload.
-#     # But we ignored previous periods
-#     UploadProjectSplitCoefficient.objects.all().delete()
-#     rows_to_process = worksheet.max_row + 1
-#     check_financial_code = CheckFinancialCode(file_upload)
-#     cc_index = header_dict[COST_CENTRE_CODE]
-#     nac_index = header_dict[NAC_CODE]
-#     prog_index = header_dict[PROGRAMME_CODE]
-#     a1_index = header_dict[ANALYSIS1_CODE]
-#     a2_index = header_dict[ANALYSIS2_CODE]
-#     proj_index = header_dict[PROJECT_CODE]
-#     row_number = 0
-#     # There is a terrible performance hit accessing the individual cells:
-#     # The cell is found starting from cell A0, and continuing until the
-#     # required cell is found
-#     # The rows in worksheet.rows are accessed sequentially, so there is no
-#     # performance problem.
-#     # A typical files took over 2 hours to read using the cell access method
-#     # and 10 minutes with the row access.
-#     for percentage_row in worksheet.rows:
-#         row_number += 1
-#         if row_number == 1:
-#             # There is no way to start reading rows from a specific place.
-#             # Ignore first row, the headers have been processed already
-#             continue
-#         if not row_number % 100:
-#             # Display the number of rows processed every 100 rows
-#             set_file_upload_feedback(
-#                 file_upload, f"Processing row {row_number} of {rows_to_process}."
-#             )
-#         cost_centre = percentage_row[cc_index].value
-#         if not cost_centre:
-#             # protection against empty rows
-#             break
-#         check_financial_code.validate(
-#             cost_centre,
-#             percentage_row[nac_index].value,
-#             percentage_row[prog_index].value,
-#             percentage_row[a1_index].value,
-#             percentage_row[a2_index].value,
-#             percentage_row[proj_index].value,
-#             row_number,
-#         )
-#         if not check_financial_code.error_found:
-#             try:
-#                 upload_project_percentage_row(
-#                     percentage_row,
-#                     check_financial_code.get_financial_code(),
-#                     check_financial_code.get_financial_code_no_project(),
-#                     month_dict,
-#                 )
-#             except UploadFileDataError as ex:
-#                 check_financial_code.record_error(row_number, str(ex))
-#
-#     final_status = FileUpload.PROCESSED
-#     if check_financial_code.error_found:
-#         final_status = FileUpload.PROCESSEDWITHERROR
-#     else:
-#         # No errors, but check that are data to be used
-#         data_found = False
-#         for month_info in month_dict.values():
-#             if month_info[1]:
-#                 data_found = True
-#                 break
-#         if not data_found:
-#             final_status = FileUpload.PROCESSEDWITHERROR
-#             set_file_upload_fatal_error(
-#                 file_upload, "Error: no data specified.", "Upload aborted: Data error.",
-#             )
-#         else:
-#             # so we can copy the figures
-#             # from the temporary table to the percentages
-#             copy_uploaded_percentage(month_dict)
-#             if check_financial_code.warning_found:
-#                 final_status = FileUpload.PROCESSEDWITHWARNING
-#         try:
-#             for month_info in month_dict.values():
-#                 if month_info[1] and month_info[0].actual_loaded:
-#                     handle_split_project(
-#                         month_info[0].financial_period_code, ForecastMonthlyFigure
-#                     )
-#         except UploadFileDataError as ex:
-#             final_status = FileUpload.PROCESSEDWITHERROR
-#             set_file_upload_fatal_error(
-#                 file_upload, f"Error: {ex}.", "Upload aborted: Data error.",
-#             )
-#
-#     set_file_upload_feedback(
-#         file_upload, f"Processed {rows_to_process} rows.", final_status
-#     )
-#
-#     return not check_financial_code.error_found
-
-
 class UploadProjectPercentages:
     def __init__(self, worksheet, header_dict, file_upload):
         self.worksheet = worksheet
@@ -168,7 +54,21 @@ class UploadProjectPercentages:
         self.proj_index = header_dict[PROJECT_CODE]
         self.file_upload = file_upload
         self.row_to_process = self.worksheet.max_row + 1
-        self.month_dict, self.month_data_found_dict = create_month_dict(header_dict)
+        self.create_month_dict(header_dict)
+
+    def create_month_dict(self, header_dict):
+        # Not all months are available in the excel file
+        # And we are only able to change month that have not yet been archived.
+        # Also, we may have the case of a month header, and no data in the columns
+        self.month_dict = {}
+        self.month_data_found_dict = {}
+        for month in EndOfMonthStatus.objects.filter(archived=False):
+            month_name = month.archived_period.period_short_name.lower()
+            if month_name in header_dict:
+                self.month_dict[header_dict[month_name]] = month.archived_period
+                self.month_data_found_dict[header_dict[month_name]] = False
+        if not self.month_dict:
+            raise UploadFileFormatError("Error: no month data")
 
     def display_row_count(self, row_number):
         if not row_number % 100:
