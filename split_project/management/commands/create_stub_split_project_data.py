@@ -11,6 +11,7 @@ from costcentre.models import (
 )
 
 from forecast.models import (
+    BudgetMonthlyFigure,
     FinancialCode,
     FinancialPeriod,
     ForecastMonthlyFigure,
@@ -38,6 +39,8 @@ def project_split_clear():
 
 def monthly_split_create():
     project_split_clear()
+    ForecastMonthlyFigure.objects.all().delete()
+    BudgetMonthlyFigure.objects.all().delete()
     current_financial_year = FinancialYear.objects.get(current=True)
     cost_centre_obj = CostCentre.objects.create(
         cost_centre_code=COST_CENTRE_CODE,
