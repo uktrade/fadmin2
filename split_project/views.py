@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.views.generic.base import TemplateView
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from forecast.views.upload_file import UploadViewBase
 
@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 class UploadPercentageView(UploadViewBase):
     form_class = UploadPercentageForm
+    success_url = reverse_lazy("project_percentage")
 
     context = "Upload Percentages"
     upload_type = FileUpload.PROJECTPERCENTAGE
@@ -43,7 +44,7 @@ class UploadedPercentageView(UserPassesTestMixin, TemplateView):
     def uploaded_files(self):
         uploaded_files = FileUpload.objects.filter(
             Q(document_type=FileUpload.PROJECTPERCENTAGE)
-        ).order_by("-created")
+        ).order_by("-created")[:1]
 
         return uploaded_files
 
