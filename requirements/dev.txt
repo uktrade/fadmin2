@@ -150,7 +150,7 @@ django==3.0.3
     #   django-tables2
     #   djangorestframework
     #   s3chunkuploader
-djangorestframework==3.11.0
+djangorestframework==3.11.2
     # via -r requirements.in/base.in
 docutils==0.14
     # via
