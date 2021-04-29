@@ -271,7 +271,7 @@ public==1.0.3
     # via
     #   -r requirements.in/base.in
     #   query-string
-py==1.6.0
+py==1.10.0
     # via
     #   -r requirements.in/base.in
     #   pytest
