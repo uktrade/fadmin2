@@ -105,7 +105,7 @@ django-storages==1.11.1
     # via
     #   -r requirements.in/base.in
     #   django-chunk-upload-handlers
-django-tables2==2.3.4
+django-tables2==2.1.1
     # via -r requirements.in/base.in
 django-webpack-loader==0.7.0
     # via -r requirements.in/base.in

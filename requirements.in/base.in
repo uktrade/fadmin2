@@ -33,7 +33,7 @@ django-settings-export
 django-simple-history
 django-staff-sso-client
 django-storages
-django-tables2>=2.3.4
+django-tables2==2.1.1
 django-webpack-loader
 django-bootstrap-breadcrumbs
 djangorestframework>=3.11.2
