@@ -226,7 +226,8 @@ NUM_META_COLS = 8
 
 CLAM_AV_USERNAME = env("CLAM_AV_USERNAME", default=None)
 CLAM_AV_PASSWORD = env("CLAM_AV_PASSWORD", default=None)
-CLAM_AV_URL = env("CLAM_AV_URL", default=None)
+CLAM_AV_DOMAIN = env("CLAM_AV_DOMAIN", default=None)
+
 GTM_CODE = env("GTM_CODE", default=None)
 
 SETTINGS_EXPORT = [
